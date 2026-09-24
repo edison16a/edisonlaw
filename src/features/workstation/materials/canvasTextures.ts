@@ -186,3 +186,28 @@ export function createTowerRearTexture() {
     ctx.fillRect(w * 0.68, y(0.89), w * 0.1, y(0.04));
   });
 }
+
+/**
+ * Dark felt for the desk mat, `width` by `depth` metres: a fine fibre speckle and a stitched border
+ * a few millimetres in from the edge.
+ */
+export function createDeskMatTexture(width: number, depth: number) {
+  const pxPerMetre = 1200;
+  const inset = 0.007 * pxPerMetre;
+  return paintTexture(Math.round(width * pxPerMetre), Math.round(depth * pxPerMetre), (ctx, w, h) => {
+    const random = seededRandom(17);
+    ctx.fillStyle = '#1c1d23';
+    ctx.fillRect(0, 0, w, h);
+    for (let i = 0; i < 16000; i++) {
+      const shade = random() > 0.5 ? '255, 255, 255' : '0, 0, 0';
+      ctx.fillStyle = `rgba(${shade}, ${0.025 + random() * 0.035})`;
+      ctx.fillRect(random() * w, random() * h, 1 + random() * 2, 1);
+    }
+    ctx.strokeStyle = '#3a3c46';
+    ctx.lineWidth = 2.2;
+    ctx.setLineDash([7, 4]);
+    ctx.beginPath();
+    ctx.roundRect(inset, inset, w - inset * 2, h - inset * 2, 10);
+    ctx.stroke();
+  });
+}
