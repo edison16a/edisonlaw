@@ -2,11 +2,11 @@
 
 import { RoundedBox } from '@react-three/drei';
 import { useMemo } from 'react';
-import { AdditiveBlending, DoubleSide, MeshBasicMaterial, MeshPhysicalMaterial, MeshStandardMaterial } from 'three';
+import { DoubleSide, MeshBasicMaterial, MeshStandardMaterial } from 'three';
 import { createSlabGeometry } from '../../geometry/slab';
 import { PC_TOWER } from '../../layout';
 import { useRgbMaterial } from '../../lighting/useRgbMaterial';
-import { createGlassSheenTexture, createPerforationTexture, createTowerRearTexture } from '../../materials/canvasTextures';
+import { createPerforationTexture, createTowerRearTexture } from '../../materials/canvasTextures';
 import { useDisposable } from '../../useDisposable';
 import { createFritGeometry, createGlassGeometry } from './chassisGeometry';
 import { Fan, type FanParts } from './Fan';
@@ -30,27 +30,12 @@ export function PcTower({ animate }: { animate: boolean }) {
     const perforation = createPerforationTexture();
     perforation.repeat.set(14, 7);
     return {
-      // Low roughness and a strong environment let the black edges catch the room and read as a shape.
-      body: new MeshStandardMaterial({ color: '#131419', roughness: 0.3, metalness: 0.55, envMapIntensity: 1.8 }),
-      frit: new MeshStandardMaterial({ color: '#050506', roughness: 0.2 }),
-      glass: new MeshPhysicalMaterial({
-        color: '#9aa6c0',
-        roughness: 0.02,
-        metalness: 0,
-        transparent: true,
-        opacity: 0.1,
-        depthWrite: false,
-        envMapIntensity: 3,
-        specularIntensity: 1,
-      }),
-      sheen: new MeshBasicMaterial({
-        map: createGlassSheenTexture(),
-        transparent: true,
-        opacity: 0.04,
-        blending: AdditiveBlending,
-        depthWrite: false,
-        toneMapped: false,
-      }),
+      // Satin rather than gloss: the black edges pick up enough of the room to read as a shape, without hot spots.
+      body: new MeshStandardMaterial({ color: '#131419', roughness: 0.44, metalness: 0.55, envMapIntensity: 1.1 }),
+      frit: new MeshStandardMaterial({ color: '#050506', roughness: 0.8 }),
+      // Smoked glass that only darkens what is behind it. Unlit, so no light, reflection or sheen ever
+      // lands on it as glare, and the internals and the RGB show through clean from every camera.
+      glass: new MeshBasicMaterial({ color: '#05060a', transparent: true, opacity: 0.2, depthWrite: false }),
       vent: new MeshStandardMaterial({ map: perforation, roughness: 0.55, metalness: 0.4 }),
       rear: new MeshStandardMaterial({ map: createTowerRearTexture(), roughness: 0.5, metalness: 0.35 }),
       rubber: new MeshStandardMaterial({ color: '#0c0c0e', roughness: 0.8 }),
@@ -126,7 +111,6 @@ export function PcTower({ animate }: { animate: boolean }) {
       {/* Black print behind the glass, then the glass itself, drawn last. */}
       <mesh geometry={shell.fritGeometry} material={shell.frit} />
       <mesh geometry={shell.glassGeometry} material={shell.glass} renderOrder={2} />
-      <mesh geometry={shell.glassGeometry} material={shell.sheen} renderOrder={3} />
     </group>
   );
 }

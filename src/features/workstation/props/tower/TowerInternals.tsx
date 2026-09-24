@@ -54,8 +54,11 @@ export function TowerInternals() {
 
   const parts = useDisposable(() => ({
     pcb: new MeshStandardMaterial({ color: '#16181d', roughness: 0.62, metalness: 0.2 }),
-    armour: new MeshStandardMaterial({ color: '#2b2e35', roughness: 0.34, metalness: 0.75 }),
-    backplate: new MeshStandardMaterial({ color: '#3a3d45', roughness: 0.3, metalness: 0.8 }),
+    // Satin metals: the tower's own light sits a hand's width away, and anything glossier flares under it.
+    armour: new MeshStandardMaterial({ color: '#2b2e35', roughness: 0.46, metalness: 0.7 }),
+    backplate: new MeshStandardMaterial({ color: '#3a3d45', roughness: 0.44, metalness: 0.75 }),
+    /** Black painted fins, matte, so the radiator's broad back never mirrors the light as a hot spot. */
+    radiator: new MeshStandardMaterial({ color: '#141519', roughness: 0.8, metalness: 0.25 }),
     shroud: new MeshStandardMaterial({ color: '#121317', roughness: 0.45, metalness: 0.4 }),
     hose: new MeshStandardMaterial({ color: '#0d0d10', roughness: 0.7 }),
     hoses: [hoseCurve(0.011), hoseCurve(-0.011)].map((curve) => new TubeGeometry(curve, 48, 0.0052, 10)),
@@ -141,7 +144,7 @@ export function TowerInternals() {
         args={[RADIATOR.depth, radiatorHeight, RADIATOR.width]}
         radius={0.002}
         smoothness={2}
-        material={parts.armour}
+        material={parts.radiator}
         position={[RADIATOR.backX + RADIATOR.depth / 2, TOWER.shroudTop + 0.004 + radiatorHeight / 2, (BACK_INNER_Z + GLASS_INNER_Z) / 2]}
       />
 
