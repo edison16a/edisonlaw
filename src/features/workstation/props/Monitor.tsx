@@ -9,7 +9,7 @@ import type { ScreenId } from '../screens/types';
 
 const PANEL_DEPTH = 0.014;
 /** Bright enough to bloom a little at the highlights while text stays readable. */
-const SCREEN_INTENSITY = 1.3;
+const SCREEN_INTENSITY = 1.5;
 
 interface MonitorProps {
   slot: MonitorSlot;
@@ -36,7 +36,8 @@ export function Monitor({ slot, screen, live }: MonitorProps) {
           emissive="#ffffff"
           emissiveMap={texture}
           emissiveIntensity={SCREEN_INTENSITY}
-          roughness={0.28}
+          roughness={0.6}
+          envMapIntensity={0.12}
           toneMapped={false}
         />
       </mesh>
