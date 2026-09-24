@@ -76,10 +76,10 @@ function shellGeometry({ hairline, offset, tone }: Shell, turnSegments: number, 
 
 /** The long top layer: centre part, bangs, clumps and strand tips around the back. */
 export function hairCapGeometry() {
-  return shellGeometry({ hairline: hairlineAt, offset: hairOffsetAt, tone: hairToneAt }, 320, 80);
+  return shellGeometry({ hairline: hairlineAt, offset: hairOffsetAt, tone: hairToneAt }, 224, 56);
 }
 
 /** The short undercut hugging the back and sides of the skull down to the nape. */
 export function undercutGeometry() {
-  return shellGeometry({ hairline: undercutLineAt, offset: undercutOffsetAt, tone: () => 1 }, 160, 48);
+  return shellGeometry({ hairline: undercutLineAt, offset: undercutOffsetAt, tone: () => 1 }, 128, 32);
 }

@@ -4,9 +4,9 @@ import { LatheGeometry, Vector2 } from 'three';
  * Capsule hanging down -Y from the origin, with a different radius at each end.
  * Both ends are hemispheres centred on the joints, so neighbouring limbs rotate without seams.
  */
-export function taperedCapsule(topRadius: number, bottomRadius: number, length: number, radialSegments = 28) {
+export function taperedCapsule(topRadius: number, bottomRadius: number, length: number, radialSegments = 24) {
   const points: Vector2[] = [];
-  const capSteps = 8;
+  const capSteps = 6;
   for (let i = 0; i <= capSteps; i++) {
     const angle = -Math.PI / 2 + (i / capSteps) * (Math.PI / 2);
     points.push(new Vector2(Math.cos(angle) * bottomRadius, -length + Math.sin(angle) * bottomRadius));
@@ -27,7 +27,7 @@ export function taperedCapsule(topRadius: number, bottomRadius: number, length: 
  * A short sleeve or trouser cuff: a dome centred on the joint so it turns in place with the limb,
  * a slightly flared tube below it, and a rolled hem.
  */
-export function sleeveGeometry(radius: number, length: number, flare = 1.04, radialSegments = 32) {
+export function sleeveGeometry(radius: number, length: number, flare = 1.04, radialSegments = 28) {
   const points: Vector2[] = [];
   const hemRadius = radius * flare;
   points.push(new Vector2(hemRadius * 0.86, -length + 0.004));

@@ -31,7 +31,7 @@ function paintSkin(point: Vector3, out: Color) {
 }
 
 /** The skull surface as a smooth closed mesh with painted vertex colours, centred on the head centre. */
-export function headGeometry(widthSegments = 96, heightSegments = 72) {
+export function headGeometry(widthSegments = 80, heightSegments = 56) {
   const sphere = new SphereGeometry(1, widthSegments, heightSegments);
   sphere.deleteAttribute('normal');
   sphere.deleteAttribute('uv');

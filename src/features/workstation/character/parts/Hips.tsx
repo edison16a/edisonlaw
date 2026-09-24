@@ -16,6 +16,6 @@ const TROUSERS: LoftRing[] = [
 
 export function Hips() {
   const materials = useCharacterMaterials();
-  const trousers = useGeometry(() => loftGeometry(TROUSERS, { radialSegments: 48, capBottom: true }));
+  const trousers = useGeometry(() => loftGeometry(TROUSERS, { radialSegments: 40, capBottom: true }));
   return <mesh geometry={trousers} material={materials.pants} castShadow receiveShadow />;
 }
