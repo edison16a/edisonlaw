@@ -36,10 +36,10 @@ describe('stepMotion', () => {
     expect(motion.settle).toBeLessThan(0.2);
   });
 
-  it('centres the spiral for the intro and the outro and moves it aside in between', () => {
+  it('centres the spiral for the intro and keeps it aside from the first card to the last', () => {
     expect(run(create(-0.5), -0.5, 0.1).engaged).toBe(0);
     expect(run(create(5), 5, 0.1).engaged).toBe(1);
-    expect(run(create(11.5), 11.5, 0.1).engaged).toBe(0);
+    expect(run(create(11), 11, 0.1).engaged).toBe(1);
   });
 
   it('brings the cards in once and keeps them there', () => {

@@ -1,7 +1,7 @@
 import { damp, smoothstep } from '@/lib/math';
 import type { SpiralMotion } from '../state/spiralMotion';
 import { stepSpring } from './spring';
-import { firstIndex, isInsideDeck, lastIndex } from './track';
+import { firstIndex, isInsideDeck } from './track';
 
 /** Seconds the damped index takes to catch up with the scroll. Enough to feel weighty. */
 const SMOOTH_TIME = 0.2;
@@ -28,10 +28,8 @@ export function stepMotion(motion: SpiralMotion, target: number, count: number, 
     !motion.dragging;
   motion.settle = damp(motion.settle, resting ? 1 : 0, resting ? 5 : 12, delta);
 
-  // Centred like a poster for the intro and outro, aside for the panel in between.
-  const opening = smoothstep(firstIndex() + 0.05, -0.08, motion.value);
-  const closing = 1 - smoothstep(count - 1 + 0.08, lastIndex(count) - 0.05, motion.value);
-  motion.engaged = opening * closing;
+  // Centred like a poster for the intro, then aside for the panel until the stage scrolls away.
+  motion.engaged = smoothstep(firstIndex() + 0.05, -0.08, motion.value);
 
   motion.reveal = reducedMotion ? 1 : damp(motion.reveal, 1, 2.4, delta);
   return motion;

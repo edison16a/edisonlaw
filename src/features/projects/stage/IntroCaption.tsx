@@ -7,16 +7,17 @@ import { EASE_OUT_EXPO } from '@/lib/easing';
 
 /**
  * Bottom left of the stage: who this is, and a hint to scroll that bows out
- * after the first scroll. The caption steps aside while the cards have the stage.
+ * after the first scroll. The caption only shows in the intro and steps aside
+ * once the cards have the stage.
  */
 export function IntroCaption() {
   const hasScrolled = useSpiralStore((state) => state.hasScrolled);
-  const inDeck = useSpiralStore((state) => state.inDeck);
+  const inIntro = useSpiralStore((state) => state.inIntro);
 
   return (
     <motion.div
       initial={false}
-      animate={{ opacity: inDeck ? 0 : 1, y: inDeck ? 12 : 0 }}
+      animate={{ opacity: inIntro ? 1 : 0, y: inIntro ? 0 : 12 }}
       transition={{ duration: 0.7, ease: EASE_OUT_EXPO }}
       className="gutter pointer-events-none absolute bottom-8 left-0 flex flex-col gap-6 lg:bottom-10"
     >

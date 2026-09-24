@@ -9,8 +9,8 @@ export interface FocusSnapshot {
   panel: number | null;
   /** Card that has locked into focus, or null while anything is still moving. */
   settled: number | null;
-  /** True while the spiral turns among the cards, rather than resting in the intro or the outro. */
-  inDeck: boolean;
+  /** True while the spiral rests in the intro, before the first card. */
+  inIntro: boolean;
 }
 
 interface SpiralState extends FocusSnapshot {
@@ -37,7 +37,7 @@ export const useSpiralStore = create<SpiralState>((set, get) => ({
   focused: 0,
   panel: null,
   settled: null,
-  inDeck: false,
+  inIntro: true,
   hasScrolled: false,
   pendingFocus: null,
   hovered: null,
@@ -52,11 +52,11 @@ export const useSpiralStore = create<SpiralState>((set, get) => ({
     return pendingFocus;
   },
 
-  syncFocus: ({ focused, panel, settled, inDeck }) => {
+  syncFocus: ({ focused, panel, settled, inIntro }) => {
     const state = get();
     const same =
-      state.focused === focused && state.panel === panel && state.settled === settled && state.inDeck === inDeck;
-    if (!same) set({ focused, panel, settled, inDeck });
+      state.focused === focused && state.panel === panel && state.settled === settled && state.inIntro === inIntro;
+    if (!same) set({ focused, panel, settled, inIntro });
   },
 
   markScrolled: () => {

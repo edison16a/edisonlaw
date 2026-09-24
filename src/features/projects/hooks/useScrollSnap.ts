@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useLenis } from 'lenis/react';
 import { snapTarget } from '../spiral/detents';
-import { indexFromScroll, scrollFromIndex } from '../spiral/track';
+import { rawIndexFromScroll, scrollFromIndex } from '../spiral/track';
 import { spiralMotion } from '../state/spiralMotion';
 import { useSpiralStore } from '../state/spiralStore';
 import { stageMetrics } from '../state/stageMetrics';
@@ -32,7 +32,8 @@ export function useScrollSnap() {
       idle = true;
       if (spiralMotion.dragging) return;
       const heading = lenis.targetScroll;
-      const position = indexFromScroll(heading, stageMetrics);
+      // Unclamped, so a stop past either end of the track never pulls the page back in.
+      const position = rawIndexFromScroll(heading, stageMetrics);
       const card = snapTarget(position, anchor, stageMetrics.count);
       if (card === null) return;
       const destination = scrollFromIndex(card, stageMetrics);

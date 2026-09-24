@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { firstIndex, indexFromScroll, isInsideDeck, lastIndex, scrollFromIndex, TRACK, trackSpan } from './track';
+import {
+  firstIndex,
+  indexFromScroll,
+  isInsideDeck,
+  lastIndex,
+  rawIndexFromScroll,
+  scrollFromIndex,
+  TRACK,
+  trackSpan,
+} from './track';
 
 const metrics = { top: 100, perCard: 500, count: 12 };
 
@@ -18,6 +27,16 @@ describe('track mapping', () => {
   it('holds the index inside the track above and below it', () => {
     expect(indexFromScroll(0, metrics)).toBe(firstIndex());
     expect(indexFromScroll(1e6, metrics)).toBe(lastIndex(12));
+  });
+
+  it('ends the track on the last project', () => {
+    expect(lastIndex(12)).toBe(11);
+    expect(indexFromScroll(scrollFromIndex(11, metrics) + 200, metrics)).toBe(11);
+  });
+
+  it('keeps counting past both ends when asked for the raw index', () => {
+    expect(rawIndexFromScroll(scrollFromIndex(11, metrics) + 250, metrics)).toBeCloseTo(11.5, 6);
+    expect(rawIndexFromScroll(0, metrics)).toBeCloseTo(-0.7, 6);
   });
 
   it('spans every card plus the intro and the outro', () => {
