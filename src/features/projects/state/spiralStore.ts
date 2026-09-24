@@ -14,8 +14,6 @@ export interface FocusSnapshot {
 interface SpiralState extends FocusSnapshot {
   /** Mode the visitor picked. Null until they use the toggle, so reduced motion can choose the default. */
   chosenMode: SpiralMode | null;
-  /** Last card that locked into focus. Snapping measures travel from here. */
-  anchor: number;
   /** True after the first scroll or drag inside the section. */
   hasScrolled: boolean;
   /** True once the visitor has moved on from the first card, which retires the intro caption. */
@@ -39,7 +37,6 @@ export const useSpiralStore = create<SpiralState>((set, get) => ({
   focused: 0,
   panel: 0,
   settled: 0,
-  anchor: 0,
   hasScrolled: false,
   introDone: false,
   pendingFocus: null,
@@ -62,7 +59,6 @@ export const useSpiralStore = create<SpiralState>((set, get) => ({
       focused,
       panel,
       settled,
-      anchor: settled ?? state.anchor,
       introDone: state.introDone || focused > 0,
     });
   },
