@@ -294,3 +294,25 @@ export function createFibreTexture() {
   return texture;
 }
 
+/**
+ * A soft diagonal sheen on black, for glass drawn with additive blending: black adds nothing, and the
+ * two pale bands read as the room reflected in the pane.
+ */
+export function createGlassSheenTexture() {
+  return paintTexture(256, 256, (ctx, w, h) => {
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(0, 0, w, h);
+    const band = (from: number, width: number, alpha: number) => {
+      const gradient = ctx.createLinearGradient(w * from, h, w * (from + 0.55), 0);
+      gradient.addColorStop(0, 'rgba(255, 255, 255, 0)');
+      gradient.addColorStop(0.5 - width, 'rgba(255, 255, 255, 0)');
+      gradient.addColorStop(0.5, `rgba(255, 255, 255, ${alpha})`);
+      gradient.addColorStop(0.5 + width, 'rgba(255, 255, 255, 0)');
+      gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, w, h);
+    };
+    band(-0.1, 0.14, 0.9);
+    band(0.25, 0.04, 0.6);
+  });
+}
