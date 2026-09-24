@@ -64,15 +64,17 @@ export function Face({ rig }: { rig: Rig }) {
       {rig.eyes.map((eye, index) => (
         <primitive key={eye.name} object={eye} position={eyeFrames[index].position} quaternion={eyeFrames[index].quaternion}>
           <mesh geometry={sphere} material={materials.eye} scale={EYE.radius} />
-          {SHINES.map(({ x, y, radius }) => (
-            <mesh
-              key={radius}
-              geometry={sphere}
-              material={materials.eyeShine}
-              position={[x, y, shineDepth(x, y)]}
-              scale={[radius, radius, radius * 0.35]}
-            />
-          ))}
+          <primitive object={rig.shines[index]}>
+            {SHINES.map(({ x, y, radius }) => (
+              <mesh
+                key={radius}
+                geometry={sphere}
+                material={materials.eyeShine}
+                position={[x, y, shineDepth(x, y)]}
+                scale={[radius, radius, radius * 0.35]}
+              />
+            ))}
+          </primitive>
         </primitive>
       ))}
       <mesh geometry={leftBrow} material={materials.brow} />

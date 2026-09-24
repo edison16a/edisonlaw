@@ -31,6 +31,8 @@ export interface Rig {
   head: Group;
   /** Left then right. Scaled on Y to blink. */
   eyes: [Group, Group];
+  /** Catch lights of each eye, hidden while the eye is shut. */
+  shines: [Group, Group];
   arms: Record<LimbName, ArmRig>;
   legs: Record<LimbName, LimbRig>;
 }
