@@ -28,7 +28,8 @@ export function IntroCaption() {
         transition={{ duration: 0.6, ease: EASE_OUT_EXPO }}
         className="flex items-center gap-3 text-xs text-grey-400"
       >
-        <span className="flex h-6 w-4 justify-center rounded-full border border-grey-600 pt-1">
+        {/* A mouse means nothing on a touch screen, so only the words show there. */}
+        <span className="flex h-6 w-4 justify-center rounded-full border border-grey-600 pt-1 pointer-coarse:hidden">
           <motion.span
             className="h-1.5 w-0.5 rounded-full bg-white"
             animate={{ y: [0, 7, 0], opacity: [1, 0.15, 1] }}

@@ -7,11 +7,13 @@ import type { SpiralMode } from '../state/spiralStore';
 interface ModeToggleProps {
   mode: SpiralMode;
   onChange: (mode: SpiralMode) => void;
+  /** Word for the picture view. Screens that get the photo carousel instead of the spiral say "photos". */
+  spiralLabel?: string;
   className?: string;
 }
 
 /** "spiral" and "list" with a small white dot between them. The active word is white. */
-export function ModeToggle({ mode, onChange, className }: ModeToggleProps) {
+export function ModeToggle({ mode, onChange, spiralLabel = 'spiral', className }: ModeToggleProps) {
   const choose = (next: SpiralMode) => {
     if (next === mode) return;
     sound.play('toggle');
@@ -20,7 +22,7 @@ export function ModeToggle({ mode, onChange, className }: ModeToggleProps) {
 
   return (
     <div role="group" aria-label="Project view" className={cn('flex items-center gap-5', className)}>
-      <ToggleWord label="spiral" active={mode === 'spiral'} onSelect={() => choose('spiral')} className="justify-end" />
+      <ToggleWord label={spiralLabel} active={mode === 'spiral'} onSelect={() => choose('spiral')} className="justify-end" />
       <span aria-hidden="true" className="size-1.5 rounded-full bg-white" />
       <ToggleWord label="list" active={mode === 'list'} onSelect={() => choose('list')} />
     </div>

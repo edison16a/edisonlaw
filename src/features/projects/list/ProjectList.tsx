@@ -12,14 +12,16 @@ interface ProjectListProps {
   onModeChange: (mode: SpiralMode) => void;
   /** Opens a project in the spiral, or the carousel on phones. */
   onOpen: (index: number) => void;
+  /** Word for the picture view in the toggle. See ModeToggle. */
+  spiralLabel?: string;
 }
 
 /** A plain text index for skimmers. Normal height, no 3D. */
-export function ProjectList({ projects, onModeChange, onOpen }: ProjectListProps) {
+export function ProjectList({ projects, onModeChange, onOpen, spiralLabel }: ProjectListProps) {
   return (
     <div className="gutter pb-24">
       <div className="flex justify-center pt-5 pb-14">
-        <ModeToggle mode="list" onChange={onModeChange} />
+        <ModeToggle mode="list" onChange={onModeChange} spiralLabel={spiralLabel} />
       </div>
       <div className="mb-10 flex flex-wrap items-end justify-between gap-6">
         <IntroTitle />

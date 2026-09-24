@@ -57,7 +57,12 @@ export function ProjectsSection({ projects = allProjects }: { projects?: Project
   return (
     <section id="projects" aria-labelledby="projects-title" className="relative pt-nav">
       {mode === 'list' ? (
-        <ProjectList projects={projects} onModeChange={changeMode} onOpen={openProject} />
+        <ProjectList
+          projects={projects}
+          onModeChange={changeMode}
+          onOpen={openProject}
+          spiralLabel={spiralFits ? 'spiral' : 'photos'}
+        />
       ) : (
         <>
           {showStage && (

@@ -67,7 +67,7 @@ export function ProjectCarousel({ projects, onModeChange, heading, className }: 
   return (
     <div className={cn('flex flex-col pb-16', className)}>
       <div className="flex justify-center pt-5 pb-8">
-        <ModeToggle mode="spiral" onChange={onModeChange} />
+        <ModeToggle mode="spiral" onChange={onModeChange} spiralLabel="photos" />
       </div>
       <IntroTitle heading={heading} className="gutter mb-8" />
       {/*
@@ -81,7 +81,7 @@ export function ProjectCarousel({ projects, onModeChange, heading, className }: 
         tabIndex={0}
         onKeyDown={onKeyDown}
         aria-label="Project photos. Use the left and right arrow keys to move between projects."
-        className="flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain px-[max(9vw,calc(50%-24rem))] pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain px-[max(9vw,calc(50%-24rem))] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {projects.map((item, index) => (
           <li key={item.id} className="w-[82vw] max-w-3xl shrink-0 snap-center">
@@ -94,7 +94,8 @@ export function ProjectCarousel({ projects, onModeChange, heading, className }: 
                 index === active ? 'opacity-100' : 'scale-[0.94] opacity-45',
               )}
             />
-            <p className="mt-3 text-center text-sm text-grey-400">{item.name}</p>
+            {/* The details below already name the project on screen. */}
+            <p className="sr-only">{item.name}</p>
           </li>
         ))}
       </ol>
