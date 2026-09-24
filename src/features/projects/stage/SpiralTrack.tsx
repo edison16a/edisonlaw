@@ -6,14 +6,13 @@ import type { Project } from '@/content/types';
 import { useInView } from '@/lib/hooks/useInView';
 import { CanvasBoundary } from '@/components/three/CanvasBoundary';
 import { sound } from '@/features/sound';
-import { ModeToggle } from '../components/ModeToggle';
 import { useOpeningCard } from '../hooks/useOpeningCard';
 import { useScrollSnap } from '../hooks/useScrollSnap';
 import { useScrollToCard } from '../hooks/useScrollToCard';
 import { useSpiralSounds } from '../hooks/useSpiralSounds';
 import { useTrackMetrics } from '../hooks/useTrackMetrics';
 import { TRACK, trackSpan } from '../spiral/track';
-import { useSpiralStore, type SpiralMode } from '../state/spiralStore';
+import { useSpiralStore } from '../state/spiralStore';
 import { DetailPanel } from './DetailPanel';
 import { HoverLabel } from './HoverLabel';
 import { IntroCaption } from './IntroCaption';
@@ -26,14 +25,13 @@ const SpiralCanvas = dynamic(() => import('../spiral/SpiralCanvas').then((loaded
 
 interface SpiralTrackProps {
   projects: Project[];
-  onModeChange: (mode: SpiralMode) => void;
 }
 
 /**
  * The tall scroll track with the sticky full-viewport stage below the navbar.
  * Scrolling through the track turns the spiral one card at a time.
  */
-export function SpiralTrack({ projects, onModeChange }: SpiralTrackProps) {
+export function SpiralTrack({ projects }: SpiralTrackProps) {
   const track = useRef<HTMLDivElement>(null);
   const stage = useRef<HTMLDivElement>(null);
   const column = useRef<HTMLDivElement>(null);
@@ -83,14 +81,6 @@ export function SpiralTrack({ projects, onModeChange }: SpiralTrackProps) {
         </StageSurface>
         {/* The stage melts into the black page below, so the handoff to the next section has no hard edge. */}
         <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-[12%] bg-linear-to-b from-transparent to-black" />
-        <div className="pointer-events-none absolute inset-x-0 top-3 flex justify-center">
-          {/* A dark pill keeps the words readable when a bright card turns behind them. */}
-          <ModeToggle
-            mode="spiral"
-            onChange={onModeChange}
-            className="pointer-events-auto rounded-full border border-white/10 bg-black/60 px-5 py-2 backdrop-blur-md"
-          />
-        </div>
         <IntroCaption />
         <HoverLabel projects={projects} />
         <DetailPanel projects={projects} columnRef={column} />

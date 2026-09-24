@@ -11,8 +11,8 @@ export function slideStride(strip: HTMLElement) {
 }
 
 /** Index of the slide nearest the centre of a horizontal scroll snap strip. */
-export function useActiveSlide(strip: RefObject<HTMLElement | null>, count: number, initial = 0) {
-  const [active, setActive] = useState(initial);
+export function useActiveSlide(strip: RefObject<HTMLElement | null>, count: number) {
+  const [active, setActive] = useState(0);
 
   useEffect(() => {
     const node = strip.current;
