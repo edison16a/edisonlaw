@@ -1,5 +1,6 @@
 import { CanvasTexture, RepeatWrapping, SRGBColorSpace } from 'three';
 import { seededRandom } from '@/lib/math';
+import { paintSailboatAtDusk } from './sailboatPainting';
 
 type Painter = (ctx: CanvasRenderingContext2D, width: number, height: number) => void;
 
@@ -87,35 +88,13 @@ export function createNoteTexture(paper: string, ink: string, seed: number) {
   });
 }
 
-/** A small night landscape for the framed picture: hills, a moon and a few stars. */
-export function createPictureTexture() {
-  return paintTexture(320, 240, (ctx, w, h) => {
-    const random = seededRandom(5);
-    const sky = ctx.createLinearGradient(0, 0, 0, h);
-    sky.addColorStop(0, '#0f1a3a');
-    sky.addColorStop(1, '#3b4c86');
-    ctx.fillStyle = sky;
-    ctx.fillRect(0, 0, w, h);
-    for (let i = 0; i < 40; i++) {
-      ctx.fillStyle = `rgba(255, 255, 255, ${0.3 + random() * 0.6})`;
-      ctx.fillRect(random() * w, random() * h * 0.55, 2, 2);
-    }
-    ctx.fillStyle = '#f4efd9';
-    ctx.beginPath();
-    ctx.arc(w * 0.7, h * 0.3, 26, 0, Math.PI * 2);
-    ctx.fill();
-    const hill = (color: string, peaks: [number, number][]) => {
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.moveTo(0, h);
-      for (const [x, y] of peaks) ctx.lineTo(x * w, y * h);
-      ctx.lineTo(w, h);
-      ctx.closePath();
-      ctx.fill();
-    };
-    hill('#26325e', [[0, 0.72], [0.28, 0.46], [0.5, 0.66], [0.78, 0.5], [1, 0.7]]);
-    hill('#141c3a', [[0, 0.86], [0.35, 0.66], [0.62, 0.84], [1, 0.74]]);
-  });
+/**
+ * The framed print on the wall, `width` by `height` metres: a sailboat on calm water at dusk (see
+ * sailboatPainting). Painted densely enough to stay crisp when a camera looks at it closely.
+ */
+export function createPictureTexture(width: number, height: number) {
+  const pxPerMetre = 3000;
+  return paintTexture(Math.round(width * pxPerMetre), Math.round(height * pxPerMetre), paintSailboatAtDusk);
 }
 
 /** Staggered round perforations on dark metal, tiled across vent panels. */
