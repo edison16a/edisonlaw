@@ -15,7 +15,7 @@ export default function ErrorPage({ error, retry }: ErrorPageProps) {
 
   return (
     <main className="gutter flex min-h-dvh flex-col items-start justify-center gap-6 bg-black">
-      <span className="font-mono text-xs tracking-widest text-grey-400">ERROR</span>
+      <span className="text-xs font-medium tracking-[0.2em] text-grey-400">ERROR</span>
       <h1 className="text-5xl font-bold sm:text-7xl">Something broke.</h1>
       <p className="max-w-md text-grey-300">
         Part of this page failed to load. Try again, or reload the page if it keeps happening.

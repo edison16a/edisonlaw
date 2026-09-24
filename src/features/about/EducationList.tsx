@@ -7,7 +7,7 @@ export function EducationList() {
         <li key={item.school} className="flex flex-col gap-1.5">
           <div className="flex flex-wrap items-baseline justify-between gap-x-4">
             <p className="font-display text-lg font-bold">{item.school}</p>
-            {item.when && <p className="font-mono text-xs text-grey-400">{item.when}</p>}
+            {item.when && <p className="text-sm text-grey-400 tabular-nums">{item.when}</p>}
           </div>
           <p className="text-grey-300">{item.detail}</p>
           {item.coursework && (

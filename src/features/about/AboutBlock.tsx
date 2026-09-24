@@ -15,7 +15,7 @@ export function AboutBlock({ label, children }: { label: string; children: React
       transition={{ duration: 0.9, ease: EASE_OUT_EXPO }}
       className="flex flex-col gap-5 border-t border-grey-900 pt-8"
     >
-      <h3 className="font-mono text-xs font-normal tracking-widest text-grey-400 uppercase">{label}</h3>
+      <h3 className="text-xs font-medium tracking-[0.18em] text-grey-400 uppercase">{label}</h3>
       {children}
     </motion.section>
   );

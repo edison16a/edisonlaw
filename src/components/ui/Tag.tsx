@@ -1,11 +1,11 @@
 import { cn } from '@/lib/cn';
 
-/** Outlined tech tag in mono type. */
+/** Small outlined tech tag. */
 export function Tag({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
     <span
       className={cn(
-        'inline-flex items-center rounded-full border border-grey-700 px-2.5 py-0.5 font-mono text-[11px] leading-5 tracking-tight text-grey-200',
+        'inline-flex items-center rounded-full border border-grey-700 px-2.5 py-0.5 text-xs leading-5 font-medium text-grey-200',
         className,
       )}
     >

@@ -50,7 +50,7 @@ export function TimelineEntry({ entry, current, reached }: TimelineEntryProps) {
         <p className="max-w-xl leading-relaxed text-grey-200">{entry.summary}</p>
         {entry.earlier && (
           <div className="max-w-xl border-l border-grey-800 pl-4 text-sm leading-relaxed text-grey-400">
-            <p className="mb-1 font-mono text-[11px] tracking-wider text-grey-400 uppercase">Earlier</p>
+            <p className="mb-1 text-xs font-medium tracking-[0.14em] text-grey-400 uppercase">Earlier</p>
             <p>
               <span className="text-grey-200">{entry.earlier.role}.</span> {entry.earlier.summary}
             </p>

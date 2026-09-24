@@ -24,9 +24,10 @@
   --color-grey-900: #121212;
   --color-grey-950: #0a0a0a;
 
+  /* One typeface across the whole site. Geist Mono is only loaded for the painted monitor screens. */
   --font-display: var(--font-satoshi), ui-sans-serif, system-ui, sans-serif;
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-sans: var(--font-satoshi), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-satoshi), ui-sans-serif, system-ui, sans-serif;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
