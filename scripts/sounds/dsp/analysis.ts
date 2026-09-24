@@ -22,11 +22,11 @@ export function mean(signal: Signal) {
   return sum / Math.max(1, signal.length);
 }
 
-/** Loudest sample within `seconds` of either end. Near zero means the edges cannot click. */
-export function edgeLevel(signal: Signal, seconds = 0.001) {
+/** Loudest sample in the last `seconds`. A one-shot should have died away to near silence there. */
+export function tailLevel(signal: Signal, seconds = 0.002) {
   const count = Math.min(signal.length, Math.round(seconds * SAMPLE_RATE));
   let max = 0;
-  for (let i = 0; i < count; i++) max = Math.max(max, Math.abs(signal[i]), Math.abs(signal[signal.length - 1 - i]));
+  for (let i = signal.length - count; i < signal.length; i++) max = Math.max(max, Math.abs(signal[i]));
   return max;
 }
 
