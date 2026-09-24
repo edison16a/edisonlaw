@@ -19,8 +19,13 @@ export function IntroCaption() {
       initial={false}
       animate={{ opacity: inIntro ? 1 : 0, y: inIntro ? 0 : 12 }}
       transition={{ duration: 0.7, ease: EASE_OUT_EXPO }}
-      className="gutter pointer-events-none absolute bottom-8 left-0 flex flex-col gap-6 lg:bottom-10"
+      className="gutter pointer-events-none absolute bottom-8 left-0 isolate flex flex-col gap-6 lg:bottom-10"
     >
+      {/* A soft shadow from the corner keeps the words readable when a bright card passes behind them. */}
+      <div
+        aria-hidden="true"
+        className="absolute -bottom-10 left-0 -z-10 h-[calc(100%+8rem)] w-[calc(100%+10rem)] bg-[radial-gradient(ellipse_at_bottom_left,rgb(0_0_0/0.82),rgb(0_0_0/0.5)_40%,transparent_70%)]"
+      />
       <IntroTitle />
       <motion.p
         aria-hidden={hasScrolled}
