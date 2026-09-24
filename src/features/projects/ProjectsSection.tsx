@@ -7,6 +7,7 @@ import type { Project } from '@/content/types';
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
 import { ProjectsIndex } from './components/ProjectsIndex';
 import { useIsClient } from './hooks/useIsClient';
+import { useWebGLSupport } from './hooks/useWebGLSupport';
 import { ProjectList } from './list/ProjectList';
 import { ProjectCarousel } from './mobile/ProjectCarousel';
 import { SpiralTrack } from './stage/SpiralTrack';
@@ -21,6 +22,7 @@ export function ProjectsSection({ projects = allProjects }: { projects?: Project
   const mode = useSpiralMode();
   const isMobile = useIsMobile();
   const isClient = useIsClient();
+  const webgl = useWebGLSupport();
   const lenis = useLenis();
   const chooseMode = useSpiralStore((state) => state.chooseMode);
   const openInSpiral = useSpiralStore((state) => state.openInSpiral);
@@ -39,8 +41,10 @@ export function ProjectsSection({ projects = allProjects }: { projects?: Project
   );
 
   // Until the client knows the screen size both layouts render and CSS picks one, so phones never flash the stage.
-  const showStage = !isClient || !isMobile;
-  const showCarousel = !isClient || isMobile;
+  // Without WebGL the carousel stands in for the spiral on every screen.
+  const spiralFits = !isMobile && webgl;
+  const showStage = !isClient || spiralFits;
+  const showCarousel = !isClient || !spiralFits;
 
   return (
     <section id="projects" aria-labelledby="projects-title" className="relative pt-nav">
@@ -56,7 +60,9 @@ export function ProjectsSection({ projects = allProjects }: { projects?: Project
               <SpiralTrack projects={projects} onModeChange={changeMode} />
             </div>
           )}
-          {showCarousel && <ProjectCarousel projects={projects} onModeChange={changeMode} className="md:hidden" />}
+          {showCarousel && (
+            <ProjectCarousel projects={projects} onModeChange={changeMode} className={isClient ? undefined : 'md:hidden'} />
+          )}
           <ProjectsIndex projects={projects} />
         </>
       )}

@@ -18,7 +18,10 @@ interface ProjectCarouselProps {
   className?: string;
 }
 
-/** Phones: a swipeable strip of photos with the details of the centred one below. No 3D. */
+/**
+ * A swipeable strip of photos with the details of the centred one below. No 3D.
+ * Phones get it, and so does any screen without WebGL.
+ */
 export function ProjectCarousel({ projects, onModeChange, className }: ProjectCarouselProps) {
   const strip = useRef<HTMLOListElement>(null);
   const active = useActiveSlide(strip, projects.length);
@@ -43,10 +46,10 @@ export function ProjectCarousel({ projects, onModeChange, className }: ProjectCa
         className="flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain px-[9vw] pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {projects.map((item, index) => (
-          <li key={item.id} className="w-[82vw] shrink-0 snap-center">
+          <li key={item.id} className="w-[82vw] max-w-3xl shrink-0 snap-center">
             <ProjectImage
               project={item}
-              sizes="82vw"
+              sizes="(min-width: 768px) 768px, 82vw"
               priority={index === 0}
               className={cn(
                 'aspect-[16/10] rounded-2xl transition-[opacity,transform] duration-500 ease-out-expo',
@@ -57,7 +60,7 @@ export function ProjectCarousel({ projects, onModeChange, className }: ProjectCa
           </li>
         ))}
       </ol>
-      <div className="gutter mt-6 min-h-[22rem]">
+      <div className="gutter mx-auto mt-6 min-h-[22rem] w-full max-w-3xl">
         <AnimatePresence mode="wait">
           <ProjectDetails key={project.id} project={project} index={active} total={projects.length} />
         </AnimatePresence>
