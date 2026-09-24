@@ -44,7 +44,18 @@ function furMaterial() {
   });
 }
 
+/**
+ * Every material draws in the transparent pass, so the dog can fade in (see useFadeIn) without its
+ * shaders changing when the fade ends. At full opacity each still writes depth and covers what is
+ * behind it, so it draws exactly as an opaque model would.
+ */
 export function createDogMaterials(): DogMaterials {
+  const materials = buildMaterials();
+  for (const material of Object.values(materials)) material.transparent = true;
+  return materials;
+}
+
+function buildMaterials(): DogMaterials {
   return {
     coat: furMaterial(),
     ear: furMaterial(),
