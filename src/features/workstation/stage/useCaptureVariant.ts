@@ -6,7 +6,7 @@ import type { StageVariant } from '../types';
 /**
  * Capture mode exists only for scripts/capture-renders.mjs. It works in development, and in a
  * production build only when built with NEXT_PUBLIC_CAPTURE=1, so the live site ignores the query.
- * Both values are inlined at build time, which drops the branch from normal builds.
+ * Next fixes both values at build time, so a normal build always reads null here.
  */
 const CAPTURE_ENABLED = process.env.NODE_ENV !== 'production' || process.env.NEXT_PUBLIC_CAPTURE === '1';
 
