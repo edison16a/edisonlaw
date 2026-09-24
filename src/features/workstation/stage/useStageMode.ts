@@ -37,7 +37,6 @@ export interface StageMode {
   rgbCycle: boolean;
   /** Screens keep repainting. */
   screensLive: boolean;
-  parallax: boolean;
   /** Lower the pixel ratio when frames run slow. */
   adaptive: boolean;
 }
@@ -83,7 +82,6 @@ export function useStageMode(
     animate,
     rgbCycle: animate && !capturing,
     screensLive: animate && (capturing || onScreen),
-    parallax: animate && !capturing,
     adaptive: !capturing,
   };
 }
