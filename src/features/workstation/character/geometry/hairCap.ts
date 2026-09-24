@@ -1,5 +1,6 @@
 import { BufferGeometry, Float32BufferAttribute } from 'three';
 import { mergeVertices } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+import { smoothstep } from '@/lib/math';
 import { hairlineAt, hairOffsetAt, hairToneAt, undercutLineAt, undercutOffsetAt } from './hairShape';
 import { headRadius } from './headShape';
 
@@ -35,13 +36,18 @@ function shellGeometry({ hairline, offset, tone }: Shell, turnSegments: number, 
   const colors: number[] = [];
   const indices: number[] = [];
 
+  // Near the crown every column steps by the same angle, so the first rings are circles round the pole
+  // instead of lopsided loops that pinch it. Further out each column spreads its rings to its own hairline.
+  let meanLine = 0;
+  for (let i = 0; i < turnSegments; i++) meanLine += hairline(-180 + (360 * i) / turnSegments) / turnSegments;
+
   for (let i = 0; i <= turnSegments; i++) {
     const phiDeg = -180 + (360 * i) / turnSegments;
     const phi = phiDeg * DEG;
     const thetaMax = hairline(phiDeg);
     for (let j = 0; j <= rings; j++) {
       const t = ringParam(j / rings);
-      const thetaDeg = t * thetaMax;
+      const thetaDeg = t * (meanLine + (thetaMax - meanLine) * smoothstep(0.08, 0.5, t));
       const theta = thetaDeg * DEG;
       const dx = Math.sin(theta) * Math.sin(phi);
       const dy = Math.cos(theta);

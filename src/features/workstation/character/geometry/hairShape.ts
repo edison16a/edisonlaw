@@ -80,11 +80,21 @@ function volumeAt(thetaDeg: number, phiDeg: number) {
   return 0.01 + 0.026 * clamp(volume, 0, 1.25);
 }
 
-/** The centre part: a groove from the forehead back to the crown, with the hair lifting either side of it. */
+/**
+ * Where the part and the ridges beside it fade out, just in front of the crown. Past it the hair is a
+ * smooth dome, so nothing runs over the pole of the shell where its grid converges.
+ */
+const crownFade = (z: number) => smoothstep(0.012, 0.07, z);
+
+/**
+ * The centre part: a groove from the forehead back toward the crown, with the hair lifting either side
+ * of it. It widens and shallows as it fades, so it ends softly instead of in a pinch.
+ */
 function partAt(x: number, y: number, z: number) {
-  const along = smoothstep(-0.13, -0.06, z) * smoothstep(0.03, 0.09, y);
+  const along = crownFade(z) * smoothstep(0.03, 0.09, y);
   if (along <= 0) return 0;
-  const groove = -0.011 * Math.exp(-((x / 0.0068) ** 2));
+  const width = 0.0066 * (1.9 - 0.9 * along);
+  const groove = -0.011 * Math.exp(-((x / width) ** 2));
   const lift = 0.0055 * Math.exp(-(((Math.abs(x) - 0.026) / 0.02) ** 2));
   return (groove + lift) * along;
 }
@@ -95,7 +105,7 @@ function partAt(x: number, y: number, z: number) {
  */
 function clumpsAt(thetaDeg: number, phiDeg: number, x: number, z: number) {
   const fromPart = smoothstep(0.006, 0.03, Math.abs(x)) * (1 - smoothstep(55, 80, thetaDeg));
-  const overTop = Math.cos(z * 150 + Math.abs(x) * 30) * fromPart * smoothstep(-0.07, 0.0, z);
+  const overTop = Math.cos(z * 150 + Math.abs(x) * 30) * fromPart * crownFade(z);
   const down = (clumpWave(phiDeg) - 0.3) * smoothstep(20, 60, thetaDeg) * behind(phiDeg);
   return 0.0022 * overTop + 0.0065 * down;
 }
