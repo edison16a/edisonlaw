@@ -16,7 +16,7 @@ const BACK = { width: 0.42, height: 0.34, thickness: 0.03, tilt: 0.16 };
 /** Where the chair sits in each variant. In `about` Edison stands, so it is pushed back and turned aside. */
 const CHAIR_POSES: Record<StageVariant, { position: Vec3; rotationY: number }> = {
   work: { position: CHAIR.position, rotationY: 0 },
-  about: { position: [-0.3, 0, 1.02], rotationY: 0.65 },
+  about: { position: [1.12, 0, 0.44], rotationY: -0.55 },
 };
 
 /**
