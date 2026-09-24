@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Project } from '@/content/types';
 import { CanvasBoundary } from '@/components/three/CanvasBoundary';
 import { sound } from '@/features/sound';
+import { cn } from '@/lib/cn';
 import { useInView } from '@/lib/hooks/useInView';
 import { useOpeningCard } from '../hooks/useOpeningCard';
 import { useSpiralSounds } from '../hooks/useSpiralSounds';
@@ -63,12 +64,16 @@ export function SpiralStage({ projects }: { projects: Project[] }) {
   return (
     // On wide screens the panel sits beside the spiral. It keeps to a composition at most
     // 160dvh wide, so on screens wider than 16:10 it does not drift away to the far edge.
+    // While the stage is home, no touch anywhere on it pans the page, though a pinch still zooms.
     <div
       ref={stage}
-      className="relative h-[calc(100dvh-var(--spacing-nav))] overflow-hidden [--panel-r:max(0px,calc((100%-160dvh)/2))] [--panel-w:clamp(21rem,29vw,27rem)]"
+      className={cn(
+        'relative h-[calc(100dvh-var(--spacing-nav))] overflow-hidden [--panel-r:max(0px,calc((100%-160dvh)/2))] [--panel-w:clamp(21rem,29vw,27rem)]',
+        home ? 'touch-pinch-zoom' : 'touch-pan-y touch-pinch-zoom',
+      )}
     >
       <StageBackdrop />
-      <StageSurface ref={surface} home={home}>
+      <StageSurface ref={surface}>
         {mounted && (
           <CanvasBoundary label="project spiral" onFail={fallBack}>
             <SpiralCanvas projects={projects} startAt={startAt} active={near} onSelect={spinTo} onHover={onHover} />
