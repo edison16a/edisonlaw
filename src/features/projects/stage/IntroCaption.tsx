@@ -27,11 +27,11 @@ export function IntroCaption() {
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         className="flex items-center gap-3 text-xs text-grey-400"
       >
-        <span className="relative h-6 w-px overflow-hidden bg-grey-800">
+        <span className="flex h-6 w-4 justify-center rounded-full border border-grey-600 pt-1">
           <motion.span
-            className="absolute inset-x-0 top-0 h-2 bg-white"
-            animate={{ y: ['-100%', '300%'] }}
-            transition={{ duration: 1.8, ease: 'easeInOut', repeat: Infinity, repeatDelay: 0.3 }}
+            className="h-1.5 w-0.5 rounded-full bg-white"
+            animate={{ y: [0, 7, 0], opacity: [1, 0.15, 1] }}
+            transition={{ duration: 1.8, ease: 'easeInOut', repeat: Infinity }}
           />
         </span>
         Scroll to explore
