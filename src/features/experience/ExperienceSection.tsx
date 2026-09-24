@@ -1,30 +1,46 @@
-import { experience } from '@/content/experience';
-import { DateRange } from '@/components/ui/DateRange';
-import { TagList } from '@/components/ui/Tag';
-import { WorkstationStage } from '@/features/workstation';
+'use client';
 
-/** Work Experience as plain text next to the desk scene. */
+import { useRef } from 'react';
+import { experience } from '@/content/experience';
+import { SectionHeader } from '@/components/ui/SectionHeader';
+import { WorkstationStage } from '@/features/workstation';
+import { useInView } from '@/lib/hooks/useInView';
+import { Timeline } from './Timeline';
+import { useActiveEntry } from './useActiveEntry';
+import { useExperienceSounds } from './useExperienceSounds';
+
+/**
+ * Timeline on the left, desk scene pinned on the right.
+ * The centre monitor follows the entry being read and the RGB pulses on each new one.
+ */
 export function ExperienceSection() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const listRef = useRef<HTMLOListElement>(null);
+  const active = useActiveEntry(listRef);
+  const inView = useInView(sectionRef, { rootMargin: '-30% 0px -30% 0px' });
+  const current = experience[Math.max(active, 0)];
+
+  useExperienceSounds(active, inView);
+
   return (
-    <section id="experience" aria-labelledby="experience-title" className="relative lg:grid lg:grid-cols-2">
-      <div className="gutter pt-nav pb-24">
-        <h2 id="experience-title" className="py-12 text-4xl font-bold">
-          Work Experience
-        </h2>
-        <ol className="flex flex-col gap-12">
-          {experience.map((entry) => (
-            <li key={entry.id} className="flex flex-col gap-2">
-              <DateRange entry={entry} />
-              <h3 className="text-xl font-bold">{entry.role}</h3>
-              <p className="text-grey-300">{entry.company}</p>
-              <p className="max-w-prose text-grey-300">{entry.summary}</p>
-              <TagList items={entry.tags} />
-            </li>
-          ))}
-        </ol>
+    <section
+      id="experience"
+      ref={sectionRef}
+      aria-labelledby="experience-title"
+      className="relative flex flex-col border-t border-grey-900 lg:grid lg:grid-cols-2"
+    >
+      <div className="gutter pt-[calc(var(--spacing-nav)+4rem)] pb-[40vh]">
+        <SectionHeader
+          index="02"
+          id="experience-title"
+          title="Work Experience"
+          lead="Startups, research labs and open source, newest first."
+          className="mb-20"
+        />
+        <Timeline listRef={listRef} active={active} />
       </div>
-      <div className="sticky top-0 hidden h-dvh pt-nav lg:block">
-        <WorkstationStage variant="work" />
+      <div className="order-first aspect-[4/3] w-full lg:sticky lg:top-nav lg:order-none lg:aspect-auto lg:h-[calc(100dvh-var(--spacing-nav))]">
+        <WorkstationStage variant="work" centerScreen={current.screen} pulseKey={Math.max(active, 0)} />
       </div>
     </section>
   );
