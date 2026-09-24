@@ -1,0 +1,281 @@
+import type { Field } from './field';
+import type { Bounds } from './primitives';
+
+/**
+ * Turns a distance field into a smooth closed triangle mesh with surface nets.
+ * The grid is split into blocks and only blocks the surface passes through are evaluated, each with
+ * just the shapes that can reach it, so a fine grid stays cheap. Vertices are then pulled exactly onto
+ * the surface and shaded with the field's own gradient, so the result is smooth at any cell size that
+ * resolves the thinnest feature.
+ */
+
+export interface SurfaceMesh {
+  positions: Float32Array;
+  normals: Float32Array;
+  indices: Uint32Array;
+  /** For each vertex, the shapes that can affect the field around it, for sampling attributes cheaply. */
+  shapesAt: Int32Array[];
+}
+
+export interface MeshOptions {
+  /** Edge length of one grid cell, in metres. Features thinner than about two cells get lost. */
+  cell: number;
+  /** Region to mesh. Defaults to the field's own bounds plus a margin. */
+  bounds?: Bounds;
+}
+
+/** Cells along one edge of a block. */
+const BLOCK = 4;
+const CORNERS = BLOCK + 1;
+
+/** The eight corners of a cell and the twelve edges between them. */
+const CORNER_OFFSETS = [
+  [0, 0, 0],
+  [1, 0, 0],
+  [0, 1, 0],
+  [1, 1, 0],
+  [0, 0, 1],
+  [1, 0, 1],
+  [0, 1, 1],
+  [1, 1, 1],
+] as const;
+const EDGES = [
+  [0, 1],
+  [2, 3],
+  [4, 5],
+  [6, 7],
+  [0, 2],
+  [1, 3],
+  [4, 6],
+  [5, 7],
+  [0, 4],
+  [1, 5],
+  [2, 6],
+  [3, 7],
+] as const;
+
+/** Tetrahedron directions for four sample gradients. */
+const TETRA = [
+  [1, -1, -1],
+  [-1, -1, 1],
+  [-1, 1, -1],
+  [1, 1, 1],
+] as const;
+
+interface Block {
+  /** Shapes that can affect this block, in field order. */
+  shapes: Int32Array;
+  corners: Float32Array;
+  /** Vertex index for each cell, or -1. */
+  cells: Int32Array;
+}
+
+export function meshField(field: Field, { cell, bounds }: MeshOptions): SurfaceMesh {
+  const pad = cell * 3 + field.maxBlend;
+  const box = bounds ?? field.bounds();
+  const origin = [box[0] - pad, box[1] - pad, box[2] - pad];
+  const blockSize = cell * BLOCK;
+  const blockCounts = [0, 1, 2].map((k) => Math.max(1, Math.ceil((box[k + 3] + pad - origin[k]) / blockSize)));
+  const [bx, by, bz] = blockCounts;
+  const blockIndex = (i: number, j: number, k: number) => (k * by + j) * bx + i;
+
+  // Shapes whose padded box overlaps each block. Far outside a shape's box its distance is larger than
+  // its blend radius plus the margin, so it cannot change the surface there.
+  const margin = blockSize * Math.sqrt(3) + cell * 2 + field.maxBlend;
+  const lists: number[][] = [];
+  field.shapes.forEach((shape, index) => {
+    const reach = shape.blend + margin;
+    const b = shape.primitive.bounds;
+    const lo = [0, 1, 2].map((k) => Math.max(0, Math.floor((b[k] - reach - origin[k]) / blockSize)));
+    const hi = [0, 1, 2].map((k) => Math.min(blockCounts[k] - 1, Math.floor((b[k + 3] + reach - origin[k]) / blockSize)));
+    for (let k = lo[2]; k <= hi[2]; k++)
+      for (let j = lo[1]; j <= hi[1]; j++)
+        for (let i = lo[0]; i <= hi[0]; i++) (lists[blockIndex(i, j, k)] ??= []).push(index);
+  });
+
+  // Evaluate the corners of blocks the surface might cross.
+  const blocks: (Block | undefined)[] = new Array(bx * by * bz);
+  const halfDiagonal = (blockSize * Math.sqrt(3)) / 2;
+  for (let k = 0; k < bz; k++)
+    for (let j = 0; j < by; j++)
+      for (let i = 0; i < bx; i++) {
+        const index = blockIndex(i, j, k);
+        const list = lists[index];
+        if (!list || field.shapes[list[0]].carve) continue;
+        const cx = origin[0] + (i + 0.5) * blockSize;
+        const cy = origin[1] + (j + 0.5) * blockSize;
+        const cz = origin[2] + (k + 0.5) * blockSize;
+        // Vertices may drift up to a cell out of their block while they settle onto the surface.
+        const shapes = field.cull(list, cx, cy, cz, halfDiagonal + cell);
+        if (shapes.length === 0 || field.shapes[shapes[0]].carve) continue;
+        // Distances grow at most about as fast as the point moves, with some slack for the ellipsoid bound.
+        if (Math.abs(field.distance(cx, cy, cz, shapes)) > halfDiagonal * 1.5 + cell) continue;
+        const corners = new Float32Array(CORNERS ** 3);
+        let inside = 0;
+        for (let c = 0, w = 0; w < CORNERS; w++)
+          for (let v = 0; v < CORNERS; v++)
+            for (let u = 0; u < CORNERS; u++, c++) {
+              const value = field.distance(
+                origin[0] + (i * BLOCK + u) * cell,
+                origin[1] + (j * BLOCK + v) * cell,
+                origin[2] + (k * BLOCK + w) * cell,
+                shapes,
+              );
+              corners[c] = value;
+              if (value < 0) inside++;
+            }
+        if (inside === 0 || inside === corners.length) continue;
+        blocks[index] = { shapes, corners, cells: new Int32Array(BLOCK ** 3).fill(-1) };
+      }
+
+  // One vertex per cell the surface crosses, at the mean of its edge crossings.
+  const positions: number[] = [];
+  const vertexBlock: number[] = [];
+  const values = new Float64Array(8);
+  const cornerAt = (block: Block, u: number, v: number, w: number) => block.corners[(w * CORNERS + v) * CORNERS + u];
+  blocks.forEach((block, index) => {
+    if (!block) return;
+    const i0 = (index % bx) * BLOCK;
+    const j0 = (Math.floor(index / bx) % by) * BLOCK;
+    const k0 = Math.floor(index / (bx * by)) * BLOCK;
+    for (let w = 0; w < BLOCK; w++)
+      for (let v = 0; v < BLOCK; v++)
+        for (let u = 0; u < BLOCK; u++) {
+          let mask = 0;
+          for (let c = 0; c < 8; c++) {
+            const [du, dv, dw] = CORNER_OFFSETS[c];
+            values[c] = cornerAt(block, u + du, v + dv, w + dw);
+            if (values[c] < 0) mask |= 1 << c;
+          }
+          if (mask === 0 || mask === 255) continue;
+          let sx = 0;
+          let sy = 0;
+          let sz = 0;
+          let crossings = 0;
+          for (const [a, b] of EDGES) {
+            const va = values[a];
+            const vb = values[b];
+            if (va < 0 === vb < 0) continue;
+            const t = va / (va - vb);
+            const [au, av, aw] = CORNER_OFFSETS[a];
+            const [bu, bv, bw] = CORNER_OFFSETS[b];
+            sx += au + (bu - au) * t;
+            sy += av + (bv - av) * t;
+            sz += aw + (bw - aw) * t;
+            crossings++;
+          }
+          block.cells[(w * BLOCK + v) * BLOCK + u] = positions.length / 3;
+          positions.push(
+            origin[0] + (i0 + u + sx / crossings) * cell,
+            origin[1] + (j0 + v + sy / crossings) * cell,
+            origin[2] + (k0 + w + sz / crossings) * cell,
+          );
+          vertexBlock.push(index);
+        }
+  });
+
+  const vertexAt = (i: number, j: number, k: number) => {
+    if (i < 0 || j < 0 || k < 0) return -1;
+    const block = blocks[blockIndex(Math.floor(i / BLOCK), Math.floor(j / BLOCK), Math.floor(k / BLOCK))];
+    if (!block) return -1;
+    return block.cells[((k % BLOCK) * BLOCK + (j % BLOCK)) * BLOCK + (i % BLOCK)];
+  };
+
+  // A quad around every grid edge the surface crosses, joining the four cells that share the edge.
+  const quads: number[] = [];
+  blocks.forEach((block, index) => {
+    if (!block) return;
+    const i0 = (index % bx) * BLOCK;
+    const j0 = (Math.floor(index / bx) % by) * BLOCK;
+    const k0 = Math.floor(index / (bx * by)) * BLOCK;
+    for (let w = 0; w < BLOCK; w++)
+      for (let v = 0; v < BLOCK; v++)
+        for (let u = 0; u < BLOCK; u++) {
+          if (block.cells[(w * BLOCK + v) * BLOCK + u] < 0) continue;
+          const d0 = cornerAt(block, u, v, w);
+          const i = i0 + u;
+          const j = j0 + v;
+          const k = k0 + w;
+          // Edge along X: cells around it vary in Y and Z.
+          const dx = cornerAt(block, u + 1, v, w);
+          if (d0 < 0 !== dx < 0) addQuad(quads, d0 < 0, vertexAt(i, j - 1, k - 1), vertexAt(i, j, k - 1), vertexAt(i, j, k), vertexAt(i, j - 1, k));
+          const dy = cornerAt(block, u, v + 1, w);
+          if (d0 < 0 !== dy < 0) addQuad(quads, d0 < 0, vertexAt(i - 1, j, k - 1), vertexAt(i - 1, j, k), vertexAt(i, j, k), vertexAt(i, j, k - 1));
+          const dz = cornerAt(block, u, v, w + 1);
+          if (d0 < 0 !== dz < 0) addQuad(quads, d0 < 0, vertexAt(i - 1, j - 1, k), vertexAt(i, j - 1, k), vertexAt(i, j, k), vertexAt(i - 1, j, k));
+        }
+  });
+
+  const vertexCount = positions.length / 3;
+  const finalPositions = new Float32Array(vertexCount * 3);
+  const normals = new Float32Array(vertexCount * 3);
+  const eps = cell * 0.2;
+  const gradient = [0, 0, 0];
+  /** Samples four points around (x, y, z): returns their mean distance and leaves the gradient in `gradient`. */
+  const sampleGradient = (x: number, y: number, z: number, shapes: Int32Array) => {
+    gradient[0] = gradient[1] = gradient[2] = 0;
+    let mean = 0;
+    for (const [tx, ty, tz] of TETRA) {
+      const value = field.distance(x + tx * eps, y + ty * eps, z + tz * eps, shapes);
+      mean += value / 4;
+      gradient[0] += (tx * value) / (4 * eps);
+      gradient[1] += (ty * value) / (4 * eps);
+      gradient[2] += (tz * value) / (4 * eps);
+    }
+    return mean;
+  };
+
+  for (let n = 0; n < vertexCount; n++) {
+    const shapes = (blocks[vertexBlock[n]] as Block).shapes;
+    let x = positions[n * 3];
+    let y = positions[n * 3 + 1];
+    let z = positions[n * 3 + 2];
+    // Newton steps onto the zero set along the gradient, never more than a cell.
+    for (let step = 0; step < 3; step++) {
+      const value = sampleGradient(x, y, z, shapes);
+      const length2 = gradient[0] ** 2 + gradient[1] ** 2 + gradient[2] ** 2;
+      if (step === 2 || length2 < 1e-20 || Math.abs(value) < cell * 1e-4) break;
+      const scale = value / length2;
+      let mx = -gradient[0] * scale;
+      let my = -gradient[1] * scale;
+      let mz = -gradient[2] * scale;
+      const move = Math.sqrt(mx * mx + my * my + mz * mz);
+      if (move > cell) {
+        mx *= cell / move;
+        my *= cell / move;
+        mz *= cell / move;
+      }
+      x += mx;
+      y += my;
+      z += mz;
+    }
+    const length = Math.sqrt(gradient[0] ** 2 + gradient[1] ** 2 + gradient[2] ** 2) || 1;
+    finalPositions.set([x, y, z], n * 3);
+    normals.set([gradient[0] / length, gradient[1] / length, gradient[2] / length], n * 3);
+  }
+
+  const shapesAt = vertexBlock.map((index) => (blocks[index] as Block).shapes);
+  return { positions: finalPositions, normals, indices: triangulate(quads, finalPositions), shapesAt };
+}
+
+/** Stores a quad wound so its front faces out of the solid. */
+function addQuad(quads: number[], outwardPositive: boolean, a: number, b: number, c: number, d: number) {
+  if (a < 0 || b < 0 || c < 0 || d < 0) return;
+  if (outwardPositive) quads.push(a, b, c, d);
+  else quads.push(a, d, c, b);
+}
+
+/** Splits each quad along its shorter diagonal. */
+function triangulate(quads: number[], positions: Float32Array) {
+  const indices = new Uint32Array((quads.length / 4) * 6);
+  const distance2 = (p: number, q: number) =>
+    (positions[p * 3] - positions[q * 3]) ** 2 +
+    (positions[p * 3 + 1] - positions[q * 3 + 1]) ** 2 +
+    (positions[p * 3 + 2] - positions[q * 3 + 2]) ** 2;
+  for (let q = 0, t = 0; q < quads.length; q += 4, t += 6) {
+    const [a, b, c, d] = [quads[q], quads[q + 1], quads[q + 2], quads[q + 3]];
+    if (distance2(a, c) <= distance2(b, d)) indices.set([a, b, c, a, c, d], t);
+    else indices.set([a, b, d, b, c, d], t);
+  }
+  return indices;
+}
