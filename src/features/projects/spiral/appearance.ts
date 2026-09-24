@@ -3,32 +3,18 @@ import { smoothstep } from '@/lib/math';
 /**
  * How a card looks at a given distance from the focus slot. Pure curves, read every frame.
  * `offset` is the card's distance from the continuous index, in cards.
- * `settle` is 1 while the spiral rests on a card, which pushes everything else back.
+ * `settle` is 1 while the spiral rests on a card, which quietly steps everything else back.
  */
-
-/** 0 is sharp, 1 is the widest blur. The cards beside the slot stay almost sharp. */
-export function cardBlur(offset: number, settle: number) {
-  const distance = Math.abs(offset);
-  const depth = smoothstep(0.45, 3.2, distance);
-  const backdrop = settle * 0.55 * smoothstep(0.25, 0.9, distance);
-  return Math.min(1, depth + backdrop);
-}
-
-/** Brightness multiplier: full in the slot, a little dimmer along the strand. */
-export function cardBrightness(offset: number, settle: number) {
-  const distance = Math.abs(offset);
-  const strand = 1 - 0.16 * smoothstep(0.4, 1.6, distance);
-  const backdrop = 1 - settle * 0.4 * smoothstep(0.25, 0.9, distance);
-  return strand * backdrop;
-}
 
 /**
- * Length of the motion streak along the strand, in texture widths, signed by
- * the direction of travel. `velocity` is in cards per second.
+ * Brightness multiplier: full in the slot and only a touch dimmer along the
+ * strand, so every card stays easy to see while depth still reads.
  */
-export function cardStreak(velocity: number) {
-  const speed = Math.min(1, Math.abs(velocity) / 9);
-  return Math.sign(velocity) * 0.09 * speed * (2 - speed);
+export function cardBrightness(offset: number, settle: number) {
+  const distance = Math.abs(offset);
+  const strand = 1 - 0.1 * smoothstep(0.5, 2.5, distance);
+  const backdrop = 1 - settle * 0.16 * smoothstep(0.3, 1, distance);
+  return strand * backdrop;
 }
 
 /**

@@ -18,10 +18,6 @@ export interface CardUniforms {
   /** Sideways bow of the middle of the card, in world units. */
   uBow: IUniform<number>;
   uSweep: IUniform<number>;
-  /** 0 is sharp, 1 is the widest blur. */
-  uBlur: IUniform<number>;
-  /** Signed motion streak along the strand, in texture widths. */
-  uStreak: IUniform<number>;
   uBrightness: IUniform<number>;
   uOpacity: IUniform<number>;
   /** 0 to 1 while the pointer rests on the card. */
@@ -37,8 +33,8 @@ export type CardMaterial = ShaderMaterial & { uniforms: CardUniforms };
 /** Shared by every card, so a resize updates them all at once. */
 export const cardViewport = new Vector2(1, 1);
 
-/** The stage background, which far cards fade toward. */
-const FOG = new Color('#0b0b0b');
+/** The stage background, plain black, which far cards fade toward. */
+const FOG = new Color('#000000');
 
 export function createCardMaterial(): CardMaterial {
   const uniforms: CardUniforms = {
@@ -50,8 +46,6 @@ export function createCardMaterial(): CardMaterial {
     uCurvature: { value: 1 / SPIRAL.radius },
     uBow: { value: 0 },
     uSweep: { value: SPIRAL.sweep },
-    uBlur: { value: 0 },
-    uStreak: { value: 0 },
     uBrightness: { value: 1 },
     uOpacity: { value: 0 },
     uHover: { value: 0 },

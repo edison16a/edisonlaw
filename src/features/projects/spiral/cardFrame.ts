@@ -2,7 +2,7 @@ import type { Mesh } from 'three';
 import { clamp, damp, smoothstep } from '@/lib/math';
 import type { CardPicture } from '../media/cardPicture';
 import type { SpiralMotion } from '../state/spiralMotion';
-import { cardBend, cardBlur, cardBow, cardBrightness, cardStreak } from './appearance';
+import { cardBend, cardBow, cardBrightness } from './appearance';
 import { createCardMaterial, type CardMaterial } from './cardMaterial';
 import { cardPose, createPose, isPastDeck, SPIRAL, slotOffset } from './geometry';
 
@@ -34,9 +34,8 @@ const VISIBLE_RANGE = 8.5;
 const RISE = 0.7;
 /** Closer than this to its goal, a card's hover counts as done easing. */
 const SETTLED = 0.001;
-/** How much darker and softer scenery cards are than the deck. */
+/** How much darker scenery cards are than the deck. */
 const SCENERY_DIM = 0.35;
-const SCENERY_BLUR = 0.2;
 
 const pose = createPose();
 
@@ -112,8 +111,6 @@ export function updateCard(
   uniforms.uCurvature.value = cardBend(velocity, pose.focus) / SPIRAL.radius;
   uniforms.uBow.value = cardBow(velocity);
   const scenery = card.scenery ? 1 : 0;
-  uniforms.uBlur.value = Math.min(1, cardBlur(offset, motion.settle) + SCENERY_BLUR * scenery);
-  uniforms.uStreak.value = cardStreak(velocity);
   uniforms.uBrightness.value = cardBrightness(offset, motion.settle) * (1 - SCENERY_DIM * scenery);
   uniforms.uOpacity.value = opacity;
   uniforms.uHover.value = card.hover;
