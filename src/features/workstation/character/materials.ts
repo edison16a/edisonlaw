@@ -75,12 +75,14 @@ export function createCharacterMaterials(): CharacterMaterials {
   return {
     skin: skinMaterial(true),
     body: skinMaterial(false),
-    // The highlight stretches around the head along the hair's tangents, a soft ring rather than a spot.
+    // Glossy black with a cool sheen; the painted band gives the ring of light round the top. The gloss
+    // stays isotropic: three.js's anisotropic highlight has no upper bound where a smoothed normal turns
+    // away from the camera, as it does along the thin edges of the locks, and those pixels flashed white
+    // through the bloom as he moved his head.
     hair: new MeshPhysicalMaterial({
       color: PALETTE.hair,
       vertexColors: true,
-      roughness: 0.4,
-      anisotropy: 0.55,
+      roughness: 0.44,
       clearcoat: 0.1,
       clearcoatRoughness: 0.34,
       sheen: 0.5,
