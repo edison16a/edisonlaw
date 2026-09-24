@@ -1,4 +1,4 @@
-import { CanvasTexture, ImageBitmapLoader, LinearMipmapLinearFilter, SRGBColorSpace, Texture, TextureLoader } from 'three';
+import { CanvasTexture, LinearMipmapLinearFilter, SRGBColorSpace, Texture, TextureLoader } from 'three';
 import type { Project } from '@/content/types';
 import { getPaintedCover } from './coverCanvas';
 
@@ -11,6 +11,12 @@ export interface CardPicture {
   flipY: boolean;
   dispose: () => void;
 }
+
+/**
+ * Widest a photo is kept on the GPU. The focused card is under 600 CSS pixels
+ * wide, so this stays sharp at twice the pixel density and saves memory.
+ */
+const MAX_WIDTH = 1280;
 
 interface LoadOptions {
   /** Lower paints sooner when the cover has to be painted. */
@@ -27,10 +33,21 @@ function prepare(texture: Texture, anisotropy: number) {
   return texture;
 }
 
+/** Decodes off the main thread, then scales big photos down so a dozen never stall a frame. */
+async function decodePhoto(src: string) {
+  const response = await fetch(src);
+  if (!response.ok) throw new Error(`${response.status} for ${src}`);
+  const full = await createImageBitmap(await response.blob());
+  if (full.width <= MAX_WIDTH) return full;
+  const resizeHeight = Math.round((full.height * MAX_WIDTH) / full.width);
+  const scaled = await createImageBitmap(full, { resizeWidth: MAX_WIDTH, resizeHeight, resizeQuality: 'high' });
+  full.close();
+  return scaled;
+}
+
 async function loadPhoto(src: string, anisotropy: number): Promise<CardPicture> {
-  // Image bitmaps decode off the main thread, so a dozen photos never stall a frame.
   if (typeof createImageBitmap === 'function') {
-    const bitmap = await new ImageBitmapLoader().loadAsync(src);
+    const bitmap = await decodePhoto(src);
     const texture = prepare(new Texture(bitmap), anisotropy);
     texture.flipY = false;
     return {
