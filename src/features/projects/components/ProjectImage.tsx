@@ -1,10 +1,9 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useRef } from 'react';
+import { useState } from 'react';
 import type { Project } from '@/content/types';
 import { cn } from '@/lib/cn';
-import { drawCoverInto, getPaintedCover } from '../media/coverCanvas';
 
 interface ProjectImageProps {
   project: Project;
@@ -14,32 +13,30 @@ interface ProjectImageProps {
   className?: string;
 }
 
-/** The project's photo in the page, or its painted cover when it has no photo. Fills its box. */
+/** The project's photo, filling its box. If the photo cannot load, a quiet grey tile names the project. */
 export function ProjectImage({ project, sizes, priority, className }: ProjectImageProps) {
+  const [failed, setFailed] = useState(false);
+
   return (
     <div className={cn('relative overflow-hidden bg-grey-900', className)}>
-      {project.image ? (
-        <Image src={project.image} alt="" fill sizes={sizes} priority={priority} className="object-cover" />
+      {failed ? (
+        <p
+          aria-hidden="true"
+          className="absolute inset-0 flex items-center justify-center p-6 text-center font-display text-xl font-bold text-grey-400"
+        >
+          {project.name}
+        </p>
       ) : (
-        <PaintedCover project={project} />
+        <Image
+          src={project.image}
+          alt=""
+          fill
+          sizes={sizes}
+          priority={priority}
+          onError={() => setFailed(true)}
+          className="object-cover"
+        />
       )}
     </div>
   );
-}
-
-function PaintedCover({ project }: { project: Project }) {
-  const canvas = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    let alive = true;
-    const cover = getPaintedCover(project);
-    void cover.ready.then(() => {
-      if (alive && canvas.current) drawCoverInto(canvas.current, cover);
-    });
-    return () => {
-      alive = false;
-    };
-  }, [project]);
-
-  return <canvas ref={canvas} width={640} height={400} aria-hidden="true" className="absolute inset-0 size-full object-cover" />;
 }

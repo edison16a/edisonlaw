@@ -16,8 +16,8 @@ export interface Project {
   stack: string[];
   description: string;
   links: Link[];
-  /** Optional photo in /public/projects. When missing, a cover is generated. */
-  image?: string;
+  /** Photo in /public/projects, 16:10. */
+  image: string;
 }
 
 export interface YearMonth {

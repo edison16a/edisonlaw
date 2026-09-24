@@ -24,12 +24,12 @@ export function useCardPictures(projects: Project[], cards: CardRuntime[], gl: W
     const loaded: CardPicture[] = [];
     const anisotropy = gl.capabilities.getMaxAnisotropy();
     const count = projects.length;
+    // Cards around the opening slot ask for their photos first. The strand wraps, so distance does too.
+    const distance = (index: number) => Math.min(Math.abs(index - startAt), count - Math.abs(index - startAt));
+    const order = projects.map((_, index) => index).sort((a, b) => distance(a) - distance(b));
 
-    projects.forEach((project, index) => {
-      // Cards around the opening slot paint first. The strand wraps, so distance does too.
-      const distance = Math.abs(index - startAt);
-      const priority = Math.min(distance, count - distance);
-      void loadCardPicture(project, { priority, anisotropy }).then((picture) => {
+    order.forEach((index) => {
+      void loadCardPicture(projects[index], anisotropy).then((picture) => {
         if (cancelled) {
           picture.dispose();
           return;

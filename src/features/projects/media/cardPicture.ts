@@ -1,6 +1,5 @@
-import { CanvasTexture, LinearMipmapLinearFilter, SRGBColorSpace, Texture, TextureLoader } from 'three';
+import { DataTexture, LinearMipmapLinearFilter, SRGBColorSpace, Texture, TextureLoader } from 'three';
 import type { Project } from '@/content/types';
-import { getPaintedCover } from './coverCanvas';
 
 /** One project's picture on the GPU, ready to wrap around a spiral card. */
 export interface CardPicture {
@@ -18,11 +17,8 @@ export interface CardPicture {
  */
 const MAX_WIDTH = 1280;
 
-interface LoadOptions {
-  /** Lower paints sooner when the cover has to be painted. */
-  priority: number;
-  anisotropy: number;
-}
+/** grey-800, the quiet tile a card shows when its photo cannot load. */
+const MISSING_GREY = [0x1f, 0x1f, 0x1f, 0xff];
 
 function prepare(texture: Texture, anisotropy: number) {
   texture.colorSpace = SRGBColorSpace;
@@ -65,21 +61,20 @@ async function loadPhoto(src: string, anisotropy: number): Promise<CardPicture> 
   return { texture, aspect: image.width / image.height, flipY: false, dispose: () => texture.dispose() };
 }
 
-async function loadPainted(project: Project, { priority, anisotropy }: LoadOptions): Promise<CardPicture> {
-  const cover = getPaintedCover(project, priority);
-  await cover.ready;
-  const texture = prepare(new CanvasTexture(cover.canvas), anisotropy);
-  return { texture, aspect: cover.canvas.width / cover.canvas.height, flipY: false, dispose: () => texture.dispose() };
+/** One grey pixel stretched over the card, in the photo's 16:10 shape. */
+function greyTile(): CardPicture {
+  const texture = new DataTexture(new Uint8Array(MISSING_GREY), 1, 1);
+  texture.colorSpace = SRGBColorSpace;
+  texture.needsUpdate = true;
+  return { texture, aspect: 1.6, flipY: false, dispose: () => texture.dispose() };
 }
 
-/** The project's photo when it has one, or its painted cover when it does not (or the photo fails). */
-export async function loadCardPicture(project: Project, options: LoadOptions): Promise<CardPicture> {
-  if (project.image) {
-    try {
-      return await loadPhoto(project.image, options.anisotropy);
-    } catch (error) {
-      console.error(`Could not load ${project.image}`, error);
-    }
+/** The project's photo, or a plain grey tile if the photo cannot load. */
+export async function loadCardPicture(project: Project, anisotropy: number): Promise<CardPicture> {
+  try {
+    return await loadPhoto(project.image, anisotropy);
+  } catch (error) {
+    console.error(`Could not load ${project.image}`, error);
+    return greyTile();
   }
-  return loadPainted(project, options);
 }
