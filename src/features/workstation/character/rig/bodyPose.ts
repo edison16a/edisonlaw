@@ -67,7 +67,8 @@ export function applyBodyPose(rig: Rig, pose: BodyPose) {
   rig.chest.updateMatrix();
   chestMatrix.multiplyMatrices(rig.pelvis.matrix, rig.spine.matrix).multiply(rig.chest.matrix);
 
-  for (const name of LIMB_NAMES) {
+  for (let side = 0; side < LIMB_NAMES.length; side++) {
+    const name = LIMB_NAMES[side];
     const arm = rig.arms[name];
     arm.base.position.y = BODY.shoulder.y + pose.shrug[name];
     arm.base.position.z = BODY.shoulder.z + pose.reach[name];
