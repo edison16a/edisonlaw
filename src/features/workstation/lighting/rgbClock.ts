@@ -76,11 +76,26 @@ export function createRgbClock(frozen = false): RgbClock {
   return clock;
 }
 
+/** Brightness every hue is balanced toward, as relative luminance. */
+const BALANCE_TARGET = 0.25;
+/** Keeps dark hues like blue from being boosted too far. */
+const BALANCE_FLOOR = 0.1;
+
 /**
- * Writes a saturated RGB colour for `hue` into `target`, scaled by `intensity`.
- * `intensity` above 1 pushes the colour into bloom range.
+ * Pure green and yellow look many times brighter than blue at the same strength.
+ * This gain evens that out halfway (a square root), so the room keeps a similar mood
+ * as the hue cycles without every colour looking the same.
+ */
+function perceptualGain(color: Color) {
+  const luminance = 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
+  return Math.sqrt(BALANCE_TARGET / (luminance + BALANCE_FLOOR));
+}
+
+/**
+ * Writes a saturated RGB colour for `hue` into `target`, scaled by `intensity` and balanced
+ * for perceived brightness. `intensity` above 1 pushes the colour into bloom range.
  */
 export function writeRgb(target: Color, hue: number, intensity = 1, saturation = 1, lightness = 0.5) {
   target.setHSL(wrap(hue, 0, 1), saturation, clamp(lightness), SRGBColorSpace);
-  return target.multiplyScalar(intensity);
+  return target.multiplyScalar(intensity * perceptualGain(target));
 }
