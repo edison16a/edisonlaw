@@ -23,7 +23,7 @@ function isOnScreen(node: HTMLElement) {
 /**
  * The left and right arrow keys turn the spiral one project at a time while
  * most of the stage is on screen and no text field has focus. Up, down and the
- * other scrolling keys are left to the page. The arrow buttons carry
+ * other scrolling keys are left to the page. The step buttons carry
  * data-step, 1 or -1, so focus has somewhere to go when the panel and the
  * screenshot row change.
  */
@@ -37,7 +37,7 @@ export function useStepKeys(stage: RefObject<HTMLElement | null>) {
       event.preventDefault();
       stepSpiral(direction);
       // A focused link in the panel or screenshot in the row leaves with its project,
-      // so focus moves to the arrow for this direction.
+      // so focus moves to the step button for this direction.
       const focused = event.target;
       if (focused instanceof HTMLElement && node.contains(focused) && !focused.dataset.step) {
         node.querySelector<HTMLElement>(`[data-step="${direction}"]`)?.focus();

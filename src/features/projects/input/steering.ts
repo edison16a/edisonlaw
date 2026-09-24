@@ -3,9 +3,9 @@ import { spiralMotion } from '../state/spiralMotion';
 import { wakeSpiral } from '../state/spiralWake';
 
 /**
- * Moves the spiral from input: the arrow buttons, the arrow keys, swipes and
- * clicks on the cards around the focused one. There is one spiral per page, so
- * like the spiral motion this works on module state.
+ * Moves the spiral from input: the wheel, swipes, the arrow keys, the step
+ * buttons and clicks on any card. There is one spiral per page, so like the
+ * spiral motion this works on module state.
  */
 
 /** Sends the spiral to card `index` on its looping index. */

@@ -16,7 +16,7 @@ import { DetailPanel } from './DetailPanel';
 import { StageBackdrop } from './StageBackdrop';
 import { StageGallery } from './StageGallery';
 import { StageSurface } from './StageSurface';
-import { StepArrows } from './StepArrows';
+import { StepButtons } from './StepButtons';
 
 const SpiralCanvas = dynamic(() => import('../spiral/SpiralCanvas').then((loaded) => loaded.SpiralCanvas), {
   ssr: false,
@@ -25,8 +25,8 @@ const SpiralCanvas = dynamic(() => import('../spiral/SpiralCanvas').then((loaded
 /**
  * One viewport under the navbar, and the page scrolls past it like any other
  * section. The spiral always shows one project up close, starting on the
- * featured one. The arrows beside it, the left and right arrow keys, sideways
- * swipes and clicks on the cards around it turn the spiral from project to
+ * featured one. The wheel over the spiral, sideways swipes, the left and
+ * right arrow keys and clicks on any card turn the spiral from project to
  * project, round and round forever.
  */
 export function SpiralStage({ projects }: { projects: Project[] }) {
@@ -66,7 +66,7 @@ export function SpiralStage({ projects }: { projects: Project[] }) {
       </StageSurface>
       {/* The stage melts into the black page below, so the handoff to the next section has no hard edge. */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-[12%] bg-linear-to-b from-transparent to-black" />
-      <StepArrows />
+      <StepButtons />
       <StageGallery projects={projects} />
       <DetailPanel projects={projects} columnRef={column} />
     </div>

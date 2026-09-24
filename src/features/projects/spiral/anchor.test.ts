@@ -1,6 +1,6 @@
 import { PerspectiveCamera, Vector3 } from 'three';
 import { describe, expect, it } from 'vitest';
-import { ARROW, focusCardRect, shiftForPanel } from './anchor';
+import { CLEARANCE, focusCardRect, shiftForPanel } from './anchor';
 import { cardBend } from './appearance';
 import { bendCardPoint } from './cardHit';
 import { cardPose, createPose, SPIRAL, sweepOffset } from './geometry';
@@ -76,32 +76,26 @@ describe('focusCardRect', () => {
 });
 
 describe('shiftForPanel', () => {
-  /** Where the arrows land, from their inner sides out, for a given shift. */
-  const arrowsAt = (width: number, height: number, shift: number) => {
-    const card = focusCardRect(width, height, shift, 0);
-    return { left: card.left - ARROW.gap - ARROW.size, right: card.right + ARROW.gap + ARROW.size };
-  };
-
-  it('keeps the preferred shift when the arrows already clear the panel', () => {
+  it('keeps the preferred shift when the card already clears the panel', () => {
     expect(shiftForPanel(1440, 836, 1022, 167)).toBe(167);
     expect(shiftForPanel(1920, 1016, 1392, 173)).toBe(173);
   });
 
-  it('slides further on a short screen so the next arrow clears the panel', () => {
-    const shift = shiftForPanel(1440, 536, 783, 167);
-    expect(shift).toBeGreaterThan(167);
-    expect(arrowsAt(1440, 536, shift).right).toBeCloseTo(783 - ARROW.margin, 6);
+  it('slides further when the card would come too close to the panel', () => {
+    const shift = shiftForPanel(1024, 704, 640, 20);
+    expect(shift).toBeGreaterThan(20);
+    expect(focusCardRect(1024, 704, shift, 0).right).toBeCloseTo(640 - CLEARANCE.panel, 6);
   });
 
-  it('fits both arrows on a tall and narrow tablet with the panel beside the card', () => {
+  it('fits the card between the stage edge and the panel on a tall and narrow tablet', () => {
     const shift = shiftForPanel(1024, 1302, 688, 134);
-    const arrows = arrowsAt(1024, 1302, shift);
-    expect(arrows.right).toBeLessThanOrEqual(688 - ARROW.margin + 1e-6);
-    expect(arrows.left).toBeGreaterThanOrEqual(ARROW.margin);
+    const card = focusCardRect(1024, 1302, shift, 0);
+    expect(card.right).toBeLessThanOrEqual(688 - CLEARANCE.panel + 1e-6);
+    expect(card.left).toBeGreaterThanOrEqual(CLEARANCE.edge);
   });
 
-  it('never pushes the previous arrow off the stage', () => {
+  it('never pushes the card off the left of the stage', () => {
     const shift = shiftForPanel(1024, 1302, 300, 134);
-    expect(arrowsAt(1024, 1302, shift).left).toBeCloseTo(ARROW.margin, 6);
+    expect(focusCardRect(1024, 1302, shift, 0).left).toBeCloseTo(CLEARANCE.edge, 6);
   });
 });

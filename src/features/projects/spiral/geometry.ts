@@ -7,7 +7,7 @@
  * nearest the camera. Upcoming cards wait below it on the right, and cards
  * that have passed rise away to the left, wrap behind the axis and come back
  * along the far side. So the strand moves left as it turns to the next card,
- * the way a swipe to the left and the arrow on the right both read.
+ * the way a swipe to the left and a scroll down both read.
  */
 
 export interface Point3 {

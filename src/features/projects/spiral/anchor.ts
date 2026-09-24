@@ -10,13 +10,10 @@ export interface StageRect {
   bottom: number;
 }
 
-/** The round arrow buttons beside the focused card, in CSS pixels. */
-export const ARROW = {
-  size: 48,
-  /** Space between a button and the card's side. */
-  gap: 20,
-  /** Space kept between a button and the panel or the edge of the stage. */
-  margin: 16,
+/** Space the focused card keeps from the panel beside it and from the stage's left edge, in CSS pixels. */
+export const CLEARANCE = {
+  panel: 48,
+  edge: 24,
 } as const;
 
 const pose = createPose();
@@ -25,12 +22,12 @@ const pose = createPose();
  * Where the focused card sits on a `width` by `height` stage once it has come
  * forward, with the picture slid `shift` pixels left and `lift` pixels up for
  * the panel. It follows the camera, the card's bend and the strand's sweep the
- * way the canvas draws them, in plain math so the page can place the arrows
- * and the screenshot row around the card without loading three.js.
+ * way the canvas draws them, in plain math so the page can place the
+ * screenshot row and the step buttons around the card without loading three.js.
  *
- * `left` and `right` are its sides halfway up, where the arrows sit, and
- * `top` and `bottom` its top and bottom edges. The settled card is a flat
- * rectangle, so these are its corners too.
+ * `left` and `right` are its sides halfway up, and `top` and `bottom` its top
+ * and bottom edges. The settled card is a flat rectangle, so these are its
+ * corners too.
  */
 export function focusCardRect(width: number, height: number, shift: number, lift: number): StageRect {
   cardPose(0, 1, 0, pose);
@@ -58,13 +55,12 @@ export function focusCardRect(width: number, height: number, shift: number, lift
 /**
  * How far the scene slides left for a panel beside it that starts `panelLeft`
  * pixels from the left of the stage. It starts from `preferred`, and slides on
- * if the next arrow would run into the panel, as far as the previous arrow can
- * go and stay on the stage.
+ * if the focused card would come too close to the panel, as far as the card
+ * can go and keep clear of the stage's left edge.
  */
 export function shiftForPanel(width: number, height: number, panelLeft: number, preferred: number) {
   const card = focusCardRect(width, height, 0, 0);
-  const reach = ARROW.gap + ARROW.size + ARROW.margin;
-  const needed = card.right + reach - panelLeft;
-  const furthest = card.left - reach;
+  const needed = card.right + CLEARANCE.panel - panelLeft;
+  const furthest = card.left - CLEARANCE.edge;
   return Math.max(preferred, Math.min(needed, furthest));
 }
