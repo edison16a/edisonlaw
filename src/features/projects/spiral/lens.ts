@@ -10,7 +10,7 @@ export const CAMERA = {
 } as const;
 
 /** Vertical field of view that keeps the whole spiral in frame at this aspect ratio. */
-export function fitFov(aspect: number) {
+function fitFov(aspect: number) {
   const needed = (2 * Math.atan(CAMERA.halfWidth / (CAMERA.z * aspect)) * 180) / Math.PI;
   return Math.min(CAMERA.maxFov, Math.max(CAMERA.fov, needed));
 }

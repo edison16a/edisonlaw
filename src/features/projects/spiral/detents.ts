@@ -4,13 +4,13 @@
  */
 
 /** Notches per card. Each one plays a soft tick as the spiral turns past it. */
-export const DETENTS_PER_CARD = 4;
+const DETENTS_PER_CARD = 4;
 
 /**
  * Past this share of a card away from the last locked card, a snap moves on to
  * the next card in the direction of travel instead of settling back.
  */
-export const SNAP_THRESHOLD = 0.08;
+const SNAP_THRESHOLD = 0.08;
 
 /**
  * The detent line crossed while moving from `previous` to `next`, as a count of
