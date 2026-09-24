@@ -66,6 +66,7 @@ export const projects: Project[] = [
     description:
       'Wildfire spread simulator built on a sequential neural network trained on historical burn data and live weather. Pick a location and the predicted spread shows up as a heat map. It beat 350+ competitors.',
     links: [{ label: 'GitHub', href: 'https://github.com/edison16a/FlameSense' }],
+    image: '/projects/flamesense.webp',
   },
   {
     id: 'safeeats',
