@@ -79,6 +79,7 @@ export const projects: Project[] = [
       { label: 'App Store', href: 'https://apps.apple.com/us/app/safeeats-food-scanner/id6739729515' },
       { label: 'GitHub', href: 'https://github.com/edison16a/SafeEats' },
     ],
+    image: '/projects/safeeats.webp',
   },
   {
     id: 'betterbart',
