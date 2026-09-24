@@ -3,6 +3,7 @@
 import { motion } from 'motion/react';
 import { IntroTitle } from '../components/IntroTitle';
 import { useSpiralStore } from '../state/spiralStore';
+import { EASE_OUT_EXPO } from '@/lib/easing';
 
 /**
  * Bottom left of the stage: who this is, and a hint to scroll that bows out
@@ -16,7 +17,7 @@ export function IntroCaption() {
     <motion.div
       initial={false}
       animate={{ opacity: inDeck ? 0 : 1, y: inDeck ? 12 : 0 }}
-      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 0.7, ease: EASE_OUT_EXPO }}
       className="gutter pointer-events-none absolute bottom-8 left-0 flex flex-col gap-6 lg:bottom-10"
     >
       <IntroTitle />
@@ -24,7 +25,7 @@ export function IntroCaption() {
         aria-hidden={hasScrolled}
         initial={false}
         animate={{ opacity: hasScrolled ? 0 : 1, y: hasScrolled ? 6 : 0 }}
-        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 0.6, ease: EASE_OUT_EXPO }}
         className="flex items-center gap-3 text-xs text-grey-400"
       >
         <span className="flex h-6 w-4 justify-center rounded-full border border-grey-600 pt-1">

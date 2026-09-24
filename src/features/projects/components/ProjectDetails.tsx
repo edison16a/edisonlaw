@@ -6,9 +6,9 @@ import { BadgeList } from '@/components/ui/Badge';
 import { TagList } from '@/components/ui/Tag';
 import { cn } from '@/lib/cn';
 import { padIndex } from '@/lib/format';
+import { EASE_OUT_EXPO } from '@/lib/easing';
 import { ProjectLinks } from './ProjectLinks';
 
-const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
 const group: Variants = {
   hidden: {},

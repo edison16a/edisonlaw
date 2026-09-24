@@ -5,13 +5,14 @@ import type { Project } from '@/content/types';
 import { BadgeList } from '@/components/ui/Badge';
 import { TagList } from '@/components/ui/Tag';
 import { padIndex } from '@/lib/format';
+import { EASE_OUT_EXPO } from '@/lib/easing';
 import { playHover } from '../components/hoverSound';
 import { ProjectLinks } from '../components/ProjectLinks';
 
 /** Rows rise in one after another when the list opens. The list staggers them. */
 const rise: Variants = {
   hidden: { opacity: 0, y: 12 },
-  shown: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
+  shown: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE_OUT_EXPO } },
 };
 
 interface ProjectRowProps {

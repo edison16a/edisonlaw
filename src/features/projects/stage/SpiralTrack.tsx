@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import { useCallback, useRef, useState } from 'react';
 import type { Project } from '@/content/types';
 import { useInView } from '@/lib/hooks/useInView';
+import { CanvasBoundary } from '@/components/three/CanvasBoundary';
 import { playHover } from '../components/hoverSound';
 import { ModeToggle } from '../components/ModeToggle';
 import { useOpeningCard } from '../hooks/useOpeningCard';
@@ -13,7 +14,6 @@ import { useSpiralSounds } from '../hooks/useSpiralSounds';
 import { useTrackMetrics } from '../hooks/useTrackMetrics';
 import { TRACK, trackSpan } from '../spiral/track';
 import { useSpiralStore, type SpiralMode } from '../state/spiralStore';
-import { CanvasBoundary } from './CanvasBoundary';
 import { DetailPanel } from './DetailPanel';
 import { HoverLabel } from './HoverLabel';
 import { IntroCaption } from './IntroCaption';
@@ -69,7 +69,7 @@ export function SpiralTrack({ projects, onModeChange }: SpiralTrackProps) {
         <StageBackdrop />
         <StageSurface count={count}>
           {mounted && (
-            <CanvasBoundary onFail={fallBack}>
+            <CanvasBoundary label="project spiral" onFail={fallBack}>
               <SpiralCanvas projects={projects} startAt={startAt} active={near} onSelect={scrollToCard} onHover={onHover} />
             </CanvasBoundary>
           )}

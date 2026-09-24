@@ -21,7 +21,7 @@ function detect() {
 
 const noop = () => () => {};
 
-/** True when the spiral can render. Assumed true on the server and during hydration. */
+/** True when WebGL 2 is available. Assumed true on the server and during hydration. */
 export function useWebGLSupport() {
   return useSyncExternalStore(noop, detect, () => true);
 }
