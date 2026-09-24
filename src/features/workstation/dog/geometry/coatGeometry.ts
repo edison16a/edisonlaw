@@ -1,4 +1,4 @@
-import { BufferGeometry, Color, Float32BufferAttribute, Uint16BufferAttribute, Uint32BufferAttribute, Vector3 } from 'three';
+import { BufferGeometry, Color, Float32BufferAttribute, Sphere, Uint16BufferAttribute, Uint32BufferAttribute, Vector3 } from 'three';
 import { smoothstep } from '@/lib/math';
 import { coatField } from '../anatomy/coat';
 import { headRestMatrix } from '../anatomy/headPose';
@@ -11,6 +11,13 @@ import { toneColor } from './paint';
 import { BONE, TAIL_BONES } from '../rig/createDogRig';
 import { createFieldSample, type Field } from '../sdf/field';
 import { meshField } from '../sdf/surfaceNets';
+
+/**
+ * Loose bounds of the posed coat in dog space, for culling, so three never skins every vertex on the CPU
+ * to measure the pose. Wide enough for the nose, the tip of the wagging tail and the head lifted to look
+ * up, with room to spare, so the dog is never culled while any of it is on screen.
+ */
+export const COAT_BOUNDS = new Sphere(new Vector3(0, 0.35, -0.03), 0.7);
 
 /** Grid cell for the coat, in metres. Fine enough for the smallest fur clumps and the lips. */
 export const COAT_CELL = 0.005;

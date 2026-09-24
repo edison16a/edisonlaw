@@ -1,14 +1,11 @@
 'use client';
 
 import { useMemo } from 'react';
-import { Matrix4, Skeleton, SkinnedMesh, Sphere, Vector3 } from 'three';
+import { Matrix4, Skeleton, SkinnedMesh } from 'three';
 import { useDisposable } from '../../useDisposable';
-import { coatGeometry, type CoatData } from '../geometry/coatGeometry';
+import { COAT_BOUNDS, coatGeometry, type CoatData } from '../geometry/coatGeometry';
 import { useDogMaterials } from '../MaterialsContext';
 import type { DogRig } from '../rig/createDogRig';
-
-/** Loose bounds for culling, so three never skins every vertex on the CPU to measure the pose. */
-const BOUNDS = new Sphere(new Vector3(0, 0.3, 0), 0.62);
 
 /**
  * The whole furry body as one skinned mesh, bound to the rig in its resting pose.
@@ -22,7 +19,7 @@ export function Coat({ rig, data }: { rig: DogRig; data: CoatData }) {
     const skinned = new SkinnedMesh(geometry, materials.coat);
     skinned.name = 'dogCoat';
     skinned.bind(skeleton, new Matrix4());
-    skinned.boundingSphere = BOUNDS.clone();
+    skinned.boundingSphere = COAT_BOUNDS.clone();
     return skinned;
   }, [geometry, materials.coat, skeleton]);
 

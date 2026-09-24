@@ -1,6 +1,8 @@
+import { Matrix4, Vector3 } from 'three';
 import { describe, expect, it } from 'vitest';
-import { BONE, TAIL_BONES } from '../rig/createDogRig';
-import { buildCoatData } from './coatGeometry';
+import { BONE, createDogRig, TAIL_BONES } from '../rig/createDogRig';
+import { applyDogPose, createDogPose, dogPose } from '../rig/dogPose';
+import { buildCoatData, COAT_BOUNDS } from './coatGeometry';
 import { buildDogData } from './dogData';
 
 /** Edges not shared by exactly one triangle each way: holes, and pinches where two sheets touch. */
@@ -63,5 +65,29 @@ describe('the built dog', () => {
   it('meshes the coat and every part as closed surfaces, with no holes or pinches', () => {
     expect(data.coat.positions.length / 3).toBeGreaterThan(20000);
     for (const part of [data.coat, data.ear, data.nose]) expect(openEdges(part.indices)).toBe(0);
+  }, 60000);
+
+  it('stays inside its culling bounds through the whole idle', () => {
+    const { coat } = data;
+    const rig = createDogRig();
+    const pose = createDogPose();
+    const skin = rig.bones.map(() => new Matrix4());
+    const rest = new Vector3();
+    const posed = new Vector3();
+    const part = new Vector3();
+    for (let t = 0; t < 40; t += 0.5) {
+      applyDogPose(rig, dogPose(t, 1, 53, pose));
+      rig.root.updateMatrixWorld(true);
+      rig.bones.forEach((bone, index) => skin[index].multiplyMatrices(bone.matrixWorld, rig.restInverses[index]));
+      for (let n = 0; n < coat.positions.length / 3; n += 5) {
+        rest.fromArray(coat.positions, n * 3);
+        posed.set(0, 0, 0);
+        for (let slot = 0; slot < 4; slot++) {
+          const weight = coat.skinWeights[n * 4 + slot];
+          if (weight > 0) posed.addScaledVector(part.copy(rest).applyMatrix4(skin[coat.skinIndices[n * 4 + slot]]), weight);
+        }
+        expect(posed.distanceTo(COAT_BOUNDS.center)).toBeLessThan(COAT_BOUNDS.radius - 0.02);
+      }
+    }
   }, 60000);
 });
