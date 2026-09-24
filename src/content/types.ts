@@ -16,8 +16,16 @@ export interface Project {
   stack: string[];
   description: string;
   links: Link[];
-  /** Photo in /public/projects, 16:10. */
+  /**
+   * Picture in /public/projects, 16:10. It is the thumbnail every card in the
+   * spiral and the phone carousel shows, and the first screenshot.
+   */
   image: string;
+  /**
+   * Up to four more screenshots in /public/projects, shown after the thumbnail
+   * in a row under the focused card. Most projects have none and show no row.
+   */
+  screenshots?: string[];
 }
 
 export interface YearMonth {
