@@ -56,6 +56,22 @@ describe('stepMotion', () => {
     expect(motion.value).toBeCloseTo(3, 2);
   });
 
+  it('crosses a long jump to a clicked card briskly and lands on it without overshooting', () => {
+    const motion = create(0);
+    motion.target = 8;
+    let furthest = 0;
+    let frames = 0;
+    while (Math.abs(motion.value - 8) > 0.2 && frames < 600) {
+      stepMotion(motion, 1 / 60, false);
+      furthest = Math.max(furthest, motion.value);
+      frames++;
+    }
+    expect(frames / 60).toBeLessThan(1.7);
+    run(motion, 8, 2);
+    expect(Math.max(furthest, motion.value)).toBeLessThanOrEqual(8);
+    expect(motion.settle).toBeGreaterThan(0.95);
+  });
+
   it('turns round smoothly when the target flips mid move', () => {
     const motion = run(create(0), 1, 0.2);
     const turnedAt = motion.value;

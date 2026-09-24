@@ -6,6 +6,11 @@ import { stepSpring } from './spring';
 const SMOOTH_TIME = 0.32;
 /** Fastest the spiral turns, in cards per second, so a queue of presses spins steadily instead of racing. */
 const MAX_SPEED = 5;
+/**
+ * A click on a far card may go faster, so that it covers the distance at
+ * about this many seconds' worth of cruising and a long jump never drags.
+ */
+const LONG_JUMP_TIME = 0.8;
 /** Short and calm for visitors who prefer reduced motion. */
 const CALM_SMOOTH_TIME = 0.06;
 
@@ -23,7 +28,8 @@ const REST_SPEED = 0.3;
  */
 export function stepMotion(motion: SpiralMotion, delta: number, reducedMotion: boolean) {
   const smoothTime = reducedMotion ? CALM_SMOOTH_TIME : SMOOTH_TIME;
-  stepSpring(motion, motion.target, smoothTime, delta, reducedMotion ? Infinity : MAX_SPEED);
+  const maxSpeed = Math.max(MAX_SPEED, Math.abs(motion.target - motion.value) / LONG_JUMP_TIME);
+  stepSpring(motion, motion.target, smoothTime, delta, reducedMotion ? Infinity : maxSpeed);
 
   const nearest = Math.round(motion.value);
   const resting =
