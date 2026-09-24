@@ -49,10 +49,11 @@ const TIMING = {
 } satisfies Record<string, Recurring>;
 
 /**
- * The head when it looks up at Edison, who stands on its right and far above: turned back toward him
- * and the chin lifted, while the face still shows to the about camera on its left.
+ * The head when it looks up at Edison. He stands on its far side and high above as the about camera
+ * sees them, so the chin lifts and the head turns a little further toward the camera's right, where he
+ * appears, and tips toward him: it reads as looking up at him while the face stays in view.
  */
-const LOOK_UP = { yaw: 0.72, pitch: 0.5, tilt: -0.02 } as const;
+const LOOK_UP = { yaw: 1.32, pitch: 0.36, tilt: -0.1 } as const;
 
 /** Breaths a second: slow and calm, a grown dog at ease. */
 const BREATH_RATE = 0.36;
