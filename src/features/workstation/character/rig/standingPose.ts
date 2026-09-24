@@ -87,9 +87,11 @@ export function standingPose(t: number, motion: number, seed: number, pose: Body
   const drift = noise(t * 0.21, seed + 3) * 0.04 * motion;
   const nod = noise(t * 0.27, seed + 4) * 0.03 * motion;
   // Thinking, he looks up a little, as if working something out.
-  const headYaw = lerp(lerp(head.yaw + drift, 0, sip), toDog.yaw, 0.6 * dog);
-  const headPitch = lerp(head.pitch + nod + 0.05 * think + 0.16 * tip, toDog.pitch, 0.6 * dog);
-  const tilt = 0.035 - 0.13 * think + 0.06 * dog + noise(t * 0.15, seed + 5) * 0.04 * motion;
+  // Toward the dog the head turns most of the way but only tips part way down, so his face stays in
+  // view from the about camera; the eyes look down the rest of the way.
+  const headYaw = lerp(lerp(head.yaw + drift, 0, sip), toDog.yaw, 0.72 * dog);
+  const headPitch = lerp(head.pitch + nod + 0.05 * think + 0.16 * tip, toDog.pitch, 0.42 * dog);
+  const tilt = 0.035 - 0.13 * think - 0.08 * dog + noise(t * 0.15, seed + 5) * 0.04 * motion;
   aimHead(pose, headYaw, headPitch, tilt);
   const eyeYaw = lerp(lerp(eyes.yaw, 0, sip), toDog.yaw, lead);
   const eyePitch = lerp(eyes.pitch + 0.07 * think - 0.1 * sip, toDog.pitch, lead);
