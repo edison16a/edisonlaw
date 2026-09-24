@@ -25,8 +25,8 @@ export interface CardPose extends Point3 {
   focus: number;
 }
 
-/** World size of a card at scale 1 (16:10). */
-export const CARD_WIDTH = 1.6;
+/** World size of a card at scale 1. Neighbours on one turn sit edge to edge. */
+export const CARD_WIDTH = 1.7;
 export const CARD_HEIGHT = 1;
 
 export const SPIRAL = {
