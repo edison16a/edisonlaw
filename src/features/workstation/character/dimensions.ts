@@ -43,6 +43,8 @@ export const HAND = {
   fingerRadius: 0.0096,
   /** Index, middle, ring, little. */
   fingerLengths: [0.03, 0.033, 0.031, 0.025] as const,
+  /** Share of each finger's length before its middle joint. */
+  fingerSplit: 0.55,
   thumbLength: 0.03,
 } as const;
 

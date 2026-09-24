@@ -20,8 +20,10 @@ export interface BodyPose {
   reach: Record<LimbName, number>;
   arms: Record<LimbName, LimbGoal>;
   legs: Record<LimbName, LimbGoal>;
-  /** Curl of index, middle, ring and little finger, in radians. */
+  /** Curl of index, middle, ring and little finger at the knuckle, in radians. */
   fingers: Record<LimbName, [number, number, number, number]>;
+  /** How much the middle joints bend, as a share of each knuckle's curl. */
+  fingerBend: Record<LimbName, number>;
   thumbs: Record<LimbName, number>;
   /** 0 open, 1 shut. */
   blink: number;
@@ -42,6 +44,7 @@ export function createBodyPose(): BodyPose {
     arms: { left: createLimbGoal(), right: createLimbGoal() },
     legs: { left: createLimbGoal(), right: createLimbGoal() },
     fingers: { left: [0, 0, 0, 0], right: [0, 0, 0, 0] },
+    fingerBend: { left: 0.7, right: 0.7 },
     thumbs: { left: 0, right: 0 },
     blink: 0,
     gaze: { x: 0, y: 0 },
@@ -75,7 +78,10 @@ export function applyBodyPose(rig: Rig, pose: BodyPose) {
     arm.base.updateMatrix();
     baseMatrix.multiplyMatrices(chestMatrix, arm.base.matrix);
     poseLimb(arm, baseMatrix, pose.arms[name], LIMBS.arm.upper, LIMBS.arm.lower);
-    for (let i = 0; i < arm.fingers.length; i++) arm.fingers[i].rotation.x = pose.fingers[name][i];
+    for (let i = 0; i < arm.fingers.length; i++) {
+      arm.fingers[i].rotation.x = pose.fingers[name][i];
+      arm.fingerTips[i].rotation.x = pose.fingers[name][i] * pose.fingerBend[name];
+    }
     arm.thumb.rotation.x = pose.thumbs[name];
 
     const leg = rig.legs[name];

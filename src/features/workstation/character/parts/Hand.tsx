@@ -1,39 +1,31 @@
 'use client';
 
-import { SphereGeometry } from 'three';
 import { useDisposable } from '../../useDisposable';
-import { HAND } from '../dimensions';
-import { taperedCapsule } from '../geometry/capsule';
+import { fingerGeometries, palmGeometry, thumbGeometry } from '../geometry/handGeometry';
 import { useCharacterMaterials } from '../MaterialsContext';
 import type { ArmRig } from '../rig/types';
 
-function useFingerGeometries() {
-  const index = useDisposable(() => taperedCapsule(HAND.fingerRadius, HAND.fingerRadius * 0.94, HAND.fingerLengths[0], 10));
-  const middle = useDisposable(() => taperedCapsule(HAND.fingerRadius, HAND.fingerRadius * 0.94, HAND.fingerLengths[1], 10));
-  const ring = useDisposable(() => taperedCapsule(HAND.fingerRadius, HAND.fingerRadius * 0.94, HAND.fingerLengths[2], 10));
-  const little = useDisposable(() => taperedCapsule(HAND.fingerRadius * 0.92, HAND.fingerRadius * 0.86, HAND.fingerLengths[3], 10));
-  return [index, middle, ring, little];
-}
-
-/** A soft chibi hand: a rounded palm, four stubby fingers and a thumb, in the hand bone's space. */
+/**
+ * A soft chibi hand in the hand bone's space: a lofted palm with a thumb pad, four stubby fingers that
+ * bend at the knuckle and the middle joint, and a thumb.
+ */
 export function Hand({ arm }: { arm: ArmRig }) {
   const materials = useCharacterMaterials();
-  const palm = useDisposable(() => new SphereGeometry(1, 20, 14));
-  const thumb = useDisposable(() => taperedCapsule(HAND.fingerRadius * 1.12, HAND.fingerRadius, HAND.thumbLength, 10));
-  const fingers = useFingerGeometries();
+  const { palm, thumb, fingers } = useDisposable(() => ({
+    palm: palmGeometry(arm.thumbSide),
+    thumb: thumbGeometry(),
+    fingers: arm.fingers.map((_, index) => fingerGeometries(index)),
+  }));
 
   return (
     <group>
-      <mesh
-        geometry={palm}
-        material={materials.body}
-        position={[0, -HAND.palmLength * 0.54, 0]}
-        scale={[HAND.palmWidth / 2, HAND.palmLength * 0.62, HAND.palmThickness / 2]}
-        castShadow
-      />
+      <mesh geometry={palm} material={materials.body} castShadow />
       {arm.fingers.map((knuckle, index) => (
         <primitive key={knuckle.name} object={knuckle}>
-          <mesh geometry={fingers[index]} material={materials.body} />
+          <mesh geometry={fingers[index].base} material={materials.body} />
+          <primitive object={arm.fingerTips[index]}>
+            <mesh geometry={fingers[index].tip} material={materials.body} />
+          </primitive>
         </primitive>
       ))}
       <primitive object={arm.thumb}>

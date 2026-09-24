@@ -18,7 +18,11 @@ export interface LimbRig {
 export interface ArmRig extends LimbRig {
   /** Knuckles of the index, middle, ring and little fingers. Positive X rotation curls toward the palm. */
   fingers: Group[];
+  /** Middle joint of each finger, a child of its knuckle, curling the same way. */
+  fingerTips: Group[];
   thumb: Group;
+  /** Which way the thumb sits in the hand bone's space: 1 is +X. */
+  thumbSide: Side;
 }
 
 export interface Rig {

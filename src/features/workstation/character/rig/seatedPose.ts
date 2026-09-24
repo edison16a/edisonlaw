@@ -140,6 +140,8 @@ export function seatedPose(t: number, motion: number, seed: number, pose: BodyPo
   typingFingers(strokes.right, rightTyping, pose.fingers.right);
   const fingers = pose.fingers.right;
   for (let i = 0; i < 4; i++) fingers[i] = lerp(fingers[i], 0.3 + (i === 0 ? 0.3 * clicking : 0), onMouse);
+  pose.fingerBend.left = 0.8;
+  pose.fingerBend.right = lerp(0.8, 0.5, onMouse);
   pose.thumbs.left = 0.35;
   pose.thumbs.right = lerp(0.35, 0.15, onMouse);
 

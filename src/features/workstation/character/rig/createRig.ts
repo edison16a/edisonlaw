@@ -12,11 +12,12 @@ function bone(name: string, x = 0, y = 0, z = 0) {
 function createArm(side: Side, name: string): ArmRig {
   const { shoulder, upperArm, forearm } = BODY;
   // The thumb sits on the inner edge of the hand when the palm faces down.
-  const thumbSide = -side;
+  const thumbSide: Side = side === 1 ? -1 : 1;
   const knuckleSpan = HAND.palmWidth / 2 - HAND.fingerRadius * 1.15;
   const fingers = HAND.fingerLengths.map((_, index) =>
     bone(`${name}Finger${index}`, thumbSide * (knuckleSpan - (index * 2 * knuckleSpan) / 3), -HAND.palmLength, 0.001),
   );
+  const fingerTips = HAND.fingerLengths.map((length, index) => bone(`${name}FingerTip${index}`, 0, -length * HAND.fingerSplit, 0));
   const thumb = bone(`${name}Thumb`, thumbSide * HAND.palmWidth * 0.4, -HAND.palmLength * 0.3, -0.005);
   // Splayed out toward the thumb side. Animation only changes the curl (rotation.x).
   thumb.rotation.set(0.2, 0, thumbSide * 0.6);
@@ -26,7 +27,9 @@ function createArm(side: Side, name: string): ArmRig {
     lower: bone(`${name}Forearm`, 0, -upperArm, 0),
     end: bone(`${name}Hand`, 0, -forearm, 0),
     fingers,
+    fingerTips,
     thumb,
+    thumbSide,
   };
 }
 
