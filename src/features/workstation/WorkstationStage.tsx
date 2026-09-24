@@ -81,6 +81,7 @@ export function WorkstationStage({ variant, centerScreen, pulseKey, className }:
         frameloop={frameloop}
         adaptive={!capturing}
         animate={animate}
+        rgbCycle={animate && !capturing}
         screensLive={animate && (capturing || onScreen)}
         parallax={animate && !capturing}
         onReady={onReady}

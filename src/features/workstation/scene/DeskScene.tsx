@@ -27,6 +27,8 @@ export interface DeskSceneProps {
   pulseKey?: number;
   /** False freezes every animation, for reduced motion. */
   animate: boolean;
+  /** False holds the RGB hue on a calm violet, for reduced motion and still captures. */
+  rgbCycle: boolean;
   /** Screens keep repainting. Off while the stage is off-screen. */
   screensLive: boolean;
   parallax: boolean;
@@ -34,12 +36,13 @@ export interface DeskSceneProps {
 }
 
 /** Everything inside the canvas: room, props, character, lights, camera and effects. */
-export function DeskScene({ variant, centerScreen, pulseKey, animate, screensLive, parallax, onReady }: DeskSceneProps) {
+export function DeskScene(props: DeskSceneProps) {
+  const { variant, centerScreen, pulseKey, animate, rgbCycle, screensLive, parallax, onReady } = props;
   const seated = variant === 'work';
   const placement = seated ? SEATED_PLACEMENT : STANDING_PLACEMENT;
 
   return (
-    <RgbClockProvider animate={animate} pulseKey={pulseKey}>
+    <RgbClockProvider animate={rgbCycle} pulseKey={pulseKey}>
       <color attach="background" args={['#000000']} />
       <CameraRig variant={variant} parallax={parallax} />
       <Lighting />
