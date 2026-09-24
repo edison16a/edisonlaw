@@ -15,7 +15,7 @@ import { CARD_HEIGHT, CARD_WIDTH } from './geometry';
 import { frameCamera } from './lens';
 import { stepMotion } from './motionStep';
 import { tickDetents } from './ticks';
-import { indexFromScroll } from './track';
+import { firstIndex, indexFromScroll } from './track';
 import { useCardPictures } from './useCardPictures';
 
 export interface SpiralSceneProps {
@@ -32,6 +32,8 @@ export interface SpiralSceneProps {
 const MIN_FACING = 0.2;
 /** Pointer travel in pixels beyond which a press is a drag, not a click. */
 const CLICK_SLOP = 6;
+/** Faster than this, in cards per second, the card under a resting pointer changes too quickly to name. */
+const HOVER_SPEED = 1.5;
 
 /** The strand of cards and the one frame loop that drives it. */
 export function SpiralScene({ projects, startAt, onSelect, onHover }: SpiralSceneProps) {
@@ -51,12 +53,19 @@ export function SpiralScene({ projects, startAt, onSelect, onHover }: SpiralScen
 
   useFrame((state, rawDelta) => {
     // A long pause (a hidden tab) should not fling the spiral.
-    const delta = Math.min(rawDelta, 1 / 20);
+    const delta = Math.min(rawDelta, 0.1);
     const previous = spiralMotion.value;
     const target = indexFromScroll(window.scrollY, stageMetrics);
     stepMotion(spiralMotion, target, count, delta, reducedMotion);
     tickDetents(previous, spiralMotion.value, spiralMotion.velocity, performance.now());
     syncFocus(readFocus(spiralMotion.value, spiralMotion.velocity, spiralMotion.settle, count, focus));
+    if (spiralMotion.hoverSlot !== null && Math.abs(spiralMotion.velocity) > HOVER_SPEED) {
+      spiralMotion.hoverSlot = null;
+      onHover(null);
+    }
+    if (Math.abs(target - firstIndex()) > 0.04 && !useSpiralStore.getState().hasScrolled) {
+      useSpiralStore.getState().markScrolled();
+    }
 
     frameCamera(camera, state.size.width, state.size.height, stageMetrics.focusShift * spiralMotion.engaged);
     gl.getDrawingBufferSize(cardViewport);
