@@ -145,6 +145,16 @@ export function seatedPose(t: number, motion: number, seed: number, pose: BodyPo
   pose.thumbs.left = 0.35;
   pose.thumbs.right = lerp(0.35, 0.15, onMouse);
 
+  // Brows drawn a little while he types, a small "hmm" and softer brows while he pauses to think.
+  const pause = motion * (1 - burst.weight) * (1 - onMouse);
+  const face = pose.expression;
+  face.browInner = -0.3 * typing + 0.35 * pause;
+  face.browLift.left = 0.25 * pause;
+  face.browLift.right = 0.1 * pause;
+  face.hmm = 0.6 * pause;
+  face.smile = 0.1 * onMouse;
+  face.squint = 0.12 * typing;
+
   // While he pauses to think, his right heel bounces.
   const idle = motion * (1 - burst.weight) * (1 - mouse.weight);
   seatedFoot(1, 'left', 0, pose.legs.left);

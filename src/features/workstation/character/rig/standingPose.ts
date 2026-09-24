@@ -102,8 +102,9 @@ export function standingPose(t: number, motion: number, seed: number, pose: Body
   face.smile = 0.2 + 0.8 * dog;
   face.hmm = think;
   face.browInner = 0.5 * think + 0.25 * dog + 0.15 * sip;
-  face.browLift.left = 0.1 * think + 0.35 * dog + 0.2 * sip;
-  face.browLift.right = 0.6 * think + 0.35 * dog + 0.2 * sip;
+  // The about camera sees his left side, so that is the brow he raises.
+  face.browLift.left = 0.65 * think + 0.35 * dog + 0.2 * sip;
+  face.browLift.right = 0.15 * think + 0.35 * dog + 0.2 * sip;
   face.squint = 0.55 * sip + 0.4 * dog + 0.15 * think;
 
   // Hands: the mug in the right, the dog's head under the left.
