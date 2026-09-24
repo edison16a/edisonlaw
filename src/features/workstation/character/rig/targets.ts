@@ -1,5 +1,6 @@
 import { Vector3 } from 'three';
-import { KEYBOARD, MONITORS, MOUSE, type MonitorSlot, type Vec3 } from '../../layout';
+import { DOG_PLACEMENT } from '../../dog/placement';
+import { DOG_PAT_POINT, KEYBOARD, MONITORS, MOUSE, type MonitorSlot, type Vec3 } from '../../layout';
 import { BODY, HEAD_ABOVE_PELVIS } from '../dimensions';
 import { SEATED_FOOT_REST, SEATED_PLACEMENT, STANDING_PLACEMENT, type Placement } from '../placement';
 
@@ -41,7 +42,22 @@ export const SEATED_TARGETS = {
   looks: monitorLooks(SEATED_PLACEMENT, SEATED_EYES),
 };
 
-/** Screen directions for the standing pose, in his own space. */
+/** The way the dog faces, as a horizontal unit vector in his own space. */
+function dogForward(placement: Placement) {
+  const heading = DOG_PLACEMENT.rotationY - placement.rotationY;
+  return new Vector3(Math.sin(heading), 0, Math.cos(heading));
+}
+
+const STANDING_PAT = toCharacterSpace(DOG_PAT_POINT, STANDING_PLACEMENT);
+const STANDING_DOG_FORWARD = dogForward(STANDING_PLACEMENT);
+/** The dog's eyes, a little ahead of and below the top of its head, where he looks when he glances down. */
+const STANDING_DOG_FACE = STANDING_PAT.clone().addScaledVector(STANDING_DOG_FORWARD, 0.08).add(new Vector3(0, -0.04, 0));
+
+/** Screen directions and the dog for the standing pose, in his own space. */
 export const STANDING_TARGETS = {
   looks: monitorLooks(STANDING_PLACEMENT, STANDING_EYES),
+  /** Top of the dog's head, where his left palm rests (DOG_PAT_POINT). */
+  pat: STANDING_PAT,
+  dogForward: STANDING_DOG_FORWARD,
+  dog: lookAngles(STANDING_EYES, STANDING_DOG_FACE),
 };
