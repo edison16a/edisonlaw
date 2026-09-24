@@ -5,7 +5,6 @@ import { SkipLink } from '@/components/layout/SkipLink';
 import { AboutSection } from '@/features/about/AboutSection';
 import { ExperienceSection } from '@/features/experience/ExperienceSection';
 import { ProjectsSection } from '@/features/projects/ProjectsSection';
-import { SoundToggle } from '@/features/sound';
 
 export default function Home() {
   return (
@@ -19,7 +18,6 @@ export default function Home() {
         <AboutSection />
       </main>
       <Footer />
-      <SoundToggle />
     </Providers>
   );
 }

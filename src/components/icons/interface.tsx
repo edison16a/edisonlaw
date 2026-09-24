@@ -25,3 +25,22 @@ export function CheckIcon(props: IconProps) {
   );
 }
 
+
+export function SpeakerIcon(props: IconProps) {
+  return (
+    <IconBase {...props}>
+      <path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z" />
+      <path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" />
+    </IconBase>
+  );
+}
+
+export function SpeakerMutedIcon(props: IconProps) {
+  return (
+    <IconBase {...props}>
+      <path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z" />
+      <path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" opacity="0.35" />
+      <path d="M3.5 3.5 20.5 20.5" />
+    </IconBase>
+  );
+}
