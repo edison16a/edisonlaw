@@ -11,13 +11,7 @@ export function SkillMark({ icon }: { icon: SkillIcon }) {
         </svg>
       );
     case 'logo':
-      return (
-        <span className="flex items-center gap-1">
-          {icon.srcs.map((src) => (
-            <Image key={src} src={src} alt="" width={20} height={20} unoptimized className="size-5 object-contain" />
-          ))}
-        </span>
-      );
+      return <Image src={icon.src} alt="" width={20} height={20} unoptimized className="size-5 object-contain" />;
     case 'letter':
       return (
         <span aria-hidden="true" className="font-display text-[19px] leading-none font-black" style={{ color: icon.color }}>

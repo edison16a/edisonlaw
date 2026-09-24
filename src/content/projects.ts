@@ -65,7 +65,7 @@ export const projects: Project[] = [
     id: 'flamesense',
     name: 'FlameSense',
     badges: ['Winner, Los Altos Hacks 2025'],
-    stack: ['HTML/CSS', 'Keras'],
+    stack: ['HTML', 'CSS', 'Keras'],
     description:
       'Wildfire spread simulator built on a sequential neural network trained on historical burn data and live weather. Pick a location and the predicted spread shows up as a heat map. It beat 350+ competitors.',
     links: [{ label: 'GitHub', href: 'https://github.com/edison16a/FlameSense' }],
@@ -134,7 +134,7 @@ export const projects: Project[] = [
     id: 'chrome-extensions',
     name: 'Chrome Extensions',
     badges: ['Featured by Google'],
-    stack: ['JavaScript', 'HTML/CSS', 'Chrome Extensions API'],
+    stack: ['JavaScript', 'HTML', 'CSS', 'Chrome Extensions API'],
     description:
       'A collection of browser extensions, part of the 10+ apps and extensions used by 5,000+ people. It includes SafeEats for Chrome, which rewrites online recipes around your allergies.',
     links: [],

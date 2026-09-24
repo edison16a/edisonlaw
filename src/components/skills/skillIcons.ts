@@ -52,15 +52,15 @@ import { BracesGlyph, DatabaseGlyph, EyeGlyph, MapPinGlyph } from './glyphs';
  */
 export type SkillIcon =
   | { kind: 'brand'; icon: SimpleIcon; color: string }
-  | { kind: 'logo'; srcs: string[] }
+  | { kind: 'logo'; src: string }
   | { kind: 'letter'; letter: string; color: string }
   | { kind: 'glyph'; Glyph: ComponentType<IconProps>; color: string };
 
 const brand = (icon: SimpleIcon): SkillIcon => ({ kind: 'brand', icon, color: visibleOnBlack(icon.hex) });
-/** Files in /public/skills. A bare name means an SVG. */
-const logo = (...files: string[]): SkillIcon => ({
+/** A file in /public/skills. A bare name means an SVG. */
+const logo = (file: string): SkillIcon => ({
   kind: 'logo',
-  srcs: files.map((file) => `/skills/${file.includes('.') ? file : `${file}.svg`}`),
+  src: `/skills/${file.includes('.') ? file : `${file}.svg`}`,
 });
 const glyph = (Glyph: ComponentType<IconProps>, hex: string): SkillIcon => ({
   kind: 'glyph',
@@ -79,7 +79,8 @@ const ICONS: Record<string, SkillIcon> = {
   Java: logo('java'),
   SQL: glyph(DatabaseGlyph, '60A5FA'),
   Swift: brand(siSwift),
-  'HTML/CSS': logo('html5', 'css3'),
+  HTML: logo('html5'),
+  CSS: logo('css3'),
   React: brand(siReact),
   'Next.js': brand(siNextdotjs),
   'React Native': brand(siReact),

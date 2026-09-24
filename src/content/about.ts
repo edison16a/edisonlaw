@@ -38,7 +38,7 @@ export const education: Education[] = [
 export const skills: SkillGroup[] = [
   {
     category: 'Languages',
-    items: ['TypeScript', 'JavaScript', 'Python', 'C++', 'C', 'C#', 'Java', 'SQL', 'Swift', 'HTML/CSS'],
+    items: ['TypeScript', 'JavaScript', 'Python', 'C++', 'C', 'C#', 'Java', 'SQL', 'Swift', 'HTML', 'CSS'],
   },
   {
     category: 'Web & Backend',
