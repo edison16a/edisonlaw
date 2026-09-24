@@ -20,7 +20,7 @@ export function SkillMark({ icon }: { icon: SkillIcon }) {
       );
     case 'letter':
       return (
-        <span className="font-display text-[19px] leading-none font-black" style={{ color: icon.color }}>
+        <span aria-hidden="true" className="font-display text-[19px] leading-none font-black" style={{ color: icon.color }}>
           {icon.letter}
         </span>
       );
