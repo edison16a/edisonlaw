@@ -1,13 +1,10 @@
+import { smoothstep } from '@/lib/math';
+
 /**
  * How a card looks at a given distance from the focus slot. Pure curves, read every frame.
  * `offset` is the card's distance from the continuous index, in cards.
  * `settle` is 1 while the spiral rests on a card, which pushes everything else back.
  */
-
-function smoothstep(edge0: number, edge1: number, x: number) {
-  const t = Math.min(1, Math.max(0, (x - edge0) / (edge1 - edge0)));
-  return t * t * (3 - 2 * t);
-}
 
 /** 0 is sharp, 1 is the widest blur. The cards beside the slot stay almost sharp. */
 export function cardBlur(offset: number, settle: number) {
