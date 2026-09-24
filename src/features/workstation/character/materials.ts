@@ -1,4 +1,4 @@
-import { Color, MeshBasicMaterial, MeshPhysicalMaterial, MeshStandardMaterial, type Texture } from 'three';
+import { Color, MeshBasicMaterial, MeshPhysicalMaterial, MeshStandardMaterial } from 'three';
 
 /** Every colour on the character. Colour is allowed here because it lives inside the 3D scene. */
 export const PALETTE = {
@@ -13,7 +13,6 @@ export const PALETTE = {
   eye: '#0c0c10',
   shirt: '#2748b0',
   shirtRib: '#1f3a92',
-  print: '#fdb515',
   pants: '#1b1b1f',
   pantsSheen: '#50505e',
   shoe: '#f3f2ee',
@@ -36,9 +35,8 @@ export interface CharacterMaterials {
   eye: MeshPhysicalMaterial;
   eyeShine: MeshBasicMaterial;
   lips: MeshStandardMaterial;
+  /** Plain royal blue tee, body and sleeves. */
   shirt: MeshPhysicalMaterial;
-  /** Plain shirt fabric for the sleeves, which have no print. */
-  sleeve: MeshPhysicalMaterial;
   shirtRib: MeshPhysicalMaterial;
   pants: MeshPhysicalMaterial;
   /** Sneakers, coloured per vertex: upper, sole and stripe. */
@@ -72,10 +70,8 @@ function fabric(color: string, sheenColor: string, roughness = 0.82) {
   return new MeshPhysicalMaterial({ color, roughness, sheen: 0.6, sheenColor: new Color(sheenColor), sheenRoughness: 0.5 });
 }
 
-/** Builds the full set. `shirtMap` carries the base colour and the chest print. */
-export function createCharacterMaterials(shirtMap: Texture): CharacterMaterials {
-  const shirt = fabric('#ffffff', '#6f8ae0');
-  shirt.map = shirtMap;
+/** Builds the full set, one per character. */
+export function createCharacterMaterials(): CharacterMaterials {
   return {
     skin: skinMaterial(true),
     body: skinMaterial(false),
@@ -96,8 +92,7 @@ export function createCharacterMaterials(shirtMap: Texture): CharacterMaterials 
     eye: new MeshPhysicalMaterial({ color: PALETTE.eye, roughness: 0.16, clearcoat: 1, clearcoatRoughness: 0.08 }),
     eyeShine: new MeshBasicMaterial({ color: '#ffffff', toneMapped: false }),
     lips: new MeshStandardMaterial({ color: PALETTE.lips, roughness: 0.6 }),
-    shirt,
-    sleeve: fabric(PALETTE.shirt, '#6f8ae0'),
+    shirt: fabric(PALETTE.shirt, '#6f8ae0'),
     shirtRib: fabric(PALETTE.shirtRib, '#6f8ae0'),
     pants: fabric(PALETTE.pants, PALETTE.pantsSheen, 0.86),
     shoe: new MeshPhysicalMaterial({ color: '#ffffff', vertexColors: true, roughness: 0.58, sheen: 0.3, sheenColor: new Color('#ffffff') }),

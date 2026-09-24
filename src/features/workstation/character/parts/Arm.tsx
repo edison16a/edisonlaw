@@ -26,7 +26,7 @@ export function Arm({ arm, children }: ArmProps) {
   return (
     <primitive object={arm.base}>
       <primitive object={arm.upper}>
-        <mesh geometry={sleeve} material={materials.sleeve} castShadow receiveShadow />
+        <mesh geometry={sleeve} material={materials.shirt} castShadow receiveShadow />
         <mesh geometry={upper} material={materials.body} castShadow />
         <primitive object={arm.lower}>
           <mesh geometry={lower} material={materials.body} castShadow />

@@ -26,7 +26,7 @@ const SHIRT: LoftRing[] = [
 
 const COLLAR = { y: 0.209, radius: 0.053, tube: 0.0085, depth: 0.93 } as const;
 
-/** The shirt with its chest print and a ribbed collar. */
+/** The plain shirt and its ribbed collar. */
 export function Torso() {
   const materials = useCharacterMaterials();
   const shirt = useDisposable(() => loftGeometry(SHIRT, { radialSegments: 80, smooth: 3 }));
