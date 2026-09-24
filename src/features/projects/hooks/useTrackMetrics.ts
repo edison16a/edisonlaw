@@ -34,10 +34,10 @@ export function useTrackMetrics({ track, stage, column }: TrackRefs, count: numb
       const stickyTop = parseFloat(getComputedStyle(stageNode).top) || 0;
       const top = trackNode.getBoundingClientRect().top + window.scrollY - stickyTop;
       const perCard = (trackNode.offsetHeight - stageNode.offsetHeight) / trackSpan(count);
-      const columnNode = column.current;
-      // Move the focused card toward the centre of the space left of the panel.
-      const free = columnNode ? stageNode.clientWidth - columnNode.offsetLeft : 0;
-      const focusShift = sidePanel.matches ? (free / 2) * SHIFT_SHARE : 0;
+      // The composition is centred, so half the panel's width puts the focused card
+      // at the centre of the space left of the panel.
+      const panelWidth = column.current?.offsetWidth ?? 0;
+      const focusShift = sidePanel.matches ? (panelWidth / 2) * SHIFT_SHARE : 0;
       const focusLift = sidePanel.matches ? 0 : stageNode.clientHeight * LIFT_SHARE;
       setStageMetrics({ top, perCard, count, focusShift, focusLift });
     };

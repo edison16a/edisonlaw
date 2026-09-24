@@ -65,7 +65,15 @@ export function SpiralTrack({ projects, onModeChange }: SpiralTrackProps) {
 
   return (
     <div ref={track} className="relative" style={{ height }}>
-      <div ref={stage} className="sticky top-nav h-[calc(100dvh-var(--spacing-nav))] overflow-hidden">
+      {/*
+        On wide screens the panel sits beside the spiral. It keeps to a composition
+        at most 160dvh wide, so on screens wider than 16:10 it does not drift away
+        from the card to the far edge.
+      */}
+      <div
+        ref={stage}
+        className="sticky top-nav h-[calc(100dvh-var(--spacing-nav))] overflow-hidden [--panel-r:max(0px,calc((100%-160dvh)/2))] [--panel-w:clamp(21rem,29vw,27rem)]"
+      >
         <StageBackdrop />
         <StageSurface count={count}>
           {mounted && (

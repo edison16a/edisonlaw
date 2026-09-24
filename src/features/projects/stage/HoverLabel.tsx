@@ -14,7 +14,7 @@ export function HoverLabel({ projects }: { projects: Project[] }) {
   const project = hovered !== null && hovered !== panel ? projects[hovered] : null;
 
   return (
-    <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-8 flex justify-center lg:right-[clamp(21rem,29vw,27rem)] lg:bottom-10">
+    <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-8 flex justify-center lg:right-[calc(var(--panel-r)+var(--panel-w))] lg:bottom-10">
       <AnimatePresence>
         {project && (
           <motion.span
