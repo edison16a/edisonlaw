@@ -1,8 +1,9 @@
+import { createAgentSession, type AgentView } from '../../anim/agentSession';
 import { blankBlock, createGrid, drawTranscript, type TermBlock } from '../../draw/terminal';
 import { terminalWindow } from '../../draw/window';
 import type { PainterFactory } from '../../types';
 import { promptBlock, promptFooter, sayBlock, spinnerBlock, toolBlock, userBlock } from './blocks';
-import { SESSION_STILL_TIME, sessionView, type SessionView } from './playback';
+import { SESSION, type ToolCall } from './session';
 import { CLAUDE_THEME as T } from './theme';
 import { welcomeBlock } from './welcome';
 
@@ -10,12 +11,20 @@ const FONT_SIZE = 14;
 const LINE_HEIGHT = 20;
 const PADDING = 18;
 
-function transcript(view: SessionView, cols: number): TermBlock[] {
+const session = createAgentSession(SESSION, { typeRate: 13, streamRate: 70 });
+
+/**
+ * The still frame: the diff has just landed and Claude is still working, with the welcome box
+ * still in view above it.
+ */
+const STILL_TIME = session.startOf((item) => item.kind === 'think' && item.verb === 'Percolating') + 0.5;
+
+function transcript(view: AgentView<ToolCall>, cols: number): TermBlock[] {
   const blocks: TermBlock[] = [welcomeBlock(), blankBlock()];
   for (const item of view.items) {
     if (item.kind === 'user') blocks.push(userBlock(item.text));
     else if (item.kind === 'say') blocks.push(sayBlock(item.text, cols));
-    else blocks.push(toolBlock(item.name, item.target, item.result, item.done, view.pulse));
+    else blocks.push(toolBlock(item.action, item.done, view.pulse));
     blocks.push(blankBlock());
   }
   if (view.working) {
@@ -28,8 +37,8 @@ function transcript(view: SessionView, cols: number): TermBlock[] {
 
 /** Claude Code in a terminal, working through a change to the project spiral on a loop. */
 export const claudeCode: PainterFactory = () => ({
-  stillTime: SESSION_STILL_TIME,
-  frameKey: (time) => sessionView(time).key,
+  stillTime: STILL_TIME,
+  frameKey: (time) => session.view(time).key,
   paint(ctx, time) {
     const area = terminalWindow(ctx, {
       title: 'Spiral Motion Weight',
@@ -44,6 +53,6 @@ export const claudeCode: PainterFactory = () => ({
       FONT_SIZE,
       LINE_HEIGHT,
     );
-    drawTranscript(ctx, grid, transcript(sessionView(time), grid.cols));
+    drawTranscript(ctx, grid, transcript(session.view(time), grid.cols));
   },
 });

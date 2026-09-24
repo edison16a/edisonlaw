@@ -15,7 +15,7 @@ import {
   type TermBlock,
 } from '../../draw/terminal';
 import { wrapWords } from '../../draw/text';
-import { SLASH_COMMANDS, type DiffLine, type ToolResult } from './session';
+import { SLASH_COMMANDS, type DiffLine, type ToolCall, type ToolResult } from './session';
 import { CLAUDE_THEME as T } from './theme';
 
 /** Transcript pieces: the user's message, Claude's replies, tool calls, spinner and prompt. */
@@ -70,7 +70,7 @@ function resultLines(result: ToolResult): Line[] {
 }
 
 /** A tool call. While it runs the dot blinks grey, then it turns green and the result shows. */
-export function toolBlock(name: string, target: string, result: ToolResult, done: boolean, blink: boolean): TermBlock {
+export function toolBlock({ name, target, result }: ToolCall, done: boolean, blink: boolean): TermBlock {
   const dotColor = done ? T.green : blink ? T.dim : T.faint;
   const call: Line = {
     spans: [glyphSpan('dot', dotColor), span(name, T.text, { weight: 700 }), span(`(${target})`, T.text)],

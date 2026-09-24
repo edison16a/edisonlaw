@@ -1,3 +1,5 @@
+import type { AgentStep } from '../../anim/agentSession';
+
 /**
  * The Claude Code session the left monitor plays on a loop, working in this very repo.
  * It ends with /clear, which brings back the welcome screen the loop starts on.
@@ -20,59 +22,64 @@ export interface ToolResult {
   output?: { text: string; pass?: boolean }[];
 }
 
-export type SessionStep =
-  | { kind: 'idle'; seconds: number }
-  | { kind: 'type'; text: string }
-  | { kind: 'think'; seconds: number; verb: string }
-  | { kind: 'say'; text: string }
-  | { kind: 'tool'; name: string; target: string; seconds: number; result: ToolResult };
+export interface ToolCall {
+  name: string;
+  target: string;
+  result: ToolResult;
+}
 
 const SPIRAL = 'src/features/projects/spiral';
 
-export const SESSION: SessionStep[] = [
+export const SESSION: AgentStep<ToolCall>[] = [
   { kind: 'idle', seconds: 1.4 },
   { kind: 'type', text: 'make the spiral feel weightier' },
   { kind: 'think', seconds: 2.2, verb: 'Pondering' },
   {
-    kind: 'tool',
-    name: 'Read',
-    target: `${SPIRAL}/useSpiralMotion.ts`,
+    kind: 'act',
     seconds: 1.4,
-    result: { summary: 'Read 64 lines', note: '(ctrl+o to expand)' },
+    action: {
+      name: 'Read',
+      target: `${SPIRAL}/useSpiralMotion.ts`,
+      result: { summary: 'Read 64 lines', note: '(ctrl+o to expand)' },
+    },
   },
   {
     kind: 'say',
     text: "It chases the scroll with a stiff spring and no mass, so it stops dead. I'll add mass and soften the spring.",
   },
   {
-    kind: 'tool',
-    name: 'Update',
-    target: `${SPIRAL}/useSpiralMotion.ts`,
+    kind: 'act',
     seconds: 1.8,
-    result: {
-      summary: `Updated ${SPIRAL}/useSpiralMotion.ts with 3 additions and 1 removal`,
-      diff: [
-        { number: 27, sign: ' ', code: '  const velocity = useRef(0);' },
-        { number: 28, sign: '-', code: '  const stiffness = 12;', changed: [20, 22] },
-        { number: 28, sign: '+', code: '  const stiffness = 5.5;', changed: [20, 23] },
-        { number: 29, sign: '+', code: '  const mass = 1.6;' },
-        { number: 30, sign: '+', code: '  const damping = 0.82;' },
-      ],
+    action: {
+      name: 'Update',
+      target: `${SPIRAL}/useSpiralMotion.ts`,
+      result: {
+        summary: `Updated ${SPIRAL}/useSpiralMotion.ts with 3 additions and 1 removal`,
+        diff: [
+          { number: 27, sign: ' ', code: '  const velocity = useRef(0);' },
+          { number: 28, sign: '-', code: '  const stiffness = 12;', changed: [20, 22] },
+          { number: 28, sign: '+', code: '  const stiffness = 5.5;', changed: [20, 23] },
+          { number: 29, sign: '+', code: '  const mass = 1.6;' },
+          { number: 30, sign: '+', code: '  const damping = 0.82;' },
+        ],
+      },
     },
   },
   { kind: 'think', seconds: 1.6, verb: 'Percolating' },
   {
-    kind: 'tool',
-    name: 'Bash',
-    target: `npx vitest run ${SPIRAL}`,
+    kind: 'act',
     seconds: 3,
-    result: {
-      summary: 'RUN  v4.0.8 /Users/edison/code/edisonlaw',
-      output: [
-        { text: 'layout.test.ts (6 tests) 41ms', pass: true },
-        { text: 'useSpiralMotion.test.ts (3 tests) 18ms', pass: true },
-        { text: 'Test Files  2 passed (2)' },
-      ],
+    action: {
+      name: 'Bash',
+      target: `npx vitest run ${SPIRAL}`,
+      result: {
+        summary: 'RUN  v4.0.8 /Users/edison/code/edisonlaw',
+        output: [
+          { text: 'layout.test.ts (6 tests) 41ms', pass: true },
+          { text: 'useSpiralMotion.test.ts (3 tests) 18ms', pass: true },
+          { text: 'Test Files  2 passed (2)' },
+        ],
+      },
     },
   },
   {
