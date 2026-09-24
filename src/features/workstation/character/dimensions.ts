@@ -22,11 +22,11 @@ export const BODY = {
   /** Shoulder joints relative to the chest pivot. */
   shoulder: { x: 0.15, y: 0.152, z: -0.006 },
   /** Base of the neck above the chest pivot. */
-  neck: 0.2,
+  neck: 0.19,
   /** Head pivot above the base of the neck. */
   headPivot: 0.03,
   /** Centre of the skull relative to the head pivot. */
-  headCenter: { y: 0.196, z: 0.014 },
+  headCenter: { y: 0.188, z: 0.014 },
 
   upperArm: 0.185,
   forearm: 0.165,
