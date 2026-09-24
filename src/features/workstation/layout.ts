@@ -71,6 +71,12 @@ export const MAC_MINI = {
   rotationY: -0.32,
 } as const;
 
+/** Closed MacBook Pro on the desk below the monitors, between the centre and right stands. */
+export const MACBOOK = {
+  position: [0.35, 0.74, -0.43] as Vec3,
+  rotationY: -0.2,
+} as const;
+
 /**
  * Tower stands on the floor to the right of the desk. `size` is length, height and depth in the
  * tower's own space: it runs along X with the fans at the +X end and the glass side facing +Z.

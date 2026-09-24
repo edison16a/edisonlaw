@@ -13,6 +13,7 @@ import { Footrest } from '../props/Footrest';
 import { Decor } from '../props/decor/Decor';
 import { DeskMat } from '../props/DeskMat';
 import { Keyboard } from '../props/keyboard/Keyboard';
+import { MacBookPro } from '../props/apple/MacBookPro';
 import { MacMini } from '../props/apple/MacMini';
 import { Monitors } from '../props/Monitors';
 import { Mouse } from '../props/Mouse';
@@ -57,6 +58,7 @@ export function DeskScene(props: DeskSceneProps) {
       <Keyboard typing={seated} animate={animate} />
       <Mouse />
       <MacMini />
+      <MacBookPro />
       {seated && (
         <>
           <Chair />
