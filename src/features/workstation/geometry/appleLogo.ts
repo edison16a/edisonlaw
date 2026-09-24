@@ -13,7 +13,7 @@ export function createAppleLogoGeometry(height: number, curveDivisions = 10) {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${VIEWBOX} ${VIEWBOX}"><path d="${siApple.path}"/></svg>`;
   const shapes = new SVGLoader()
     .parse(svg)
-    .paths.flatMap((path) => SVGLoader.createShapes(path))
+    .paths.flatMap((path) => path.toShapes())
     // Flip Y so the logo stands upright, rebuilding each outline so its triangles still face the viewer.
     .map((shape) => {
       const { shape: outline, holes } = shape.extractPoints(curveDivisions);
