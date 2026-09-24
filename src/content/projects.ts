@@ -56,6 +56,7 @@ export const projects: Project[] = [
     description:
       'Real-time transcription and summaries of 911 dispatcher calls. It highlights the key details, suggests follow-up questions and ranks incidents by priority.',
     links: [{ label: 'GitHub', href: 'https://github.com/edison16a/CallSense' }],
+    image: '/projects/callsense.webp',
   },
   {
     id: 'flamesense',
