@@ -7,7 +7,7 @@ import { LAB_THEME as T } from './theme';
 
 /** The notebook figure: stress strain curves, a plate photo and zone diameters, matplotlib style. */
 
-const LABEL = { size: 11, family: 'sans', color: T.axis } as const;
+const LABEL = { size: 9.5, family: 'sans', color: T.axis } as const;
 
 const px = (rect: Rect, scale: Scale, value: number) => rect.x + ((value - scale.min) / (scale.max - scale.min)) * rect.w;
 const py = (rect: Rect, scale: Scale, value: number) => rect.y + rect.h - ((value - scale.min) / (scale.max - scale.min)) * rect.h;
@@ -28,26 +28,26 @@ function axes(ctx: CanvasRenderingContext2D, rect: Rect, options: AxesOptions) {
   ctx.strokeRect(Math.round(rect.x) + 0.5, Math.round(rect.y) + 0.5, Math.round(rect.w), Math.round(rect.h));
   options.xTicks.forEach((tick) => {
     const x = Math.round(px(rect, options.x, tick)) + 0.5;
-    fillRect(ctx, x - 0.5, rect.y + rect.h, 1, 4, T.axis);
-    text(ctx, String(tick), x, rect.y + rect.h + 14, { ...LABEL, align: 'center' });
+    fillRect(ctx, x - 0.5, rect.y + rect.h, 1, 3, T.axis);
+    text(ctx, String(tick), x, rect.y + rect.h + 10, { ...LABEL, align: 'center' });
   });
   options.yTicks.forEach((tick) => {
     const y = Math.round(py(rect, options.y, tick)) + 0.5;
-    fillRect(ctx, rect.x - 4, y - 0.5, 4, 1, T.axis);
-    text(ctx, String(tick), rect.x - 8, y, { ...LABEL, align: 'right' });
+    fillRect(ctx, rect.x - 3, y - 0.5, 3, 1, T.axis);
+    text(ctx, String(tick), rect.x - 6, y, { ...LABEL, align: 'right' });
   });
-  text(ctx, options.xLabel, rect.x + rect.w / 2, rect.y + rect.h + 32, { ...LABEL, size: 12, align: 'center' });
+  text(ctx, options.xLabel, rect.x + rect.w / 2, rect.y + rect.h + 24, { ...LABEL, size: 10, align: 'center' });
   ctx.save();
-  ctx.translate(rect.x - 38, rect.y + rect.h / 2);
+  ctx.translate(rect.x - 28, rect.y + rect.h / 2);
   ctx.rotate(-Math.PI / 2);
-  text(ctx, options.yLabel, 0, 0, { ...LABEL, size: 12, align: 'center' });
+  text(ctx, options.yLabel, 0, 0, { ...LABEL, size: 10, align: 'center' });
   ctx.restore();
-  text(ctx, options.title, rect.x + rect.w / 2, rect.y - 14, { ...LABEL, size: 13, align: 'center' });
+  text(ctx, options.title, rect.x + rect.w / 2, rect.y - 10, { ...LABEL, size: 11, align: 'center' });
 }
 
 function legend(ctx: CanvasRenderingContext2D, x: number, y: number, labels: string[], colors: string[], swatch: 'line' | 'box') {
-  const height = labels.length * 16 + 8;
-  const width = 118;
+  const height = labels.length * 12 + 6;
+  const width = 86;
   ctx.fillStyle = 'rgba(17,17,17,0.85)';
   ctx.strokeStyle = '#555555';
   ctx.beginPath();
@@ -55,10 +55,10 @@ function legend(ctx: CanvasRenderingContext2D, x: number, y: number, labels: str
   ctx.fill();
   ctx.stroke();
   labels.forEach((label, index) => {
-    const rowY = y + 12 + index * 16;
-    if (swatch === 'line') fillRect(ctx, x + 8, rowY - 1, 18, 2, colors[index]);
-    else fillRect(ctx, x + 10, rowY - 5, 12, 10, colors[index]);
-    text(ctx, label, x + 32, rowY + 1, { ...LABEL, size: 10.5 });
+    const rowY = y + 9 + index * 12;
+    if (swatch === 'line') fillRect(ctx, x + 6, rowY - 1, 13, 2, colors[index]);
+    else fillRect(ctx, x + 7, rowY - 4, 9, 8, colors[index]);
+    text(ctx, label, x + 24, rowY + 1, { ...LABEL, size: 8.5 });
   });
 }
 
@@ -76,20 +76,20 @@ export function stressStrain(ctx: CanvasRenderingContext2D, rect: Rect) {
       else ctx.lineTo(sx, sy);
     }
     ctx.strokeStyle = color;
-    ctx.lineWidth = 1.8;
+    ctx.lineWidth = 1.5;
     ctx.stroke();
     // Failure point.
     const fx = px(rect, x, gel.failure);
     const fy = py(rect, y, stressAt(gel, gel.failure));
     ctx.beginPath();
-    ctx.moveTo(fx - 4, fy - 4);
-    ctx.lineTo(fx + 4, fy + 4);
-    ctx.moveTo(fx + 4, fy - 4);
-    ctx.lineTo(fx - 4, fy + 4);
-    ctx.lineWidth = 1.6;
+    ctx.moveTo(fx - 3, fy - 3);
+    ctx.lineTo(fx + 3, fy + 3);
+    ctx.moveTo(fx + 3, fy - 3);
+    ctx.lineTo(fx - 3, fy + 3);
+    ctx.lineWidth = 1.4;
     ctx.stroke();
   });
-  legend(ctx, rect.x + 8, rect.y + 8, GELS.map((gel) => gel.label), [...T.series], 'line');
+  legend(ctx, rect.x + 5, rect.y + 5, GELS.map((gel) => gel.label), [...T.series], 'line');
 }
 
 export function plate(ctx: CanvasRenderingContext2D, rect: Rect) {
@@ -98,7 +98,7 @@ export function plate(ctx: CanvasRenderingContext2D, rect: Rect) {
   const cy = rect.y + rect.h / 2;
   const radius = size * 0.46;
   fillRect(ctx, rect.x, rect.y, rect.w, rect.h, '#0b0a08');
-  text(ctx, 'E. coli, 24 h, 37 °C', cx, rect.y - 14, { ...LABEL, size: 13, align: 'center' });
+  text(ctx, 'E. coli, 24 h, 37 °C', cx, rect.y - 10, { ...LABEL, size: 11, align: 'center' });
 
   const agar = ctx.createRadialGradient(cx - radius * 0.2, cy - radius * 0.2, radius * 0.1, cx, cy, radius);
   agar.addColorStop(0, '#e2bf57');
@@ -106,11 +106,11 @@ export function plate(ctx: CanvasRenderingContext2D, rect: Rect) {
   circle(ctx, cx, cy, radius, agar);
   // Bacterial lawn texture.
   const random = seededRandom(42);
-  for (let i = 0; i < 900; i++) {
+  for (let i = 0; i < 600; i++) {
     const angle = random() * Math.PI * 2;
     const distance = Math.sqrt(random()) * radius * 0.97;
     ctx.fillStyle = random() > 0.5 ? 'rgba(255,240,190,0.18)' : 'rgba(90,60,10,0.18)';
-    ctx.fillRect(cx + Math.cos(angle) * distance, cy + Math.sin(angle) * distance, 1.5, 1.5);
+    ctx.fillRect(cx + Math.cos(angle) * distance, cy + Math.sin(angle) * distance, 1.2, 1.2);
   }
   const mm = (radius * 2) / 90;
   ZONES.coli.forEach((zone, index) => {
@@ -119,19 +119,19 @@ export function plate(ctx: CanvasRenderingContext2D, rect: Rect) {
     const dy = cy + Math.sin(angle) * radius * 0.5;
     circle(ctx, dx, dy, (zone / 2) * mm, 'rgba(60,44,14,0.75)');
     circle(ctx, dx, dy, 3 * mm, '#f4f1e8');
-    text(ctx, ZONES.concentrations[index], dx, dy + (zone / 2) * mm + 10, { size: 10, family: 'sans', color: '#ffffff', align: 'center' });
+    text(ctx, ZONES.concentrations[index], dx, dy + (zone / 2) * mm + 7, { size: 8.5, family: 'sans', color: '#ffffff', align: 'center' });
     if (index === 3) {
       const half = (zone / 2) * mm;
-      fillRect(ctx, dx - half, dy - 0.75, half * 2, 1.5, '#ffffff');
-      fillRect(ctx, dx - half, dy - 5, 1.5, 10, '#ffffff');
-      fillRect(ctx, dx + half - 1.5, dy - 5, 1.5, 10, '#ffffff');
-      text(ctx, `${zone} mm`, dx, dy - half - 10, { size: 11, weight: 600, family: 'sans', color: '#ffffff', align: 'center' });
+      fillRect(ctx, dx - half, dy - 0.6, half * 2, 1.2, '#ffffff');
+      fillRect(ctx, dx - half, dy - 4, 1.2, 8, '#ffffff');
+      fillRect(ctx, dx + half - 1.2, dy - 4, 1.2, 8, '#ffffff');
+      text(ctx, `${zone} mm`, dx, dy - half - 7, { size: 9.5, weight: 600, family: 'sans', color: '#ffffff', align: 'center' });
     }
   });
-  ctx.lineWidth = 3;
+  ctx.lineWidth = 2.2;
   ctx.strokeStyle = 'rgba(230,230,230,0.55)';
   ctx.beginPath();
-  ctx.arc(cx, cy, radius + 1.5, 0, Math.PI * 2);
+  ctx.arc(cx, cy, radius + 1, 0, Math.PI * 2);
   ctx.stroke();
 }
 
@@ -147,7 +147,7 @@ export function zoneBars(ctx: CanvasRenderingContext2D, rect: Rect) {
   const barW = slot * 0.3;
   ZONES.concentrations.forEach((label, index) => {
     const center = rect.x + slot * (index + 0.5);
-    text(ctx, label, center, rect.y + rect.h + 14, { ...LABEL, align: 'center' });
+    text(ctx, label, center, rect.y + rect.h + 10, { ...LABEL, align: 'center' });
     groups.forEach((group, g) => {
       const left = center - barW + g * barW;
       const top = py(rect, y, group.values[index]);
@@ -155,10 +155,10 @@ export function zoneBars(ctx: CanvasRenderingContext2D, rect: Rect) {
       const errorTop = py(rect, y, group.values[index] + group.errors[index]);
       const errorBottom = py(rect, y, group.values[index] - group.errors[index]);
       const mid = left + barW / 2;
-      fillRect(ctx, mid - 0.5, errorTop, 1.2, errorBottom - errorTop, T.axis);
-      fillRect(ctx, mid - 4, errorTop, 8, 1.2, T.axis);
-      fillRect(ctx, mid - 4, errorBottom, 8, 1.2, T.axis);
+      fillRect(ctx, mid - 0.5, errorTop, 1, errorBottom - errorTop, T.axis);
+      fillRect(ctx, mid - 3, errorTop, 6, 1, T.axis);
+      fillRect(ctx, mid - 3, errorBottom, 6, 1, T.axis);
     });
   });
-  legend(ctx, rect.x + 8, rect.y + 8, ['E. coli', 'S. aureus'], [T.series[0], T.series[1]], 'box');
+  legend(ctx, rect.x + 5, rect.y + 5, ['E. coli', 'S. aureus'], [T.series[0], T.series[1]], 'box');
 }
