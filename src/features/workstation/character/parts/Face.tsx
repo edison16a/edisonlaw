@@ -11,7 +11,7 @@ import { useCharacterMaterials } from '../MaterialsContext';
 import type { Rig } from '../rig/types';
 
 /** Face layout on the skull, angles in degrees (crown angle, turn angle toward his left). */
-const EYE = { theta: 97, phi: 23.5, lift: -0.0035, radius: [0.028, 0.035, 0.013] as const };
+const EYE = { theta: 97, phi: 23.5, lift: -0.0036, radius: [0.028, 0.035, 0.0108] as const };
 /** Catch lights, placed the same on both eyes as if lit from one window. */
 const SHINES = [
   { x: 0.0085, y: 0.013, radius: 0.0082 },
