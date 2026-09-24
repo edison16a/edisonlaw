@@ -113,8 +113,8 @@ export function drawParticipants(ctx: CanvasRenderingContext2D, area: Rect, spea
 
 export function drawTitleBar(ctx: CanvasRenderingContext2D, height: number, elapsed: string) {
   fillRect(ctx, 0, 0, VIEW_WIDTH, height, T.chrome);
-  const after = textRun(ctx, 'Network design review', 14, height / 2 + 1, { size: 13, weight: 700, family: 'sans', color: T.text });
-  text(ctx, 'Career Exploration Program', after + 12, height / 2 + 1, { size: 11.5, family: 'sans', color: T.muted });
+  const after = textRun(ctx, 'Network design review', 14, height / 2 + 1, { size: 14.5, weight: 700, family: 'sans', color: T.text });
+  text(ctx, 'Career Exploration Program', after + 12, height / 2 + 1, { size: 12, family: 'sans', color: T.muted });
   circle(ctx, VIEW_WIDTH - 156, height / 2, 4, T.red);
   text(ctx, `REC  ${elapsed}`, VIEW_WIDTH - 146, height / 2 + 1, { size: 11, weight: 600, family: 'mono', color: T.text });
   (['grid', 'users'] as IconName[]).forEach((icon, index) => drawIcon(ctx, icon, VIEW_WIDTH - 50 + index * 24, height / 2, 15, T.muted, 1.4));

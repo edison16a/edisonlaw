@@ -27,7 +27,7 @@ function sheetsIcon(ctx: CanvasRenderingContext2D, x: number, y: number) {
 export function drawSheetChrome(ctx: CanvasRenderingContext2D, cellName: string, cellValue: string) {
   fillRect(ctx, 0, 0, VIEW_WIDTH, GRID_TOP, T.chrome);
   sheetsIcon(ctx, 12, 8);
-  text(ctx, 'IFSS lab notebook, summer 2024', 40, 15, { size: 14, family: 'sans', color: T.text });
+  text(ctx, 'IFSS lab notebook, summer 2024', 40, 15, { size: 16, family: 'sans', color: T.text });
   const menu = { size: 11, family: 'sans', color: T.text } as const;
   ['File', 'Edit', 'View', 'Insert', 'Format', 'Data', 'Tools', 'Help'].reduce((x, item) => {
     text(ctx, item, x, 32, menu);

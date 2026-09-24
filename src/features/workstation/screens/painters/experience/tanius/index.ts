@@ -36,8 +36,8 @@ function phoneQuotes(live: number): PhoneQuotes {
 function topBar(ctx: CanvasRenderingContext2D, live: number) {
   fillRect(ctx, 0, 0, VIEW_WIDTH, TOP, '#0d1119');
   fillRect(ctx, 0, TOP - 1, VIEW_WIDTH, 1, T.border);
-  const after = textRun(ctx, 'Tanius', MARGIN + 2, TOP / 2 + 1, { size: 14, weight: 700, family: 'sans', color: T.text });
-  textRun(ctx, ' Analytics', after, TOP / 2 + 1, { size: 14, family: 'sans', color: T.muted });
+  const after = textRun(ctx, 'Tanius', MARGIN + 2, TOP / 2 + 1, { size: 16, weight: 700, family: 'sans', color: T.text });
+  textRun(ctx, ' Analytics', after, TOP / 2 + 1, { size: 16, family: 'sans', color: T.muted });
   const { spy, spyChange, vx1, vxChange } = quotes(live);
   const tickers = [
     ['SPY', spy.toFixed(2), spyChange],
@@ -45,7 +45,7 @@ function topBar(ctx: CanvasRenderingContext2D, live: number) {
     ['VX2', (vx1 + 1.05).toFixed(2), vxChange * 0.7],
     ['QQQ', '489.10', 0.52],
   ] as const;
-  let x = 150;
+  let x = 160;
   for (const [symbol, price, change] of tickers) {
     x = textRun(ctx, symbol, x, TOP / 2 + 1, { size: 11, weight: 700, family: 'mono', color: T.text });
     x = textRun(ctx, ` ${price} `, x, TOP / 2 + 1, { size: 11, family: 'mono', color: T.muted });

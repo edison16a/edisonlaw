@@ -11,7 +11,7 @@ const BADGE_SIZE = 10;
 function card(ctx: CanvasRenderingContext2D, rect: Rect, title: string) {
   fillRound(ctx, rect.x, rect.y, rect.w, rect.h, 8, T.panel);
   strokeRound(ctx, rect.x, rect.y, rect.w, rect.h, 8, T.border);
-  text(ctx, title, rect.x + 14, rect.y + 20, { size: 13, weight: 600, family: 'sans', color: T.text });
+  text(ctx, title, rect.x + 14, rect.y + 20, { size: 14, weight: 700, family: 'sans', color: T.text });
 }
 
 /** A pill in the card's top right corner. */

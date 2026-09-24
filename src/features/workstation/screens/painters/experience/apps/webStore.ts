@@ -93,8 +93,8 @@ function storeListing(ctx: CanvasRenderingContext2D, rect: Rect, upload: number)
 export function drawWebStore(ctx: CanvasRenderingContext2D, rect: Rect, upload: number) {
   fillRect(ctx, rect.x, rect.y, rect.w, rect.h, T.background);
   storeMark(ctx, rect.x + 12, rect.y + 8);
-  const after = textRun(ctx, 'Chrome Web Store', rect.x + 42, rect.y + 20, { size: 13, weight: 600, family: 'sans', color: T.text });
-  text(ctx, 'Developer Dashboard', after + 8, rect.y + 20, { size: 13, family: 'sans', color: T.muted });
+  const after = textRun(ctx, 'Chrome Web Store', rect.x + 42, rect.y + 20, { size: 14.5, weight: 700, family: 'sans', color: T.text });
+  text(ctx, 'Developer Dashboard', after + 8, rect.y + 20, { size: 14.5, family: 'sans', color: T.muted });
   fillRect(ctx, rect.x, rect.y + 40, rect.w, 1, T.border);
   rail(ctx, rect);
 

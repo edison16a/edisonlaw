@@ -129,8 +129,7 @@ function appInformation(ctx: CanvasRenderingContext2D, rect: Rect) {
 
 export function drawAppStore(ctx: CanvasRenderingContext2D, rect: Rect, selected: number, scan: number) {
   fillRect(ctx, rect.x, rect.y, rect.w, rect.h, T.background);
-  text(ctx, 'App Store Connect', rect.x + 14, rect.y + 20, { size: 13, weight: 600, family: 'sans', color: T.text });
-  let tabX = rect.x + 154;
+  let tabX = textRun(ctx, 'App Store Connect', rect.x + 14, rect.y + 20, { size: 14.5, weight: 700, family: 'sans', color: T.text }) + 20;
   ['Apps', 'Analytics', 'Trends'].forEach((tab) => {
     const active = tab === 'Apps';
     const after = textRun(ctx, tab, tabX, rect.y + 20, { size: 11.5, weight: active ? 600 : 400, family: 'sans', color: active ? T.text : T.muted });

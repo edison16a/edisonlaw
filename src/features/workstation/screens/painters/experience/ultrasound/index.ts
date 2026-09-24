@@ -37,8 +37,8 @@ function header(ctx: CanvasRenderingContext2D, frameNumber: number) {
   fillRect(ctx, 0, 0, VIEW_WIDTH, HEADER, T.panel);
   fillRect(ctx, 0, HEADER - 1, VIEW_WIDTH, 1, T.border);
   logo(ctx, 14, HEADER / 2);
-  const after = textRun(ctx, 'Enhanced Ultrasound', 42, HEADER / 2 + 1, { size: 14, weight: 700, family: 'sans', color: T.text });
-  text(ctx, 'Study 0142   Thyroid, right lobe', after + 16, HEADER / 2 + 1, { size: 11.5, family: 'sans', color: T.muted });
+  const after = textRun(ctx, 'Enhanced Ultrasound', 42, HEADER / 2 + 1, { size: 16, weight: 700, family: 'sans', color: T.text });
+  text(ctx, 'Study 0142   Thyroid, right lobe', after + 16, HEADER / 2 + 1, { size: 12, family: 'sans', color: T.muted });
   const right = VIEW_WIDTH - MARGIN;
   pill(ctx, 'Cloud Run', right - 70, HEADER / 2, { bg: '#16202b', color: T.muted, size: 10 });
   circle(ctx, right - 150, HEADER / 2, 4, T.red);
