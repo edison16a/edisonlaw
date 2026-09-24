@@ -9,11 +9,11 @@ import { LAB_THEME as T } from './theme';
 
 /** JupyterLab chrome and the pieces of a notebook: prompts, code cells and a DataFrame. */
 
-export const MENU_HEIGHT = 30;
-export const TAB_TOP = MENU_HEIGHT;
-export const TOOLBAR_TOP = MENU_HEIGHT + 32;
+const MENU_HEIGHT = 30;
+const TAB_TOP = MENU_HEIGHT;
+const TOOLBAR_TOP = MENU_HEIGHT + 32;
 export const BODY_TOP = TOOLBAR_TOP + 32;
-export const SIDE_WIDTH = 40;
+const SIDE_WIDTH = 40;
 export const CELL_X = 118;
 
 function logo(ctx: CanvasRenderingContext2D, x: number, y: number) {

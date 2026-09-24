@@ -50,7 +50,7 @@ export const DARK_MODERN: Record<TokenKind, string> = {
   bracket: '#ffd700',
 };
 
-export const BRACKET_COLORS = ['#ffd700', '#da70d6', '#179fff'];
+const BRACKET_COLORS = ['#ffd700', '#da70d6', '#179fff'];
 
 const CONTROL = new Set(
   'import export from return if else for while switch case break continue default as await throw try catch new'.split(' '),

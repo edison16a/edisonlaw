@@ -19,7 +19,7 @@ const SYMBOL_KEYS: Record<string, [label: string, shifted: boolean]> = {
 };
 
 /** Key labels (see keyLayout) pressed for one character, shift first when needed. */
-export function keysForChar(char: string): string[] {
+function keysForChar(char: string): string[] {
   const symbol = SYMBOL_KEYS[char];
   if (symbol) return symbol[1] ? ['lshift', symbol[0]] : [symbol[0]];
   const lower = char.toLowerCase();

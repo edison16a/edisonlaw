@@ -17,8 +17,8 @@ export interface CameraFraming {
 }
 
 /** Panel aspect ratios (width / height) the two shots are tuned for. */
-export const PORTRAIT_ASPECT = 0.7;
-export const LANDSCAPE_ASPECT = 1.4;
+const PORTRAIT_ASPECT = 0.7;
+const LANDSCAPE_ASPECT = 1.4;
 
 export const CAMERA_FRAMINGS: Record<StageVariant, CameraFraming> = {
   // Elevated three-quarter view from behind and to the right, like the reference.

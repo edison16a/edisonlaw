@@ -13,11 +13,9 @@ export interface CharacterProps {
   pose: CharacterPose;
   /** False freezes the idle animation, for reduced motion. */
   animate?: boolean;
-  /** Holds the animation at this many seconds. For screenshots and tests. */
-  frozenTime?: number;
 }
 
-/** Different seeds so the two Edisons in the room never move in step. */
+/** Each pose gets its own seed, so its idle motion has its own rhythm. */
 const SEEDS: Record<CharacterPose, number> = { seated: 11, standing: 29 };
 
 /**
@@ -25,9 +23,9 @@ const SEEDS: Record<CharacterPose, number> = { seated: 11, standing: 29 };
  * Seated, the origin is where his pelvis meets the seat; standing, it is the floor between his feet.
  * Place him with SEATED_PLACEMENT or STANDING_PLACEMENT from ./placement.
  */
-export function Character({ pose, animate = true, frozenTime }: CharacterProps) {
+export function Character({ pose, animate = true }: CharacterProps) {
   const [rig] = useState(createRig);
-  useCharacterMotion(rig, { pose, animate, frozenTime, seed: SEEDS[pose] });
+  useCharacterMotion(rig, { pose, animate, seed: SEEDS[pose] });
 
   return (
     <CharacterMaterialsProvider>

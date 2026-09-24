@@ -15,7 +15,7 @@ export function font(size: number, weight = 400, family: FontKind = 'mono', ital
   return `${italic ? 'italic ' : ''}${weight} ${size}px ${fontFamilies()[family]}`;
 }
 
-export function applyText(ctx: CanvasRenderingContext2D, style: TextStyle) {
+function applyText(ctx: CanvasRenderingContext2D, style: TextStyle) {
   ctx.font = font(style.size, style.weight, style.family, style.italic);
   ctx.fillStyle = style.color;
   ctx.textAlign = style.align ?? 'left';

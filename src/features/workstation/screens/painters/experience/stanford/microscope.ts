@@ -12,8 +12,8 @@ import { LAB_SHEET_THEME as T } from './theme';
  * rendered once with additive blending so overlaps glow the way stacked channels do.
  */
 
-export const IMAGE_WIDTH = 468;
-export const IMAGE_HEIGHT = 330;
+const IMAGE_WIDTH = 468;
+const IMAGE_HEIGHT = 330;
 
 function blob(ctx: CanvasRenderingContext2D, x: number, y: number, rx: number, ry: number, angle: number, color: string, alpha: number) {
   ctx.save();

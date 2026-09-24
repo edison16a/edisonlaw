@@ -28,7 +28,7 @@ const GLAND: Ellipse = { x: 0.04, d: 0.5, rx: 0.34, rd: 0.24 };
 const TRACHEA: Ellipse = { x: 0.43, d: 0.36, rx: 0.1, rd: 0.07 };
 
 /** Distance from the centre in ellipse units, 1 on the boundary. */
-export const ellipseDistance = (e: Ellipse, x: number, d: number) => Math.hypot((x - e.x) / e.rx, (d - e.d) / e.rd);
+const ellipseDistance = (e: Ellipse, x: number, d: number) => Math.hypot((x - e.x) / e.rx, (d - e.d) / e.rd);
 
 /** Brightness of the layers under the skin, by distance from the probe face. */
 function layers(radial: number, x: number) {

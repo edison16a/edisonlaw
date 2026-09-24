@@ -48,12 +48,6 @@ export function hline(ctx: CanvasRenderingContext2D, x: number, y: number, w: nu
   ctx.fillRect(x, Math.round(y), w, 1);
 }
 
-/** Crisp one pixel vertical line. */
-export function vline(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, color: string) {
-  ctx.fillStyle = color;
-  ctx.fillRect(Math.round(x), y, 1, h);
-}
-
 export function circle(ctx: CanvasRenderingContext2D, x: number, y: number, r: number, color: string | CanvasGradient) {
   ctx.beginPath();
   ctx.arc(x, y, r, 0, Math.PI * 2);
@@ -67,25 +61,6 @@ export function ring(ctx: CanvasRenderingContext2D, x: number, y: number, r: num
   ctx.strokeStyle = color;
   ctx.lineWidth = lineWidth;
   ctx.stroke();
-}
-
-/** Polyline through `points`, stroked. */
-export function polyline(ctx: CanvasRenderingContext2D, points: [number, number][], color: string, lineWidth = 1.5) {
-  ctx.beginPath();
-  points.forEach(([x, y], index) => (index === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)));
-  ctx.strokeStyle = color;
-  ctx.lineWidth = lineWidth;
-  ctx.lineJoin = 'round';
-  ctx.lineCap = 'round';
-  ctx.stroke();
-}
-
-/** Vertical gradient between two colours across a band of the canvas. */
-export function verticalGradient(ctx: CanvasRenderingContext2D, y0: number, y1: number, from: string, to: string) {
-  const gradient = ctx.createLinearGradient(0, y0, 0, y1);
-  gradient.addColorStop(0, from);
-  gradient.addColorStop(1, to);
-  return gradient;
 }
 
 /** Runs `paint` with drawing clipped to a rectangle. */

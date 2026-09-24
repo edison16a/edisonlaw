@@ -10,9 +10,9 @@ const FAVOURED_HUE = 0.76;
 /** 0 is an even cycle. 0.6 spends four times longer at the favoured hue than at its opposite. */
 const LINGER = 0.6;
 /** Length of the pulse surge, in seconds. */
-export const PULSE_DURATION = 0.7;
+const PULSE_DURATION = 0.7;
 /** Extra brightness at the peak of a pulse, so the peak reads 1.8x. */
-export const PULSE_GAIN = 0.8;
+const PULSE_GAIN = 0.8;
 
 /**
  * One hue clock shared by everything RGB in a scene (tower, strips, keyboard, lights),
@@ -35,13 +35,13 @@ export interface RgbClock {
  * Maps an evenly advancing phase to a hue that still covers the whole wheel but slows down
  * around violet, blue and magenta, where the room looks best.
  */
-export function warpHue(phase: number) {
+function warpHue(phase: number) {
   const offset = phase - FAVOURED_HUE;
   return wrap(phase - (LINGER * Math.sin(2 * Math.PI * offset)) / (2 * Math.PI), 0, 1);
 }
 
 /** Eased bump from 0 up to 1 and back to 0 over `progress` 0 to 1. */
-export function pulseEnvelope(progress: number) {
+function pulseEnvelope(progress: number) {
   if (progress <= 0 || progress >= 1) return 0;
   const s = Math.sin(Math.PI * progress);
   return s * s;

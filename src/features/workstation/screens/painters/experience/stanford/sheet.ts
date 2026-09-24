@@ -8,7 +8,7 @@ import { LAB_SHEET_THEME as T } from './theme';
 
 /** A spreadsheet in the style of Google Sheets, holding the lab's growth and imaging log. */
 
-export const GRID_TOP = 134;
+const GRID_TOP = 134;
 const ROW_HEIGHT = 24;
 const HEADER_HEIGHT = 22;
 const ROW_LABELS = 42;

@@ -17,7 +17,7 @@ export const scaleOf = (values: number[], padding = 0.08): Scale => {
 export const yOf = (rect: Rect, scale: Scale, value: number) =>
   rect.y + rect.h - ((value - scale.min) / (scale.max - scale.min || 1)) * rect.h;
 
-export const xOf = (rect: Rect, index: number, count: number) => rect.x + (count <= 1 ? 0 : (index / (count - 1)) * rect.w);
+const xOf = (rect: Rect, index: number, count: number) => rect.x + (count <= 1 ? 0 : (index / (count - 1)) * rect.w);
 
 function tracePath(ctx: CanvasRenderingContext2D, rect: Rect, values: number[], scale: Scale) {
   values.forEach((value, index) => {

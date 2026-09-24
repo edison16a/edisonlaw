@@ -6,12 +6,12 @@ import { SEATED_FOOT_REST, SEATED_PLACEMENT, STANDING_PLACEMENT, type Placement 
 const UP = new Vector3(0, 1, 0);
 
 /** A room point seen from inside the character's own space for a given placement. */
-export function toCharacterSpace(point: Vec3, placement: Placement) {
+function toCharacterSpace(point: Vec3, placement: Placement) {
   return new Vector3(...point).sub(new Vector3(...placement.position)).applyAxisAngle(UP, -placement.rotationY);
 }
 
 /** Yaw (toward his left) and pitch (up) in radians to look from `from` at `to`. */
-export function lookAngles(from: Vector3, to: Vector3) {
+function lookAngles(from: Vector3, to: Vector3) {
   const dx = to.x - from.x;
   const dy = to.y - from.y;
   const dz = to.z - from.z;

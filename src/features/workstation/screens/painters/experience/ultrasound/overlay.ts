@@ -9,7 +9,7 @@ import { ULTRASOUND_THEME as T } from './theme';
 const DEPTH_CM = 4.5;
 
 /** Screen position of a point given in the flat anatomy coordinates. */
-export function toScreen(x: number, d: number): [number, number] {
+function toScreen(x: number, d: number): [number, number] {
   return [SECTOR.apexX + x * SECTOR.far, SECTOR.apexY + SECTOR.near + d * (SECTOR.far - SECTOR.near)];
 }
 

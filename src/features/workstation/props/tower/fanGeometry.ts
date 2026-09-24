@@ -5,7 +5,7 @@ import { roundedRectShape } from '../../geometry/shapes';
 /** Outer size of a fan frame, in metres. */
 export const FAN_SIZE = 0.116;
 export const FAN_DEPTH = 0.012;
-export const FAN_RING_RADIUS = FAN_SIZE * 0.44;
+const FAN_RING_RADIUS = FAN_SIZE * 0.44;
 const BLADE_COUNT = 7;
 
 /** Square frame with a round opening, facing +Z. */
