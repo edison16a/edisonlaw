@@ -1,8 +1,9 @@
 import { step } from '../../../anim/timeline';
-import { SCREEN_HEIGHT, type PainterFactory } from '../../../types';
+import { VIEW_HEIGHT, VIEW_WIDTH, zoomIn } from '../../../draw/view';
+import type { PainterFactory } from '../../../types';
 import { EDIT_COLUMN, ROWS } from './data';
 import { drawViewer, renderMicrograph } from './microscope';
-import { drawGrid, drawSheetChrome, drawSheetTabs } from './sheet';
+import { drawGrid, drawSheetChrome, drawSheetTabs, TABS_HEIGHT } from './sheet';
 
 /** Seconds the selection rests on each cell as it walks down the OD600 column. */
 const DWELL = 1.4;
@@ -13,7 +14,10 @@ const CURSOR_PATH: [number, number][] = [
   [240, 186],
 ];
 
-/** Stanford lab notebook: a growth and imaging log beside a fluorescence micrograph. */
+/** The viewer window's place over the sheet, in the zoomed view. */
+const VIEWER = { x: 466, y: 104, w: VIEW_WIDTH - 466 - 14 };
+
+/** Stanford lab notebook, zoomed in: a growth and imaging log beside a fluorescence micrograph. */
 export const stanford: PainterFactory = () => {
   let micrograph: HTMLCanvasElement | null = null;
 
@@ -24,12 +28,13 @@ export const stanford: PainterFactory = () => {
       const tick = step(time, 1 / DWELL);
       const row = 1 + (tick % ROWS.length);
       const cellName = `${String.fromCharCode(65 + EDIT_COLUMN)}${row + 1}`;
+      zoomIn(ctx);
       const value = ROWS[row - 1][EDIT_COLUMN];
       drawSheetChrome(ctx, cellName, value || `=AVERAGE(${cellName.replace(/\d+/, '2')}:${cellName.replace(/\d+/, String(ROWS.length + 1))})`);
       drawGrid(ctx, row);
       drawSheetTabs(ctx);
       micrograph ??= renderMicrograph();
-      drawViewer(ctx, { x: 764, y: 148, w: 500, h: SCREEN_HEIGHT - 148 - 46 }, micrograph, CURSOR_PATH[tick % CURSOR_PATH.length]);
+      drawViewer(ctx, { ...VIEWER, h: VIEW_HEIGHT - VIEWER.y - TABS_HEIGHT - 12 }, micrograph, CURSOR_PATH[tick % CURSOR_PATH.length]);
     },
     dispose() {
       if (micrograph) micrograph.width = 0;

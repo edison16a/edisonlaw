@@ -1,14 +1,14 @@
 /** The growth and imaging log in the lab notebook. */
 
 export const COLUMNS = [
-  { label: 'Date', width: 64 },
-  { label: 'Sample', width: 62 },
-  { label: 'Strain', width: 118 },
-  { label: 'Condition', width: 104 },
-  { label: 'OD600', width: 64, numeric: true },
-  { label: 'CFU/mL', width: 78, numeric: true },
-  { label: 'Stain', width: 80 },
-  { label: 'Notes', width: 132 },
+  { label: 'Date', width: 44 },
+  { label: 'Sample', width: 50 },
+  { label: 'Strain', width: 86 },
+  { label: 'Condition', width: 86 },
+  { label: 'OD600', width: 50, numeric: true },
+  { label: 'CFU/mL', width: 58, numeric: true },
+  { label: 'Stain', width: 64 },
+  { label: 'Notes', width: 100 },
 ];
 
 export const ROWS = [

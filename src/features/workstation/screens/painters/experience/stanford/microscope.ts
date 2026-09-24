@@ -2,7 +2,7 @@ import { seededRandom } from '@/lib/math';
 import { lineChart } from '../../../draw/charts';
 import { drawGlyph } from '../../../draw/glyphs';
 import { fillRect, fillRound, strokeRound, type Rect } from '../../../draw/shapes';
-import { text } from '../../../draw/text';
+import { measure, text } from '../../../draw/text';
 import { trafficLights } from '../../../draw/window';
 import { pill } from '../../../draw/widgets';
 import { LAB_SHEET_THEME as T } from './theme';
@@ -76,46 +76,54 @@ export function renderMicrograph(): HTMLCanvasElement {
 
 const HISTOGRAM = Array.from({ length: 48 }, (_, i) => Math.exp(-((i - 9) ** 2) / 30) * 0.9 + Math.exp(-((i - 30) ** 2) / 60) * 0.35 + 0.02);
 
+/** The viewer window floating over the sheet: the micrograph with a pixel readout, channels and a histogram. */
 export function drawViewer(ctx: CanvasRenderingContext2D, rect: Rect, image: HTMLCanvasElement, cursor: [number, number]) {
   // Soft drop shadow so the window floats over the sheet.
   ctx.save();
   ctx.shadowColor = 'rgba(0,0,0,0.6)';
-  ctx.shadowBlur = 30;
-  ctx.shadowOffsetY = 10;
-  fillRound(ctx, rect.x, rect.y, rect.w, rect.h, 12, T.viewer);
+  ctx.shadowBlur = 20;
+  ctx.shadowOffsetY = 6;
+  fillRound(ctx, rect.x, rect.y, rect.w, rect.h, 10, T.viewer);
   ctx.restore();
-  strokeRound(ctx, rect.x, rect.y, rect.w, rect.h, 12, '#3a3a40');
-  trafficLights(ctx, rect.x + 20, rect.y + 18, 6, 20);
-  text(ctx, 'img_0716_40x.tif', rect.x + rect.w / 2, rect.y + 19, { size: 13, weight: 600, family: 'sans', color: T.text, align: 'center' });
+  strokeRound(ctx, rect.x, rect.y, rect.w, rect.h, 10, '#3a3a40');
+  trafficLights(ctx, rect.x + 16, rect.y + 14, 5, 16);
+  text(ctx, 'img_0716_40x.tif', rect.x + rect.w / 2, rect.y + 15, { size: 11.5, weight: 600, family: 'sans', color: T.text, align: 'center' });
 
-  const imageX = rect.x + (rect.w - IMAGE_WIDTH) / 2;
-  const imageY = rect.y + 38;
-  ctx.drawImage(image, imageX, imageY);
+  // The micrograph is rendered once at its own size and scaled into the window.
+  const imageW = rect.w - 20;
+  const scale = imageW / IMAGE_WIDTH;
+  const imageH = IMAGE_HEIGHT * scale;
+  const imageX = rect.x + 10;
+  const imageY = rect.y + 28;
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(image, imageX, imageY, imageW, imageH);
   // Scale bar.
-  fillRect(ctx, imageX + IMAGE_WIDTH - 86, imageY + IMAGE_HEIGHT - 20, 64, 4, '#ffffff');
-  text(ctx, '20 µm', imageX + IMAGE_WIDTH - 54, imageY + IMAGE_HEIGHT - 32, { size: 11.5, weight: 600, family: 'sans', color: '#ffffff', align: 'center' });
-  text(ctx, '40x, NA 0.95', imageX + 10, imageY + 16, { size: 11.5, family: 'mono', color: '#d0d0d0' });
+  fillRect(ctx, imageX + imageW - 58, imageY + imageH - 14, 44, 3, '#ffffff');
+  text(ctx, '20 µm', imageX + imageW - 36, imageY + imageH - 24, { size: 10, weight: 600, family: 'sans', color: '#ffffff', align: 'center' });
+  text(ctx, '40x, NA 0.95', imageX + 8, imageY + 12, { size: 10, family: 'mono', color: '#d0d0d0' });
 
-  // Pointer with a pixel readout.
-  const [cx, cy] = [imageX + cursor[0], imageY + cursor[1]];
-  drawGlyph(ctx, 'cross', cx, cy, 22, '#ffffff');
+  // Pointer with a pixel readout, which flips to the pointer's left near the image edge.
+  const [cx, cy] = [imageX + cursor[0] * scale, imageY + cursor[1] * scale];
+  drawGlyph(ctx, 'cross', cx, cy, 16, '#ffffff');
   const readout = `x ${Math.round(cursor[0] * 2.2)}  y ${Math.round(cursor[1] * 2.2)}  GFP ${Math.round(1800 + cursor[0] * 3)}`;
-  fillRound(ctx, cx + 12, cy + 10, 186, 22, 5, 'rgba(0,0,0,0.75)');
-  text(ctx, readout, cx + 20, cy + 22, { size: 11, family: 'mono', color: '#e8e8e8' });
+  const style = { size: 9.5, family: 'mono', color: '#e8e8e8' } as const;
+  const boxW = measure(ctx, readout, style) + 12;
+  const boxX = cx + 10 + boxW <= imageX + imageW ? cx + 10 : cx - 10 - boxW;
+  fillRound(ctx, boxX, cy + 8, boxW, 17, 4, 'rgba(0,0,0,0.75)');
+  text(ctx, readout, boxX + 6, cy + 17, style);
 
-  const infoY = imageY + IMAGE_HEIGHT + 20;
-  let x = rect.x + 20;
+  const infoY = imageY + imageH + 15;
+  let x = rect.x + 12;
   for (const [label, color] of [
     ['DAPI', '#5b8cff'],
     ['GFP', '#3fdc7c'],
     ['Merge', '#e4e4e7'],
   ]) {
-    x += pill(ctx, label, x, infoY, { bg: '#1c1c20', color, size: 11.5, dot: color }) + 8;
+    x += pill(ctx, label, x, infoY, { bg: '#1c1c20', color, size: 10, dot: color }) + 6;
   }
-  text(ctx, 'Fixed HeLa, sample S11', rect.x + rect.w - 20, infoY, { size: 12, family: 'sans', color: T.muted, align: 'right' });
+  text(ctx, 'Fixed HeLa, S11', rect.x + rect.w - 12, infoY, { size: 10.5, family: 'sans', color: T.muted, align: 'right' });
 
-  const plot = { x: rect.x + 20, y: infoY + 22, w: rect.w - 40, h: rect.y + rect.h - infoY - 36 };
+  const plot = { x: rect.x + 12, y: infoY + 14, w: rect.w - 24, h: rect.y + rect.h - infoY - 24 };
   fillRect(ctx, plot.x, plot.y + plot.h, plot.w, 1, '#3a3a40');
   lineChart(ctx, plot, HISTOGRAM, { min: 0, max: 1 }, { color: '#3fdc7c', width: 1.5, fill: 'rgba(63,220,124,0.25)' });
-  text(ctx, 'intensity histogram', plot.x + plot.w, plot.y + 8, { size: 11, family: 'sans', color: T.faint, align: 'right' });
 }
