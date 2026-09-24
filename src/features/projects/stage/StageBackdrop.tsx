@@ -10,7 +10,7 @@ export function StageBackdrop() {
         className="absolute inset-0 bg-center [mask-image:radial-gradient(ellipse_60%_62%_at_50%_50%,black_35%,transparent_100%)]"
         style={{
           backgroundImage:
-            'linear-gradient(to right, rgb(255 255 255 / 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgb(255 255 255 / 0.05) 1px, transparent 1px)',
+            'linear-gradient(to right, rgb(255 255 255 / 0.065) 1px, transparent 1px), linear-gradient(to bottom, rgb(255 255 255 / 0.065) 1px, transparent 1px)',
           backgroundSize: '50px 50px',
         }}
       />

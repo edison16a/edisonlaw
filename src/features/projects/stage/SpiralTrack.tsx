@@ -80,7 +80,7 @@ export function SpiralTrack({ projects, onModeChange }: SpiralTrackProps) {
           onPointerUp={drag.onPointerUp}
           onPointerCancel={drag.onPointerCancel}
           className={cn(
-            'absolute inset-0 touch-pan-y outline-offset-[-10px] select-none',
+            'absolute inset-0 touch-pan-y rounded-2xl outline-offset-[-10px] select-none focus-visible:outline-white/30',
             drag.dragging ? 'cursor-grabbing' : hovered !== null ? 'cursor-pointer' : 'cursor-grab',
           )}
         >
