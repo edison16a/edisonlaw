@@ -102,7 +102,9 @@ export function applyBodyPose(rig: Rig, pose: BodyPose) {
   for (let i = 0; i < 2; i++) {
     rig.eyes[i].scale.y = open;
     rig.gazes[i].position.set(pose.gaze.x * GAZE_SHIFT.x, pose.gaze.y * GAZE_SHIFT.y, 0);
-    rig.shines[i].scale.setScalar(shine);
+    // The catch lights shrink across the eye but keep their depth, so they stay on its curved front
+    // instead of sinking into it whenever he squints.
+    rig.shines[i].scale.set(shine, shine, 1);
     rig.shines[i].visible = shine > 0;
   }
   applyExpression(rig, pose.expression);
