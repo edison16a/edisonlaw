@@ -74,8 +74,13 @@ export function SpiralTrack({ projects, onModeChange }: SpiralTrackProps) {
             </CanvasBoundary>
           )}
         </StageSurface>
-        <div className="pointer-events-none absolute inset-x-0 top-5 flex justify-center">
-          <ModeToggle mode="spiral" onChange={onModeChange} className="pointer-events-auto" />
+        <div className="pointer-events-none absolute inset-x-0 top-3 flex justify-center">
+          {/* A dark pill keeps the words readable when a bright card turns behind them. */}
+          <ModeToggle
+            mode="spiral"
+            onChange={onModeChange}
+            className="pointer-events-auto rounded-full border border-white/10 bg-black/60 px-5 py-2 backdrop-blur-md"
+          />
         </div>
         <IntroCaption />
         <HoverLabel projects={projects} />
