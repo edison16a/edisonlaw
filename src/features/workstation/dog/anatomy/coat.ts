@@ -4,7 +4,7 @@ import { Field, transformShapes } from '../sdf/field';
 import { bodyForms, bodyFur } from './body';
 import { FACE, headForms, headFur, mouthCarves } from './head';
 import { surfaceFrame } from '../sdf/trace';
-import { neckForms } from './neck';
+import { neckForms, neckFur } from './neck';
 import { tailForms, tailFur } from './tail';
 
 function restRotation() {
@@ -74,6 +74,7 @@ export function coatField() {
       ...transformShapes(headForms(), headToDog),
       ...tailForms(),
       ...bodyFur(),
+      ...neckFur(),
       ...transformShapes(headFur(), headToDog),
       ...tailFur(),
       ...transformShapes(mouthCarves(), headToDog),

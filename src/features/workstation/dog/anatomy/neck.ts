@@ -2,7 +2,7 @@ import { Vector3, type Matrix4 } from 'three';
 import { PART, TONE } from '../dimensions';
 import type { Shape } from '../sdf/field';
 import { FACE } from './head';
-import { cone } from './sculpt';
+import { cone, flatLock } from './sculpt';
 
 const neck = (tone: number, blend: number) => ({ tone, blend, part: PART.neck });
 
@@ -27,4 +27,34 @@ export function neckAxis(headToDog: Matrix4) {
   const toNape = new Vector3(...FACE.nape).applyMatrix4(headToDog).sub(base);
   const length = toNape.length();
   return { base, direction: toNape.divideScalar(length), length };
+}
+
+/** Angles round the neck, from its front toward the dog's left, where the mane locks grow. */
+const MANE = [-80, -45, -15, 15, 45, 80];
+
+/**
+ * A soft mane round the base of the neck: broad locks draping from the neck over the shoulders and
+ * the top of the bib, so the head sits in a collar of fur.
+ */
+export function neckFur(): Shape[] {
+  const [, y, z] = BASE;
+  return MANE.flatMap((degrees) => {
+    const angle = (degrees * Math.PI) / 180;
+    const [sin, cos] = [Math.sin(angle), Math.cos(angle)];
+    const front = Math.max(0, cos) ** 2;
+    return flatLock({
+      path: [
+        [sin * 0.078, y + 0.05, z + cos * 0.078],
+        [sin * 0.094, y + 0.005, z + cos * 0.094 + 0.006],
+        [sin * 0.1, y - 0.035, z + cos * 0.098 + 0.01],
+      ],
+      width: 0.03,
+      flatness: 0.4,
+      facing: [sin, 0.35, cos],
+      tones: [TONE.coat + 0.2 * front, TONE.light + 0.25 * front],
+      blend: 0.016,
+      part: PART.neck,
+      segments: 5,
+    });
+  });
 }
