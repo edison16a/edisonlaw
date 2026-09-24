@@ -2,12 +2,12 @@
 export const WEB_STORE_THEME = {
   background: '#202124',
   surface: '#292a2d',
+  field: '#303134',
   border: '#3c4043',
   text: '#e8eaed',
   muted: '#9aa0a6',
   blue: '#8ab4f8',
   green: '#81c995',
-  star: '#fdd663',
 } as const;
 
 export const APP_STORE_THEME = {
@@ -18,5 +18,5 @@ export const APP_STORE_THEME = {
   muted: '#98989f',
   blue: '#0a84ff',
   green: '#30d158',
-  star: '#ff9f0a',
+  red: '#ff453a',
 } as const;
