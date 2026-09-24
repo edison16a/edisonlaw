@@ -6,6 +6,12 @@ import { FACE, headForms } from './head';
 /** Eye ellipsoid half sizes: wide, tall and shallow, big and round for a chibi face. */
 export const EYE_RADII = [0.0155, 0.0175, 0.0085] as const;
 
+/** The pupil: a smaller dark ellipsoid set forward in the eye, so a ring of brown iris shows round it. */
+export const PUPIL = { radii: [0.0098, 0.0112, 0.0066] as const, forward: 0.0025 } as const;
+
+/** The inside of the open mouth: a dark liner just within the carved opening, in head space. */
+export const MOUTH_LINER = { center: [0, -0.1665, 0.112] as const, radii: [0.029, 0.0105, 0.027] as const } as const;
+
 /** Where a face part sits in head space: its position, and a rotation with +Z out of the face. */
 export interface FacePlacement {
   position: [number, number, number];

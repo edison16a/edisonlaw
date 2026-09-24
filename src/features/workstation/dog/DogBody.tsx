@@ -4,6 +4,7 @@ import type { DogData } from './geometry/dogData';
 import { Coat } from './parts/Coat';
 import { Ear } from './parts/Ear';
 import { Eyes } from './parts/Eyes';
+import { Mouth } from './parts/Mouth';
 import { Nose } from './parts/Nose';
 import { Tongue } from './parts/Tongue';
 import type { DogRig } from './rig/createDogRig';
@@ -17,6 +18,7 @@ export function DogBody({ rig, data }: { rig: DogRig; data: DogData }) {
         <group position={rig.headOrigin}>
           <Eyes rig={rig} face={data.face} />
           <Nose data={data.nose} frame={data.face.nose} />
+          <Mouth />
         </group>
         <primitive object={rig.jaw}>
           <Tongue data={data.tongue} />

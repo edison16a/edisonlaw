@@ -13,7 +13,9 @@ export const DOG_PALETTE = {
   tongue: '#e8837f',
   tongueSheen: '#ffc2bd',
   nose: '#141112',
-  eye: '#1d110c',
+  /** Dark, kind brown eyes with near black pupils. */
+  eye: '#3b1f10',
+  pupil: '#0b0706',
 } as const;
 
 export interface DogMaterials {
@@ -24,7 +26,10 @@ export interface DogMaterials {
   nose: MeshPhysicalMaterial;
   tongue: MeshPhysicalMaterial;
   eye: MeshPhysicalMaterial;
+  pupil: MeshPhysicalMaterial;
   eyeShine: MeshBasicMaterial;
+  /** The dark inside of the open mouth. */
+  mouth: MeshPhysicalMaterial;
 }
 
 /** Soft clay fur: matte, with a warm sheen at grazing angles that reads as fuzz on the silhouette. */
@@ -53,6 +58,8 @@ export function createDogMaterials(): DogMaterials {
       sheenColor: new Color(DOG_PALETTE.tongueSheen),
     }),
     eye: new MeshPhysicalMaterial({ color: DOG_PALETTE.eye, roughness: 0.16, clearcoat: 1, clearcoatRoughness: 0.08 }),
+    pupil: new MeshPhysicalMaterial({ color: DOG_PALETTE.pupil, roughness: 0.16, clearcoat: 1, clearcoatRoughness: 0.08 }),
+    mouth: new MeshPhysicalMaterial({ color: DOG_PALETTE.mouth, roughness: 0.45, clearcoat: 0.4, clearcoatRoughness: 0.3 }),
     eyeShine: new MeshBasicMaterial({ color: '#ffffff', toneMapped: false }),
   };
 }

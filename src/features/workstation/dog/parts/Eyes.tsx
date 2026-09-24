@@ -3,7 +3,7 @@
 import { SphereGeometry } from 'three';
 import { useDisposable } from '../../useDisposable';
 import { mergeParts } from '../../character/geometry/merge';
-import { EYE_RADII, type FaceLayout } from '../anatomy/face';
+import { EYE_RADII, PUPIL, type FaceLayout } from '../anatomy/face';
 import { useDogMaterials } from '../MaterialsContext';
 import type { DogRig } from '../rig/createDogRig';
 
@@ -16,7 +16,10 @@ const SHINES = [
 /** Where a catch light sits on the front of the glossy eye. */
 function shineDepth(x: number, y: number) {
   const [rx, ry, rz] = EYE_RADII;
-  return rz * Math.sqrt(Math.max(0, 1 - (x / rx) ** 2 - (y / ry) ** 2)) - 0.0006;
+  const eye = rz * Math.sqrt(Math.max(0, 1 - (x / rx) ** 2 - (y / ry) ** 2));
+  const [px, py, pz] = PUPIL.radii;
+  const pupil = PUPIL.forward + pz * Math.sqrt(Math.max(0, 1 - (x / px) ** 2 - (y / py) ** 2));
+  return Math.max(eye, pupil) - 0.0006;
 }
 
 function shineGeometry() {
@@ -25,7 +28,7 @@ function shineGeometry() {
   );
 }
 
-/** Big, dark, glossy eyes with white catch lights, seated on the skull. Head space. */
+/** Big, dark brown, glossy eyes with near black pupils and white catch lights, seated on the skull. Head space. */
 export function Eyes({ rig, face }: { rig: DogRig; face: FaceLayout }) {
   const materials = useDogMaterials();
   const eye = useDisposable(() => new SphereGeometry(1, 28, 20));
@@ -35,6 +38,7 @@ export function Eyes({ rig, face }: { rig: DogRig; face: FaceLayout }) {
       {rig.eyes.map((group, index) => (
         <primitive key={group.name} object={group} position={face.eyes[index].position} quaternion={face.eyes[index].quaternion}>
           <mesh geometry={eye} material={materials.eye} scale={EYE_RADII} />
+          <mesh geometry={eye} material={materials.pupil} scale={PUPIL.radii} position-z={PUPIL.forward} />
           <mesh geometry={shine} material={materials.eyeShine} />
         </primitive>
       ))}
