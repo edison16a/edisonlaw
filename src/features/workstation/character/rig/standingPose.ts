@@ -11,16 +11,19 @@ import type { LimbName, Side } from './types';
 const TIMING = {
   glance: { period: 7, duration: 2.7, ease: 0.7, chance: 0.75 },
   /** Sips and thinking share one slot stream so they never overlap. */
-  sip: { period: 9.5, duration: 3.8, ease: 0.95 },
-  think: { period: 9.5, duration: 5.6, ease: 1.15 },
+  sip: { period: 7.5, duration: 3.8, ease: 0.95 },
+  think: { period: 7.5, duration: 5.6, ease: 1.15 },
 } satisfies Record<string, Recurring>;
-const GESTURE = { sip: 0.45, think: 0.82 } as const;
+
+/** What he does in each gesture slot, in order, so sips and thinking alternate with quiet moments. */
+const GESTURES = ['sip', 'idle', 'think', 'idle', 'sip', 'idle', 'think', 'sip', 'idle'] as const;
+const gestureIn = (slot: number) => GESTURES[((slot % GESTURES.length) + GESTURES.length) % GESTURES.length];
 
 /** Mug positions in his own space: held at the belly, and raised to the lips. */
 const MUG_REST = new Vector3(-0.075, 0.8, 0.175);
-const MUG_SIP = new Vector3(-0.012, 1.07, 0.226);
+const MUG_SIP = new Vector3(-0.004, 1.072, 0.232);
 const AXIS_REST = new Vector3(0.06, 1, 0.08).normalize();
-const AXIS_SIP = new Vector3(0.05, 0.78, -0.62).normalize();
+const AXIS_SIP = new Vector3(0.03, 0.74, -0.67).normalize();
 const MUG_OUTWARD = new Vector3(-1, 0.05, -0.3).normalize();
 const MUG_IN_HAND = new Vector3(...MUG.centerInHand);
 
@@ -68,7 +71,7 @@ function mugHand(sip: number, tip: number, breath: number, out: LimbGoal) {
   along.crossVectors(axis, MUG_OUTWARD);
   aimRotation(along, MUG_OUTWARD, out.rotation);
   jointFor(point, out.rotation, MUG_IN_HAND, out.target);
-  out.pole.set(-1, -0.7, -0.45);
+  out.pole.set(lerp(-1, -0.45, sip), -1, lerp(-0.45, 0.2, sip));
 }
 
 /** Left hand hangs relaxed, or comes up to rest a loose fist under his chin. */
@@ -95,8 +98,8 @@ export function standingPose(t: number, motion: number, seed: number, pose: Body
   const looking = occurrence(t, TIMING.glance, seed + 31, glance).weight * motion;
   occurrence(t, TIMING.sip, seed + 41, sipEvent);
   occurrence(t, TIMING.think, seed + 41, thinkEvent);
-  const sip = (sipEvent.roll < GESTURE.sip ? sipEvent.weight : 0) * motion;
-  const think = (thinkEvent.roll >= GESTURE.sip && thinkEvent.roll < GESTURE.think ? thinkEvent.weight : 0) * motion;
+  const sip = (gestureIn(sipEvent.index) === 'sip' ? sipEvent.weight : 0) * motion;
+  const think = (gestureIn(thinkEvent.index) === 'think' ? thinkEvent.weight : 0) * motion;
   // The mug tips toward his lips only once it is up there.
   const tip = sip * sip;
 
@@ -110,7 +113,8 @@ export function standingPose(t: number, motion: number, seed: number, pose: Body
   const { left, center, right } = STANDING_TARGETS.looks;
   const toSide = 0.8 * looking;
   const target = glance.roll < 0.5 ? left : right;
-  const yaw = lerp(center.yaw, target.yaw, toSide) + noise(t * 0.21, seed + 3) * 0.06 * motion;
+  // While sipping he looks down his nose at the mug, straight ahead.
+  const yaw = lerp(lerp(center.yaw, target.yaw, toSide) + noise(t * 0.21, seed + 3) * 0.06 * motion, 0, sip);
   const pitch = lerp(center.pitch, target.pitch, toSide) + noise(t * 0.27, seed + 4) * 0.04 * motion + 0.16 * tip - 0.06 * think;
   aimHead(pose, yaw, pitch, noise(t * 0.15, seed + 5) * 0.05 * motion - 0.12 * think + 0.03);
 
