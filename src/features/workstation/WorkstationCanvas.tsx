@@ -13,6 +13,12 @@ export interface WorkstationCanvasProps extends DeskSceneProps {
 }
 
 const MAX_DPR = 2;
+/**
+ * Both cameras stand well back from the room, the About one about nine metres out, so the near plane
+ * sits a metre out rather than a hand's width. That spends the depth buffer on the room itself, and
+ * thin layers such as the print on its mat or the rug's bands never shimmer against each other.
+ */
+const CAMERA = { fov: 30, near: 1, far: 30, position: [2.4, 2.2, 3.2] as const };
 
 /** Renders one frame whenever the loop mode changes, so a resumed on-demand canvas is never stale. */
 function FrameloopKick({ frameloop }: { frameloop: Frameloop }) {
@@ -32,7 +38,7 @@ export function WorkstationCanvas({ frameloop, adaptive, ...sceneProps }: Workst
       frameloop={frameloop}
       dpr={[1, dpr]}
       gl={{ antialias: false, alpha: false, stencil: false, powerPreference: 'high-performance' }}
-      camera={{ fov: 30, near: 0.1, far: 30, position: [2.4, 2.2, 3.2] }}
+      camera={CAMERA}
       style={{ pointerEvents: 'none' }}
     >
       {adaptive && frameloop === 'always' && (
