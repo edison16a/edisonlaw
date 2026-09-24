@@ -7,9 +7,10 @@ import { SESSION, type ToolCall } from './session';
 import { CLAUDE_THEME as T } from './theme';
 import { welcomeBlock } from './welcome';
 
-const FONT_SIZE = 14;
-const LINE_HEIGHT = 20;
-const PADDING = 18;
+/** Large enough to read on the monitor, which shows the canvas at a fifth of its size or less. */
+const FONT_SIZE = 26;
+const LINE_HEIGHT = 36;
+const PADDING = 24;
 
 const session = createAgentSession(SESSION, { typeRate: 13, streamRate: 70 });
 
@@ -24,7 +25,7 @@ function transcript(view: AgentView<ToolCall>, cols: number): TermBlock[] {
   for (const item of view.items) {
     if (item.kind === 'user') blocks.push(userBlock(item.text));
     else if (item.kind === 'say') blocks.push(sayBlock(item.text, cols));
-    else blocks.push(toolBlock(item.action, item.done, view.pulse));
+    else blocks.push(toolBlock(item.action, item.done, view.pulse, cols));
     blocks.push(blankBlock());
   }
   if (view.working) {

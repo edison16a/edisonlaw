@@ -70,6 +70,8 @@ export function createGrid(ctx: CanvasRenderingContext2D, area: Rect, fontSize: 
 }
 
 export const cellX = (grid: TerminalGrid, col: number) => grid.x + col * grid.cellWidth;
+/** Width of box drawing lines, which get heavier with the font like the ones a terminal draws. */
+export const lineWeight = (grid: TerminalGrid) => Math.max(1, grid.fontSize / 10);
 export const rowY = (grid: TerminalGrid, row: number) => grid.y + row * grid.cellHeight;
 
 /** Draws spans from (col, row) and returns the column after the last one. */
@@ -132,7 +134,7 @@ export function drawCellBox(
   cols: number,
   rows: number,
   color: string,
-  { radius, lineWidth = 1.5 }: BoxOptions = {},
+  { radius, lineWidth = lineWeight(grid) }: BoxOptions = {},
 ) {
   const left = cellX(grid, col) + grid.cellWidth / 2;
   const right = cellX(grid, col + cols - 1) + grid.cellWidth / 2;

@@ -39,18 +39,25 @@ function diffLines(diff: DiffLine[]): Line[] {
   });
 }
 
-function resultLines(result: ToolResult): Line[] {
-  const lines: Line[] = [
-    {
-      spans: [
-        span('  '),
-        glyphSpan('elbow', T.dim),
-        span(' '),
-        span(result.summary, T.dim),
-        ...(result.note ? [span(` ${result.note}`, T.faint)] : []),
-      ],
-    },
-  ];
+/** The "⎿ summary" line under a tool call, wrapped under itself when it is too long for the terminal. */
+function summaryLines({ summary, note }: ToolResult, cols: number): Line[] {
+  const width = cols - 5;
+  const parts = wrapWords(summary, width);
+  const last = parts.length - 1;
+  const noteFits = note && parts[last].length + note.length + 1 <= width;
+  const lines = parts.map<Line>((part, index) => ({
+    spans: [
+      ...(index === 0 ? [span('  '), glyphSpan('elbow', T.dim), span(' ')] : [span('     ')]),
+      span(part, T.dim),
+      ...(index === last && noteFits ? [span(` ${note}`, T.faint)] : []),
+    ],
+  }));
+  if (note && !noteFits) lines.push({ spans: [span(`     ${note}`, T.faint)] });
+  return lines;
+}
+
+function resultLines(result: ToolResult, cols: number): Line[] {
+  const lines = summaryLines(result, cols);
   result.output?.forEach((output) => {
     lines.push({
       spans: output.pass
@@ -63,12 +70,12 @@ function resultLines(result: ToolResult): Line[] {
 }
 
 /** A tool call. While it runs the dot blinks grey, then it turns green and the result shows. */
-export function toolBlock({ name, target, result }: ToolCall, done: boolean, blink: boolean): TermBlock {
+export function toolBlock({ name, target, result }: ToolCall, done: boolean, blink: boolean, cols: number): TermBlock {
   const dotColor = done ? T.green : blink ? T.dim : T.faint;
   const call: Line = {
     spans: [glyphSpan('dot', dotColor), span(name, T.text, { weight: 700 }), span(`(${target})`, T.text)],
   };
-  return linesBlock(done ? [call, ...resultLines(result)] : [call], T.text);
+  return linesBlock(done ? [call, ...resultLines(result, cols)] : [call], T.text);
 }
 
 /** The ping pong star animation beside the spinner verb. */
