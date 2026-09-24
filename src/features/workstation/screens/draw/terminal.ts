@@ -159,3 +159,24 @@ export function drawTranscript(ctx: CanvasRenderingContext2D, grid: TerminalGrid
   }
   ctx.restore();
 }
+
+/** Returns `spans` with a background over characters [from, to), splitting spans at the edges. */
+export function withBackground(spans: Span[], from: number, to: number, bg: string): Span[] {
+  const result: Span[] = [];
+  let at = 0;
+  for (const part of spans) {
+    const start = at;
+    const end = at + part.text.length;
+    at = end;
+    if (part.glyph || end <= from || start >= to) {
+      result.push(part);
+      continue;
+    }
+    const cutA = Math.max(from, start) - start;
+    const cutB = Math.min(to, end) - start;
+    if (cutA > 0) result.push({ ...part, text: part.text.slice(0, cutA) });
+    result.push({ ...part, text: part.text.slice(cutA, cutB), bg });
+    if (cutB < part.text.length) result.push({ ...part, text: part.text.slice(cutB) });
+  }
+  return result;
+}
