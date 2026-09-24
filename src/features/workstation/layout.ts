@@ -52,8 +52,11 @@ export const MOUSE = { position: [0.34, 0.748, -0.08] as Vec3 } as const;
 
 export const MAC_MINI = { position: [-0.8, 0.74, -0.3] as Vec3, size: [0.2, 0.036, 0.2] as Vec3 } as const;
 
-/** Tower stands on the floor to the right of the desk, glass side toward the camera. */
-export const PC_TOWER = { position: [1.32, 0, -0.42] as Vec3, size: [0.23, 0.5, 0.46] as Vec3 } as const;
+/**
+ * Tower stands on the floor to the right of the desk. `size` is length, height and depth in the
+ * tower's own space: it runs along X with the fans at the +X end and the glass side facing +Z.
+ */
+export const PC_TOWER = { position: [1.38, 0, -0.52] as Vec3, size: [0.46, 0.5, 0.23] as Vec3 } as const;
 
 /** Chair base centre on the floor, and the height of the seat cushion top. */
 export const CHAIR = {
