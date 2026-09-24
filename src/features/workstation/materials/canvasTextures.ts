@@ -117,3 +117,72 @@ export function createPictureTexture() {
     hill('#141c3a', [[0, 0.86], [0.35, 0.66], [0.62, 0.84], [1, 0.74]]);
   });
 }
+
+/** Staggered round perforations on dark metal, tiled across vent panels. */
+export function createPerforationTexture() {
+  const texture = paintTexture(128, 128, (ctx, w, h) => {
+    ctx.fillStyle = '#2c2e35';
+    ctx.fillRect(0, 0, w, h);
+    ctx.fillStyle = '#050506';
+    const pitch = 16;
+    for (let row = 0; row <= h / pitch; row++) {
+      for (let col = 0; col <= w / pitch; col++) {
+        const x = col * pitch + (row % 2) * (pitch / 2);
+        ctx.beginPath();
+        ctx.arc(x, row * pitch, 5.2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+  });
+  texture.wrapS = RepeatWrapping;
+  texture.wrapT = RepeatWrapping;
+  return texture;
+}
+
+/**
+ * The back of the PC case, drawn on its rear panel: the I/O shield beside the motherboard tray, the exhaust
+ * fan grille, seven expansion slot covers and the power supply with its switch and socket. U runs from the
+ * tray side to the glass side and V from the floor up.
+ */
+export function createTowerRearTexture() {
+  return paintTexture(256, 512, (ctx, w, h) => {
+    ctx.fillStyle = '#141519';
+    ctx.fillRect(0, 0, w, h);
+    const y = (fromTop: number) => fromTop * h;
+    // I/O shield with rows of ports.
+    ctx.fillStyle = '#23252b';
+    ctx.fillRect(w * 0.06, y(0.04), w * 0.22, y(0.3));
+    ctx.fillStyle = '#060607';
+    for (let i = 0; i < 9; i++) ctx.fillRect(w * 0.09, y(0.07) + i * y(0.028), w * 0.15, y(0.014));
+    // Exhaust fan grille: a round field of honeycomb holes.
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(w * 0.56, y(0.2), w * 0.25, 0, Math.PI * 2);
+    ctx.clip();
+    ctx.fillStyle = '#050506';
+    for (let row = 0; row < 24; row++) {
+      for (let col = 0; col < 18; col++) {
+        ctx.beginPath();
+        ctx.arc(w * 0.28 + col * 12 + (row % 2) * 6, y(0.07) + row * 10.5, 4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+    ctx.restore();
+    // Expansion slot covers.
+    for (let i = 0; i < 7; i++) {
+      const top = y(0.44) + i * y(0.036);
+      ctx.fillStyle = '#26282e';
+      ctx.fillRect(w * 0.06, top, w * 0.7, y(0.027));
+      ctx.fillStyle = '#0b0b0d';
+      ctx.fillRect(w * 0.14, top + y(0.009), w * 0.54, y(0.01));
+    }
+    // Power supply: fan grille, switch and socket.
+    ctx.fillStyle = '#1d1f24';
+    ctx.fillRect(w * 0.06, y(0.77), w * 0.86, y(0.2));
+    ctx.fillStyle = '#060607';
+    for (let i = 0; i < 9; i++) ctx.fillRect(w * 0.12 + i * w * 0.045, y(0.8), w * 0.022, y(0.14));
+    ctx.fillRect(w * 0.64, y(0.81), w * 0.2, y(0.06));
+    ctx.fillStyle = '#3a3c43';
+    ctx.fillRect(w * 0.68, y(0.89), w * 0.1, y(0.04));
+  });
+}

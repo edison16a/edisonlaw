@@ -2,42 +2,61 @@
 
 import { RoundedBox } from '@react-three/drei';
 import { useMemo } from 'react';
-import { MeshPhysicalMaterial, MeshStandardMaterial } from 'three';
+import { DoubleSide, MeshPhysicalMaterial, MeshStandardMaterial } from 'three';
+import { createSlabGeometry } from '../../geometry/slab';
 import { PC_TOWER } from '../../layout';
 import { useRgbMaterial } from '../../lighting/useRgbMaterial';
+import { createPerforationTexture, createTowerRearTexture } from '../../materials/canvasTextures';
 import { useDisposable } from '../../useDisposable';
+import { createFritGeometry, createGlassGeometry } from './chassisGeometry';
 import { Fan, type FanParts } from './Fan';
 import { createFanBladesGeometry, createFanFrameGeometry, createFanHubGeometry, createFanRingGeometry, FAN_DEPTH, FAN_SIZE } from './fanGeometry';
 import { TowerInternals } from './TowerInternals';
-import { TOWER } from './towerSpec';
+import { BACK_INNER_Z, GLASS_INNER_X, GLASS_INNER_Z, INNER_BOTTOM, INNER_TOP, REAR_INNER_X, TOWER } from './towerSpec';
 
 /** Turned a little toward the desk so the camera sees both the glass side and the front fans. */
 const YAW = -0.35;
 const FRONT_FAN_COUNT = 3;
+const FAN_GAP = 0.002;
+/** Front fans sit just behind the front glass; the radiator sits behind them. */
+export const FRONT_FAN_X = GLASS_INNER_X - 0.002 - FAN_DEPTH / 2;
+const FRONT_FAN_Z = (BACK_INNER_Z + GLASS_INNER_Z) / 2;
+const FRONT_FAN_START = TOWER.shroudTop + 0.004 + FAN_SIZE / 2;
+const REAR_FAN = { y: 0.395, z: 0.004 };
 
-interface PcTowerProps {
-  animate: boolean;
-}
+/**
+ * Glass PC on the floor right of the desk: a black aluminium case whose side and front glass meet at a
+ * pillarless corner, with three front fans on a radiator, a rear exhaust fan and lit internals.
+ */
+export function PcTower({ animate }: { animate: boolean }) {
+  const ringMaterial = useRgbMaterial({ intensity: 3 });
+  const bladeMaterial = useRgbMaterial({ intensity: 0.34, saturation: 0.75, side: DoubleSide });
 
-/** Glass-sided PC on the floor right of the desk: visible internals, three front fans and an RGB strip. */
-export function PcTower({ animate }: PcTowerProps) {
-  const ringMaterial = useRgbMaterial({ intensity: 3.2 });
-  const bladeMaterial = useRgbMaterial({ intensity: 0.32, saturation: 0.8 });
-  const strip = useRgbMaterial({ hueOffset: 0.03, intensity: 2.6 });
-
-  const shell = useDisposable(() => ({
-    body: new MeshStandardMaterial({ color: '#111216', roughness: 0.42, metalness: 0.45 }),
-    glass: new MeshPhysicalMaterial({
-      color: '#0b0d12',
-      roughness: 0.04,
-      metalness: 0,
-      clearcoat: 1,
-      transparent: true,
-      opacity: 0.16,
-      depthWrite: false,
-      envMapIntensity: 2.2,
-    }),
-  }));
+  const shell = useDisposable(() => {
+    const perforation = createPerforationTexture();
+    perforation.repeat.set(14, 7);
+    return {
+      body: new MeshStandardMaterial({ color: '#111216', roughness: 0.38, metalness: 0.5 }),
+      frit: new MeshStandardMaterial({ color: '#050506', roughness: 0.2 }),
+      glass: new MeshPhysicalMaterial({
+        color: '#9aa6c0',
+        roughness: 0.02,
+        metalness: 0,
+        transparent: true,
+        opacity: 0.1,
+        depthWrite: false,
+        envMapIntensity: 3,
+        specularIntensity: 1,
+      }),
+      vent: new MeshStandardMaterial({ map: perforation, roughness: 0.55, metalness: 0.4 }),
+      rear: new MeshStandardMaterial({ map: createTowerRearTexture(), roughness: 0.5, metalness: 0.35 }),
+      rubber: new MeshStandardMaterial({ color: '#0c0c0e', roughness: 0.8 }),
+      glassGeometry: createGlassGeometry(),
+      fritGeometry: createFritGeometry(),
+      plate: createSlabGeometry({ width: TOWER.length, depth: TOWER.depth, height: TOWER.plate, radius: 0.008, bevel: 0.003 }),
+      rail: createSlabGeometry({ width: TOWER.length * 0.84, depth: 0.03, height: TOWER.foot, radius: 0.012, bevel: 0.004 }),
+    };
+  });
   const fanGeometry = useDisposable(() => ({
     frame: createFanFrameGeometry(),
     blades: createFanBladesGeometry(),
@@ -51,35 +70,35 @@ export function PcTower({ animate }: PcTowerProps) {
     [fanGeometry, shell, ringMaterial, bladeMaterial],
   );
 
-  const { length: L, height: H, depth: D, wall, foot } = TOWER;
-  const bodyH = H - foot;
-  const midY = foot + bodyH / 2;
-  const fanX = L / 2 - wall - FAN_DEPTH / 2 - 0.004;
-  const fanStart = TOWER.shroudTop + FAN_SIZE / 2 + 0.006;
+  const { length: L, height: H, depth: D, wall } = TOWER;
+  const wallHeight = INNER_TOP - INNER_BOTTOM;
+  const wallY = (INNER_TOP + INNER_BOTTOM) / 2;
+  const rearDepth = GLASS_INNER_Z - BACK_INNER_Z;
 
   return (
     <group position={PC_TOWER.position} rotation-y={YAW}>
-      {/* Case: back panel, top, bottom and rear, then glass on the side and front. */}
-      <RoundedBox args={[L, bodyH, wall]} radius={0.003} smoothness={2} material={shell.body} position={[0, midY, -D / 2 + wall / 2]} />
-      <RoundedBox args={[L, wall, D]} radius={0.003} smoothness={2} material={shell.body} position={[0, H - wall / 2, 0]} />
-      <RoundedBox args={[L, wall, D]} radius={0.003} smoothness={2} material={shell.body} position={[0, foot + wall / 2, 0]} />
-      <RoundedBox args={[wall, bodyH, D]} radius={0.003} smoothness={2} material={shell.body} position={[-L / 2 + wall / 2, midY, 0]} />
-      <mesh material={shell.body} position={[L / 2 - 0.006, midY, D / 2 - 0.006]}>
-        <boxGeometry args={[0.012, bodyH, 0.012]} />
+      {/* Rail feet, bottom and top plates, with a perforated vent set into the top. */}
+      {[-1, 1].map((side) => (
+        <mesh key={side} geometry={shell.rail} material={shell.rubber} position-z={side * (D / 2 - 0.03)} />
+      ))}
+      <mesh geometry={shell.plate} material={shell.body} position-y={TOWER.foot} />
+      <mesh geometry={shell.plate} material={shell.body} position-y={INNER_TOP} />
+      <mesh material={shell.vent} position={[0.01, H + 0.0003, 0]} rotation-x={-Math.PI / 2}>
+        <planeGeometry args={[L - 0.08, D - 0.06]} />
       </mesh>
-      <mesh material={shell.glass} position={[0, midY, D / 2 - 0.002]}>
-        <boxGeometry args={[L - 0.012, bodyH - wall * 2, 0.003]} />
+
+      {/* Motherboard tray along the back and the rear panel, butted so no faces overlap. */}
+      <RoundedBox args={[L, wallHeight, wall]} radius={0.002} smoothness={2} material={shell.body} position={[0, wallY, -D / 2 + wall / 2]} />
+      <RoundedBox
+        args={[wall, wallHeight, rearDepth]}
+        radius={0.002}
+        smoothness={2}
+        material={shell.body}
+        position={[-L / 2 + wall / 2, wallY, (GLASS_INNER_Z + BACK_INNER_Z) / 2]}
+      />
+      <mesh material={shell.rear} position={[-L / 2 - 0.0004, wallY, (GLASS_INNER_Z + BACK_INNER_Z) / 2]} rotation-y={-Math.PI / 2}>
+        <planeGeometry args={[rearDepth - 0.01, wallHeight - 0.01]} />
       </mesh>
-      <mesh material={shell.glass} position={[L / 2 - 0.002, midY, 0]}>
-        <boxGeometry args={[0.003, bodyH - wall * 2, D - 0.012]} />
-      </mesh>
-      {[-1, 1].map((sx) =>
-        [-1, 1].map((sz) => (
-          <mesh key={`${sx}${sz}`} material={shell.body} position={[sx * (L / 2 - 0.04), foot / 2, sz * (D / 2 - 0.03)]}>
-            <cylinderGeometry args={[0.012, 0.014, foot, 12]} />
-          </mesh>
-        )),
-      )}
 
       <TowerInternals />
 
@@ -88,18 +107,22 @@ export function PcTower({ animate }: PcTowerProps) {
         <Fan
           key={index}
           parts={fanParts}
-          position={[fanX, fanStart + index * (FAN_SIZE + 0.004), 0]}
+          position={[FRONT_FAN_X, FRONT_FAN_START + index * (FAN_SIZE + FAN_GAP), FRONT_FAN_Z]}
           rotation={[0, Math.PI / 2, 0]}
           spinning={animate}
         />
       ))}
       {/* Rear exhaust. */}
-      <Fan parts={fanParts} position={[-L / 2 + wall + FAN_DEPTH / 2 + 0.002, 0.39, 0.01]} rotation={[0, -Math.PI / 2, 0]} spinning={animate} />
+      <Fan
+        parts={fanParts}
+        position={[REAR_INNER_X + FAN_DEPTH / 2 + 0.001, REAR_FAN.y, REAR_FAN.z]}
+        rotation={[0, -Math.PI / 2, 0]}
+        spinning={animate}
+      />
 
-      {/* Vertical strip in the front corner behind the glass. */}
-      <mesh material={strip} position={[L / 2 - 0.022, midY, D / 2 - 0.016]}>
-        <boxGeometry args={[0.004, bodyH - 0.05, 0.004]} />
-      </mesh>
+      {/* Black print behind the glass, then the glass itself, drawn last. */}
+      <mesh geometry={shell.fritGeometry} material={shell.frit} />
+      <mesh geometry={shell.glassGeometry} material={shell.glass} renderOrder={2} />
     </group>
   );
 }

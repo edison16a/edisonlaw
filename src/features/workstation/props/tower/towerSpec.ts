@@ -10,12 +10,29 @@ export const TOWER = {
   length,
   height,
   depth,
+  /** Height of the rail feet under the case. */
+  foot: 0.016,
+  /** Thickness of the top and bottom plates. */
+  plate: 0.014,
+  /** Thickness of the solid walls: the motherboard tray at -Z and the rear panel at -X. */
   wall: 0.008,
-  /** Height of the feet under the case. */
-  foot: 0.018,
+  /** Tempered glass on the side and the front, which meet at a pillarless corner. */
+  glass: 0.004,
   /** Top of the PSU shroud, the floor of the display chamber. */
   shroudTop: 0.13,
 } as const;
 
-/** Inner face of the back panel, where the motherboard mounts. */
+/** Top face of the bottom plate and underside of the top plate: the inside of the case. */
+export const INNER_BOTTOM = TOWER.foot + TOWER.plate;
+export const INNER_TOP = TOWER.height - TOWER.plate;
+
+/** Inner face of the motherboard tray. */
 export const BACK_INNER_Z = -depth / 2 + TOWER.wall;
+/** Inner faces of the side glass and of the front glass. */
+export const GLASS_INNER_Z = depth / 2 - TOWER.glass;
+export const GLASS_INNER_X = length / 2 - TOWER.glass;
+/** Inner face of the rear panel. */
+export const REAR_INNER_X = -length / 2 + TOWER.wall;
+
+/** The motherboard stands off the tray on short posts; this is its front face. */
+export const BOARD_FACE_Z = BACK_INNER_Z + 0.007;

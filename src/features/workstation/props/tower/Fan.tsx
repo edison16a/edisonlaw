@@ -27,7 +27,7 @@ interface FanProps {
   spinning: boolean;
 }
 
-/** One ARGB fan: dark frame, glowing ring and translucent blades lit by the ring. Faces +Z. */
+/** One ARGB fan: dark frame with a lit ring around the opening, and pale blades lit by it. Faces +Z. */
 export function Fan({ parts, position, rotation = [0, 0, 0], spinning }: FanProps) {
   const rotor = useRef<Group>(null);
 
