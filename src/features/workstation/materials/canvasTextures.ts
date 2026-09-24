@@ -317,3 +317,19 @@ export function createGlassSheenTexture() {
   });
 }
 
+/** Ribbed rubber for the footrest: soft light and dark ridges running side to side. */
+export function createRibTexture() {
+  return paintTexture(64, 256, (ctx, w, h) => {
+    ctx.fillStyle = '#d0d0d0';
+    ctx.fillRect(0, 0, w, h);
+    const ridges = 24;
+    for (let i = 0; i < ridges; i++) {
+      const gradient = ctx.createLinearGradient(0, (i * h) / ridges, 0, ((i + 1) * h) / ridges);
+      gradient.addColorStop(0, 'rgba(255, 255, 255, 0.35)');
+      gradient.addColorStop(0.5, 'rgba(0, 0, 0, 0)');
+      gradient.addColorStop(1, 'rgba(0, 0, 0, 0.45)');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, (i * h) / ridges, w, h / ridges);
+    }
+  });
+}
