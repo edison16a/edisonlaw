@@ -24,15 +24,6 @@ export function createExpression(): Expression {
   return { browLift: { left: 0, right: 0 }, browInner: 0, hmm: 0, smile: 0, squint: 0 };
 }
 
-export function resetExpression(expression: Expression) {
-  expression.browLift.left = 0;
-  expression.browLift.right = 0;
-  expression.browInner = 0;
-  expression.hmm = 0;
-  expression.smile = 0;
-  expression.squint = 0;
-}
-
 /** Writes the brow and mouth blend weights. Eyelids are handled with the blink. */
 export function applyExpression(rig: Rig, expression: Expression) {
   rig.brows[0] = expression.browLift.left;

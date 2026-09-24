@@ -1,13 +1,6 @@
 import { lerp } from '@/lib/math';
-import type { MonitorSlot } from '../../layout';
+import type { Look, LookSet } from './look';
 import { hash01, smootherstep } from './timeline';
-
-export interface Look {
-  yaw: number;
-  pitch: number;
-}
-
-export type LookSet = Record<MonitorSlot, Look>;
 
 const SCAN = {
   /** Average seconds his eyes rest on one spot. */

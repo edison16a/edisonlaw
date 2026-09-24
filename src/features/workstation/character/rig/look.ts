@@ -1,5 +1,15 @@
 import { clamp } from '@/lib/math';
+import type { MonitorSlot } from '../../layout';
 import type { BodyPose } from './bodyPose';
+
+/** A direction to look in, in radians: `yaw` toward his left, `pitch` up. */
+export interface Look {
+  yaw: number;
+  pitch: number;
+}
+
+/** Where each monitor is, as seen from his eyes. */
+export type LookSet = Record<MonitorSlot, Look>;
 
 /** Share of a look carried by the neck, the head takes the rest. */
 const NECK_SHARE = 0.38;

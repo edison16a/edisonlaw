@@ -4,7 +4,7 @@ import { BODY, HAND } from '../dimensions';
 import type { BodyPose } from './bodyPose';
 import { aimRotation, createLimbGoal, jointFor, type LimbGoal } from './limbs';
 import { footOnSurface } from './feet';
-import { aimEyes, aimHead } from './look';
+import { aimEyes, aimHead, type Look } from './look';
 import { SEATED_TARGETS } from './targets';
 import { breathAt, createOccurrence, noise, occurrence, type Recurring } from './timeline';
 import { createKeystroke, keystrokeAt, type Keystroke } from './typing';
@@ -60,11 +60,6 @@ function mouseHand(t: number, seed: number, out: LimbGoal) {
   aimRotation(along, facing, out.rotation);
   jointFor(point, out.rotation, PALM, out.target);
   out.pole.set(-1, -0.35, -0.45);
-}
-
-interface Look {
-  yaw: number;
-  pitch: number;
 }
 
 const head: Look = { yaw: 0, pitch: 0 };

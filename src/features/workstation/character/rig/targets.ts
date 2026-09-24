@@ -1,7 +1,8 @@
 import { Vector3 } from 'three';
-import { DOG_PAT_POINT, KEYBOARD, MONITORS, MOUSE, type MonitorSlot, type Vec3 } from '../../layout';
+import { DOG_PAT_POINT, KEYBOARD, MONITORS, MOUSE, type Vec3 } from '../../layout';
 import { BODY, HEAD_ABOVE_PELVIS } from '../dimensions';
 import { SEATED_FOOT_REST, SEATED_PLACEMENT, STANDING_PLACEMENT, type Placement } from '../placement';
+import type { Look, LookSet } from './look';
 
 const UP = new Vector3(0, 1, 0);
 
@@ -11,14 +12,13 @@ function toCharacterSpace(point: Vec3, placement: Placement) {
 }
 
 /** Yaw (toward his left) and pitch (up) in radians to look from `from` at `to`. */
-function lookAngles(from: Vector3, to: Vector3) {
+function lookAngles(from: Vector3, to: Vector3): Look {
   const dx = to.x - from.x;
   const dy = to.y - from.y;
   const dz = to.z - from.z;
   return { yaw: Math.atan2(dx, dz), pitch: Math.atan2(dy, Math.hypot(dx, dz)) };
 }
 
-type LookSet = Record<MonitorSlot, { yaw: number; pitch: number }>;
 
 function monitorLooks(placement: Placement, eyes: Vector3): LookSet {
   const looks = {} as LookSet;
