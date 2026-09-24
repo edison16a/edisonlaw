@@ -105,6 +105,7 @@ export const projects: Project[] = [
       { label: 'photo-craft.vercel.app', href: 'https://photo-craft.vercel.app' },
       { label: 'GitHub', href: 'https://github.com/edison16a/photo-craft' },
     ],
+    image: '/projects/photo-craft.webp',
   },
   {
     id: 'clue-ai',
