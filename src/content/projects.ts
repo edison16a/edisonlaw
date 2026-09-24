@@ -92,6 +92,7 @@ export const projects: Project[] = [
       { label: 'betterbart.vercel.app', href: 'https://betterbart.vercel.app' },
       { label: 'GitHub', href: 'https://github.com/edison16a/BetterBart' },
     ],
+    image: '/projects/betterbart.webp',
   },
   {
     id: 'photo-craft',
