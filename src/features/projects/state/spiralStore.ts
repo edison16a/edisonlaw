@@ -22,6 +22,8 @@ interface SpiralState extends FocusSnapshot {
   pendingFocus: number | null;
   /** Project under the pointer in the spiral, or null. */
   hovered: number | null;
+  /** True once the spiral canvas has failed, so the carousel takes over for the rest of the visit. */
+  spiralFailed: boolean;
 
   chooseMode: (mode: SpiralMode) => void;
   openInSpiral: (index: number) => void;
@@ -30,6 +32,7 @@ interface SpiralState extends FocusSnapshot {
   syncFocus: (snapshot: FocusSnapshot) => void;
   markScrolled: () => void;
   setHovered: (index: number | null) => void;
+  failSpiral: () => void;
 }
 
 export const useSpiralStore = create<SpiralState>((set, get) => ({
@@ -41,6 +44,7 @@ export const useSpiralStore = create<SpiralState>((set, get) => ({
   hasScrolled: false,
   pendingFocus: null,
   hovered: null,
+  spiralFailed: false,
 
   chooseMode: (mode) => set({ chosenMode: mode }),
 
@@ -66,4 +70,6 @@ export const useSpiralStore = create<SpiralState>((set, get) => ({
   setHovered: (index) => {
     if (get().hovered !== index) set({ hovered: index });
   },
+
+  failSpiral: () => set({ spiralFailed: true }),
 }));

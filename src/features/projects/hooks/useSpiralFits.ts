@@ -2,6 +2,7 @@
 
 import { useMediaQuery } from '@/lib/hooks/useMediaQuery';
 import { useWebGLSupport } from '@/lib/hooks/useWebGLSupport';
+import { useSpiralStore } from '../state/spiralStore';
 
 /**
  * Screens with room for the spiral stage. A phone turned on its side is wide
@@ -19,9 +20,13 @@ export const CAROUSEL_QUERY = '(max-width: 767px), (max-height: 520px)';
 export const STAGE_ONLY = 'max-md:hidden [@media(max-height:520px)]:hidden';
 export const CAROUSEL_ONLY = '[@media(min-width:768px)_and_(min-height:521px)]:hidden';
 
-/** True when the spiral fits the screen and WebGL is there to draw it. Assumed true on the server. */
+/**
+ * True when the spiral fits the screen, WebGL is there to draw it and it has not failed this visit.
+ * Assumed true on the server.
+ */
 export function useSpiralFits() {
   const roomy = useMediaQuery(STAGE_QUERY, true);
   const webgl = useWebGLSupport();
-  return roomy && webgl;
+  const failed = useSpiralStore((state) => state.spiralFailed);
+  return roomy && webgl && !failed;
 }

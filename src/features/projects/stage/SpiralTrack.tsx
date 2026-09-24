@@ -50,8 +50,7 @@ export function SpiralTrack({ projects, onModeChange }: SpiralTrackProps) {
 
   const scrollToCard = useScrollToCard();
   const setHovered = useSpiralStore((state) => state.setHovered);
-  const chooseMode = useSpiralStore((state) => state.chooseMode);
-  const fallBack = useCallback(() => chooseMode('list'), [chooseMode]);
+  const fallBack = useSpiralStore((state) => state.failSpiral);
 
   const onHover = useCallback(
     (project: number | null) => {
