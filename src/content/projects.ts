@@ -135,5 +135,6 @@ export const projects: Project[] = [
     description:
       'A collection of browser extensions, part of the 10+ apps and extensions used by 5,000+ people. It includes SafeEats for Chrome, which rewrites online recipes around your allergies.',
     links: [],
+    image: '/projects/chrome-extensions.webp',
   },
 ];
