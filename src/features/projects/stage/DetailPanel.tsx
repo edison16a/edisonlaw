@@ -4,6 +4,7 @@ import type { Ref } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import type { Project } from '@/content/types';
 import { ProjectDetails } from '../components/ProjectDetails';
+import { ProjectStatus } from '../components/ProjectStatus';
 import { useSpiralStore } from '../state/spiralStore';
 
 interface DetailPanelProps {
@@ -32,7 +33,6 @@ export function DetailPanel({ projects, columnRef }: DetailPanelProps) {
       />
       <div
         ref={columnRef}
-        aria-live="polite"
         className="pointer-events-none absolute right-0 bottom-0 flex w-full justify-end px-8 pb-8 lg:inset-y-0 lg:w-[clamp(21rem,29vw,27rem)] lg:items-center lg:px-0 lg:pr-12 lg:pb-0"
       >
         <AnimatePresence mode="wait">
@@ -43,6 +43,7 @@ export function DetailPanel({ projects, columnRef }: DetailPanelProps) {
           )}
         </AnimatePresence>
       </div>
+      <ProjectStatus project={project} index={panel ?? 0} total={projects.length} />
     </>
   );
 }
