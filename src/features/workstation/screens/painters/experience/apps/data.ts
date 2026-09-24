@@ -28,10 +28,6 @@ export const IOS_APP = {
   category: 'Food & Drink',
   secondaryCategory: 'Utilities',
   version: '1.1',
-  promo: [
-    'Point your camera at an ingredient list and SafeEats flags',
-    'the allergens you choose, in real time, in six languages.',
-  ],
 };
 
 /** Allergen toggles on the settings screenshot. */
