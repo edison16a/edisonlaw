@@ -28,7 +28,7 @@ export function ProjectRow({ project, index, onOpen }: ProjectRowProps) {
   return (
     <motion.li
       variants={rise}
-      className="group relative grid grid-cols-[2.5rem_minmax(0,1fr)] gap-x-4 gap-y-3 border-t border-grey-900 py-6 transition-colors duration-300 hover:bg-white/[0.025] md:grid-cols-[3.5rem_minmax(0,1.1fr)_minmax(0,1fr)_minmax(0,1.2fr)_auto] md:items-center md:gap-x-6 md:px-3"
+      className="group relative grid grid-cols-[2.5rem_minmax(0,1fr)] gap-x-4 gap-y-3 border-t border-grey-900 py-6 transition-colors duration-300 hover:bg-white/[0.025] md:grid-cols-[3.5rem_minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1.3fr)_14rem] md:items-center md:gap-x-6 md:px-3"
     >
       <span className="font-mono text-xs text-grey-500 transition-colors group-hover:text-white">{padIndex(index + 1)}</span>
       <div className="flex flex-col gap-1">
@@ -45,9 +45,16 @@ export function ProjectRow({ project, index, onOpen }: ProjectRowProps) {
         </h3>
         {project.org && <p className="text-sm text-grey-500">{project.org}</p>}
       </div>
-      <BadgeList items={project.badges} className="col-start-2 md:col-start-auto" />
-      <TagList items={project.stack} className="col-start-2 md:col-start-auto" />
-      <ProjectLinks links={project.links} className="relative z-10 col-start-2 md:col-start-auto md:justify-end" />
+      {/* Every cell renders, even empty, so the columns line up from row to row. */}
+      <div className="col-start-2 empty:hidden md:col-start-auto md:empty:block">
+        <BadgeList items={project.badges} />
+      </div>
+      <div className="col-start-2 md:col-start-auto">
+        <TagList items={project.stack} />
+      </div>
+      <div className="col-start-2 empty:hidden md:col-start-auto md:empty:block">
+        <ProjectLinks links={project.links} className="relative z-10 md:justify-end" />
+      </div>
     </motion.li>
   );
 }
