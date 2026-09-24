@@ -25,9 +25,10 @@ export function taperedCapsule(topRadius: number, bottomRadius: number, length: 
 
 /**
  * A short sleeve or trouser cuff: a dome centred on the joint so it turns in place with the limb,
- * a slightly flared tube below it, and a rolled hem.
+ * a slightly flared tube below it, and a rolled hem. `capHeight` below `radius` flattens the dome
+ * along the limb, so a sleeve cap sits level with the shoulder instead of rising above it.
  */
-export function sleeveGeometry(radius: number, length: number, flare = 1.04, radialSegments = 28) {
+export function sleeveGeometry(radius: number, length: number, flare = 1.04, radialSegments = 28, capHeight = radius) {
   const points: Vector2[] = [];
   const hemRadius = radius * flare;
   points.push(new Vector2(hemRadius * 0.86, -length + 0.004));
@@ -41,7 +42,7 @@ export function sleeveGeometry(radius: number, length: number, flare = 1.04, rad
   const domeSteps = 10;
   for (let i = 1; i <= domeSteps; i++) {
     const angle = (i / domeSteps) * (Math.PI / 2);
-    points.push(new Vector2(Math.max(1e-5, Math.cos(angle) * radius), Math.sin(angle) * radius));
+    points.push(new Vector2(Math.max(1e-5, Math.cos(angle) * radius), Math.sin(angle) * capHeight));
   }
   return new LatheGeometry(points, radialSegments);
 }

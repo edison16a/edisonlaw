@@ -8,7 +8,7 @@ import { useCharacterMaterials } from '../MaterialsContext';
 import type { ArmRig } from '../rig/types';
 import { Hand } from './Hand';
 
-const ARM = { upperTop: 0.044, elbow: 0.0375, wrist: 0.0305, sleeve: 0.055, sleeveLength: 0.095 } as const;
+const ARM = { upperTop: 0.044, elbow: 0.0375, wrist: 0.0305, sleeve: 0.053, sleeveCap: 0.046, sleeveLength: 0.095 } as const;
 
 interface ArmProps {
   arm: ArmRig;
@@ -19,7 +19,7 @@ interface ArmProps {
 /** Short sleeve, upper arm, forearm and hand along the arm's bones. */
 export function Arm({ arm, children }: ArmProps) {
   const materials = useCharacterMaterials();
-  const sleeve = useDisposable(() => sleeveGeometry(ARM.sleeve, ARM.sleeveLength, 1.03));
+  const sleeve = useDisposable(() => sleeveGeometry(ARM.sleeve, ARM.sleeveLength, 1.05, 40, ARM.sleeveCap));
   const upper = useDisposable(() => taperedCapsule(ARM.upperTop, ARM.elbow, BODY.upperArm));
   const lower = useDisposable(() => taperedCapsule(ARM.elbow, ARM.wrist, BODY.forearm));
 
