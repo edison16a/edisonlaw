@@ -41,16 +41,13 @@ export function ProjectsSection({ projects = allProjects }: { projects?: Project
   );
 
   // Until the client knows the screen size both layouts render and CSS picks one, so phones never flash the stage.
-  // Without WebGL the carousel stands in for the spiral on every screen.
+  // Meanwhile the stage's title is the h1. Without WebGL the carousel stands in for the spiral on every screen.
   const spiralFits = !isMobile && webgl;
   const showStage = !isClient || spiralFits;
   const showCarousel = !isClient || !spiralFits;
 
   return (
     <section id="projects" aria-labelledby="projects-title" className="relative pt-nav">
-      <h2 id="projects-title" className="sr-only">
-        Projects
-      </h2>
       {mode === 'list' ? (
         <ProjectList projects={projects} onModeChange={changeMode} onOpen={openInSpiral} />
       ) : (
@@ -61,7 +58,12 @@ export function ProjectsSection({ projects = allProjects }: { projects?: Project
             </div>
           )}
           {showCarousel && (
-            <ProjectCarousel projects={projects} onModeChange={changeMode} className={isClient ? undefined : 'md:hidden'} />
+            <ProjectCarousel
+              projects={projects}
+              onModeChange={changeMode}
+              heading={isClient}
+              className={isClient ? undefined : 'md:hidden'}
+            />
           )}
           <ProjectsIndex projects={projects} />
         </>

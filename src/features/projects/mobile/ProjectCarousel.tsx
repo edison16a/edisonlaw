@@ -15,6 +15,8 @@ import { useActiveSlide } from './useActiveSlide';
 interface ProjectCarouselProps {
   projects: Project[];
   onModeChange: (mode: SpiralMode) => void;
+  /** Whether its title is the page's h1. See IntroTitle. */
+  heading?: boolean;
   className?: string;
 }
 
@@ -22,7 +24,7 @@ interface ProjectCarouselProps {
  * A swipeable strip of photos with the details of the centred one below. No 3D.
  * Phones get it, and so does any screen without WebGL.
  */
-export function ProjectCarousel({ projects, onModeChange, className }: ProjectCarouselProps) {
+export function ProjectCarousel({ projects, onModeChange, heading, className }: ProjectCarouselProps) {
   const strip = useRef<HTMLOListElement>(null);
   const active = useActiveSlide(strip, projects.length);
   const project = projects[active];
@@ -38,7 +40,7 @@ export function ProjectCarousel({ projects, onModeChange, className }: ProjectCa
       <div className="flex justify-center pt-5 pb-8">
         <ModeToggle mode="spiral" onChange={onModeChange} />
       </div>
-      <IntroTitle className="gutter mb-8" />
+      <IntroTitle heading={heading} className="gutter mb-8" />
       {/*
         Lenis leaves sideways wheel swipes to the strip. Its stylesheet then sets
         overscroll-behavior: contain, so the inline style hands vertical swipes back to the page.
