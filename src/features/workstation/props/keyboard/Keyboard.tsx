@@ -9,6 +9,7 @@ import { useDisposable } from '../../useDisposable';
 import { createKeyboardCaseGeometry, createKeycapGeometry, createKeyHaloGeometry, HALO_ALPHA_ATTRIBUTE } from './keyboardGeometry';
 import { createKeycapMaterial, createKeyHaloMaterial, KEY_STRETCH_ATTRIBUTE } from './keycapMaterial';
 import { KeyboardAnimator } from './KeyboardAnimator';
+import { KeyboardCable } from './KeyboardCable';
 import { KEYS, LAYOUT_DEPTH_U, LAYOUT_WIDTH_U } from './keyLayout';
 
 const BORDER = 0.012;
@@ -83,20 +84,23 @@ export function Keyboard({ typing, animate }: KeyboardProps) {
   const [x, , z] = KEYBOARD.position;
 
   return (
-    <group position={[x, MAT_TOP, z]}>
-      <mesh geometry={parts.caseGeometry} material={parts.caseMaterial} />
-      <group position-y={DECK_HEIGHT} rotation-x={TILT}>
-        <mesh material={parts.plateMaterial} position-y={0.0004} rotation-x={-Math.PI / 2}>
-          <planeGeometry args={[LAYOUT_WIDTH_U * UNIT + 0.004, LAYOUT_DEPTH_U * UNIT + 0.004]} />
-        </mesh>
-        <instancedMesh ref={caps} args={[parts.capGeometry, parts.capMaterial, KEYS.length]} frustumCulled={false} />
-        <instancedMesh
-          ref={halos}
-          args={[parts.haloGeometry, parts.haloMaterial, KEYS.length]}
-          position-y={0.0008}
-          frustumCulled={false}
-        />
+    <>
+      <KeyboardCable />
+      <group position={[x, MAT_TOP, z]}>
+        <mesh geometry={parts.caseGeometry} material={parts.caseMaterial} />
+        <group position-y={DECK_HEIGHT} rotation-x={TILT}>
+          <mesh material={parts.plateMaterial} position-y={0.0004} rotation-x={-Math.PI / 2}>
+            <planeGeometry args={[LAYOUT_WIDTH_U * UNIT + 0.004, LAYOUT_DEPTH_U * UNIT + 0.004]} />
+          </mesh>
+          <instancedMesh ref={caps} args={[parts.capGeometry, parts.capMaterial, KEYS.length]} frustumCulled={false} />
+          <instancedMesh
+            ref={halos}
+            args={[parts.haloGeometry, parts.haloMaterial, KEYS.length]}
+            position-y={0.0008}
+            frustumCulled={false}
+          />
+        </group>
       </group>
-    </group>
+    </>
   );
 }
