@@ -3,6 +3,7 @@
 import { Bloom, EffectComposer, Noise, Vignette } from '@react-three/postprocessing';
 import { BlendFunction } from 'postprocessing';
 import { HalfFloatType } from 'three';
+import { ComposerPixelRatio } from './ComposerPixelRatio';
 import { DisplayToneMapping } from './DisplayToneMapping';
 
 /**
@@ -18,6 +19,7 @@ export function Effects() {
       <DisplayToneMapping />
       <Vignette offset={0.28} darkness={0.62} />
       <Noise opacity={0.045} blendFunction={BlendFunction.OVERLAY} />
+      <ComposerPixelRatio />
     </EffectComposer>
   );
 }
