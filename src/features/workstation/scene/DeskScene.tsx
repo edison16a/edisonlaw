@@ -8,6 +8,7 @@ import { Lighting } from '../lighting/Lighting';
 import { RgbClockProvider } from '../lighting/RgbClockProvider';
 import { Chair } from '../props/Chair';
 import { Desk } from '../props/Desk';
+import { Footrest } from '../props/Footrest';
 import { Decor } from '../props/decor/Decor';
 import { DeskMat } from '../props/DeskMat';
 import { Keyboard } from '../props/keyboard/Keyboard';
@@ -57,6 +58,7 @@ export function DeskScene(props: DeskSceneProps) {
       <Mouse />
       <MacMini />
       <Chair variant={variant} />
+      {seated && <Footrest />}
       <PcTower animate={animate} />
       <Decor />
       <group position={placement.position} rotation-y={placement.rotationY}>
