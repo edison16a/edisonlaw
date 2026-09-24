@@ -3,8 +3,8 @@ import { lerp } from '@/lib/math';
 import { BODY, HAND } from '../dimensions';
 import type { BodyPose } from './bodyPose';
 import { aimRotation, createLimbGoal, jointFor, type LimbGoal } from './limbs';
-import { footOnSurface } from './feet';
 import { aimEyes, aimHead, type Look } from './look';
+import { hangingLeg } from './seatedLegs';
 import { SEATED_TARGETS } from './targets';
 import { breathAt, createOccurrence, noise, occurrence, type Recurring } from './timeline';
 import { createKeystroke, keystrokeAt, type Keystroke } from './typing';
@@ -84,12 +84,6 @@ function typingFingers(stroke: Keystroke, typing: number, out: [number, number, 
   for (let i = 0; i < 4; i++) out[i] = curl + (i === stroke.finger ? 0.55 : -0.06) * stroke.press * typing;
 }
 
-/** Feet resting on the footrest, toes turned out a touch, a heel bouncing while he thinks. */
-function seatedFoot(side: Side, name: LimbName, heelLift: number, out: LimbGoal) {
-  footOnSurface(SEATED_TARGETS.feet[name], side * 0.1, heelLift, out);
-  out.pole.set(side * 0.15, 0.3, 1);
-}
-
 /**
  * Seated at the desk: leaning in, typing in bursts, glancing at the side screens and reaching for
  * the mouse now and then. `motion` 0 gives the still home row pose used for reduced motion.
@@ -150,8 +144,8 @@ export function seatedPose(t: number, motion: number, seed: number, pose: BodyPo
   face.smile = 0.1 * onMouse;
   face.squint = 0.12 * typing;
 
-  // While he pauses to think, his right heel bounces.
+  // His feet hang under the seat. While he pauses to think, his right foot swings a little.
   const idle = motion * (1 - burst.weight) * (1 - mouse.weight);
-  seatedFoot(1, 'left', 0, pose.legs.left);
-  seatedFoot(-1, 'right', 0.22 * idle * (0.5 + 0.5 * Math.sin(t * Math.PI * 3.4)) ** 2, pose.legs.right);
+  hangingLeg(1, 'left', 0, pose.legs.left);
+  hangingLeg(-1, 'right', idle * Math.sin(t * Math.PI * 1.25), pose.legs.right);
 }

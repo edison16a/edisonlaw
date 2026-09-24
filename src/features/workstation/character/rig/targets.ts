@@ -1,7 +1,7 @@
 import { Vector3 } from 'three';
 import { DOG_PAT_POINT, KEYBOARD, MONITORS, MOUSE, type Vec3 } from '../../layout';
 import { BODY, HEAD_ABOVE_PELVIS } from '../dimensions';
-import { SEATED_FOOT_REST, SEATED_PLACEMENT, STANDING_PLACEMENT, type Placement } from '../placement';
+import { SEATED_PLACEMENT, STANDING_PLACEMENT, type Placement } from '../placement';
 import type { Look, LookSet } from './look';
 
 const UP = new Vector3(0, 1, 0);
@@ -34,10 +34,6 @@ const STANDING_EYES = new Vector3(0, BODY.standingPelvisHeight + HEAD_ABOVE_PELV
 export const SEATED_TARGETS = {
   keyboard: toCharacterSpace(KEYBOARD.position, SEATED_PLACEMENT),
   mouse: toCharacterSpace(MOUSE.position, SEATED_PLACEMENT),
-  feet: {
-    left: toCharacterSpace(SEATED_FOOT_REST.left, SEATED_PLACEMENT),
-    right: toCharacterSpace(SEATED_FOOT_REST.right, SEATED_PLACEMENT),
-  },
   looks: monitorLooks(SEATED_PLACEMENT, SEATED_EYES),
 };
 

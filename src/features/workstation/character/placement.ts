@@ -26,12 +26,3 @@ export const STANDING_PLACEMENT: Placement = {
   position: [0.3, 0, 0.42],
   rotationY: Math.PI + 0.15,
 };
-
-/**
- * Room space points under the middle of each sneaker while seated. His legs are too short to reach the
- * floor from a standard seat, so his feet rest flat on an under-desk footrest whose top is at this height.
- */
-export const SEATED_FOOT_REST: { left: Vec3; right: Vec3 } = {
-  left: [CHAIR.position[0] - 0.1, 0.2, CHAIR.position[2] - 0.33],
-  right: [CHAIR.position[0] + 0.1, 0.2, CHAIR.position[2] - 0.33],
-};
