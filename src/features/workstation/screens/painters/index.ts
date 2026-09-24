@@ -3,6 +3,7 @@ import { claudeCode } from './claudeCode';
 import { codex } from './codex';
 import { optagon } from './experience/optagon';
 import { placeholder } from './placeholder';
+import { ultrasound } from './experience/ultrasound';
 import { vscode } from './vscode';
 
 /** Every screen id and the painter that draws it. */
@@ -11,7 +12,7 @@ export const painters: Record<ScreenId, PainterFactory> = {
   codex,
   vscode,
   optagon,
-  ultrasound: placeholder('ultrasound'),
+  ultrasound,
   westpa: placeholder('westpa'),
   nanoscience: placeholder('nanoscience'),
   tanius: placeholder('tanius'),
