@@ -45,10 +45,14 @@ export const SPIRAL = {
   sweep: 0.1,
 } as const;
 
-/** Where a locked card moves to: pulled toward the camera, a little bigger and level with it. */
+/**
+ * Where a locked card moves to: pulled toward the camera, level with it and
+ * grown, so the project in focus reads at a glance, half as big again as the
+ * cards on the strand.
+ */
 export const FOCUS = {
   lift: 0.5,
-  scale: 1.16,
+  scale: 1.38,
   height: 0.04,
   /** How far from the slot a card still counts as in focus, in cards. */
   reach: 0.5,
