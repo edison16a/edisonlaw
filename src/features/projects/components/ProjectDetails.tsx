@@ -41,7 +41,7 @@ export function ProjectDetails({ project, index, total, className }: ProjectDeta
     <motion.div variants={group} initial="hidden" animate="shown" exit="gone" className={cn('@container w-full', className)}>
       <div className="grid gap-4 [grid-template-areas:'head'_'stack'_'links'] @xl:grid-cols-2 @xl:grid-rows-[auto_1fr] @xl:gap-x-10 @xl:[grid-template-areas:'head_stack'_'links_stack']">
         <div className="flex flex-col items-start gap-4 [grid-area:head]">
-          <motion.p variants={item} className="font-mono text-xs tracking-widest text-grey-400">
+          <motion.p variants={item} className="text-xs font-medium tracking-widest text-grey-400 tabular-nums">
             <span className="text-white">{padIndex(index + 1)}</span> / {padIndex(total)}
           </motion.p>
           <motion.div variants={item} className="flex flex-col gap-1.5">
