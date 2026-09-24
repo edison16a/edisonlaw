@@ -3,7 +3,6 @@
 import { sound } from '@/features/sound';
 import { cn } from '@/lib/cn';
 import type { SpiralMode } from '../state/spiralStore';
-import { playHover } from './hoverSound';
 
 interface ModeToggleProps {
   mode: SpiralMode;
@@ -43,7 +42,7 @@ function ToggleWord({ label, active, onSelect, className }: ToggleWordProps) {
         type="button"
         aria-pressed={active}
         onClick={onSelect}
-        onPointerEnter={() => !active && playHover()}
+        onPointerEnter={() => !active && sound.play('hover')}
         className={cn(
           'group relative overflow-hidden text-lg leading-7 font-medium tracking-tight transition-colors duration-300',
           active ? 'text-white' : 'text-grey-500 hover:text-grey-200',

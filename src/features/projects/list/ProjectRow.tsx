@@ -4,9 +4,9 @@ import { motion, type Variants } from 'motion/react';
 import type { Project } from '@/content/types';
 import { BadgeList } from '@/components/ui/Badge';
 import { TagList } from '@/components/ui/Tag';
+import { sound } from '@/features/sound';
 import { padIndex } from '@/lib/format';
 import { EASE_OUT_EXPO } from '@/lib/easing';
-import { playHover } from '../components/hoverSound';
 import { ProjectLinks } from '../components/ProjectLinks';
 
 /** Rows rise in one after another when the list opens. The list staggers them. */
@@ -37,7 +37,7 @@ export function ProjectRow({ project, index, onOpen }: ProjectRowProps) {
           <button
             type="button"
             onClick={() => onOpen(index)}
-            onPointerEnter={playHover}
+            onPointerEnter={() => sound.play('hover')}
             aria-label={`Show ${project.name} in the spiral`}
             className="text-left after:absolute after:inset-0 after:content-['']"
           >

@@ -5,7 +5,7 @@ import { useCallback, useRef, useState } from 'react';
 import type { Project } from '@/content/types';
 import { useInView } from '@/lib/hooks/useInView';
 import { CanvasBoundary } from '@/components/three/CanvasBoundary';
-import { playHover } from '../components/hoverSound';
+import { sound } from '@/features/sound';
 import { ModeToggle } from '../components/ModeToggle';
 import { useOpeningCard } from '../hooks/useOpeningCard';
 import { useScrollSnap } from '../hooks/useScrollSnap';
@@ -56,7 +56,7 @@ export function SpiralTrack({ projects, onModeChange }: SpiralTrackProps) {
   const onHover = useCallback(
     (project: number | null) => {
       setHovered(project);
-      if (project !== null) playHover();
+      if (project !== null) sound.play('hover');
     },
     [setHovered],
   );

@@ -4,7 +4,6 @@ import type { Link } from '@/content/types';
 import { ArrowUpRightIcon } from '@/components/icons';
 import { sound } from '@/features/sound';
 import { cn } from '@/lib/cn';
-import { playHover } from './hoverSound';
 
 const base =
   'inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-[background-color,border-color,color,transform] duration-300 ease-out-expo active:scale-95';
@@ -30,7 +29,7 @@ export function ProjectLinks({ links, className, tabIndex }: ProjectLinksProps) 
             target="_blank"
             rel="noreferrer"
             tabIndex={tabIndex}
-            onPointerEnter={playHover}
+            onPointerEnter={() => sound.play('hover')}
             onClick={() => sound.play('blip')}
             className={cn(base, index === 0 ? primary : secondary)}
           >
