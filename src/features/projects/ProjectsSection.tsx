@@ -1,37 +1,65 @@
-import { projects } from '@/content/projects';
-import { BadgeList } from '@/components/ui/Badge';
-import { TagList } from '@/components/ui/Tag';
-import { padIndex } from '@/lib/format';
+'use client';
 
-/** Projects as plain text. The spiral builds on top of this. */
-export function ProjectsSection() {
+import { useCallback } from 'react';
+import { useLenis } from 'lenis/react';
+import { projects as allProjects } from '@/content/projects';
+import type { Project } from '@/content/types';
+import { useIsMobile } from '@/lib/hooks/useIsMobile';
+import { ProjectsIndex } from './components/ProjectsIndex';
+import { useIsClient } from './hooks/useIsClient';
+import { ProjectList } from './list/ProjectList';
+import { ProjectCarousel } from './mobile/ProjectCarousel';
+import { SpiralTrack } from './stage/SpiralTrack';
+import { useSpiralStore, type SpiralMode } from './state/spiralStore';
+import { useSpiralMode } from './state/useSpiralMode';
+
+/**
+ * The first thing visitors see. Desktop gets the spiral, phones a swipeable
+ * strip, and list mode a plain index. Every project is real text in every mode.
+ */
+export function ProjectsSection({ projects = allProjects }: { projects?: Project[] }) {
+  const mode = useSpiralMode();
+  const isMobile = useIsMobile();
+  const isClient = useIsClient();
+  const lenis = useLenis();
+  const chooseMode = useSpiralStore((state) => state.chooseMode);
+  const openInSpiral = useSpiralStore((state) => state.openInSpiral);
+
+  const toTop = useCallback(() => {
+    if (lenis) lenis.scrollTo('#projects', { immediate: true, force: true });
+    else document.getElementById('projects')?.scrollIntoView();
+  }, [lenis]);
+
+  const changeMode = useCallback(
+    (next: SpiralMode) => {
+      toTop();
+      chooseMode(next);
+    },
+    [chooseMode, toTop],
+  );
+
+  // Until the client knows the screen size both layouts render and CSS picks one, so phones never flash the stage.
+  const showStage = !isClient || !isMobile;
+  const showCarousel = !isClient || isMobile;
+
   return (
-    <section id="projects" aria-labelledby="projects-title" className="gutter min-h-dvh pt-nav">
-      <h2 id="projects-title" className="py-12 text-4xl font-bold">
+    <section id="projects" aria-labelledby="projects-title" className="relative pt-nav">
+      <h2 id="projects-title" className="sr-only">
         Projects
       </h2>
-      <ol className="grid gap-10 pb-24 md:grid-cols-2">
-        {projects.map((project, index) => (
-          <li key={project.id} className="flex flex-col gap-3 border-t border-grey-800 pt-6">
-            <span className="font-mono text-xs text-grey-500">{padIndex(index + 1)}</span>
-            <h3 className="text-2xl font-bold">{project.name}</h3>
-            <BadgeList items={project.badges} />
-            <p className="max-w-prose text-grey-300">{project.description}</p>
-            <TagList items={project.stack} />
-            {project.links.length > 0 && (
-              <ul className="flex flex-wrap gap-4 text-sm">
-                {project.links.map((link) => (
-                  <li key={link.href}>
-                    <a href={link.href} target="_blank" rel="noreferrer" className="underline underline-offset-4">
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </li>
-        ))}
-      </ol>
+      {mode === 'list' ? (
+        <ProjectList projects={projects} onModeChange={changeMode} onOpen={openInSpiral} />
+      ) : (
+        <>
+          {showStage && (
+            <div className="max-md:hidden">
+              <SpiralTrack projects={projects} onModeChange={changeMode} />
+            </div>
+          )}
+          {showCarousel && <ProjectCarousel projects={projects} onModeChange={changeMode} className="md:hidden" />}
+          <ProjectsIndex projects={projects} />
+        </>
+      )}
     </section>
   );
 }
