@@ -7,10 +7,10 @@ import { withEdgeFade } from '../materials/edgeFade';
 
 /** Concentric bands from the outside in, dimmed versions of the reference's orange and mustard. */
 const BANDS = [
-  { inset: 0, color: '#6e3417' },
-  { inset: 0.16, color: '#8f6524' },
-  { inset: 0.3, color: '#6e3417' },
-  { inset: 0.42, color: '#846229' },
+  { inset: 0, color: '#5c2c15' },
+  { inset: 0.16, color: '#7a5822' },
+  { inset: 0.3, color: '#5c2c15' },
+  { inset: 0.42, color: '#6f5426' },
 ];
 const SIZE = { width: 3.3, depth: 2.4, radius: 0.34 };
 const LAYER_HEIGHT = 0.004;
