@@ -7,18 +7,38 @@ import type { WebGLProgramParametersWithUniforms } from 'three';
  */
 export const DISPLAY_ALPHA = 0;
 
+/** How much of the detail lost to minification the unsharp mask puts back. */
+const SHARPEN = 0.3;
+
 /**
- * The screens sit five to ten times smaller on the page than their canvases, so the GPU samples
- * a small mip level and the text goes soft. This bias picks a sharper level instead, and
- * anisotropic filtering still smooths the angled side monitors.
+ * The monitors show their canvases four to ten times smaller than painted, the side ones at an
+ * angle. One trilinear sample sizes its mip level to the longest side of the pixel's footprint, so
+ * text goes soft. Four samples on a rotated grid, each covering a quarter of the footprint, keep
+ * it crisp without shimmer. A light unsharp mask against the plain sample restores the contrast.
  */
-const MIP_BIAS = -0.65;
+const SAMPLE_DISPLAY = /* glsl */ `
+vec4 sampleDisplay(sampler2D image, vec2 uv) {
+  vec2 dx = dFdx(uv);
+  vec2 dy = dFdy(uv);
+  vec2 qx = dx * 0.5;
+  vec2 qy = dy * 0.5;
+  vec4 fine = 0.25 * (
+    textureGrad(image, uv + 0.125 * dx + 0.375 * dy, qx, qy) +
+    textureGrad(image, uv - 0.125 * dx - 0.375 * dy, qx, qy) +
+    textureGrad(image, uv + 0.375 * dx - 0.125 * dy, qx, qy) +
+    textureGrad(image, uv - 0.375 * dx + 0.125 * dy, qx, qy));
+  vec3 plain = textureGrad(image, uv, dx, dy).rgb;
+  return vec4(clamp(fine.rgb + ${SHARPEN.toFixed(2)} * (fine.rgb - plain), 0.0, 1.0), fine.a);
+}
+`;
 
-const SAMPLE = 'texture2D( map, vMapUv )';
-
-/** Shader tweaks for the monitor faces, applied through `onBeforeCompile` on their unlit material. */
+/**
+ * Shader tweaks for the monitor faces, applied through `onBeforeCompile` on their unlit material.
+ * The chunks are still `#include` lines at this point, so the patch swaps whole includes.
+ */
 export function patchDisplayShader(shader: WebGLProgramParametersWithUniforms) {
   shader.fragmentShader = shader.fragmentShader
-    .replace(SAMPLE, `texture2D( map, vMapUv, ${MIP_BIAS.toFixed(2)} )`)
+    .replace('void main() {', `#ifdef USE_MAP\n${SAMPLE_DISPLAY}\n#endif\nvoid main() {`)
+    .replace('#include <map_fragment>', '#ifdef USE_MAP\n  diffuseColor *= sampleDisplay( map, vMapUv );\n#endif')
     .replace('#include <opaque_fragment>', `#include <opaque_fragment>\ngl_FragColor.a = ${DISPLAY_ALPHA.toFixed(1)};`);
 }
