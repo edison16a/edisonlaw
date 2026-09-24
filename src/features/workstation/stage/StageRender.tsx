@@ -6,7 +6,7 @@ import type { StageVariant } from '../types';
 /** Describes each scene for screen readers, for both the live canvas and the still image. */
 export const STAGE_ALT: Record<StageVariant, string> = {
   work: 'Edison at his desk at night, typing in front of three glowing monitors, with an RGB PC tower beside the desk.',
-  about: 'Edison standing beside his desk at night, looking at code on his three monitors.',
+  about: 'Edison standing beside his desk at night with a mug of coffee, petting his golden retriever and looking at code on his three monitors.',
 };
 
 interface StageRenderProps {

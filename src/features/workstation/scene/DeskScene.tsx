@@ -57,8 +57,12 @@ export function DeskScene(props: DeskSceneProps) {
       <Keyboard typing={seated} animate={animate} />
       <Mouse />
       <MacMini />
-      <Chair variant={variant} />
-      {seated && <Footrest />}
+      {seated && (
+        <>
+          <Chair />
+          <Footrest />
+        </>
+      )}
       <PcTower animate={animate} />
       <Decor />
       <group position={placement.position} rotation-y={placement.rotationY}>

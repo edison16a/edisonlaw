@@ -3,21 +3,14 @@
 import { RoundedBox } from '@react-three/drei';
 import { TubeGeometry, Vector3 } from 'three';
 import { roundedPath } from '../geometry/roundedPath';
-import { CHAIR, type Vec3 } from '../layout';
+import { CHAIR } from '../layout';
 import { getMaterials } from '../materials/materials';
-import type { StageVariant } from '../types';
 import { useDisposable } from '../useDisposable';
 
 const TUBE_RADIUS = 0.011;
 const FRAME_HALF_WIDTH = 0.19;
 const SEAT = { width: 0.44, depth: 0.42, thickness: 0.035 };
 const BACK = { width: 0.42, height: 0.34, thickness: 0.03, tilt: 0.16 };
-
-/** Where the chair sits in each variant. In `about` Edison stands, so it is pushed back and turned aside. */
-const CHAIR_POSES: Record<StageVariant, { position: Vec3; rotationY: number }> = {
-  work: { position: CHAIR.position, rotationY: 0 },
-  about: { position: [1.12, 0, 0.44], rotationY: -0.55 },
-};
 
 /**
  * One side of the cantilever frame in chair space (front is -Z): up behind the back,
@@ -37,10 +30,9 @@ function sideFrame(x: number) {
   );
 }
 
-/** White shell seat and back on a grey tubular cantilever frame, like the reference. */
-export function Chair({ variant }: { variant: StageVariant }) {
+/** White shell seat and back on a grey tubular cantilever frame, like the reference. Work scene only. */
+export function Chair() {
   const materials = getMaterials();
-  const pose = CHAIR_POSES[variant];
 
   const frame = useDisposable(() =>
     [-1, 1].map((side) => new TubeGeometry(sideFrame(side * FRAME_HALF_WIDTH), 96, TUBE_RADIUS, 10)),
@@ -49,7 +41,7 @@ export function Chair({ variant }: { variant: StageVariant }) {
   const seatY = CHAIR.seatHeight - SEAT.thickness / 2;
 
   return (
-    <group position={pose.position} rotation-y={pose.rotationY}>
+    <group position={CHAIR.position}>
       <RoundedBox
         args={[SEAT.width, SEAT.thickness, SEAT.depth]}
         radius={0.016}
