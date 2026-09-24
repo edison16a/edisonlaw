@@ -48,7 +48,7 @@ export function SpiralScene({ projects, startAt, onSelect }: SpiralSceneProps) {
   const geometry = useMemo(() => new PlaneGeometry(CARD_WIDTH, CARD_HEIGHT, 32, 12), []);
   const [cards] = useState<CardRuntime[]>(() => createCards(count));
   const [focus] = useState<FocusSnapshot>(() => ({ panel: null, settled: null }));
-  const uploadNext = useCardPictures(projects, cards, gl, startAt);
+  const handOutPictures = useCardPictures(projects, cards, gl, startAt);
   const [cursor] = useState(createPointerCursor);
 
   useEffect(() => () => geometry.dispose(), [geometry]);
@@ -61,6 +61,14 @@ export function SpiralScene({ projects, startAt, onSelect }: SpiralSceneProps) {
   useEffect(() => onSpiralWake(() => invalidate()), [invalidate]);
   // Coming back on screen switches the loop on again, which should draw at least once.
   useEffect(() => invalidate(), [frameloop, invalidate]);
+  // A screenshot picked in the row swaps the focused card's picture.
+  useEffect(
+    () =>
+      useSpiralStore.subscribe((state, previous) => {
+        if (state.gallery !== previous.gallery) invalidate();
+      }),
+    [invalidate],
+  );
 
   useFrame((state, rawDelta) => {
     // A long pause (a hidden tab, or the canvas resting) should not fling the spiral.
@@ -73,7 +81,7 @@ export function SpiralScene({ projects, startAt, onSelect }: SpiralSceneProps) {
 
     frameCamera(camera, state.size.width, state.size.height, stageMetrics.focusShift, stageMetrics.focusLift);
     gl.getDrawingBufferSize(cardViewport);
-    let busy = uploadNext();
+    let busy = handOutPictures(value, focus.panel, useSpiralStore.getState().gallery);
     for (const card of cards) busy = updateCard(card, spiralMotion, cards.length, delta, reducedMotion) || busy;
     if (focusCardShown(cards)) markReady();
     cursor.update(velocity, gl.domElement);

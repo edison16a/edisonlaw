@@ -1,7 +1,6 @@
 import { DataTexture, LinearMipmapLinearFilter, SRGBColorSpace, Texture, TextureLoader } from 'three';
-import type { Project } from '@/content/types';
 
-/** One project's picture on the GPU, ready to wrap around a spiral card. */
+/** One picture on the GPU, ready to wrap around a spiral card. */
 export interface CardPicture {
   texture: Texture;
   /** Width over height, for cover fitting in the shader. */
@@ -71,12 +70,12 @@ function greyTile(): CardPicture {
   return { texture, aspect: 1.6, flipY: false, dispose: () => texture.dispose() };
 }
 
-/** The project's photo, or a plain grey tile if the photo cannot load. */
-export async function loadCardPicture(project: Project, anisotropy: number): Promise<CardPicture> {
+/** The photo at `src`, or a plain grey tile if it cannot load. */
+export async function loadCardPicture(src: string, anisotropy: number): Promise<CardPicture> {
   try {
-    return await loadPhoto(project.image, anisotropy);
+    return await loadPhoto(src, anisotropy);
   } catch (error) {
-    console.error(`Could not load ${project.image}`, error);
+    console.error(`Could not load ${src}`, error);
     return greyTile();
   }
 }

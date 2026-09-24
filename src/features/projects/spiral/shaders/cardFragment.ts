@@ -2,12 +2,17 @@
  * Fragment stage of a spiral card: cover fits the picture, rounds the corners
  * with a smooth edge, and lets far cards sink a little into the dark. Every
  * card reads one sharp sample of its picture, so nothing is ever blurred.
+ * While a card swaps pictures it crossfades to a second one.
  */
 export const cardFragmentShader = /* glsl */ `
   uniform sampler2D uMap;
   uniform vec2 uSize;
   uniform float uImageAspect;
   uniform float uFlipY;
+  uniform sampler2D uMapNext;
+  uniform float uNextAspect;
+  uniform float uNextFlipY;
+  uniform float uBlend;
   uniform float uCornerRadius;
   uniform float uBrightness;
   uniform float uOpacity;
@@ -24,12 +29,18 @@ export const cardFragmentShader = /* glsl */ `
 
   // Like CSS object-fit: cover. The picture fills the card and is never stretched.
   // Height is trimmed from the bottom only, so a screenshot keeps the header along its top.
-  vec2 coverUv(vec2 uv) {
+  vec2 coverUv(vec2 uv, float imageAspect) {
     float planeAspect = uSize.x / uSize.y;
-    vec2 scale = planeAspect > uImageAspect
-      ? vec2(1.0, uImageAspect / planeAspect)
-      : vec2(planeAspect / uImageAspect, 1.0);
+    vec2 scale = planeAspect > imageAspect
+      ? vec2(1.0, imageAspect / planeAspect)
+      : vec2(planeAspect / imageAspect, 1.0);
     return vec2((uv.x - 0.5) * scale.x + 0.5, 1.0 - (1.0 - uv.y) * scale.y);
+  }
+
+  vec3 picture(sampler2D map, float imageAspect, float flipY, vec2 uv) {
+    vec2 fitted = coverUv(uv, imageAspect);
+    fitted.y = mix(fitted.y, 1.0 - fitted.y, flipY);
+    return texture2D(map, fitted).rgb;
   }
 
   void main() {
@@ -43,9 +54,8 @@ export const cardFragmentShader = /* glsl */ `
     float backFace = gl_FrontFacing ? 0.0 : 1.0;
     // Seen from behind, flip the picture so it still reads the right way round.
     vec2 uv = vec2(mix(vUv.x, 1.0 - vUv.x, backFace), vUv.y);
-    uv = coverUv(uv);
-    uv.y = mix(uv.y, 1.0 - uv.y, uFlipY);
-    vec3 color = texture2D(uMap, uv).rgb;
+    vec3 color = picture(uMap, uImageAspect, uFlipY, uv);
+    if (uBlend > 0.0) color = mix(color, picture(uMapNext, uNextAspect, uNextFlipY, uv), uBlend);
 
     color *= uBrightness * (1.0 - 0.12 * backFace);
     float fog = smoothstep(7.0, 10.5, vDepth);

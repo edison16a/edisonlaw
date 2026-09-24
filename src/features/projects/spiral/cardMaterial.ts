@@ -12,6 +12,12 @@ export interface CardUniforms {
   uImageAspect: IUniform<number>;
   /** 1 for image bitmaps, which arrive top row first. */
   uFlipY: IUniform<number>;
+  /** The picture fading in over uMap, with its own shape and orientation. */
+  uMapNext: IUniform<Texture | null>;
+  uNextAspect: IUniform<number>;
+  uNextFlipY: IUniform<number>;
+  /** 0 to 1, how far uMapNext has faded in. */
+  uBlend: IUniform<number>;
   uCornerRadius: IUniform<number>;
   /** 1 over the bend radius. 0 is flat. */
   uCurvature: IUniform<number>;
@@ -42,6 +48,10 @@ export function createCardMaterial(): CardMaterial {
     uSize: { value: new Vector2(CARD_WIDTH, CARD_HEIGHT) },
     uImageAspect: { value: CARD_WIDTH / CARD_HEIGHT },
     uFlipY: { value: 0 },
+    uMapNext: { value: null },
+    uNextAspect: { value: CARD_WIDTH / CARD_HEIGHT },
+    uNextFlipY: { value: 0 },
+    uBlend: { value: 0 },
     uCornerRadius: { value: 0.07 },
     uCurvature: { value: 1 / SPIRAL.radius },
     uBow: { value: 0 },
