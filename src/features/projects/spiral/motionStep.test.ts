@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { SpiralMotion } from '../state/spiralMotion';
-import { stepMotion } from './motionStep';
+import { isAtRest, stepMotion } from './motionStep';
 
 const create = (value: number): SpiralMotion => ({
   target: value,
@@ -45,5 +45,26 @@ describe('stepMotion', () => {
   it('brings the cards in once and keeps them there', () => {
     const motion = run(create(0), 0, 3);
     expect(motion.reveal).toBeGreaterThan(0.99);
+  });
+});
+
+describe('isAtRest', () => {
+  it('rests once the spiral has settled on a card and the entrance is done', () => {
+    expect(isAtRest(run(create(3), 3, 5))).toBe(true);
+  });
+
+  it('rests in the intro too, where nothing settles', () => {
+    expect(isAtRest(run(create(-0.5), -0.5, 5))).toBe(true);
+  });
+
+  it('keeps drawing while the spiral travels, settles or rises in', () => {
+    expect(isAtRest(run(create(2), 3, 0.1))).toBe(false);
+    expect(isAtRest(run(create(3), 3, 0.05))).toBe(false);
+  });
+
+  it('keeps drawing while the stage is being dragged', () => {
+    const motion = run(create(3), 3, 5);
+    motion.dragging = true;
+    expect(isAtRest(motion)).toBe(false);
   });
 });

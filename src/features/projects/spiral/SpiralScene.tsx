@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
 import { PlaneGeometry, type PerspectiveCamera } from 'three';
 import type { Project } from '@/content/types';
@@ -13,7 +13,7 @@ import { cardViewport } from './cardMaterial';
 import { readFocus } from './focus';
 import { CARD_HEIGHT, CARD_WIDTH } from './geometry';
 import { frameCamera } from './lens';
-import { stepMotion } from './motionStep';
+import { isAtRest, stepMotion } from './motionStep';
 import { tickDetents } from './ticks';
 import { firstIndex, indexFromScroll } from './track';
 import { useCardPictures } from './useCardPictures';
@@ -39,6 +39,8 @@ const HOVER_SPEED = 1.5;
 export function SpiralScene({ projects, startAt, onSelect, onHover }: SpiralSceneProps) {
   const gl = useThree((state) => state.gl);
   const camera = useThree((state) => state.camera) as PerspectiveCamera;
+  const invalidate = useThree((state) => state.invalidate);
+  const frameloop = useThree((state) => state.frameloop);
   const reducedMotion = useReducedMotion();
   const syncFocus = useSpiralStore((state) => state.syncFocus);
   const count = projects.length;
@@ -51,9 +53,23 @@ export function SpiralScene({ projects, startAt, onSelect, onHover }: SpiralScen
   useEffect(() => () => geometry.dispose(), [geometry]);
   useEffect(() => () => cards.forEach((card) => card.material.dispose()), [cards]);
 
+  // The canvas only draws while something moves. Scrolling, resizing and the pointer wake it.
+  const resting = useRef(false);
+  useEffect(() => {
+    const wake = () => invalidate();
+    window.addEventListener('scroll', wake, { passive: true });
+    window.addEventListener('resize', wake);
+    return () => {
+      window.removeEventListener('scroll', wake);
+      window.removeEventListener('resize', wake);
+    };
+  }, [invalidate]);
+  // Coming back on screen switches the loop on again, which should draw at least once.
+  useEffect(() => invalidate(), [frameloop, invalidate]);
+
   useFrame((state, rawDelta) => {
-    // A long pause (a hidden tab) should not fling the spiral.
-    const delta = Math.min(rawDelta, 0.1);
+    // A long pause (a hidden tab, or the canvas resting) should not fling the spiral.
+    const delta = resting.current ? 1 / 60 : Math.min(rawDelta, 0.1);
     const previous = spiralMotion.value;
     const target = indexFromScroll(window.scrollY, stageMetrics);
     stepMotion(spiralMotion, target, count, delta, reducedMotion);
@@ -71,13 +87,16 @@ export function SpiralScene({ projects, startAt, onSelect, onHover }: SpiralScen
     const engaged = spiralMotion.engaged;
     frameCamera(camera, state.size.width, state.size.height, focusShift * engaged, focusLift * engaged);
     gl.getDrawingBufferSize(cardViewport);
-    uploadNext();
-    for (const card of cards) updateCard(card, spiralMotion, cards.length, count, delta, reducedMotion);
+    let busy = uploadNext();
+    for (const card of cards) busy = updateCard(card, spiralMotion, cards.length, count, delta, reducedMotion) || busy;
     const hovered = spiralMotion.hoverSlot === null ? null : cards[spiralMotion.hoverSlot];
     if (hovered?.scenery) {
       spiralMotion.hoverSlot = null;
       onHover(null);
     }
+
+    resting.current = !busy && isAtRest(spiralMotion);
+    if (!resting.current) state.invalidate();
   });
 
   const hover = (card: CardRuntime) => (event: ThreeEvent<PointerEvent>) => {
@@ -86,12 +105,14 @@ export function SpiralScene({ projects, startAt, onSelect, onHover }: SpiralScen
     if (card.scenery) return;
     spiralMotion.hoverSlot = card.slot;
     onHover(card.project);
+    invalidate();
   };
 
   const leave = (card: CardRuntime) => () => {
     if (spiralMotion.hoverSlot !== card.slot) return;
     spiralMotion.hoverSlot = null;
     onHover(null);
+    invalidate();
   };
 
   const select = (card: CardRuntime) => (event: ThreeEvent<MouseEvent>) => {

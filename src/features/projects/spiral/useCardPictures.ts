@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef } from 'react';
+import { useThree } from '@react-three/fiber';
 import type { WebGLRenderer } from 'three';
 import type { Project } from '@/content/types';
 import { loadCardPicture, type CardPicture } from '../media/cardPicture';
@@ -14,10 +15,12 @@ interface Loaded {
 /**
  * Loads every project's picture and returns a function that hands the next
  * one to its cards. Call it once per frame so a dozen texture uploads never
- * land in the same frame. Textures are disposed when the scene goes away.
+ * land in the same frame. It returns true while more are waiting. Each arrival
+ * wakes the canvas, and textures are disposed when the scene goes away.
  */
 export function useCardPictures(projects: Project[], cards: CardRuntime[], gl: WebGLRenderer, startAt: number) {
   const queue = useRef<Loaded[]>([]);
+  const invalidate = useThree((state) => state.invalidate);
 
   useEffect(() => {
     let cancelled = false;
@@ -36,6 +39,7 @@ export function useCardPictures(projects: Project[], cards: CardRuntime[], gl: W
         }
         loaded.push(picture);
         queue.current.push({ project: index, picture });
+        invalidate();
       });
     });
 
@@ -44,14 +48,15 @@ export function useCardPictures(projects: Project[], cards: CardRuntime[], gl: W
       queue.current = [];
       loaded.forEach((picture) => picture.dispose());
     };
-  }, [projects, gl, startAt]);
+  }, [projects, gl, startAt, invalidate]);
 
   return useCallback(() => {
     const next = queue.current.shift();
-    if (!next) return;
+    if (!next) return false;
     gl.initTexture(next.picture.texture);
     for (const card of cards) {
       if (card.project === next.project) showPicture(card, next.picture);
     }
+    return queue.current.length > 0;
   }, [cards, gl]);
 }

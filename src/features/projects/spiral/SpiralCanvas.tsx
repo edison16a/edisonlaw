@@ -9,12 +9,15 @@ interface SpiralCanvasProps extends SpiralSceneProps {
   active: boolean;
 }
 
-/** The one WebGL canvas behind the spiral stage. Load it client only. */
+/**
+ * The one WebGL canvas behind the spiral stage. Load it client only. It draws
+ * on demand: the scene asks for frames while anything moves and rests otherwise.
+ */
 export function SpiralCanvas({ active, ...scene }: SpiralCanvasProps) {
   return (
     <Canvas
       dpr={[1, 2]}
-      frameloop={active ? 'always' : 'never'}
+      frameloop={active ? 'demand' : 'never'}
       flat
       gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
       camera={{ position: [0, 0, CAMERA.z], fov: CAMERA.fov, near: 0.1, far: 40 }}

@@ -32,6 +32,8 @@ const FADE_IN = 0.7;
 const VISIBLE_RANGE = 8.5;
 /** Share of the entrance each card spends rising, the rest is its stagger. */
 const RISE = 0.7;
+/** Closer than this to its goal, a card's hover counts as done easing. */
+const SETTLED = 0.001;
 /** How much darker and softer scenery cards are than the deck. */
 const SCENERY_DIM = 0.35;
 const SCENERY_BLUR = 0.2;
@@ -69,7 +71,8 @@ export function showPicture(card: CardRuntime, picture: CardPicture) {
 /**
  * Places one card for this frame and writes its uniforms. `count` is the
  * number of projects. `calm` drops the speed effects for visitors who prefer
- * reduced motion.
+ * reduced motion. Returns true while the card is still fading in or easing its
+ * hover, so the canvas knows to draw another frame.
  */
 export function updateCard(
   card: CardRuntime,
@@ -78,9 +81,9 @@ export function updateCard(
   count: number,
   delta: number,
   calm: boolean,
-) {
+): boolean {
   const mesh = card.mesh;
-  if (!mesh) return;
+  if (!mesh) return false;
 
   const offset = slotOffset(card.slot, motion.value, slots);
   card.scenery = isPastDeck(card.slot, motion.value, count, slots);
@@ -92,16 +95,18 @@ export function updateCard(
   card.facing = pose.facing;
 
   if (card.shownFor >= 0) card.shownFor += delta;
+  const fading = card.shownFor >= 0 && card.shownFor < FADE_IN;
   const opacity = smoothstep(0, FADE_IN, card.shownFor) * rise;
   mesh.visible = opacity > 0.001 && Math.abs(offset) < VISIBLE_RANGE;
-  if (!mesh.visible) return;
+  if (!mesh.visible) return fading;
 
   mesh.position.set(pose.x, pose.y, pose.z);
   mesh.rotation.y = pose.rotationY;
   mesh.scale.setScalar(pose.scale);
 
   const velocity = calm ? 0 : motion.velocity;
-  card.hover = damp(card.hover, motion.hoverSlot === card.slot ? 1 : 0, 10, delta);
+  const hoverGoal = motion.hoverSlot === card.slot ? 1 : 0;
+  card.hover = damp(card.hover, hoverGoal, 10, delta);
 
   const uniforms = card.material.uniforms;
   uniforms.uCurvature.value = cardBend(velocity, pose.focus) / SPIRAL.radius;
@@ -112,4 +117,5 @@ export function updateCard(
   uniforms.uBrightness.value = cardBrightness(offset, motion.settle) * (1 - SCENERY_DIM * scenery);
   uniforms.uOpacity.value = opacity;
   uniforms.uHover.value = card.hover;
+  return fading || Math.abs(card.hover - hoverGoal) > SETTLED;
 }

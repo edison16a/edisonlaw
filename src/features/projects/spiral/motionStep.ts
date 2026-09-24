@@ -34,3 +34,21 @@ export function stepMotion(motion: SpiralMotion, target: number, count: number, 
   motion.reveal = reducedMotion ? 1 : damp(motion.reveal, 1, 2.4, delta);
   return motion;
 }
+
+/** Closer than this, a value counts as having reached where it is heading. */
+const STILL = 0.001;
+
+/**
+ * True once another frame would change nothing: the spiral has caught up with
+ * the scroll, settled one way or the other and finished its entrance. The
+ * canvas stops drawing until something wakes it.
+ */
+export function isAtRest(motion: SpiralMotion) {
+  return (
+    !motion.dragging &&
+    Math.abs(motion.target - motion.value) < STILL / 10 &&
+    Math.abs(motion.velocity) < STILL &&
+    (motion.settle < STILL || motion.settle > 1 - STILL) &&
+    motion.reveal > 1 - STILL
+  );
+}
