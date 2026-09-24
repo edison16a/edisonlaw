@@ -19,10 +19,12 @@ export function projectAt(index: number, count: number) {
  * spiral to. It counts on from the card the spiral is already heading for, so
  * quick presses queue up, and a press the other way turns it round smoothly.
  * The queue never runs more than `maxLead` cards from the card passing the
- * slot right now at `value`.
+ * slot right now at `value`. A click on a card further away than that goes
+ * there anyway, and a press the same way on top of it adds nothing.
  */
 export function stepTarget(target: number, value: number, direction: 1 | -1, maxLead = MAX_LEAD) {
   const here = Math.round(value);
-  const next = Math.round(target) + direction;
-  return Math.min(here + maxLead, Math.max(here - maxLead, next));
+  const heading = Math.round(target);
+  const next = heading + direction;
+  return Math.min(Math.max(here + maxLead, heading), Math.max(Math.min(here - maxLead, heading), next));
 }

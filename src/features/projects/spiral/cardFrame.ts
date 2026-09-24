@@ -18,8 +18,6 @@ export interface CardRuntime {
   swap: PictureSwap<CardPicture>;
   /** Seconds since the first picture reached the GPU, or -1 while it is on its way. */
   shownFor: number;
-  /** Mirrors the pose so pointer handlers can ignore cards turned away. */
-  facing: number;
   /** Distance from the continuous index this frame, in cards, so a click knows where the card sits. */
   offset: number;
 }
@@ -49,7 +47,6 @@ export function createCards(projects: number): CardRuntime[] {
     mesh: null,
     swap: createSwap<CardPicture>(),
     shownFor: -1,
-    facing: 0,
     offset: 0,
   }));
 }
@@ -98,7 +95,6 @@ export function updateCard(card: CardRuntime, motion: SpiralMotion, slots: numbe
   const rise = clamp((motion.reveal - stagger) / RISE);
   const hidden = 1 - rise * (2 - rise);
   cardPose(offset, motion.settle, hidden, pose);
-  card.facing = pose.facing;
 
   if (card.shownFor >= 0) card.shownFor += delta;
   const swapping = stepSwap(card.swap, delta, SWAP_TIME);

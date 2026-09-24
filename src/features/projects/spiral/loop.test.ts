@@ -59,6 +59,13 @@ describe('stepTarget', () => {
     expect(stepTarget(4 - MAX_LEAD, 4, -1)).toBe(4 - MAX_LEAD);
   });
 
+  it('never pulls back a click on a card further away than the lead', () => {
+    expect(stepTarget(10, 4, 1)).toBe(10);
+    expect(stepTarget(10, 4, -1)).toBe(9);
+    expect(stepTarget(-3, 4, -1)).toBe(-3);
+    expect(stepTarget(-3, 4, 1)).toBe(-2);
+  });
+
   it('always lands on a whole card', () => {
     expect(stepTarget(2.7, 2.2, 1)).toBe(4);
     expect(Number.isInteger(stepTarget(2.7, 2.2, -1))).toBe(true);

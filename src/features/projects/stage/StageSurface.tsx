@@ -5,8 +5,8 @@ import { useStageSwipe } from '../input/useStageSwipe';
 
 /**
  * The layer that holds the canvas. It turns sideways swipes into steps. The
- * canvas itself shows a pointer over the cards around the focused one, which
- * move the spiral when clicked.
+ * canvas itself shows a pointer over every card but the focused one, and a
+ * click on any of them turns the spiral to it.
  */
 export function StageSurface({ children }: { children: ReactNode }) {
   const swipe = useStageSwipe();

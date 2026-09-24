@@ -24,16 +24,18 @@ export interface SpiralSceneProps {
   projects: Project[];
   /** Project whose picture loads first. */
   startAt: number;
-  /** A card facing the camera was clicked. Receives the card's place on the looping index. */
+  /** A card was clicked. Receives the card's place on the looping index. */
   onSelect: (index: number) => void;
 }
 
-/** Cards turned further than this from the camera ignore the pointer. */
-const MIN_FACING = 0.2;
 /** Pointer travel in pixels beyond which a press is a swipe, not a click. */
 const CLICK_SLOP = 6;
 
-/** The strand of cards and the one frame loop that drives it. */
+/**
+ * The strand of cards and the one frame loop that drives it. A click on any
+ * card in sight, near or far, turns the spiral straight to it. The card in
+ * front wins where cards overlap.
+ */
 export function SpiralScene({ projects, startAt, onSelect }: SpiralSceneProps) {
   const gl = useThree((state) => state.gl);
   const camera = useThree((state) => state.camera) as PerspectiveCamera;
@@ -91,7 +93,6 @@ export function SpiralScene({ projects, startAt, onSelect }: SpiralSceneProps) {
   });
 
   const point = (card: CardRuntime) => (event: ThreeEvent<PointerEvent>) => {
-    if (card.facing < MIN_FACING) return;
     event.stopPropagation();
     cursor.enter(card);
     invalidate();
@@ -103,7 +104,6 @@ export function SpiralScene({ projects, startAt, onSelect }: SpiralSceneProps) {
   };
 
   const select = (card: CardRuntime) => (event: ThreeEvent<MouseEvent>) => {
-    if (card.facing < MIN_FACING) return;
     event.stopPropagation();
     if (event.delta <= CLICK_SLOP) onSelect(Math.round(spiralMotion.value + card.offset));
   };

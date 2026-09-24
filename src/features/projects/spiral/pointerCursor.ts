@@ -5,7 +5,7 @@ import { FOCUS } from './geometry';
 const POINT_SPEED = 1.5;
 
 export interface PointerCursor {
-  /** The pointer moved onto a card facing the camera. */
+  /** The pointer moved onto a card. */
   enter: (card: CardRuntime) => void;
   /** The pointer left the card. */
   leave: (card: CardRuntime) => void;
@@ -14,8 +14,8 @@ export interface PointerCursor {
 }
 
 /**
- * The pointer cursor over the cards beside the focused one, the only hint
- * that a click turns the spiral to them. Cards never react to the pointer
+ * The pointer cursor over every card but the focused one, the only hint that
+ * a click turns the spiral to them. Cards never react to the pointer
  * themselves, and hovering re-renders nothing. Nothing tests the pointer
  * again while the cards move under it, so a fast turn forgets the card until
  * the pointer moves.
