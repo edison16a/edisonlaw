@@ -13,17 +13,21 @@ interface RgbLightSpec {
   hueOffset: number;
   intensity: number;
   distance: number;
+  /** How much of the hue reaches the room. Low values keep walls and floor near white while the accents cycle. */
+  saturation: number;
 }
 
 const [towerX, , towerZ] = PC_TOWER.position;
 
+// The colour lives on the emissive parts (tower, strips, keyboard). These lights only hint at it, with
+// short reach and washed out colour, so the room itself stays neutral whatever the hue.
 const LIGHTS: RgbLightSpec[] = [
-  // Inside the tower, so colour spills out through the glass onto the floor, desk leg and wall.
-  { position: [towerX, 0.32, towerZ + 0.02], hueOffset: 0, intensity: 1.1, distance: 3 },
-  // Behind the monitors, washing the back wall like a bias light.
-  { position: [0, 1.02, ROOM.backWallZ + 0.16], hueOffset: 0.06, intensity: 0.9, distance: 2.6 },
-  // Under the desk, a low glow on the floor and rug.
-  { position: [-0.35, 0.3, -0.62], hueOffset: 0.12, intensity: 0.5, distance: 2.2 },
+  // Inside the tower, so a little colour spills out through the glass onto the floor beside it.
+  { position: [towerX, 0.32, towerZ + 0.02], hueOffset: 0, intensity: 0.7, distance: 2, saturation: 0.55 },
+  // Behind the monitors, a soft bias light on the back wall.
+  { position: [0, 1.02, ROOM.backWallZ + 0.16], hueOffset: 0.06, intensity: 0.8, distance: 2.4, saturation: 0.2 },
+  // Under the desk, a faint glow on the floor.
+  { position: [-0.35, 0.3, -0.62], hueOffset: 0.12, intensity: 0.35, distance: 1.8, saturation: 0.2 },
 ];
 
 /** Coloured point lights that follow the shared RGB hue and its pulse. */
@@ -36,7 +40,7 @@ export function RgbLights() {
     LIGHTS.forEach((spec, index) => {
       const light = refs.current[index];
       if (!light) return;
-      writeRgb(light.color, clock.hue + spec.hueOffset);
+      writeRgb(light.color, clock.hue + spec.hueOffset, 1, spec.saturation);
       light.intensity = spec.intensity * clock.boost;
     });
   });
