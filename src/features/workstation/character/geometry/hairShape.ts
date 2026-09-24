@@ -11,10 +11,10 @@ import { mirrored, periodicSpline } from './spline';
 const DEG = Math.PI / 180;
 
 /** Strand clumps around the head, shared by the edge tips, the ridges and the tint. */
-const CLUMPS = 22;
+const CLUMPS = 13;
 
 /** 1 on a clump's centre line, falling to 0 between clumps. */
-const clumpWave = (phiDeg: number) => (0.5 + 0.5 * Math.cos(phiDeg * DEG * CLUMPS + 0.4)) ** 2;
+const clumpWave = (phiDeg: number) => (0.5 + 0.5 * Math.cos(phiDeg * DEG * CLUMPS + 0.4)) ** 2.4;
 
 /** Clumps only show over the sides and back; the front is carried by the bang locks. */
 const behind = (phiDeg: number) => smoothstep(0.05, 0.6, -Math.cos(phiDeg * DEG) + 0.45);
@@ -42,7 +42,7 @@ const topLine = periodicSpline(
 );
 
 /** Uneven tip lengths so the back does not look like a row of scallops. */
-const tipLength = (phiDeg: number) => 6.5 * (0.72 + 0.28 * Math.sin(phiDeg * DEG * 3 + 1.1)) * (0.8 + 0.2 * Math.cos(phiDeg * DEG * 7));
+const tipLength = (phiDeg: number) => 7.5 * (0.72 + 0.28 * Math.sin(phiDeg * DEG * 3 + 1.1)) * (0.8 + 0.2 * Math.cos(phiDeg * DEG * 7));
 
 /** Where the long top layer ends, with rounded strand tips hanging down around the back. */
 export const hairlineAt = (phiDeg: number) => topLine(phiDeg) + tipLength(phiDeg) * clumpWave(phiDeg) * behind(phiDeg);
@@ -82,22 +82,27 @@ export function volumeAt(thetaDeg: number, phiDeg: number) {
 
 /** The centre part: a groove from the forehead back to the crown, with the hair lifting either side of it. */
 export function partAt(x: number, y: number, z: number) {
-  const along = smoothstep(-0.12, -0.04, z) * smoothstep(0.03, 0.09, y);
+  const along = smoothstep(-0.13, -0.06, z) * smoothstep(0.03, 0.09, y);
   if (along <= 0) return 0;
   const groove = -0.011 * Math.exp(-((x / 0.0068) ** 2));
   const lift = 0.0055 * Math.exp(-(((Math.abs(x) - 0.026) / 0.02) ** 2));
   return (groove + lift) * along;
 }
 
-/** Soft ridges down the back and sides that line up with the strand tips, fading out over the top. */
-export function clumpsAt(thetaDeg: number, phiDeg: number) {
-  const fade = smoothstep(45, 85, thetaDeg);
-  return 0.005 * (clumpWave(phiDeg) - 0.35) * fade * behind(phiDeg);
+/**
+ * Soft clumps that follow the flow of the cut: over the top they run out sideways from the part,
+ * over the back and sides they fall from the crown and line up with the strand tips.
+ */
+export function clumpsAt(thetaDeg: number, phiDeg: number, x: number, z: number) {
+  const fromPart = smoothstep(0.006, 0.03, Math.abs(x)) * (1 - smoothstep(55, 80, thetaDeg));
+  const overTop = Math.cos(z * 150 + Math.abs(x) * 30) * fromPart * smoothstep(-0.07, 0.0, z);
+  const down = (clumpWave(phiDeg) - 0.3) * smoothstep(20, 60, thetaDeg) * behind(phiDeg);
+  return 0.0022 * overTop + 0.0065 * down;
 }
 
 /** Height of the top layer above the skull, before its edge rolls into the skin. */
 export function hairOffsetAt(thetaDeg: number, phiDeg: number, x: number, y: number, z: number) {
-  return Math.max(0.006, volumeAt(thetaDeg, phiDeg) + partAt(x, y, z) + clumpsAt(thetaDeg, phiDeg));
+  return Math.max(0.006, volumeAt(thetaDeg, phiDeg) + partAt(x, y, z) + clumpsAt(thetaDeg, phiDeg, x, z));
 }
 
 /** Height of the undercut: a thin close crop that thins further toward the nape. */
@@ -109,6 +114,6 @@ export const undercutOffsetAt = (thetaDeg: number) => 0.0045 - 0.0015 * smoothst
  */
 export function hairToneAt(thetaDeg: number, phiDeg: number, edge: number) {
   const band = Math.exp(-(((thetaDeg - 36) / 12) ** 2));
-  const strands = (clumpWave(phiDeg) - 0.4) * smoothstep(40, 80, thetaDeg) * behind(phiDeg);
+  const strands = (clumpWave(phiDeg) - 0.4) * smoothstep(20, 70, thetaDeg) * behind(phiDeg);
   return 1 + 0.9 * band + 0.55 * strands - 0.3 * smoothstep(0.85, 1, edge);
 }
