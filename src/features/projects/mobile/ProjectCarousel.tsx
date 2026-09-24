@@ -1,7 +1,7 @@
 'use client';
 
 import { getImageProps } from 'next/image';
-import { useCallback, useEffect, useRef, type KeyboardEvent } from 'react';
+import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { preload } from 'react-dom';
 import { AnimatePresence } from 'motion/react';
 import type { Project } from '@/content/types';
@@ -12,8 +12,11 @@ import { ProjectDetails } from '../components/ProjectDetails';
 import { ProjectImage } from '../components/ProjectImage';
 import { ProjectStatus } from '../components/ProjectStatus';
 import { featuredIndex } from '../featured';
+import { hasGallery, projectPictures } from '../gallery/pictures';
+import { NO_SELECTION, selectPicture, shownPicture } from '../gallery/selection';
 import { CAROUSEL_QUERY } from '../hooks/useSpiralFits';
 import { CarouselControls } from './CarouselControls';
+import { CarouselGallery } from './CarouselGallery';
 import { slideStride, useActiveSlide } from './useActiveSlide';
 
 /** Slide widths for next/image, so phones download a sensible size. */
@@ -52,6 +55,10 @@ export function ProjectCarousel({ projects, className }: ProjectCarouselProps) {
   preloadPhoto(projects[opening]);
   const project = projects[active];
   const previous = useRef(active);
+
+  // A screenshot picked under the current slide. Moving to another slide puts its thumbnail back.
+  const [gallery, setGallery] = useState(NO_SELECTION);
+  if (gallery.project !== null && gallery.project !== active) setGallery(NO_SELECTION);
 
   useEffect(() => {
     if (previous.current !== active) sound.play('tick', { rate: 1.1, volume: 0.6 });
@@ -98,6 +105,7 @@ export function ProjectCarousel({ projects, className }: ProjectCarouselProps) {
             <ProjectImage
               project={item}
               sizes={SLIDE_SIZES}
+              shown={index === active && hasGallery(item) ? shownPicture(gallery, index) : undefined}
               className={cn(
                 'aspect-[16/10] rounded-2xl transition-[opacity,transform] duration-500 ease-out-expo',
                 index === active ? 'opacity-100' : 'scale-[0.94] opacity-45',
@@ -108,6 +116,11 @@ export function ProjectCarousel({ projects, className }: ProjectCarouselProps) {
           </li>
         ))}
       </ol>
+      <CarouselGallery
+        project={project}
+        shown={shownPicture(gallery, active)}
+        onChoose={(picture) => setGallery(selectPicture(active, picture, projectPictures(project).length))}
+      />
       <div className="gutter mx-auto mt-3 flex w-full max-w-3xl justify-end">
         <CarouselControls index={active} count={projects.length} onMove={moveTo} />
       </div>
