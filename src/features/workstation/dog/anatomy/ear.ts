@@ -24,7 +24,7 @@ const DEG = Math.PI / 180;
 /** Half the thickness of the flap. */
 const THICKNESS = 0.007;
 /** Gap between the inner face of the flap and the head it hangs against. */
-const GAP = 0.002;
+const GAP = 0.006;
 
 /** Retrievers' ears are a shade deeper and redder than the coat around them. */
 const LEATHER = 0.08;
