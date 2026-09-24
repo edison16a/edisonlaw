@@ -1,5 +1,5 @@
 import { Bone, Euler, Group, Matrix4, Quaternion, Vector3 } from 'three';
-import { headBoneMatrix, headCrown } from '../anatomy/coat';
+import { headBoneMatrix, headCrown } from '../anatomy/headPose';
 import { EAR } from '../anatomy/ear';
 import { FACE } from '../anatomy/head';
 import { TAIL_PATH } from '../anatomy/tail';

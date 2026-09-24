@@ -28,7 +28,7 @@ export function surfaceFrame(field: Field, origin: Vec3Like, direction: Vec3Like
   return { position: point.addScaledVector(normal, lift), quaternion, normal };
 }
 
-export function gradientAt(field: Field, point: Vector3, eps = 1e-4) {
+function gradientAt(field: Field, point: Vector3, eps = 1e-4) {
   const { x, y, z } = point;
   return new Vector3(
     field.distance(x + eps, y, z) - field.distance(x - eps, y, z),

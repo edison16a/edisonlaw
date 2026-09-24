@@ -58,6 +58,11 @@ function muzzle(): Shape[] {
   ];
 }
 
+/** Skull and muzzle, in head space. */
+export function headForms(): Shape[] {
+  return [...skull(), ...muzzle()];
+}
+
 /** Soft cream tufts behind the cheeks, where the ruff starts, lying back along the jaw line. */
 function cheekFluff(): Shape[] {
   return bothSides((side) =>
@@ -78,11 +83,6 @@ function cheekFluff(): Shape[] {
       }),
     ),
   );
-}
-
-/** Skull and muzzle, in head space. */
-export function headForms(): Shape[] {
-  return [...skull(), ...muzzle()];
 }
 
 /** Soft locks falling from the back of the skull over the nape, so the head flows into the neck. */

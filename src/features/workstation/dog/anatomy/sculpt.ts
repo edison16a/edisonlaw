@@ -29,58 +29,11 @@ export const carve = (shape: Shape, blend: number): Shape => ({ ...shape, blend,
 /** Finish for carved shapes, whose tone and part do not matter. */
 export const CUT: Finish = { blend: 0, tone: 0, part: 0 };
 
-/** The same point on the other side of the body. */
-export const mirror = ([x, y, z]: Vec3Like): Vec3 => [-x, y, z];
-
 /** Runs a recipe for the left side (+1) and the right side (-1). */
 export const bothSides = (build: (side: 1 | -1) => Shape[]) => [...build(1), ...build(-1)];
 
 /** A point with its X scaled by `side`. */
 export const sided = ([x, y, z]: Vec3Like, side: number): Vec3 => [x * side, y, z];
-
-export interface LockSpec {
-  /** Root to tip, through the middle of the clump. */
-  path: Vec3Like[];
-  /** Radius at the root, and at the rounded tip. */
-  root: number;
-  tip: number;
-  /** Tone at the root and at the tip. */
-  tones: [number, number];
-  /** How softly the root melts into the coat below. */
-  blend: number;
-  part: number;
-  segments?: number;
-}
-
-/**
- * A sculpted clump of fur: a tapering tube along a smooth path that swells a little past its root and
- * ends in a round tip, like a lock pressed onto clay. Its segments melt into each other and into the
- * coat, so only the free end stands off the surface.
- */
-export function lock({ path, root, tip, tones, blend, part, segments = 5 }: LockSpec): Shape[] {
-  const curve = new CatmullRomCurve3(
-    path.map(([x, y, z]) => new Vector3(x, y, z)),
-    false,
-    'centripetal',
-  );
-  const radius = (s: number) => (root + (tip - root) * s ** 1.3) * (1 + 0.18 * Math.sin(Math.PI * Math.min(1, s * 1.4)));
-  const shapes: Shape[] = [];
-  let previous = curve.getPointAt(0);
-  for (let i = 1; i <= segments; i++) {
-    const s0 = (i - 1) / segments;
-    const s1 = i / segments;
-    const next = curve.getPointAt(s1);
-    shapes.push(
-      cone(previous.toArray(), next.toArray(), radius(s0), radius(s1), {
-        blend: i === 1 ? blend : Math.min(blend, radius(s1) * 0.8),
-        tone: tones[0] + (tones[1] - tones[0]) * ((s0 + s1) / 2) ** 1.5,
-        part,
-      }),
-    );
-    previous = next;
-  }
-  return shapes;
-}
 
 export interface FlatLockSpec {
   /** Root to tip, through the middle of the lock. */
@@ -115,7 +68,9 @@ export function flatLock({ path, width, flatness, facing, tones, blend, part, se
   const center = new Vector3();
   const tangent = new Vector3();
   const up = new Vector3();
-  const profile = (s: number) => (s < 0.35 ? 0.72 + 0.28 * Math.sin((s / 0.35) * Math.PI * 0.5) : Math.sqrt(Math.max(0.12, 1 - ((s - 0.35) / 0.65) ** 2.4)));
+  // Swells to full width a third of the way along, then rounds off toward the tip.
+  const profile = (s: number) =>
+    s < 0.35 ? 0.72 + 0.28 * Math.sin((s / 0.35) * Math.PI * 0.5) : Math.sqrt(Math.max(0.12, 1 - ((s - 0.35) / 0.65) ** 2.4));
   const shapes: Shape[] = [];
   for (let i = 0; i < segments; i++) {
     const s = (i + 0.5) / segments;
@@ -123,13 +78,9 @@ export function flatLock({ path, width, flatness, facing, tones, blend, part, se
     curve.getTangentAt(s, tangent);
     up.copy(face).addScaledVector(tangent, -face.dot(tangent)).normalize();
     const w = width * profile(s);
-    shapes.push(
-      ellipsoid(center.toArray(), [w, w * flatness, halfLength], {
-        blend: i === 0 ? blend : Math.min(blend, w * 0.6),
-        tone: tones[0] + (tones[1] - tones[0]) * s ** 1.4,
-        part,
-      }, up.toArray(), tangent.toArray()),
-    );
+    // The root melts into the coat; further along, each piece only softens into its neighbours.
+    const finish = { blend: i === 0 ? blend : Math.min(blend, w * 0.6), tone: tones[0] + (tones[1] - tones[0]) * s ** 1.4, part };
+    shapes.push(ellipsoid(center.toArray(), [w, w * flatness, halfLength], finish, up.toArray(), tangent.toArray()));
   }
   return shapes;
 }

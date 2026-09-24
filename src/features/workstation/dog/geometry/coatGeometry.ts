@@ -1,6 +1,7 @@
 import { BufferGeometry, Color, Float32BufferAttribute, Uint16BufferAttribute, Uint32BufferAttribute, Vector3 } from 'three';
 import { smoothstep } from '@/lib/math';
-import { coatField, headRestMatrix } from '../anatomy/coat';
+import { coatField } from '../anatomy/coat';
+import { headRestMatrix } from '../anatomy/headPose';
 import { faceLayout } from '../anatomy/face';
 import { neckAxis } from '../anatomy/neck';
 import { TAIL_PATH } from '../anatomy/tail';

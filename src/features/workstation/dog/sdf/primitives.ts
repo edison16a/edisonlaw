@@ -86,11 +86,6 @@ export function packedDistance(kind: number, p: Float64Array, o: number, x: numb
   return (Math.sqrt(x2 * a2 * il2) + along * rr) * il2 - p[o + 10];
 }
 
-/** Distance from a point to one primitive, for tests and one-off queries. */
-export function distanceTo(primitive: Primitive, x: number, y: number, z: number) {
-  return packedDistance(primitive.kind, Float64Array.from(primitive.params), 0, x, y, z);
-}
-
 export class Sphere implements Primitive {
   readonly kind = KIND.sphere;
   readonly params: number[];
