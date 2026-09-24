@@ -22,15 +22,17 @@ const PEOPLE: Participant[] = [
   { name: 'Edison Law (you)', feed: null, muted: true },
 ];
 
-/** A soft, out of focus webcam frame: a lit wall, a head and shoulders. */
-function cameraFeed(ctx: CanvasRenderingContext2D, rect: Rect, feed: NonNullable<Participant['feed']>) {
+type Feed = NonNullable<Participant['feed']>;
+
+/** A soft, out of focus webcam frame: a lit wall, a head and shoulders. `blur` is in canvas pixels. */
+function cameraFeed(ctx: CanvasRenderingContext2D, rect: Rect, feed: Feed, blur: number) {
   const wall = ctx.createRadialGradient(rect.x + rect.w * 0.3, rect.y + rect.h * 0.2, 10, rect.x + rect.w / 2, rect.y + rect.h / 2, rect.w * 0.8);
   wall.addColorStop(0, feed.wall);
   wall.addColorStop(1, '#141414');
   fillRect(ctx, rect.x, rect.y, rect.w, rect.h, wall);
   const cx = rect.x + rect.w / 2;
-  // Webcams are soft, and the blur hides how simple the shapes are. Filters ignore the transform.
-  ctx.filter = `blur(${1.5 * pixelScale(ctx)}px)`;
+  // Webcams are soft, and the blur hides how simple the shapes are.
+  ctx.filter = `blur(${blur}px)`;
   ctx.fillStyle = feed.shirt;
   ctx.beginPath();
   ctx.ellipse(cx, rect.y + rect.h + 8, rect.w * 0.3, rect.h * 0.42, 0, Math.PI, 0);
@@ -45,6 +47,44 @@ function cameraFeed(ctx: CanvasRenderingContext2D, rect: Rect, feed: NonNullable
   ctx.ellipse(cx, rect.y + rect.h * 0.47, rect.h * 0.17, rect.h * 0.2, 0, 0, Math.PI * 2);
   ctx.fill();
   ctx.filter = 'none';
+}
+
+/**
+ * The camera feeds never change, yet their blur is the costliest thing on this screen, which
+ * repaints ten times a second. Each feed is painted once at the canvas resolution and reused.
+ */
+export class FeedCache {
+  private readonly images = new Map<string, HTMLCanvasElement>();
+
+  draw(ctx: CanvasRenderingContext2D, rect: Rect, name: string, feed: Feed) {
+    // Canvas pixels per layout unit. The transform here only scales.
+    const scale = ctx.getTransform().a;
+    const width = Math.ceil(rect.w * scale);
+    const height = Math.ceil(rect.h * scale);
+    const key = `${name}:${width}x${height}`;
+    let image = this.images.get(key);
+    if (!image) {
+      image = document.createElement('canvas');
+      image.width = width;
+      image.height = height;
+      const imageCtx = image.getContext('2d');
+      if (imageCtx) {
+        imageCtx.scale(width / rect.w, height / rect.h);
+        // Filters ignore the transform, so the blur is sized in the screen's canvas pixels.
+        cameraFeed(imageCtx, { x: 0, y: 0, w: rect.w, h: rect.h }, feed, 1.5 * pixelScale(ctx));
+      }
+      this.images.set(key, image);
+    }
+    ctx.drawImage(image, rect.x, rect.y, rect.w, rect.h);
+  }
+
+  dispose() {
+    this.images.forEach((image) => {
+      image.width = 0;
+      image.height = 0;
+    });
+    this.images.clear();
+  }
 }
 
 function cameraIcon(ctx: CanvasRenderingContext2D, x: number, y: number, color: string) {
@@ -90,7 +130,7 @@ function micIcon(ctx: CanvasRenderingContext2D, x: number, y: number, muted: boo
   ctx.stroke();
 }
 
-export function drawParticipants(ctx: CanvasRenderingContext2D, area: Rect, speaker: number, pulse: number) {
+export function drawParticipants(ctx: CanvasRenderingContext2D, area: Rect, feeds: FeedCache, speaker: number, pulse: number) {
   const gap = 8;
   const h = (area.h - gap * (PEOPLE.length - 1)) / PEOPLE.length;
   PEOPLE.forEach((person, index) => {
@@ -99,7 +139,7 @@ export function drawParticipants(ctx: CanvasRenderingContext2D, area: Rect, spea
     ctx.beginPath();
     ctx.roundRect(rect.x, rect.y, rect.w, rect.h, 8);
     ctx.clip();
-    if (person.feed) cameraFeed(ctx, rect, person.feed);
+    if (person.feed) feeds.draw(ctx, rect, person.name, person.feed);
     else {
       fillRect(ctx, rect.x, rect.y, rect.w, rect.h, T.tile);
       avatar(ctx, 'EL', rect.x + rect.w / 2, rect.y + rect.h / 2 - 8, 20, '#3b5bdb');
