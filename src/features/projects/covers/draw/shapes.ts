@@ -45,6 +45,8 @@ export function ring(x: number, y: number, outer: number, inner: number) {
   return path;
 }
 
+export const polygon = (points: readonly Point[]) => polyline(points, true);
+
 export function regularPolygon(x: number, y: number, radius: number, sides: number, rotation = -Math.PI / 2) {
   const points: Point[] = [];
   for (let i = 0; i < sides; i++) {
