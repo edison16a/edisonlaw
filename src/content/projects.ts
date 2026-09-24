@@ -46,6 +46,7 @@ export const projects: Project[] = [
     description:
       'Autonomous AI agent that finds reputable medical clinics and books appointments end to end through programmatic voice calls. It beat 130+ engineers.',
     links: [],
+    image: '/projects/senseplan.webp',
   },
   {
     id: 'callsense',
