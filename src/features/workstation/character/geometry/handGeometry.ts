@@ -58,12 +58,12 @@ export function fingerGeometries(index: number) {
   const radius = HAND.fingerRadius * (index === 3 ? 0.92 : 1);
   const split = length * HAND.fingerSplit;
   return {
-    base: taperedCapsule(radius, radius * 0.96, split, 14),
-    tip: taperedCapsule(radius * 0.96, radius * 0.88, length - split, 14),
+    base: taperedCapsule(radius, radius * 0.96, split, 12, 5),
+    tip: taperedCapsule(radius * 0.96, radius * 0.88, length - split, 12, 5),
   };
 }
 
 /** A short, thick thumb that tapers to a soft round tip. */
 export function thumbGeometry() {
-  return taperedCapsule(HAND.fingerRadius * 1.14, HAND.fingerRadius * 0.98, HAND.thumbLength, 14);
+  return taperedCapsule(HAND.fingerRadius * 1.14, HAND.fingerRadius * 0.98, HAND.thumbLength, 12, 5);
 }

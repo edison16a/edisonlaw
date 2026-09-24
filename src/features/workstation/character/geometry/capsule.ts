@@ -4,14 +4,14 @@ import { LatheGeometry, Vector2 } from 'three';
  * Capsule hanging down -Y from the origin, with a different radius at each end.
  * Both ends are hemispheres centred on the joints, so neighbouring limbs rotate without seams.
  */
-export function taperedCapsule(topRadius: number, bottomRadius: number, length: number, radialSegments = 24) {
+export function taperedCapsule(topRadius: number, bottomRadius: number, length: number, radialSegments = 24, capSteps = 8) {
   const points: Vector2[] = [];
-  const capSteps = 8;
   for (let i = 0; i <= capSteps; i++) {
     const angle = -Math.PI / 2 + (i / capSteps) * (Math.PI / 2);
     points.push(new Vector2(Math.cos(angle) * bottomRadius, -length + Math.sin(angle) * bottomRadius));
   }
-  const bodySteps = 6;
+  // The side is a straight taper, so a couple of rings carry it; the normals come from the profile.
+  const bodySteps = 3;
   for (let i = 1; i < bodySteps; i++) {
     const t = i / bodySteps;
     points.push(new Vector2(bottomRadius + (topRadius - bottomRadius) * t, -length * (1 - t)));

@@ -97,7 +97,7 @@ function upperGeometry(floor: number) {
 /** One flat lace lying across the instep, bent to follow the rounded top of the shoe. */
 function laceGeometry(floor: number, height: number) {
   const section = sectionAt(height, 'front');
-  const lace = taperedCapsule(LACE.radius, LACE.radius, LACE.halfLength * 2, 10)
+  const lace = taperedCapsule(LACE.radius, LACE.radius, LACE.halfLength * 2, 10, 4)
     .translate(0, LACE.halfLength, 0)
     .scale(1, 1, LACE.flatten)
     .rotateZ(Math.PI / 2)
@@ -116,7 +116,7 @@ function laceGeometry(floor: number, height: number) {
 function heelTabGeometry(floor: number) {
   const { radius, length, flatten, top } = HEEL_TAB;
   const middle = top - length / 2;
-  const tab = taperedCapsule(radius, radius, length, 12)
+  const tab = taperedCapsule(radius, radius, length, 12, 4)
     .translate(0, length / 2, 0)
     .scale(1, 1, flatten)
     .rotateX(slopeAt(middle, 'back'))

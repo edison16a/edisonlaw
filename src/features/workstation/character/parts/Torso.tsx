@@ -29,7 +29,7 @@ const COLLAR = { y: 0.209, radius: 0.053, tube: 0.0085, depth: 0.93 } as const;
 /** The shirt with its chest print and a ribbed collar. */
 export function Torso() {
   const materials = useCharacterMaterials();
-  const shirt = useDisposable(() => loftGeometry(SHIRT, { radialSegments: 96, smooth: 4 }));
+  const shirt = useDisposable(() => loftGeometry(SHIRT, { radialSegments: 80, smooth: 3 }));
   const collar = useDisposable(() => new TorusGeometry(COLLAR.radius, COLLAR.tube, 10, 40));
 
   return (
