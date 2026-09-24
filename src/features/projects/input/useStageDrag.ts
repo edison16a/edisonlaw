@@ -96,12 +96,21 @@ export function useStageDrag(calm: boolean) {
     [release],
   );
 
+  // A touch starts out captured by the canvas under the finger. Moving the capture to the surface
+  // makes the canvas lose it, and that event bubbles up here, so only the surface's own loss ends the drag.
+  const onLostPointerCapture = useCallback(
+    (event: PointerEvent<HTMLElement>) => {
+      if (event.target === event.currentTarget) release(event);
+    },
+    [release],
+  );
+
   return {
     dragging,
     onPointerDown,
     onPointerMove,
     onPointerUp: release,
     onPointerCancel: release,
-    onLostPointerCapture: release,
+    onLostPointerCapture,
   };
 }
