@@ -15,7 +15,7 @@ export const HEAD = {
    * The crown contact point in dog space: as high as DOG_PAT_POINT, since the dog stands on the floor,
    * a neck's length ahead of the shoulders and a little to the dog's right, toward Edison's hand.
    */
-  top: [-0.018, DOG_PAT_POINT[1], 0.3] as Vec3,
+  top: [-0.048, DOG_PAT_POINT[1], 0.3] as Vec3,
   /** Head space is sculpted at a real retriever's size; the clay head is this much bigger. */
   scale: 1.1,
   /**

@@ -54,22 +54,44 @@ describe('dog placement', () => {
   });
 
   it('keeps clear of Edison and of the desk legs', () => {
-    // Edison's feet and shins fill roughly a 0.1 radius column around his placement; higher up only
-    // the line of his left thigh must stay clear, since the petted head leans against his leg.
-    const [ex, , ez] = STANDING_PLACEMENT.position;
-    const [sin, cos] = [Math.sin(STANDING_PLACEMENT.rotationY), Math.cos(STANDING_PLACEMENT.rotationY)];
-    for (let angle = 0; angle < Math.PI * 2; angle += Math.PI / 24) {
-      for (const y of [0.03, 0.15, 0.3]) {
-        const p = toDog(ex + Math.cos(angle) * 0.1, y, ez + Math.sin(angle) * 0.1);
-        expect(field.distance(p.x, p.y, p.z)).toBeGreaterThan(0.005);
+    // Roughly where his sneakers and left leg are in his own space (see character/rig/standingPose.ts):
+    // each shoe about 0.1 to the side of his centre, 0.09 wide and running from 0.03 behind the ankle to
+    // 0.12 in front, and his left leg rising from that ankle to the hip in trousers about 0.05 thick. The
+    // dog keeps a little more room than the lean into his hand takes up.
+    const inRoom = (x: number, y: number, z: number) =>
+      new Vector3(x, y, z).applyAxisAngle(UP, STANDING_PLACEMENT.rotationY).add(new Vector3(...STANDING_PLACEMENT.position));
+    const clearance = (p: Vector3) => {
+      const dog = toDog(p.x, p.y, p.z);
+      return field.distance(dog.x, dog.y, dog.z);
+    };
+    for (const foot of [
+      { x: 0.104, z: 0.035, turn: 0.2 },
+      { x: -0.1, z: -0.01, turn: -0.26 },
+    ]) {
+      for (let across = -0.046; across <= 0.046; across += 0.023) {
+        for (let along = -0.03; along <= 0.12; along += 0.015) {
+          for (const y of [0.01, 0.05, 0.09]) {
+            const local = new Vector3(across, y, along).applyAxisAngle(UP, foot.turn);
+            expect(clearance(inRoom(foot.x + local.x, y, foot.z + local.z))).toBeGreaterThan(0.02);
+          }
+        }
       }
     }
-    const thigh = toDog(ex + 0.085 * cos, 0.45, ez - 0.085 * sin);
-    expect(field.distance(thigh.x, thigh.y, thigh.z)).toBeGreaterThan(0.04);
-    const legX = DESK.width / 2 - 0.13;
-    const legZ = DESK.center[2] + DESK.depth / 2 - 0.1;
-    for (let y = 0; y < DESK.height; y += 0.05) {
-      const p = toDog(legX, y, legZ);
+    for (let share = 0; share <= 1; share += 0.05) {
+      const leg = inRoom(0.104 - 0.032 * share, 0.07 + 0.49 * share, 0.035 * (1 - share));
+      expect(clearance(leg) - 0.05).toBeGreaterThan(0.015);
+    }
+    // The desk: its legs at the corners and the front edge of its top.
+    for (const sx of [1, -1]) {
+      for (const sz of [1, -1]) {
+        for (let y = 0; y < DESK.height; y += 0.05) {
+          const p = toDog(sx * (DESK.width / 2 - 0.13), y, DESK.center[2] + sz * (DESK.depth / 2 - 0.1));
+          expect(field.distance(p.x, p.y, p.z)).toBeGreaterThan(0.03);
+        }
+      }
+    }
+    for (let x = -DESK.width / 2; x <= DESK.width / 2; x += 0.05) {
+      const p = toDog(x, DESK.height - DESK.thickness / 2, DESK.frontZ);
       expect(field.distance(p.x, p.y, p.z)).toBeGreaterThan(0.03);
     }
   });

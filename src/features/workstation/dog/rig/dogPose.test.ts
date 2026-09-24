@@ -52,7 +52,8 @@ describe('dogPose', () => {
       expect(pose.blink).toBeGreaterThanOrEqual(0);
       expect(pose.blink).toBeLessThanOrEqual(1);
       for (const ear of pose.ears) expect(ear.out).toBeGreaterThanOrEqual(0);
-      expect(Math.abs(pose.lean)).toBeLessThan(0.06);
+      // Leaning into the hand, never so far that its shoulder reaches Edison's leg.
+      expect(Math.abs(pose.lean)).toBeLessThan(0.03);
       for (const swing of pose.tail) expect(Math.abs(swing)).toBeLessThan(0.6);
     }
   });

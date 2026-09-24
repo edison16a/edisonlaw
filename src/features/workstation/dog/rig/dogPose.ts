@@ -78,7 +78,7 @@ export function dogPose(t: number, motion: number, seed: number, pose: DogPose) 
   const blissful = occurrence(t, TIMING.bliss, seed + 13, bliss).weight * motion * (1 - looking);
 
   pose.breath = breath;
-  pose.lean = 0.02 + (0.018 * blissful + 0.008 * noise(t * 0.35, seed + 1)) * motion;
+  pose.lean = 0.008 + (0.012 * blissful + 0.005 * noise(t * 0.35, seed + 1)) * motion;
   pose.rock = 0.006 * noise(t * 0.5, seed + 2) * motion;
 
   // Nuzzling up into the hand while it pets, and looking up at him now and then.
