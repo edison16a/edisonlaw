@@ -6,8 +6,11 @@ import { echo, SECTOR } from './anatomy';
  * on a polar grid and stretched along the arc, the way real scans smear it sideways.
  */
 
-/** The fan is computed at half resolution and scaled up, which softens it like a real probe. */
-const SCALE = 0.5;
+/**
+ * Pixels per unit of the zoomed view. The fan is computed at half the canvas resolution and
+ * scaled up, which softens it like a real probe.
+ */
+const SCALE = 0.8;
 const THETA_CELLS = 220;
 const DEPTH_CELLS = 300;
 

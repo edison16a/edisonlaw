@@ -6,13 +6,13 @@
  */
 
 export const SECTOR = {
-  /** Apex of the fan on screen. */
-  apexX: 410,
-  apexY: 70,
+  /** Apex of the fan in the zoomed view (see draw/view). */
+  apexX: 256,
+  apexY: 46,
   /** Half angle of the fan, radians. */
   halfAngle: 0.68,
-  near: 26,
-  far: 612,
+  near: 17,
+  far: 388,
 } as const;
 
 export interface Ellipse {

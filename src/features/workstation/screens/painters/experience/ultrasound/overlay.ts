@@ -7,6 +7,8 @@ import { ULTRASOUND_THEME as T } from './theme';
 /** Everything drawn over the scan: SAM masks and prompts, depth scale and probe settings. */
 
 const DEPTH_CM = 4.5;
+/** The depth scale runs down just right of the fan. */
+export const DEPTH_SCALE_X = SECTOR.apexX + Math.sin(SECTOR.halfAngle) * SECTOR.far - 2;
 
 /** Screen position of a point given in the flat anatomy coordinates. */
 function toScreen(x: number, d: number): [number, number] {
@@ -31,16 +33,16 @@ function mask(ctx: CanvasRenderingContext2D, e: Ellipse, color: string, fill: st
   ctx.fillStyle = fill;
   ctx.fill();
   ctx.strokeStyle = color;
-  ctx.lineWidth = 2 + pulse;
+  ctx.lineWidth = 1.6 + pulse * 0.8;
   ctx.stroke();
   const [x, y] = toScreen(e.x + e.rx * 0.75, e.d - e.rd * 1.1);
-  pill(ctx, label, x, y - 12, { bg: 'rgba(6,8,11,0.8)', color, size: 11, dot: color });
+  pill(ctx, label, x, y - 9, { bg: 'rgba(6,8,11,0.8)', color, size: 10, dot: color });
 }
 
 function point(ctx: CanvasRenderingContext2D, x: number, d: number, color: string) {
   const [px, py] = toScreen(x, d);
-  circle(ctx, px, py, 7, '#ffffff');
-  circle(ctx, px, py, 5, color);
+  circle(ctx, px, py, 5, '#ffffff');
+  circle(ctx, px, py, 3.6, color);
 }
 
 export function drawMasks(ctx: CanvasRenderingContext2D, pulse: number) {
@@ -50,9 +52,9 @@ export function drawMasks(ctx: CanvasRenderingContext2D, pulse: number) {
   // Box prompt around the nodule, dashed like the SAM demo tools.
   const [left, top] = toScreen(NODULE.x - NODULE.rx * 1.25, NODULE.d - NODULE.rd * 1.3);
   const [right, bottom] = toScreen(NODULE.x + NODULE.rx * 1.25, NODULE.d + NODULE.rd * 1.3);
-  ctx.setLineDash([6, 5]);
+  ctx.setLineDash([4, 3]);
   ctx.strokeStyle = 'rgba(34,211,238,0.7)';
-  ctx.lineWidth = 1.5;
+  ctx.lineWidth = 1.2;
   ctx.strokeRect(left, top, right - left, bottom - top);
   ctx.setLineDash([]);
 
@@ -62,29 +64,29 @@ export function drawMasks(ctx: CanvasRenderingContext2D, pulse: number) {
 }
 
 export function drawScanAnnotations(ctx: CanvasRenderingContext2D, frameNumber: number) {
-  const style = { size: 13, family: 'mono', color: '#b8c2cf' } as const;
-  ['L12-5  12.0 MHz', 'Gn 58   DR 60', 'D 4.5 cm', 'FR 32 Hz'].forEach((line, index) => text(ctx, line, 28, 84 + index * 20, style));
-  ['Thyroid R, trans', 'MI 0.8   TIs 0.3', `Frame ${frameNumber}`].forEach((line, index) =>
-    text(ctx, line, 744, 84 + index * 20, { ...style, align: 'right' }),
+  const style = { size: 10.5, family: 'mono', color: '#b8c2cf' } as const;
+  ['L12-5  12.0 MHz', 'Gn 58   DR 60', 'D 4.5 cm'].forEach((line, index) => text(ctx, line, 16, 52 + index * 14, style));
+  ['Thyroid R, trans', `Frame ${frameNumber}`].forEach((line, index) =>
+    text(ctx, line, DEPTH_SCALE_X - 16, 52 + index * 14, { ...style, align: 'right' }),
   );
 
   // Depth scale down the right side, one tick per centimetre.
-  const x = 772;
+  const x = DEPTH_SCALE_X;
   const top = SECTOR.apexY + SECTOR.near;
   const span = SECTOR.far - SECTOR.near;
   ctx.fillStyle = '#6b7686';
   for (let cm = 0; cm <= DEPTH_CM; cm += 0.5) {
     const y = Math.round(top + (cm / DEPTH_CM) * span);
     const major = cm % 1 === 0;
-    ctx.fillRect(x - (major ? 10 : 5), y, major ? 10 : 5, 1.5);
-    if (major && cm > 0) text(ctx, String(cm), x + 6, y + 1, { size: 12, family: 'mono', color: '#8b97a8' });
+    ctx.fillRect(x - (major ? 7 : 4), y, major ? 7 : 4, 1.2);
+    if (major && cm > 0) text(ctx, String(cm), x + 4, y + 1, { size: 10, family: 'mono', color: '#8b97a8' });
   }
   // Focus marker at the nodule depth.
   const focusY = top + NODULE.d * span;
   ctx.beginPath();
-  ctx.moveTo(x - 14, focusY);
-  ctx.lineTo(x - 22, focusY - 5);
-  ctx.lineTo(x - 22, focusY + 5);
+  ctx.moveTo(x - 10, focusY);
+  ctx.lineTo(x - 16, focusY - 4);
+  ctx.lineTo(x - 16, focusY + 4);
   ctx.closePath();
   ctx.fillStyle = T.amber;
   ctx.fill();
