@@ -12,15 +12,15 @@ const BASE_HEIGHT = 0.0092;
 const LID_HEIGHT = 0.0058;
 /** Rubber feet lift the base this far off the desk. */
 const FEET = 0.0012;
-/** The lid rests open by this angle, just enough for a thin dark gap at the front. */
-const OPEN_ANGLE = 0.055;
+/** The closed lid rests this far above the base, a hairline seam all round like the real one. */
+const SEAM = 0.0005;
 /** The hinge axis sits this far in from the back edge. */
 const HINGE_INSET = 0.0055;
 
 /**
- * Space grey MacBook Pro below the monitors with its lid folded almost shut: a thin wedge of dark gap at
- * the front, the black hinge along the back and the polished Apple logo on the lid. The logo faces the
- * back of the lid, so from the front of the desk it reads upside down, as on a real closed MacBook.
+ * Space grey MacBook Pro below the monitors with its lid shut flat: a hairline seam between lid and base,
+ * the black hinge along the back and the polished Apple logo on the lid. The logo faces the back of the
+ * lid, so from the front of the desk it reads upside down, as on a real closed MacBook.
  */
 export function MacBookPro() {
   const materials = getMaterials();
@@ -32,7 +32,6 @@ export function MacBookPro() {
 
   const baseTop = FEET + BASE_HEIGHT;
   const hingeZ = -SIZE.depth / 2 + HINGE_INSET;
-  const inner = { width: SIZE.width - 0.014, depth: SIZE.depth - 0.016 };
 
   return (
     <group position={MACBOOK.position} rotation-y={MACBOOK.rotationY}>
@@ -48,24 +47,15 @@ export function MacBookPro() {
         )),
       )}
       <mesh geometry={parts.base} material={materials.spaceGrey} position-y={FEET} />
-      {/* Keyboard well and the black hinge cover, seen only through the gap. */}
-      <mesh material={materials.blackMatte} position={[0, baseTop + 0.0002, 0.012]} rotation-x={-Math.PI / 2}>
-        <planeGeometry args={[inner.width - 0.03, inner.depth * 0.6]} />
-      </mesh>
+      {/* The black hinge cover along the back. */}
       <mesh material={materials.blackMatte} position={[0, baseTop + 0.0005, hingeZ + 0.001]} rotation-z={Math.PI / 2}>
         <capsuleGeometry args={[0.0042, SIZE.width * 0.74, 6, 16]} />
       </mesh>
 
-      {/* The lid turns about the hinge at the back and rests almost shut. */}
-      <group position={[0, baseTop + 0.0012, hingeZ]} rotation-x={-OPEN_ANGLE}>
-        <group position-z={SIZE.depth / 2 - HINGE_INSET}>
-          <mesh geometry={parts.lid} material={materials.spaceGrey} />
-          {/* The display side of the lid: black glass inside a thin bezel. */}
-          <mesh material={materials.blackGlass} position-y={-0.0002} rotation-x={Math.PI / 2}>
-            <planeGeometry args={[inner.width, inner.depth]} />
-          </mesh>
-          <mesh geometry={parts.logo} material={materials.polishedChrome} position-y={LID_HEIGHT + 0.0002} rotation-y={Math.PI} />
-        </group>
+      {/* The lid lies flat on the base, all the way shut. */}
+      <group position-y={baseTop + SEAM}>
+        <mesh geometry={parts.lid} material={materials.spaceGrey} />
+        <mesh geometry={parts.logo} material={materials.polishedChrome} position-y={LID_HEIGHT + 0.0002} rotation-y={Math.PI} />
       </group>
     </group>
   );
