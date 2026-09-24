@@ -125,6 +125,7 @@ export const projects: Project[] = [
     description:
       'Mobile AR game that discourages littering and rewards people for throwing trash away properly. It won out over 650+ participants.',
     links: [{ label: 'GitHub', href: 'https://github.com/Aldicodi/Cruzhacks-2023-TrashGo' }],
+    image: '/projects/trashgo.webp',
   },
   {
     id: 'chrome-extensions',
