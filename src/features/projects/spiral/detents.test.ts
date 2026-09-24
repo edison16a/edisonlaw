@@ -1,26 +1,23 @@
 import { describe, expect, it } from 'vitest';
-import { detentCrossed, isCardDetent } from './detents';
+import { detentCrossed } from './detents';
 
 describe('detentCrossed', () => {
-  it('returns null while staying between two lines', () => {
-    expect(detentCrossed(0.3, 0.45, 4)).toBeNull();
-    expect(detentCrossed(2.01, 2.24, 4)).toBeNull();
+  it('returns null while the same card holds the slot', () => {
+    expect(detentCrossed(0.1, 0.45)).toBeNull();
+    expect(detentCrossed(2.01, 1.6)).toBeNull();
   });
 
-  it('finds the line crossed going forward and backward', () => {
-    expect(detentCrossed(0.9, 1.1, 4)).toBe(4);
-    expect(detentCrossed(1.1, 0.9, 4)).toBe(4);
-    expect(detentCrossed(0.2, 0.3, 4)).toBe(1);
+  it('finds the card that takes over, halfway between two, going either way', () => {
+    expect(detentCrossed(0.4, 0.6)).toBe(1);
+    expect(detentCrossed(1.6, 1.4)).toBe(1);
+    expect(detentCrossed(-0.4, -0.6)).toBe(-1);
   });
 
-  it('reports the line nearest the new position after a big jump', () => {
-    expect(detentCrossed(0.1, 0.9, 4)).toBe(3);
-    expect(detentCrossed(0.9, 0.1, 4)).toBe(1);
-  });
-
-  it('marks card boundaries, including negative ones', () => {
-    expect(isCardDetent(8, 4)).toBe(true);
-    expect(isCardDetent(9, 4)).toBe(false);
-    expect(isCardDetent(-4, 4)).toBe(true);
+  it('crosses exactly once on a turn of one card', () => {
+    let crossings = 0;
+    for (let value = 3; value < 4; value += 0.01) {
+      if (detentCrossed(value, value + 0.01) !== null) crossings++;
+    }
+    expect(crossings).toBe(1);
   });
 });
