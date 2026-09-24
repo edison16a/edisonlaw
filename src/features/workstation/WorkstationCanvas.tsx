@@ -4,8 +4,7 @@ import { PerformanceMonitor } from '@react-three/drei';
 import { Canvas, useThree } from '@react-three/fiber';
 import { useEffect, useState } from 'react';
 import { DeskScene, type DeskSceneProps } from './scene/DeskScene';
-
-export type Frameloop = 'always' | 'demand' | 'never';
+import type { Frameloop } from './types';
 
 export interface WorkstationCanvasProps extends DeskSceneProps {
   frameloop: Frameloop;

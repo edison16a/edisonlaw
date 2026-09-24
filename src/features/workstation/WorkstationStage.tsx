@@ -4,21 +4,14 @@ import dynamic from 'next/dynamic';
 import { useCallback, useRef, useState, type CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from '@/lib/cn';
-import { useInView } from '@/lib/hooks/useInView';
-import { useIsMobile } from '@/lib/hooks/useIsMobile';
-import { useReducedMotion } from '@/lib/hooks/useReducedMotion';
 import type { ScreenId } from './screens/types';
 import { STAGE_ALT, StageRender } from './stage/StageRender';
-import { useCaptureVariant } from './stage/useCaptureVariant';
+import { useStageMode } from './stage/useStageMode';
 import type { StageVariant } from './types';
-import type { Frameloop } from './WorkstationCanvas';
 
 const WorkstationCanvas = dynamic(() => import('./WorkstationCanvas').then((mod) => mod.WorkstationCanvas), {
   ssr: false,
 });
-
-/** Start loading the scene a full screen before it scrolls in. */
-const NEAR_MARGIN = '100% 0px 100% 0px';
 
 /** Softens every edge of the panel so the room melts into the black page instead of ending in a line. */
 const EDGE_MASK = [
@@ -49,28 +42,10 @@ export interface WorkstationStageProps {
  */
 export function WorkstationStage({ variant, centerScreen, pulseKey, className }: WorkstationStageProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const near = useInView(ref, { rootMargin: NEAR_MARGIN });
-  const onScreen = useInView(ref);
-  const isMobile = useIsMobile();
-  const reducedMotion = useReducedMotion();
-  const capture = useCaptureVariant();
-
-  // Once mounted, the canvas stays mounted so scrolling back never recompiles shaders.
-  const [mounted, setMounted] = useState(false);
-  if (near && !mounted) setMounted(true);
   const [imageFailed, setImageFailed] = useState(false);
   const [ready, setReady] = useState(false);
   const onReady = useCallback(() => setReady(true), []);
-
-  const capturing = capture === variant;
-  const showImage = isMobile && !imageFailed && !capture;
-  const live = capturing || (!capture && !showImage && mounted);
-  const still = reducedMotion || isMobile;
-  const animate = capturing || !still;
-
-  let frameloop: Frameloop = 'always';
-  if (!capturing && !onScreen) frameloop = 'never';
-  else if (!capturing && still) frameloop = 'demand';
+  const { capturing, showImage, live, ...canvasMode } = useStageMode(ref, variant, imageFailed);
 
   const canvas = live && (
     <div className={cn('absolute inset-0 transition-opacity duration-1000 ease-out', ready ? 'opacity-100' : 'opacity-0')}>
@@ -78,13 +53,8 @@ export function WorkstationStage({ variant, centerScreen, pulseKey, className }:
         variant={variant}
         centerScreen={centerScreen}
         pulseKey={pulseKey}
-        frameloop={frameloop}
-        adaptive={!capturing}
-        animate={animate}
-        rgbCycle={animate && !capturing}
-        screensLive={animate && (capturing || onScreen)}
-        parallax={animate && !capturing}
         onReady={onReady}
+        {...canvasMode}
       />
     </div>
   );
