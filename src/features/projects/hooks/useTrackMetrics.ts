@@ -8,6 +8,8 @@ import { setStageMetrics } from '../state/stageMetrics';
 const SIDE_PANEL_QUERY = '(min-width: 1024px)';
 /** Share of the way to the centre of the free space. A little less keeps the spiral from hugging the left. */
 const SHIFT_SHARE = 0.8;
+/** On narrower screens the panel sits at the bottom, so the scene rises by this share of the stage height. */
+const LIFT_SHARE = 0.15;
 
 interface TrackRefs {
   track: RefObject<HTMLElement | null>;
@@ -19,7 +21,7 @@ interface TrackRefs {
 /**
  * Measures the scroll track and the sticky stage on mount and on every resize,
  * and publishes where the track starts, how much scroll one card takes and how
- * far the scene slides aside for the panel.
+ * far the scene slides aside, or up, for the panel.
  */
 export function useTrackMetrics({ track, stage, column }: TrackRefs, count: number) {
   useEffect(() => {
@@ -36,7 +38,8 @@ export function useTrackMetrics({ track, stage, column }: TrackRefs, count: numb
       // Move the focused card toward the centre of the space left of the panel.
       const free = columnNode ? stageNode.clientWidth - columnNode.offsetLeft : 0;
       const focusShift = sidePanel.matches ? (free / 2) * SHIFT_SHARE : 0;
-      setStageMetrics({ top, perCard, count, focusShift });
+      const focusLift = sidePanel.matches ? 0 : stageNode.clientHeight * LIFT_SHARE;
+      setStageMetrics({ top, perCard, count, focusShift, focusLift });
     };
 
     measure();

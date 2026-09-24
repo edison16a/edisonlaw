@@ -67,7 +67,9 @@ export function SpiralScene({ projects, startAt, onSelect, onHover }: SpiralScen
       useSpiralStore.getState().markScrolled();
     }
 
-    frameCamera(camera, state.size.width, state.size.height, stageMetrics.focusShift * spiralMotion.engaged);
+    const { focusShift, focusLift } = stageMetrics;
+    const engaged = spiralMotion.engaged;
+    frameCamera(camera, state.size.width, state.size.height, focusShift * engaged, focusLift * engaged);
     gl.getDrawingBufferSize(cardViewport);
     uploadNext();
     for (const card of cards) updateCard(card, spiralMotion, cards.length, delta, reducedMotion);

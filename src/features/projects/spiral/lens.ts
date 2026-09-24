@@ -17,19 +17,20 @@ export function fitFov(aspect: number) {
 
 /**
  * Frames the spiral for a `width` by `height` canvas and slides the picture
- * `shift` CSS pixels to the left, like a shifted lens, so perspective does not
- * change as the scene makes room for the panel.
+ * `shift` CSS pixels to the left and `lift` pixels up, like a shifted lens, so
+ * perspective does not change as the scene makes room for the panel.
  */
-export function frameCamera(camera: PerspectiveCamera, width: number, height: number, shift: number) {
+export function frameCamera(camera: PerspectiveCamera, width: number, height: number, shift: number, lift: number) {
   const fov = fitFov(width / height);
   const view = camera.view;
   const unchanged =
     camera.fov === fov &&
     view !== null &&
     view.offsetX === shift &&
+    view.offsetY === lift &&
     view.fullWidth === width &&
     view.fullHeight === height;
   if (unchanged) return;
   camera.fov = fov;
-  camera.setViewOffset(width, height, shift, 0, width, height);
+  camera.setViewOffset(width, height, shift, lift, width, height);
 }
