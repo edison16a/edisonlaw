@@ -4,6 +4,7 @@ import { motion } from 'motion/react';
 import type { Experience } from '@/content/types';
 import { DateRange } from '@/components/ui/DateRange';
 import { cn } from '@/lib/cn';
+import { EASE_OUT_EXPO } from '@/lib/easing';
 
 interface TimelineEntryProps {
   entry: Experience;
@@ -21,7 +22,7 @@ export function TimelineEntry({ entry, current, reached }: TimelineEntryProps) {
       initial={{ opacity: 0, y: 28 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '0px 0px -12% 0px' }}
-      transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 0.9, ease: EASE_OUT_EXPO }}
       className="relative pl-10 sm:pl-12"
     >
       <span

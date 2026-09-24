@@ -2,6 +2,7 @@
 
 import { useEffect, type RefObject } from 'react';
 import { useReducedMotion } from '@/lib/hooks/useReducedMotion';
+import { EASE_OUT_EXPO_CSS } from '@/lib/easing';
 
 /** Bar height when sound is off: a row of dots. */
 export const FLAT = 0.15;
@@ -20,7 +21,6 @@ const RHYTHMS = [
 /** A still, readable "on" for reduced motion. */
 const STILL = [0.55, 0.9, 0.7, 0.45];
 
-const EASE_OUT = 'cubic-bezier(0.16, 1, 0.3, 1)';
 const SETTLE_MS = 500;
 const STAGGER_MS = 45;
 
@@ -46,7 +46,7 @@ export function useEqualizer(bars: RefObject<(HTMLElement | null)[]>, active: bo
       const settle = bar.animate([{ transform: from === 'none' ? scale(FLAT) : from }, { transform: scale(target) }], {
         duration: reduced ? 0 : SETTLE_MS,
         delay: active && !reduced ? index * STAGGER_MS : 0,
-        easing: EASE_OUT,
+        easing: EASE_OUT_EXPO_CSS,
         fill: 'forwards',
       });
       if (!active || reduced) return;
