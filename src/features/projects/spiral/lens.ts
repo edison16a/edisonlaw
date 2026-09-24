@@ -3,7 +3,7 @@ import type { PerspectiveCamera } from 'three';
 export const CAMERA = {
   z: 8,
   /** Vertical field of view on wide screens, in degrees. */
-  fov: 33,
+  fov: 32,
   maxFov: 58,
   /** Half the spiral's width at the axis, which must stay in frame on narrow screens. */
   halfWidth: 2.95,
