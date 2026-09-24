@@ -3,10 +3,10 @@ import { Color, MeshBasicMaterial, MeshPhysicalMaterial } from 'three';
 /** Every colour on the dog. Colour is allowed here because it lives inside the 3D scene. */
 export const DOG_PALETTE = {
   /** Coat tones from the deep gold of the back to the cream of the feathering, see TONE. */
-  coat: ['#bf792c', '#dd9d46', '#efc06e', '#f9e4b5'],
+  coat: ['#c98232', '#e3a44c', '#f2c677', '#fbe7bb'],
   /** Stops of the coat gradient, matching `coat`. */
   coatStops: [0, 0.3, 0.62, 0.95],
-  coatSheen: '#ffd9a0',
+  coatSheen: '#ffe2ad',
   /** Dark pigment on the lips and round the eyes. */
   pigment: '#2b1a12',
   mouth: '#4a1c1c',
@@ -38,7 +38,7 @@ function furMaterial() {
     color: '#ffffff',
     vertexColors: true,
     roughness: 0.72,
-    sheen: 0.8,
+    sheen: 1,
     sheenColor: new Color(DOG_PALETTE.coatSheen),
     sheenRoughness: 0.45,
   });
