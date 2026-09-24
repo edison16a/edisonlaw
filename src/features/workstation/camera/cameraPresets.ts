@@ -28,11 +28,11 @@ export const CAMERA_FRAMINGS: Record<StageVariant, CameraFraming> = {
   },
   // From the left, near eye level, so the standing figure reads in three-quarter profile against
   // the glowing screens. The camera sits past the left wall, which is single sided and so invisible.
-  // The left edge falls between the wall shelf and the left monitor at every panel width, so the
-  // shelf's moon lamp is never cut in half there.
+  // Wide enough that the left monitor, the Mac mini, Edison and the whole golden retriever on his left,
+  // tail and paws included, stay clear of the stage's faded edges at every panel width.
   about: {
-    portrait: { position: [-4.3, 1.95, 2.0], target: [0.14, 0.9, -0.02], fov: 34.5 },
-    landscape: { position: [-4.3, 1.95, 2.0], target: [0.19, 0.94, 0.1], fov: 21.5 },
+    portrait: { position: [-4.8, 1.95, 2.3], target: [0.25, 1.0, 0.25], fov: 40 },
+    landscape: { position: [-4.6, 1.98, 2.3], target: [0.22, 0.86, 0.2], fov: 25.5 },
   },
 };
 
