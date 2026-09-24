@@ -3,7 +3,7 @@ import { clamp, lerp, smoothstep } from '@/lib/math';
 
 /** The two ends of the gradient as sRGB values, blended in sRGB so the middle reads as an even blue. */
 const NAVY = new Color().setRGB(0x0a / 255, 0x2b / 255, 0xb8 / 255);
-const SKY = new Color().setRGB(0x8a / 255, 0xd8 / 255, 0xff / 255);
+const SKY = new Color().setRGB(0x6c / 255, 0xc8 / 255, 0xff / 255);
 /** Navy is far darker than sky blue, so it glows harder to stay readable at the same strength. */
 const NAVY_GAIN = 2.2;
 /** How far the shimmer slides the gradient, as a share of the board. */

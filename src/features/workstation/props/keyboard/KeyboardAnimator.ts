@@ -11,7 +11,7 @@ const HALO_GAIN = 1.5;
 /** How fast a struck key's flash fades, roughly 1 / seconds. */
 const FLASH_FADE = 7;
 /** Brightness of the plate between the keys, a dim wash under the halos. */
-const PLATE_GLOW = 0.28;
+const PLATE_GLOW = 0.2;
 const PLATE_TEXELS = 64;
 
 export interface KeycapMetrics {
