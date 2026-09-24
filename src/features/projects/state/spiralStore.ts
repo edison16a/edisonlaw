@@ -8,7 +8,7 @@ export interface FocusSnapshot {
 }
 
 interface SpiralState extends FocusSnapshot {
-  /** True once the spiral has drawn its first frame, so the controls around it can show. */
+  /** True once the focused card's picture is on screen, so the controls around it can show. */
   ready: boolean;
   /** Project under the pointer in the spiral, or null. */
   hovered: number | null;
@@ -16,6 +16,10 @@ interface SpiralState extends FocusSnapshot {
   spiralFailed: boolean;
 
   syncFocus: (snapshot: FocusSnapshot) => void;
+  /** The canvas has drawn the focused card. */
+  markReady: () => void;
+  /** The canvas went away, so a later one starts from nothing and the controls wait for it again. */
+  resetSpiral: () => void;
   setHovered: (index: number | null) => void;
   failSpiral: () => void;
 }
@@ -29,9 +33,15 @@ export const useSpiralStore = create<SpiralState>((set, get) => ({
 
   syncFocus: ({ panel, settled }) => {
     const state = get();
-    if (state.ready && state.panel === panel && state.settled === settled) return;
-    set({ panel, settled, ready: true });
+    if (state.panel === panel && state.settled === settled) return;
+    set({ panel, settled });
   },
+
+  markReady: () => {
+    if (!get().ready) set({ ready: true });
+  },
+
+  resetSpiral: () => set({ panel: null, settled: null, ready: false, hovered: null }),
 
   setHovered: (index) => {
     if (get().hovered !== index) set({ hovered: index });

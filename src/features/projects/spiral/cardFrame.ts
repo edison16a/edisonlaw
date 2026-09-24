@@ -52,6 +52,11 @@ export function createCards(projects: number): CardRuntime[] {
   }));
 }
 
+/** True once the card in the focus slot has its picture and has begun to fade in. */
+export function focusCardShown(cards: CardRuntime[]) {
+  return cards.some((card) => card.shownFor >= 0 && Math.abs(card.offset) < 0.5);
+}
+
 /** Points the card at its picture and starts the fade in. */
 export function showPicture(card: CardRuntime, picture: CardPicture) {
   const uniforms = card.material.uniforms;
