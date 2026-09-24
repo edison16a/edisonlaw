@@ -247,3 +247,49 @@ export function createSpineTexture(color: string, foil: string, seed: number) {
     ctx.globalAlpha = 1;
   });
 }
+
+/** Soft mottled plaster, a few percent either side of white, to keep large walls from reading as flat colour. */
+export function createPlasterTexture() {
+  const texture = paintTexture(256, 256, (ctx, w, h) => {
+    const random = seededRandom(23);
+    ctx.fillStyle = '#f4f4f4';
+    ctx.fillRect(0, 0, w, h);
+    for (let i = 0; i < 260; i++) {
+      const x = random() * w;
+      const y = random() * h;
+      const radius = 6 + random() * 26;
+      const shade = random() > 0.5 ? 255 : 205;
+      const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
+      gradient.addColorStop(0, `rgba(${shade}, ${shade}, ${shade}, 0.12)`);
+      gradient.addColorStop(1, `rgba(${shade}, ${shade}, ${shade}, 0)`);
+      ctx.fillStyle = gradient;
+      ctx.fillRect(x - radius, y - radius, radius * 2, radius * 2);
+    }
+    for (let i = 0; i < 5000; i++) {
+      ctx.fillStyle = `rgba(0, 0, 0, ${random() * 0.05})`;
+      ctx.fillRect(random() * w, random() * h, 1, 1);
+    }
+  });
+  texture.wrapS = RepeatWrapping;
+  texture.wrapT = RepeatWrapping;
+  return texture;
+}
+
+/** Tufted wool: fine light and dark flecks, tiled over the rug and tinted by each band's colour. */
+export function createFibreTexture() {
+  const texture = paintTexture(256, 256, (ctx, w, h) => {
+    const random = seededRandom(29);
+    ctx.fillStyle = '#e6e6e6';
+    ctx.fillRect(0, 0, w, h);
+    for (let i = 0; i < 9000; i++) {
+      const light = random() > 0.45;
+      ctx.fillStyle = light ? `rgba(255, 255, 255, ${0.1 + random() * 0.25})` : `rgba(0, 0, 0, ${0.08 + random() * 0.2})`;
+      ctx.beginPath();
+      ctx.arc(random() * w, random() * h, 0.6 + random() * 1.4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  });
+  texture.wrapS = RepeatWrapping;
+  texture.wrapT = RepeatWrapping;
+  return texture;
+}

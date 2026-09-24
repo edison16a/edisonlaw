@@ -1,5 +1,5 @@
 import { MeshPhysicalMaterial, MeshStandardMaterial } from 'three';
-import { createFloorTexture } from './canvasTextures';
+import { createFloorTexture, createPlasterTexture } from './canvasTextures';
 import { withEdgeFade } from './edgeFade';
 
 /**
@@ -9,10 +9,11 @@ import { withEdgeFade } from './edgeFade';
 function createMaterials() {
   const floorMap = createFloorTexture();
   floorMap.repeat.set(1.6, 1.6);
+  const plaster = createPlasterTexture();
 
   return {
     /** Near black charcoal with a hint of warmth. */
-    wall: withEdgeFade(new MeshStandardMaterial({ color: '#27221f', roughness: 0.96 })),
+    wall: withEdgeFade(new MeshStandardMaterial({ map: plaster, color: '#29241f', roughness: 0.96 })),
     skirting: withEdgeFade(new MeshStandardMaterial({ color: '#1a1715', roughness: 0.8 })),
     floor: withEdgeFade(new MeshStandardMaterial({ map: floorMap, color: '#b4a497', roughness: 0.62 })),
     /** Pale off-white laminate, catches the screen light. */
