@@ -31,7 +31,6 @@ export function ExperienceSection() {
     >
       <div className="gutter pt-16 lg:pt-[calc(var(--spacing-nav)+4rem)] pb-[40vh]">
         <SectionHeader
-          index="02"
           id="experience-title"
           title="Work Experience"
           lead="Startups, research labs and open source, newest first."
