@@ -1,6 +1,7 @@
 /**
- * One shared clock for every animated screen. Each task runs at about 12 fps, and at most one
- * task runs per animation frame so several screens never repaint in the same frame.
+ * One shared clock for every animated screen. Each task runs at about 10 fps, enough for typing
+ * and blinking cursors, and at most one task runs per animation frame so several screens never
+ * repaint in the same frame. Every repaint of a big canvas also costs an upload, so the rate stays low.
  * The loop only exists while there are tasks, and requestAnimationFrame already stops in
  * background tabs.
  */
@@ -8,7 +9,7 @@
 /** Receives the seconds since this task last ran. */
 export type ScheduledTask = (delta: number) => void;
 
-const INTERVAL = 1000 / 12;
+const INTERVAL = 1000 / 10;
 /** Longest step a task is told about, so a paused tab does not fast forward the loop. */
 const MAX_DELTA = 0.25;
 
