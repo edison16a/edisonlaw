@@ -4,6 +4,7 @@ import { codex } from './codex';
 import { optagon } from './experience/optagon';
 import { placeholder } from './placeholder';
 import { ultrasound } from './experience/ultrasound';
+import { westpa } from './experience/westpa';
 import { vscode } from './vscode';
 
 /** Every screen id and the painter that draws it. */
@@ -13,7 +14,7 @@ export const painters: Record<ScreenId, PainterFactory> = {
   vscode,
   optagon,
   ultrasound,
-  westpa: placeholder('westpa'),
+  westpa,
   nanoscience: placeholder('nanoscience'),
   tanius: placeholder('tanius'),
   cisco: placeholder('cisco'),
