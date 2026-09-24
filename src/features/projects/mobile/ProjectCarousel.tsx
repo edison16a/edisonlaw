@@ -8,7 +8,6 @@ import type { Project } from '@/content/types';
 import { sound } from '@/features/sound';
 import { cn } from '@/lib/cn';
 import { useReducedMotion } from '@/lib/hooks/useReducedMotion';
-import { IntroTitle } from '../components/IntroTitle';
 import { ProjectDetails } from '../components/ProjectDetails';
 import { ProjectImage } from '../components/ProjectImage';
 import { ProjectStatus } from '../components/ProjectStatus';
@@ -38,8 +37,6 @@ function preloadPhoto(project: Project) {
 
 interface ProjectCarouselProps {
   projects: Project[];
-  /** Whether its title is the page's h1. See IntroTitle. */
-  heading?: boolean;
   className?: string;
 }
 
@@ -48,7 +45,7 @@ interface ProjectCarouselProps {
  * Phones get it, and so does any screen without WebGL. Like the spiral, it
  * opens on the featured project.
  */
-export function ProjectCarousel({ projects, heading, className }: ProjectCarouselProps) {
+export function ProjectCarousel({ projects, className }: ProjectCarouselProps) {
   const strip = useRef<HTMLOListElement>(null);
   const opening = featuredIndex(projects);
   const active = useActiveSlide(strip, projects.length, opening);
@@ -81,7 +78,6 @@ export function ProjectCarousel({ projects, heading, className }: ProjectCarouse
 
   return (
     <div className={cn('flex flex-col pt-10 pb-16', className)}>
-      <IntroTitle heading={heading} className="gutter mb-8" />
       {/*
         Lenis leaves sideways wheel swipes to the strip. Its stylesheet then sets
         overscroll-behavior: contain, so the inline style hands vertical swipes back to the page.

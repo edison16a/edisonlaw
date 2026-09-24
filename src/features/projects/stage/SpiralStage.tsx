@@ -14,7 +14,6 @@ import { useSpiralStore } from '../state/spiralStore';
 import { DetailPanel } from './DetailPanel';
 import { StageBackdrop } from './StageBackdrop';
 import { StageSurface } from './StageSurface';
-import { StageTitle } from './StageTitle';
 import { StepArrows } from './StepArrows';
 
 const SpiralCanvas = dynamic(() => import('../spiral/SpiralCanvas').then((loaded) => loaded.SpiralCanvas), {
@@ -64,7 +63,6 @@ export function SpiralStage({ projects }: { projects: Project[] }) {
       </StageSurface>
       {/* The stage melts into the black page below, so the handoff to the next section has no hard edge. */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-[12%] bg-linear-to-b from-transparent to-black" />
-      <StageTitle />
       <StepArrows />
       <DetailPanel projects={projects} columnRef={column} />
     </div>
