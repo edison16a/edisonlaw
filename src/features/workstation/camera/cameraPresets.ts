@@ -25,14 +25,16 @@ export const CAMERA_FRAMINGS: Record<StageVariant, CameraFraming> = {
     landscape: { position: [2.6, 2.85, 3.6], target: [0.35, 0.9, -0.3], fov: 32 },
     aspects: [0.7, 1.4],
   },
-  // From the left, near eye level, so the standing figure reads in three-quarter profile against
-  // the glowing screens. The camera sits past the left wall, which is single sided and so invisible.
-  // Wide enough that the left monitor, the Mac mini, Edison and the whole golden retriever on his left,
-  // tail and paws included, stay clear of the stage's faded edges at every panel width.
+  // From the left, a little above eye level, so the standing figure reads in three-quarter profile
+  // against the glowing screens. The camera stands well back past the left wall, which is single sided
+  // and so invisible, with a long lens that keeps the near end of the room from looming. The plant, the
+  // shelf, the cork board, the picture, the desk with all three monitors, Edison and the whole golden
+  // retriever on his left all stay clear of the stage's faded edges. The portrait shot is tuned for a
+  // desktop half panel, and taller panels keep its width.
   about: {
-    portrait: { position: [-4.8, 1.95, 2.3], target: [0.25, 1.0, 0.25], fov: 40 },
-    landscape: { position: [-4.6, 1.98, 2.3], target: [0.22, 0.86, 0.2], fov: 25.5 },
-    aspects: [0.7, 1.4],
+    portrait: { position: [-9, 2.85, 3.95], target: [0.11, 0.92, -0.03], fov: 23.9 },
+    landscape: { position: [-9, 2.85, 3.95], target: [0.11, 0.93, -0.04], fov: 19.6 },
+    aspects: [0.86, 1.4],
   },
 };
 
