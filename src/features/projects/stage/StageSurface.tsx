@@ -28,6 +28,7 @@ export function StageSurface({ count, children }: StageSurfaceProps) {
       aria-roledescription="carousel"
       aria-label="Project spiral. Use the arrow keys to move between projects."
       tabIndex={0}
+      data-focus-on-open
       onKeyDown={onKeyDown}
       onPointerDown={drag.onPointerDown}
       onPointerMove={drag.onPointerMove}

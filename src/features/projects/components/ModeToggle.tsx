@@ -21,7 +21,7 @@ export function ModeToggle({ mode, onChange, spiralLabel = 'spiral', className }
   };
 
   return (
-    <div role="group" aria-label="Project view" className={cn('flex items-center gap-5', className)}>
+    <div role="group" aria-label="Project view" data-view-toggle className={cn('flex items-center gap-5', className)}>
       <ToggleWord label={spiralLabel} active={mode === 'spiral'} onSelect={() => choose('spiral')} className="justify-end" />
       <span aria-hidden="true" className="size-1.5 rounded-full bg-white" />
       <ToggleWord label="list" active={mode === 'list'} onSelect={() => choose('list')} />

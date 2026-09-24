@@ -1,17 +1,16 @@
 'use client';
 
-import { useCallback } from 'react';
-import { useLenis } from 'lenis/react';
+import { useRef } from 'react';
 import { projects as allProjects } from '@/content/projects';
 import type { Project } from '@/content/types';
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
 import { useIsClient } from '@/lib/hooks/useIsClient';
 import { useWebGLSupport } from '@/lib/hooks/useWebGLSupport';
 import { ProjectsIndex } from './components/ProjectsIndex';
+import { useViewSwitch } from './hooks/useViewSwitch';
 import { ProjectList } from './list/ProjectList';
 import { ProjectCarousel } from './mobile/ProjectCarousel';
 import { SpiralTrack } from './stage/SpiralTrack';
-import { useSpiralStore, type SpiralMode } from './state/spiralStore';
 import { useSpiralMode } from './state/useSpiralMode';
 
 /**
@@ -23,30 +22,8 @@ export function ProjectsSection({ projects = allProjects }: { projects?: Project
   const isMobile = useIsMobile();
   const isClient = useIsClient();
   const webgl = useWebGLSupport();
-  const lenis = useLenis();
-  const chooseMode = useSpiralStore((state) => state.chooseMode);
-  const openInSpiral = useSpiralStore((state) => state.openInSpiral);
-
-  const toTop = useCallback(() => {
-    if (lenis) lenis.scrollTo('#projects', { immediate: true, force: true });
-    else document.getElementById('projects')?.scrollIntoView();
-  }, [lenis]);
-
-  const changeMode = useCallback(
-    (next: SpiralMode) => {
-      toTop();
-      chooseMode(next);
-    },
-    [chooseMode, toTop],
-  );
-
-  const openProject = useCallback(
-    (index: number) => {
-      toTop();
-      openInSpiral(index);
-    },
-    [openInSpiral, toTop],
-  );
+  const section = useRef<HTMLElement>(null);
+  const { changeMode, openProject } = useViewSwitch(section);
 
   // Until the client knows the screen size both layouts render and CSS picks one, so phones never flash the stage.
   // Meanwhile the stage's title is the h1. Without WebGL the carousel stands in for the spiral on every screen.
@@ -55,7 +32,7 @@ export function ProjectsSection({ projects = allProjects }: { projects?: Project
   const showCarousel = !isClient || !spiralFits;
 
   return (
-    <section id="projects" aria-labelledby="projects-title" className="relative pt-nav">
+    <section ref={section} id="projects" aria-labelledby="projects-title" className="relative pt-nav">
       {mode === 'list' ? (
         <ProjectList
           projects={projects}

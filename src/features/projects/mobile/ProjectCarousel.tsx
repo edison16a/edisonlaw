@@ -79,6 +79,7 @@ export function ProjectCarousel({ projects, onModeChange, heading, className }: 
         data-lenis-prevent-horizontal
         style={{ overscrollBehaviorY: 'auto' }}
         tabIndex={0}
+        data-focus-on-open
         onKeyDown={onKeyDown}
         aria-label="Project photos. Use the left and right arrow keys to move between projects."
         className="flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain px-[max(9vw,calc(50%-24rem))] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
