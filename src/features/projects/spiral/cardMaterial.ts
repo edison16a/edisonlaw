@@ -18,6 +18,8 @@ export interface CardUniforms {
   /** Sideways bow of the middle of the card, in world units. */
   uBow: IUniform<number>;
   uSweep: IUniform<number>;
+  /** 0 on the strand to 1 settled in focus, where the card is a flat rectangle the sweep only moves. */
+  uFlat: IUniform<number>;
   uBrightness: IUniform<number>;
   uOpacity: IUniform<number>;
   /** Drawing buffer size in pixels, for the fade at the stage edges. */
@@ -44,6 +46,7 @@ export function createCardMaterial(): CardMaterial {
     uCurvature: { value: 1 / SPIRAL.radius },
     uBow: { value: 0 },
     uSweep: { value: SPIRAL.sweep },
+    uFlat: { value: 0 },
     uBrightness: { value: 1 },
     uOpacity: { value: 0 },
     uViewport: { value: cardViewport },

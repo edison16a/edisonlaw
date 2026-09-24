@@ -19,19 +19,21 @@ export function cardBrightness(offset: number, settle: number) {
 
 /**
  * How closely a card hugs the cylinder: 1 follows it exactly. Speed bends it a
- * touch further and a card relaxes almost flat while it is in focus.
+ * touch further. `focus` runs from 0 on the strand to 1 once the card has
+ * settled in the slot, where it eases out perfectly flat.
  */
 export function cardBend(velocity: number, focus: number) {
   const speed = Math.min(1, Math.abs(velocity) / 8);
-  return (1 + 0.45 * speed) * (1 - 0.8 * focus);
+  return (1 + 0.45 * speed) * (1 - focus);
 }
 
 /**
  * How far the middle of a card bows along the strand with speed, in world
  * units, the way the card is travelling. Cards move toward their own left as
- * the index grows, so the bow runs against the velocity's sign.
+ * the index grows, so the bow runs against the velocity's sign. A card
+ * settling in focus straightens out.
  */
-export function cardBow(velocity: number) {
+export function cardBow(velocity: number, focus: number) {
   const clamped = Math.max(-10, Math.min(10, velocity));
-  return clamped * -0.016;
+  return clamped * -0.016 * (1 - focus);
 }

@@ -93,7 +93,8 @@ export function updateCard(card: CardRuntime, motion: SpiralMotion, slots: numbe
   const velocity = calm ? 0 : motion.velocity;
   const uniforms = card.material.uniforms;
   uniforms.uCurvature.value = cardBend(velocity, pose.focus) / SPIRAL.radius;
-  uniforms.uBow.value = cardBow(velocity);
+  uniforms.uBow.value = cardBow(velocity, pose.focus);
+  uniforms.uFlat.value = pose.focus;
   uniforms.uBrightness.value = cardBrightness(offset, motion.settle);
   uniforms.uOpacity.value = opacity;
   return fading;

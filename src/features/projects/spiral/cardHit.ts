@@ -1,13 +1,14 @@
 import { Vector3, Vector4, type Camera, type Intersection, type Matrix4, type Mesh, type Raycaster } from 'three';
 import type { CardUniforms } from './cardMaterial';
-import { CARD_HEIGHT, CARD_WIDTH, SPIRAL } from './geometry';
+import { CARD_HEIGHT, CARD_WIDTH, sweepOffset } from './geometry';
 
 /**
  * Hit testing that follows the card the canvas draws. The vertex shader bends
  * each flat plane round the cylinder, bows it with speed and sweeps the strand
  * sideways, so three.js's own test against the flat plane misses near the
  * edges of a bent card. This bends a grid the same way, projects it to the
- * screen and looks for the pointer among its triangles.
+ * screen and looks for the pointer among its triangles. A card settled in
+ * focus has no bend or bow and takes the sweep of its centre, just as drawn.
  */
 
 /** Grid cells across and up the card. The chords stay well under a pixel from the bent surface. */
@@ -22,6 +23,7 @@ const local = new Vector3();
 const view = new Vector3();
 const clip = new Vector4();
 const pointer = new Vector3();
+const shape: CardShape = { curvature: 0, bow: 0, flat: 0 };
 
 /** Card point `u`, `v` (0 to 1 across and up) bent like the vertex shader bends it, in the card's own units. */
 export function bendCardPoint(u: number, v: number, curvature: number, bow: number, out: Vector3) {
@@ -36,8 +38,16 @@ export function bendCardPoint(u: number, v: number, curvature: number, bow: numb
   return out;
 }
 
+/** How the vertex shader shapes one card: its bend, speed bow and how flat it has settled. */
+export interface CardShape {
+  curvature: number;
+  bow: number;
+  flat: number;
+}
+
 /** Bends and projects the grid for one card. Returns false if any point falls behind the camera. */
-function projectGrid(matrixWorld: Matrix4, camera: Camera, curvature: number, bow: number) {
+function projectGrid(matrixWorld: Matrix4, camera: Camera, { curvature, bow, flat }: CardShape) {
+  const centreY = matrixWorld.elements[13];
   for (let row = 0; row <= ROWS; row++) {
     for (let column = 0; column <= COLUMNS; column++) {
       const index = row * (COLUMNS + 1) + column;
@@ -46,7 +56,7 @@ function projectGrid(matrixWorld: Matrix4, camera: Camera, curvature: number, bo
       world[index * 3 + 1] = local.y;
       world[index * 3 + 2] = local.z;
       view.copy(local).applyMatrix4(camera.matrixWorldInverse);
-      view.x += SPIRAL.sweep * local.y * local.y;
+      view.x += sweepOffset(local.y, centreY, flat);
       clip.set(view.x, view.y, view.z, 1).applyMatrix4(camera.projectionMatrix);
       if (clip.w <= 0) return false;
       screen[index * 2] = clip.x / clip.w;
@@ -83,11 +93,11 @@ function hitTriangle(x: number, y: number, a: number, b: number, c: number, out:
 
 /**
  * Where the pointer at `x`, `y` in normalized device coordinates lands on a
- * card placed by `matrixWorld` and drawn through `camera` with this bend and
- * bow. Writes the world point to `out` and returns true, or returns false for a miss.
+ * card placed by `matrixWorld` and drawn through `camera` in this shape.
+ * Writes the world point to `out` and returns true, or returns false for a miss.
  */
-export function hitBentCard(x: number, y: number, matrixWorld: Matrix4, camera: Camera, curvature: number, bow: number, out: Vector3) {
-  if (!projectGrid(matrixWorld, camera, curvature, bow)) return false;
+export function hitBentCard(x: number, y: number, matrixWorld: Matrix4, camera: Camera, shape: CardShape, out: Vector3) {
+  if (!projectGrid(matrixWorld, camera, shape)) return false;
   for (let row = 0; row < ROWS; row++) {
     for (let column = 0; column < COLUMNS; column++) {
       const a = row * (COLUMNS + 1) + column;
@@ -110,10 +120,11 @@ export function bentCardRaycast(mesh: Mesh, uniforms: CardUniforms) {
     if (!mesh.visible || !camera) return;
     // Every point on a picking ray lands on the same spot on screen, so one step along it finds the pointer.
     pointer.copy(raycaster.ray.origin).add(raycaster.ray.direction).project(camera);
+    shape.curvature = uniforms.uCurvature.value;
+    shape.bow = uniforms.uBow.value;
+    shape.flat = uniforms.uFlat.value;
     const point = new Vector3();
-    if (!hitBentCard(pointer.x, pointer.y, mesh.matrixWorld, camera, uniforms.uCurvature.value, uniforms.uBow.value, point)) {
-      return;
-    }
+    if (!hitBentCard(pointer.x, pointer.y, mesh.matrixWorld, camera, shape, point)) return;
     intersects.push({ distance: raycaster.ray.origin.distanceTo(point), point, object: mesh });
   };
 }

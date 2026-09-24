@@ -99,6 +99,18 @@ export function cardPose(offset: number, settle: number, hidden: number, out: Ca
   return out;
 }
 
+/**
+ * How far the strand's sweep pushes a point at height `y` to the right, for a
+ * card whose centre sits at `centreY`. The sweep grows with height squared,
+ * which leans a card's sides a little. A card in focus (`flat` 1) takes the
+ * sweep of its centre everywhere, so it moves with the strand but stays a
+ * true rectangle.
+ */
+export function sweepOffset(y: number, centreY: number, flat: number) {
+  const squared = y * y + (centreY * centreY - y * y) * flat;
+  return SPIRAL.sweep * squared;
+}
+
 export function createPose(): CardPose {
   return { x: 0, y: 0, z: 0, rotationY: 0, facing: 1, scale: 1, focus: 0 };
 }

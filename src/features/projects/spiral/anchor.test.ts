@@ -2,11 +2,12 @@ import { PerspectiveCamera, Vector3 } from 'three';
 import { describe, expect, it } from 'vitest';
 import { ARROW, focusCardRect, shiftForPanel } from './anchor';
 import { cardBend } from './appearance';
-import { CARD_HEIGHT, CARD_WIDTH, cardPose, createPose, SPIRAL } from './geometry';
+import { bendCardPoint } from './cardHit';
+import { cardPose, createPose, SPIRAL, sweepOffset } from './geometry';
 import { CAMERA, frameCamera } from './lens';
 
 /**
- * Pushes points on the card, in its own units from its centre, through a real
+ * Pushes points on the card, from 0 to 1 across and up, through a real
  * three.js camera framed the way the canvas frames it, with the vertex shader's bend and sweep.
  */
 function projectWithThree(width: number, height: number, shift: number, lift: number) {
@@ -18,12 +19,11 @@ function projectWithThree(width: number, height: number, shift: number, lift: nu
 
   const pose = cardPose(0, 1, 0, createPose());
   const curvature = cardBend(0, pose.focus) / SPIRAL.radius;
-  const angle = (CARD_WIDTH / 2) * curvature;
-  return (side: number, end: number) => {
-    const local = new Vector3(side * (Math.sin(angle) / curvature), end * (CARD_HEIGHT / 2), (Math.cos(angle) - 1) / curvature);
+  return (u: number, v: number) => {
+    const local = bendCardPoint(u, v, curvature, 0, new Vector3());
     const world = local.multiplyScalar(pose.scale).add(new Vector3(pose.x, pose.y, pose.z));
     const view = world.clone().applyMatrix4(camera.matrixWorldInverse);
-    view.x += SPIRAL.sweep * world.y * world.y;
+    view.x += sweepOffset(world.y, pose.y, pose.focus);
     const clip = view.applyMatrix4(camera.projectionMatrix);
     return { x: ((clip.x + 1) / 2) * width, y: ((1 - clip.y) / 2) * height };
   };
@@ -38,10 +38,24 @@ describe('focusCardRect', () => {
     ]) {
       const ours = focusCardRect(width, height, shift, lift);
       const project = projectWithThree(width, height, shift, lift);
-      expect(ours.left).toBeCloseTo(project(-1, 0).x, 1);
-      expect(ours.right).toBeCloseTo(project(1, 0).x, 1);
+      expect(ours.left).toBeCloseTo(project(0, 0.5).x, 1);
+      expect(ours.right).toBeCloseTo(project(1, 0.5).x, 1);
       expect(ours.top).toBeCloseTo(project(1, 1).y, 1);
-      expect(ours.bottom).toBeCloseTo(project(1, -1).y, 1);
+      expect(ours.bottom).toBeCloseTo(project(1, 0).y, 1);
+    }
+  });
+
+  it('is a true rectangle once the card has settled flat', () => {
+    const project = projectWithThree(1440, 836, 167, 0);
+    for (const u of [0, 1]) {
+      const column = [0, 0.5, 1].map((v) => project(u, v).x);
+      expect(column[0]).toBeCloseTo(column[1], 3);
+      expect(column[2]).toBeCloseTo(column[1], 3);
+    }
+    for (const v of [0, 1]) {
+      const row = [0, 0.5, 1].map((u) => project(u, v).y);
+      expect(row[0]).toBeCloseTo(row[1], 3);
+      expect(row[2]).toBeCloseTo(row[1], 3);
     }
   });
 

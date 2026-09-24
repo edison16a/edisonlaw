@@ -1,5 +1,5 @@
 import { cardBend } from './appearance';
-import { CARD_HEIGHT, CARD_WIDTH, cardPose, createPose, SPIRAL } from './geometry';
+import { CARD_HEIGHT, CARD_WIDTH, cardPose, createPose, SPIRAL, sweepOffset } from './geometry';
 import { CAMERA, fitFov } from './lens';
 
 /** A box on the stage in CSS pixels from its top left corner. */
@@ -26,24 +26,26 @@ const pose = createPose();
  * forward, with the picture slid `shift` pixels left and `lift` pixels up for
  * the panel. It follows the camera, the card's bend and the strand's sweep the
  * way the canvas draws them, in plain math so the page can place the arrows
- * beside the card without loading three.js.
+ * and the screenshot row around the card without loading three.js.
  *
- * The sweep leans the card's sides a little, so `left` and `right` are its
- * sides halfway up, where the arrows sit, and `top` and `bottom` its highest
- * and lowest corners.
+ * `left` and `right` are its sides halfway up, where the arrows sit, and
+ * `top` and `bottom` its top and bottom edges. The settled card is a flat
+ * rectangle, so these are its corners too.
  */
 export function focusCardRect(width: number, height: number, shift: number, lift: number): StageRect {
   cardPose(0, 1, 0, pose);
   // Pixels per world unit at one unit from the camera.
   const focal = height / 2 / Math.tan((fitFov(width / height) * Math.PI) / 360);
-  // The settled card relaxes almost flat, so its sides fall back only a little.
+  // A card that still curves would pull its sides back toward the axis.
   const curvature = cardBend(0, pose.focus) / SPIRAL.radius;
   const angle = (CARD_WIDTH / 2) * curvature;
-  const halfWidth = (Math.sin(angle) / curvature) * pose.scale;
+  const curved = Math.abs(curvature) > 1e-6;
+  const halfWidth = (curved ? Math.sin(angle) / curvature : CARD_WIDTH / 2) * pose.scale;
   const halfHeight = (CARD_HEIGHT / 2) * pose.scale;
-  const depth = CAMERA.z - pose.z - ((Math.cos(angle) - 1) / curvature) * pose.scale;
+  const sag = curved ? (Math.cos(angle) - 1) / curvature : 0;
+  const depth = CAMERA.z - pose.z - sag * pose.scale;
 
-  const toX = (x: number, y: number) => width / 2 + ((x + SPIRAL.sweep * y * y) / depth) * focal - shift;
+  const toX = (x: number, y: number) => width / 2 + ((x + sweepOffset(y, pose.y, pose.focus)) / depth) * focal - shift;
   const toY = (y: number) => height / 2 - (y / depth) * focal - lift;
   return {
     left: toX(pose.x - halfWidth, pose.y),
