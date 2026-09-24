@@ -2,12 +2,14 @@ import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 import { site } from '@/content/site';
 import { fontVariables } from './fonts';
+import { personJsonLd } from './structuredData';
 import '@/styles/globals.css';
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: { default: `${site.name}, software engineer`, template: `%s | ${site.name}` },
   description: site.description,
+  alternates: { canonical: '/' },
   authors: [{ name: site.name, url: site.url }],
   openGraph: {
     type: 'website',
@@ -28,7 +30,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={fontVariables}>
-      <body>{children}</body>
+      <body>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd()) }} />
+        {children}
+      </body>
     </html>
   );
 }
