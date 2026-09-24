@@ -79,6 +79,7 @@ export function WorkstationStage({ variant, centerScreen, pulseKey, className }:
         centerScreen={centerScreen}
         pulseKey={pulseKey}
         frameloop={frameloop}
+        adaptive={!capturing}
         animate={animate}
         screensLive={animate && (capturing || onScreen)}
         parallax={animate && !capturing}

@@ -9,6 +9,8 @@ export type Frameloop = 'always' | 'demand' | 'never';
 
 export interface WorkstationCanvasProps extends DeskSceneProps {
   frameloop: Frameloop;
+  /** Drop to 1x pixel ratio when the frame rate struggles. Off for captures, which want full detail. */
+  adaptive: boolean;
 }
 
 const MAX_DPR = 2;
@@ -23,7 +25,7 @@ function FrameloopKick({ frameloop }: { frameloop: Frameloop }) {
 }
 
 /** The R3F canvas for the desk scene. Loaded client-only by WorkstationStage. */
-export function WorkstationCanvas({ frameloop, ...sceneProps }: WorkstationCanvasProps) {
+export function WorkstationCanvas({ frameloop, adaptive, ...sceneProps }: WorkstationCanvasProps) {
   const [dpr, setDpr] = useState(() => Math.min(window.devicePixelRatio || 1, MAX_DPR));
 
   return (
@@ -34,7 +36,7 @@ export function WorkstationCanvas({ frameloop, ...sceneProps }: WorkstationCanva
       camera={{ fov: 30, near: 0.1, far: 30, position: [2.4, 2.2, 3.2] }}
       style={{ pointerEvents: 'none' }}
     >
-      {frameloop === 'always' && (
+      {adaptive && frameloop === 'always' && (
         <PerformanceMonitor
           onDecline={() => setDpr(1)}
           onIncline={() => setDpr(Math.min(window.devicePixelRatio || 1, MAX_DPR))}
