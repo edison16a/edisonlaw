@@ -40,6 +40,14 @@ export function ProjectsSection({ projects = allProjects }: { projects?: Project
     [chooseMode, toTop],
   );
 
+  const openProject = useCallback(
+    (index: number) => {
+      toTop();
+      openInSpiral(index);
+    },
+    [openInSpiral, toTop],
+  );
+
   // Until the client knows the screen size both layouts render and CSS picks one, so phones never flash the stage.
   // Meanwhile the stage's title is the h1. Without WebGL the carousel stands in for the spiral on every screen.
   const spiralFits = !isMobile && webgl;
@@ -49,7 +57,7 @@ export function ProjectsSection({ projects = allProjects }: { projects?: Project
   return (
     <section id="projects" aria-labelledby="projects-title" className="relative pt-nav">
       {mode === 'list' ? (
-        <ProjectList projects={projects} onModeChange={changeMode} onOpen={openInSpiral} />
+        <ProjectList projects={projects} onModeChange={changeMode} onOpen={openProject} />
       ) : (
         <>
           {showStage && (

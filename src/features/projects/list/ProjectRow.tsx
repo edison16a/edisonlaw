@@ -23,7 +23,8 @@ interface ProjectRowProps {
 
 /**
  * One line of the index: number, name, awards, stack and links. The whole row
- * opens the project in the spiral. Links sit above that and open on their own.
+ * opens the project in the spiral, or the carousel on phones. Links sit above
+ * that and open on their own.
  */
 export function ProjectRow({ project, index, onOpen }: ProjectRowProps) {
   return (
@@ -38,7 +39,7 @@ export function ProjectRow({ project, index, onOpen }: ProjectRowProps) {
             type="button"
             onClick={() => onOpen(index)}
             onPointerEnter={() => sound.play('hover')}
-            aria-label={`Show ${project.name} in the spiral`}
+            aria-label={`Show ${project.name}`}
             className="text-left after:absolute after:inset-0 after:content-['']"
           >
             {project.name}

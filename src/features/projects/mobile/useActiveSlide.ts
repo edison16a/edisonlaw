@@ -2,9 +2,17 @@
 
 import { useEffect, useState, type RefObject } from 'react';
 
+/** Distance from one slide to the next in a horizontal strip, in pixels. */
+export function slideStride(strip: HTMLElement) {
+  const first = strip.children[0] as HTMLElement | undefined;
+  const second = strip.children[1] as HTMLElement | undefined;
+  if (!first) return 1;
+  return Math.max(1, second ? second.offsetLeft - first.offsetLeft : first.offsetWidth);
+}
+
 /** Index of the slide nearest the centre of a horizontal scroll snap strip. */
-export function useActiveSlide(strip: RefObject<HTMLElement | null>, count: number) {
-  const [active, setActive] = useState(0);
+export function useActiveSlide(strip: RefObject<HTMLElement | null>, count: number, initial = 0) {
+  const [active, setActive] = useState(initial);
 
   useEffect(() => {
     const node = strip.current;
@@ -13,11 +21,7 @@ export function useActiveSlide(strip: RefObject<HTMLElement | null>, count: numb
 
     const update = () => {
       frame = 0;
-      const first = node.children[0] as HTMLElement | undefined;
-      const second = node.children[1] as HTMLElement | undefined;
-      if (!first) return;
-      const stride = second ? second.offsetLeft - first.offsetLeft : first.offsetWidth;
-      const index = Math.round(node.scrollLeft / Math.max(1, stride));
+      const index = Math.round(node.scrollLeft / slideStride(node));
       setActive(Math.min(count - 1, Math.max(0, index)));
     };
 

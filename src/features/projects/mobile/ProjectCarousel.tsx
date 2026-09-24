@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { AnimatePresence } from 'motion/react';
 import type { Project } from '@/content/types';
 import { sound } from '@/features/sound';
@@ -9,8 +9,8 @@ import { IntroTitle } from '../components/IntroTitle';
 import { ModeToggle } from '../components/ModeToggle';
 import { ProjectDetails } from '../components/ProjectDetails';
 import { ProjectImage } from '../components/ProjectImage';
-import type { SpiralMode } from '../state/spiralStore';
-import { useActiveSlide } from './useActiveSlide';
+import { useSpiralStore, type SpiralMode } from '../state/spiralStore';
+import { slideStride, useActiveSlide } from './useActiveSlide';
 
 interface ProjectCarouselProps {
   projects: Project[];
@@ -26,9 +26,17 @@ interface ProjectCarouselProps {
  */
 export function ProjectCarousel({ projects, onModeChange, heading, className }: ProjectCarouselProps) {
   const strip = useRef<HTMLOListElement>(null);
-  const active = useActiveSlide(strip, projects.length);
+  // A project chosen in the list opens here, the same way the spiral opens on it.
+  const [opening] = useState(() => useSpiralStore.getState().pendingFocus ?? 0);
+  const active = useActiveSlide(strip, projects.length, opening);
   const project = projects[active];
   const previous = useRef(active);
+
+  useLayoutEffect(() => {
+    const pending = useSpiralStore.getState().takePendingFocus();
+    const node = strip.current;
+    if (pending !== null && node) node.scrollLeft = pending * slideStride(node);
+  }, []);
 
   useEffect(() => {
     if (previous.current !== active) sound.play('tick', { rate: 1.1, volume: 0.6 });

@@ -10,7 +10,7 @@ import { ProjectRow } from './ProjectRow';
 interface ProjectListProps {
   projects: Project[];
   onModeChange: (mode: SpiralMode) => void;
-  /** Opens a project in the spiral. */
+  /** Opens a project in the spiral, or the carousel on phones. */
   onOpen: (index: number) => void;
 }
 
