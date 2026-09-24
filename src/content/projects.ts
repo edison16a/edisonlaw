@@ -14,6 +14,7 @@ export const projects: Project[] = [
     description:
       "Production platform for Optagon Labs' AI-native R&D for drug developers. I built the core infrastructure, including billing, usage metering, organizations and project ingestion.",
     links: [{ label: 'backbond.net', href: 'https://backbond.net' }],
+    image: '/projects/backbond.webp',
   },
   {
     id: 'autolab',
