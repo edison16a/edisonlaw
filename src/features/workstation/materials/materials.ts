@@ -21,6 +21,8 @@ function createMaterials() {
     /** Glossy white plastic for the chair shell, pots and the mug. */
     whitePlastic: new MeshPhysicalMaterial({ color: '#efece6', roughness: 0.38, clearcoat: 0.4, clearcoatRoughness: 0.35 }),
     brushedMetal: new MeshStandardMaterial({ color: '#9ca0a8', metalness: 0.85, roughness: 0.32 }),
+    /** Satin brass for the desk's leg ferrules. */
+    brass: new MeshStandardMaterial({ color: '#c9a060', metalness: 0.85, roughness: 0.3 }),
     aluminium: new MeshStandardMaterial({ color: '#c9ccd1', metalness: 0.8, roughness: 0.34 }),
     /** Apple's bead blasted finishes: half metal so they stay readable in the dim room. */
     silverAluminium: new MeshStandardMaterial({ color: '#d9dbdf', metalness: 0.55, roughness: 0.3 }),
