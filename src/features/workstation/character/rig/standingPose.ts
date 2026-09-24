@@ -67,9 +67,9 @@ export function standingPose(t: number, motion: number, seed: number, pose: Body
   // left arm reaches its head with a soft elbow. He turns a little toward the dog too.
   pose.pelvisPosition.set(-0.014 + 0.006 * sway, BODY.standingPelvisHeight - 0.003 - 0.002 * Math.abs(sway), 0.004);
   pose.pelvis.set(0.01, 0.07 + 0.02 * sway, -0.035 + 0.012 * sway);
-  pose.spine.set(0.035 + 0.006 * breath + 0.02 * think + 0.03 * dog, 0.05 + 0.03 * dog, -0.05 - 0.008 * sway);
+  pose.spine.set(0.035 + 0.006 * breath + 0.02 * think + 0.03 * dog, 0.05 + 0.03 * dog, -0.062 - 0.008 * sway);
   pose.chest.set(0.02 - 0.012 * breath + 0.02 * think, 0.03 + 0.05 * dog - 0.04 * sip, -0.03);
-  pose.shrug.left = -0.008 + 0.003 * breath;
+  pose.shrug.left = -0.014 + 0.003 * breath;
   pose.shrug.right = 0.004 * breath + 0.004 * sip + 0.003 * think;
   pose.reach.left = 0.006;
   pose.reach.right = 0.006 * sip + 0.004 * think;
@@ -113,7 +113,7 @@ export function standingPose(t: number, motion: number, seed: number, pose: Body
   pose.fingerBend.right = MUG_GRIP.bend;
   pose.thumbs.right = MUG_GRIP.thumb;
   pettingFingers(petting, pose.fingers.left);
-  pose.fingerBend.left = 0.6;
+  pose.fingerBend.left = 0.72;
   pose.thumbs.left = 0.12;
 
   plantedFoot(1, 'left', pose.legs.left);
