@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { activities, education, honors, skills, socials } from '../about';
 import { experience } from '../experience';
 import { projects } from '../projects';
-import { getSkillIcon } from '@/features/about/skills/skillIcons';
+import { getSkillIcon } from '@/components/skills/skillIcons';
 
 const isUrl = (href: string) => /^(https:\/\/|mailto:)/.test(href);
 const sentenceCount = (text: string) => text.split(/(?<=[.!?])\s+/).filter(Boolean).length;

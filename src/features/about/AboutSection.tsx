@@ -6,7 +6,7 @@ import { AboutBlock } from './AboutBlock';
 import { ContactLinks } from './ContactLinks';
 import { EducationList } from './EducationList';
 import { ActivitiesList, HonorsList } from './RecognitionLists';
-import { SkillGrid } from './skills/SkillGrid';
+import { SkillGrid } from './SkillGrid';
 
 /** Standing scene pinned on the left, the story and details scrolling on the right. */
 export function AboutSection() {

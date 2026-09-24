@@ -1,5 +1,5 @@
 import type { SkillGroup } from '@/content/types';
-import { SkillCard } from './SkillCard';
+import { SkillCard } from '@/components/skills/SkillCard';
 
 /** Skills grouped by category, each group a grid of identical cards. */
 export function SkillGrid({ groups }: { groups: SkillGroup[] }) {
