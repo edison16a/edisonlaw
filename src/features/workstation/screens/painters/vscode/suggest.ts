@@ -7,12 +7,18 @@ import { VSCODE_THEME as T } from './theme';
 /** The IntelliSense list, with the typed part of each name in blue and details on the first row. */
 
 const ROW = 22;
-const WIDTH = 460;
+const WIDTH = 360;
+const MAX_ROWS = 6;
 const DETAIL = 'setScalar(scalar: number): Vector3';
 
+/** Height of the list for `suggest`, so the editor can decide where it fits. */
+export function suggestHeight(suggest: Suggest) {
+  return Math.min(suggest.items.length, MAX_ROWS) * ROW + 2;
+}
+
 export function drawSuggest(ctx: CanvasRenderingContext2D, suggest: Suggest, x: number, y: number, fontSize: number) {
-  const rows = Math.min(suggest.items.length, 6);
-  const height = rows * ROW + 2;
+  const rows = Math.min(suggest.items.length, MAX_ROWS);
+  const height = suggestHeight(suggest);
   fillRound(ctx, x, y, WIDTH, height, 4, T.widget);
   strokeRound(ctx, x, y, WIDTH, height, 4, T.widgetBorder);
 

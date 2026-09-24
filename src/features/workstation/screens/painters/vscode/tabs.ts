@@ -15,7 +15,6 @@ const TABS = [
   { name: 'SpiralCard.tsx', active: true, modified: true },
   { name: 'useSpiralMotion.ts', modified: true },
   { name: 'card.frag' },
-  { name: 'layout.ts', modified: true },
 ];
 
 /** Purple cube VS Code uses for methods and functions. */
@@ -45,7 +44,7 @@ export function drawTabs(ctx: CanvasRenderingContext2D, area: Rect, dirty: boole
   const middle = area.y + TABS_HEIGHT / 2;
   let x = area.x;
   for (const tab of TABS) {
-    const width = 70 + measure(ctx, tab.name, style);
+    const width = 64 + measure(ctx, tab.name, style);
     if (tab.active) {
       fillRect(ctx, x, area.y, width, TABS_HEIGHT, T.editor);
       fillRect(ctx, x, area.y, width, 1, T.accent);

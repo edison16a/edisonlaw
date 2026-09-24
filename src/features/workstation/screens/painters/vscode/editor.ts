@@ -4,18 +4,20 @@ import { cellX, createGrid, drawSpans, rowY, type TerminalGrid } from '../../dra
 import { text } from '../../draw/text';
 import type { EditorView } from './playback';
 import { INDENT, SCROLL_TOP, SUGGEST_AT } from './source';
-import { drawSuggest } from './suggest';
+import { drawSuggest, suggestHeight } from './suggest';
 import { VSCODE_THEME as T } from './theme';
 
 /** The code area: gutter, highlighted code, indent guides, caret, minimap and scrollbar. */
 
 const FONT_SIZE = 14;
-const LINE_HEIGHT = 20;
-const GUTTER = 66;
-const MINIMAP = 96;
-const SCROLLBAR = 14;
+const LINE_HEIGHT = 21;
+const GUTTER = 50;
+/** Gap between the gutter and the first column of code. */
+const CODE_INSET = 8;
+const MINIMAP = 56;
+const SCROLLBAR = 10;
 /** Minimap scale: pixels per character and per line. */
-const MINI_CHAR = 1.25;
+const MINI_CHAR = 0.6;
 const MINI_LINE = 3;
 
 /** Lines changed on this branch, shown as a bar in the gutter. */
@@ -64,7 +66,12 @@ function drawScrollbar(ctx: CanvasRenderingContext2D, area: Rect, total: number,
 
 export function drawEditor(ctx: CanvasRenderingContext2D, area: Rect, view: EditorView) {
   fillRect(ctx, area.x, area.y, area.w, area.h, T.editor);
-  const grid = createGrid(ctx, { x: area.x + GUTTER + 12, y: area.y + 4, w: area.w - GUTTER - MINIMAP, h: area.h - 4 }, FONT_SIZE, LINE_HEIGHT);
+  const grid = createGrid(
+    ctx,
+    { x: area.x + GUTTER + CODE_INSET, y: area.y + 4, w: area.w - GUTTER - CODE_INSET - MINIMAP - SCROLLBAR, h: area.h - 4 },
+    FONT_SIZE,
+    LINE_HEIGHT,
+  );
   const tokens = tokenize(view.lines, 'tsx');
   const { caret } = view;
 
@@ -79,7 +86,7 @@ export function drawEditor(ctx: CanvasRenderingContext2D, area: Rect, view: Edit
     if (index === view.selectedLine) {
       fillRect(ctx, cellX(grid, INDENT.length), top, (view.lines[index].length - INDENT.length) * grid.cellWidth, grid.cellHeight, T.textSelection);
     }
-    text(ctx, String(index + 1), area.x + GUTTER - 16, middle, {
+    text(ctx, String(index + 1), area.x + GUTTER - 14, middle, {
       size: FONT_SIZE - 1,
       color: current ? T.text : T.faint,
       align: 'right',
@@ -102,7 +109,11 @@ export function drawEditor(ctx: CanvasRenderingContext2D, area: Rect, view: Edit
   drawScrollbar(ctx, area, view.lines.length, grid.rows);
 
   if (view.suggest) {
+    // The list opens under the caret, or above it when the editor has no room below, as in VS Code.
     const x = cellX(grid, INDENT.length + SUGGEST_AT.length) - 28;
-    drawSuggest(ctx, view.suggest, x, rowY(grid, caretRow + 1) + 2, FONT_SIZE - 1);
+    const height = suggestHeight(view.suggest);
+    const below = rowY(grid, caretRow + 1) + 2;
+    const y = below + height <= area.y + area.h ? below : rowY(grid, caretRow) - height - 2;
+    drawSuggest(ctx, view.suggest, x, y, FONT_SIZE - 1);
   }
 }

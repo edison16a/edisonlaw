@@ -6,7 +6,8 @@ import { VSCODE_THEME as T } from './theme';
 
 /** The terminal panel under the editor, running the dev server. */
 
-const TABS = ['PROBLEMS', 'OUTPUT', 'DEBUG CONSOLE', 'TERMINAL', 'PORTS'];
+/** The tabs a narrow panel keeps in view. */
+const TABS = ['PROBLEMS', 'OUTPUT', 'TERMINAL'];
 const LINE = 18;
 
 type OutputLine = { mark?: 'triangle' | 'check'; text: string; dim?: string };
@@ -51,7 +52,10 @@ export function drawPanel(ctx: CanvasRenderingContext2D, area: Rect, recompiles:
   const lines: OutputLine[] = [...BOOT];
   for (let i = 0; i < recompiles; i++) lines.push({ mark: 'check', text: `Compiled in ${[164, 138][i % 2]}ms` });
   const visible = Math.floor((area.h - 44) / LINE);
-  lines.slice(-visible).forEach((line, index) => {
+  // The newest lines, without a blank one left hanging at the top.
+  const shown = lines.slice(-visible);
+  if (!shown[0]?.text) shown.shift();
+  shown.forEach((line, index) => {
     const y = area.y + 44 + index * LINE;
     const style = { size: 12.5, color: T.text } as const;
     if (line.mark === 'triangle') triangle(ctx, area.x + 26, y);

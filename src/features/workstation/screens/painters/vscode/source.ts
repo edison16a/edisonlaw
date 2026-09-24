@@ -56,5 +56,5 @@ export const TYPED_LINE = 'card.scale.setScalar(1 + focus.value * 0.12);';
 export const SUGGEST_AT = 'card.scale.';
 export const SUGGESTIONS = ['setScalar', 'set', 'setFromMatrixScale', 'setComponent', 'setLength', 'setX', 'setY', 'setZ'];
 
-/** First line shown at the top of the editor. */
-export const SCROLL_TOP = 17;
+/** First line shown at the top of the editor, so the edited lines sit in the lower half. */
+export const SCROLL_TOP = 21;

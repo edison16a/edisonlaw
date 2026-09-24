@@ -3,7 +3,7 @@ import { drawIcon, type IconName } from '../../draw/icons';
 import { circle, fillRect, fillRound, strokeRound } from '../../draw/shapes';
 import { measure, text } from '../../draw/text';
 import { trafficLights } from '../../draw/window';
-import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../../types';
+import { VIEW_HEIGHT, VIEW_WIDTH } from './layout';
 import { VSCODE_THEME as T } from './theme';
 
 /** Title bar, activity bar and status bar around the workbench. */
@@ -13,12 +13,12 @@ export const STATUS_HEIGHT = 22;
 export const ACTIVITY_WIDTH = 48;
 
 export function drawTitleBar(ctx: CanvasRenderingContext2D) {
-  fillRect(ctx, 0, 0, SCREEN_WIDTH, TITLE_HEIGHT, T.chrome);
-  fillRect(ctx, 0, TITLE_HEIGHT - 1, SCREEN_WIDTH, 1, T.border);
+  fillRect(ctx, 0, 0, VIEW_WIDTH, TITLE_HEIGHT, T.chrome);
+  fillRect(ctx, 0, TITLE_HEIGHT - 1, VIEW_WIDTH, 1, T.border);
   trafficLights(ctx, 20, TITLE_HEIGHT / 2, 6);
 
-  const boxWidth = 440;
-  const boxX = (SCREEN_WIDTH - boxWidth) / 2;
+  const boxWidth = 300;
+  const boxX = (VIEW_WIDTH - boxWidth) / 2;
   drawGlyph(ctx, 'chevron', boxX - 52, TITLE_HEIGHT / 2, 16, T.icon);
   ctx.save();
   ctx.translate(boxX - 76, TITLE_HEIGHT / 2);
@@ -29,16 +29,16 @@ export function drawTitleBar(ctx: CanvasRenderingContext2D) {
   strokeRound(ctx, boxX, 6, boxWidth, TITLE_HEIGHT - 12, 6, '#353535');
   const label = 'edisonlaw';
   const labelWidth = measure(ctx, label, { size: 12.5, family: 'sans' });
-  drawIcon(ctx, 'search', SCREEN_WIDTH / 2 - labelWidth / 2 - 12, TITLE_HEIGHT / 2, 14, T.text);
-  text(ctx, label, SCREEN_WIDTH / 2 + 6, TITLE_HEIGHT / 2 + 1, { size: 12.5, family: 'sans', color: T.text, align: 'center' });
+  drawIcon(ctx, 'search', VIEW_WIDTH / 2 - labelWidth / 2 - 12, TITLE_HEIGHT / 2, 14, T.text);
+  text(ctx, label, VIEW_WIDTH / 2 + 6, TITLE_HEIGHT / 2 + 1, { size: 12.5, family: 'sans', color: T.text, align: 'center' });
 
   const layout: IconName[] = ['split', 'layers', 'grid'];
-  layout.forEach((icon, index) => drawIcon(ctx, icon, SCREEN_WIDTH - 90 + index * 28, TITLE_HEIGHT / 2, 16, T.icon, 1.3));
+  layout.forEach((icon, index) => drawIcon(ctx, icon, VIEW_WIDTH - 90 + index * 28, TITLE_HEIGHT / 2, 16, T.icon, 1.3));
 }
 
 export function drawActivityBar(ctx: CanvasRenderingContext2D) {
   const top = TITLE_HEIGHT;
-  const height = SCREEN_HEIGHT - TITLE_HEIGHT - STATUS_HEIGHT;
+  const height = VIEW_HEIGHT - TITLE_HEIGHT - STATUS_HEIGHT;
   fillRect(ctx, 0, top, ACTIVITY_WIDTH, height, T.chrome);
   fillRect(ctx, ACTIVITY_WIDTH - 1, top, 1, height, T.border);
 
@@ -64,10 +64,10 @@ interface StatusInfo {
 }
 
 export function drawStatusBar(ctx: CanvasRenderingContext2D, { line, col }: StatusInfo) {
-  const top = SCREEN_HEIGHT - STATUS_HEIGHT;
+  const top = VIEW_HEIGHT - STATUS_HEIGHT;
   const middle = top + STATUS_HEIGHT / 2;
-  fillRect(ctx, 0, top, SCREEN_WIDTH, STATUS_HEIGHT, T.chrome);
-  fillRect(ctx, 0, top, SCREEN_WIDTH, 1, T.border);
+  fillRect(ctx, 0, top, VIEW_WIDTH, STATUS_HEIGHT, T.chrome);
+  fillRect(ctx, 0, top, VIEW_WIDTH, 1, T.border);
 
   // Remote indicator, the one splash of accent colour in the bar.
   fillRect(ctx, 0, top, 36, STATUS_HEIGHT, T.accent);
@@ -90,9 +90,10 @@ export function drawStatusBar(ctx: CanvasRenderingContext2D, { line, col }: Stat
   drawIcon(ctx, 'warning', x + 30, middle, 14, T.text, 1.2);
   text(ctx, '0', x + 40, middle + 1, style);
 
-  const right = [`Ln ${line}, Col ${col}`, 'Spaces: 2', 'UTF-8', 'LF', '{ } TypeScript JSX', 'Prettier'];
-  let rx = SCREEN_WIDTH - 40;
-  drawIcon(ctx, 'bell', SCREEN_WIDTH - 20, middle, 14, T.text, 1.2);
+  // The narrow zoomed window leaves room for the items VS Code keeps longest.
+  const right = [`Ln ${line}, Col ${col}`, 'UTF-8', '{ } TypeScript JSX', 'Prettier'];
+  let rx = VIEW_WIDTH - 40;
+  drawIcon(ctx, 'bell', VIEW_WIDTH - 20, middle, 14, T.text, 1.2);
   for (const item of [...right].reverse()) {
     const width = measure(ctx, item, style);
     text(ctx, item, rx - width, middle + 1, style);

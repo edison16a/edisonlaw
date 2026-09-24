@@ -1,7 +1,7 @@
 import { drawGlyph } from '../../draw/glyphs';
 import { drawIcon } from '../../draw/icons';
 import { fillRect, type Rect } from '../../draw/shapes';
-import { text } from '../../draw/text';
+import { fitText, font, text } from '../../draw/text';
 import { drawFileIcon } from './fileIcon';
 import { VSCODE_THEME as T } from './theme';
 
@@ -20,16 +20,11 @@ interface TreeRow {
   active?: boolean;
 }
 
+/** Trimmed to what fits the zoomed side bar: the path down to the file being edited. */
 const TREE: TreeRow[] = [
-  { depth: 0, name: 'node_modules', open: false },
-  { depth: 0, name: 'public', open: false },
-  { depth: 0, name: 'scripts', open: false },
   { depth: 0, name: 'src', open: true, dirty: true },
   { depth: 1, name: 'app', open: false },
-  { depth: 1, name: 'components', open: false },
-  { depth: 1, name: 'content', open: false },
   { depth: 1, name: 'features', open: true, dirty: true },
-  { depth: 2, name: 'about', open: false },
   { depth: 2, name: 'experience', open: false },
   { depth: 2, name: 'projects', open: true, dirty: true },
   { depth: 3, name: 'spiral', open: true, dirty: true },
@@ -39,17 +34,13 @@ const TREE: TreeRow[] = [
   { depth: 4, name: 'SpiralScene.tsx' },
   { depth: 4, name: 'useSpiralMotion.ts', git: 'M' },
   { depth: 4, name: 'motion.test.ts', git: 'U' },
-  { depth: 3, name: 'ProjectsSection.tsx' },
-  { depth: 2, name: 'sound', open: false },
   { depth: 2, name: 'workstation', open: false },
-  { depth: 1, name: 'lib', open: false },
-  { depth: 1, name: 'styles', open: false },
-  { depth: 0, name: 'package.json' },
-  { depth: 0, name: 'tsconfig.json' },
 ];
 
 const ROW = 22;
-const INDENT = 12;
+const INDENT = 8;
+/** Room kept at the right of each row for the git letter. */
+const BADGE_WIDTH = 34;
 
 function sectionHeader(ctx: CanvasRenderingContext2D, x: number, y: number, label: string, open: boolean) {
   drawGlyph(ctx, open ? 'chevronDown' : 'chevron', x + 10, y + ROW / 2, 14, T.text);
@@ -84,7 +75,9 @@ export function drawExplorer(ctx: CanvasRenderingContext2D, area: Rect) {
       labelX = indentX + 26;
     }
     const color = row.git === 'M' ? T.modified : row.git === 'U' ? T.untracked : row.dirty ? T.modified : T.text;
-    text(ctx, row.name, labelX, middle + 1, { size: 13, family: 'sans', color });
+    const style = { size: 13, family: 'sans', color } as const;
+    ctx.font = font(style.size, 400, style.family);
+    text(ctx, fitText(ctx, row.name, area.x + area.w - BADGE_WIDTH - labelX), labelX, middle + 1, style);
     if (row.git) {
       text(ctx, row.git, area.x + area.w - 22, middle + 1, { size: 12, family: 'sans', weight: 600, color, align: 'center' });
     } else if (row.dirty) {

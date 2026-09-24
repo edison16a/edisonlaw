@@ -1,13 +1,11 @@
-import { SCREEN_HEIGHT, SCREEN_WIDTH, type PainterFactory } from '../../types';
+import type { PainterFactory } from '../../types';
 import { ACTIVITY_WIDTH, drawActivityBar, drawStatusBar, drawTitleBar, STATUS_HEIGHT, TITLE_HEIGHT } from './chrome';
 import { drawEditor } from './editor';
 import { drawExplorer } from './explorer';
+import { PANEL_HEIGHT, SIDEBAR_WIDTH, VIEW_HEIGHT, VIEW_WIDTH, ZOOM } from './layout';
 import { drawPanel } from './panel';
 import { EDITOR_STILL_TIME, editorView } from './playback';
 import { BREADCRUMB_HEIGHT, drawBreadcrumbs, drawTabs, TABS_HEIGHT } from './tabs';
-
-const SIDEBAR_WIDTH = 250;
-const PANEL_HEIGHT = 168;
 
 /** VS Code in Dark Modern with this repo open, typing a line into the spiral card. */
 export const vscode: PainterFactory = () => ({
@@ -15,10 +13,11 @@ export const vscode: PainterFactory = () => ({
   frameKey: (time) => editorView(time).key,
   paint(ctx, time) {
     const view = editorView(time);
+    ctx.scale(ZOOM, ZOOM);
     const bodyTop = TITLE_HEIGHT;
-    const bodyHeight = SCREEN_HEIGHT - TITLE_HEIGHT - STATUS_HEIGHT;
+    const bodyHeight = VIEW_HEIGHT - TITLE_HEIGHT - STATUS_HEIGHT;
     const groupX = ACTIVITY_WIDTH + SIDEBAR_WIDTH;
-    const group = { x: groupX, y: bodyTop, w: SCREEN_WIDTH - groupX, h: bodyHeight };
+    const group = { x: groupX, y: bodyTop, w: VIEW_WIDTH - groupX, h: bodyHeight };
     const editorTop = bodyTop + TABS_HEIGHT + BREADCRUMB_HEIGHT;
 
     drawTitleBar(ctx);
