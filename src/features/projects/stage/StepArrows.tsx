@@ -55,10 +55,11 @@ function StepArrow({ direction, label, place, path }: StepArrowProps) {
     <button
       type="button"
       aria-label={label}
+      data-step={direction}
       onClick={() => stepSpiral(direction)}
       onPointerEnter={() => sound.play('hover')}
       className={cn(
-        'group pointer-events-auto absolute top-[var(--card-middle,50%)] flex size-12 -translate-y-1/2 items-center justify-center rounded-full border border-grey-700 bg-black/80 text-white transition-[background-color,border-color,color,scale] duration-300 ease-out-expo hover:border-white hover:bg-white hover:text-black active:scale-90 active:duration-100',
+        'group pointer-events-auto absolute top-[var(--card-middle,50%)] flex size-12 -translate-y-1/2 items-center justify-center rounded-full border border-grey-600 bg-black/75 text-white transition-[background-color,border-color,color,scale] duration-300 ease-out-expo hover:border-white hover:bg-white hover:text-black active:scale-90 active:duration-100',
         place,
       )}
     >
