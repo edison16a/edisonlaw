@@ -60,7 +60,7 @@ export function DeskScene(props: DeskSceneProps) {
       <MacBookPro />
       {seated && <Chair />}
       <PcTower animate={animate} />
-      <Decor />
+      <Decor mugOnDesk={seated} />
       <group position={placement.position} rotation-y={placement.rotationY}>
         <Character pose={seated ? 'seated' : 'standing'} animate={animate} />
       </group>
