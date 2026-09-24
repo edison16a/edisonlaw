@@ -35,10 +35,11 @@ const NORMAL = UP.clone()
   .addScaledVector(new Vector3(-PAT.x, 0, -PAT.z).normalize(), Math.sin(LEAN))
   .normalize();
 /**
- * Fingers reach over the crown toward the dog's brow, turned a little toward his own front so the hand
- * runs on from his forearm. Each stroke pushes the other way, toward the dog's neck.
+ * Fingers reach over the crown toward the dog's brow, turned this far toward his own front, in radians,
+ * so the hand runs on from his forearm. Each stroke pushes the other way, toward the dog's neck.
  */
-const FINGERS = HEADING.clone().applyAxisAngle(UP, -0.45).projectOnPlane(NORMAL).normalize();
+const FINGER_TURN = 0.45;
+const FINGERS = HEADING.clone().applyAxisAngle(UP, -FINGER_TURN).projectOnPlane(NORMAL).normalize();
 const BACK = FINGERS.clone().negate();
 /** Centre of the dome that touches the pat point there. */
 const DOME = PAT.clone().addScaledVector(NORMAL, -HEAD_CURVE);
