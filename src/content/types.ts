@@ -50,7 +50,6 @@ export interface Experience {
   summary: string;
   /** An earlier role at the same company. */
   earlier?: { role: string; summary: string };
-  tags: string[];
   screen: ExperienceScreen;
 }
 

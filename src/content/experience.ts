@@ -16,7 +16,6 @@ export const experience: Experience[] = [
       summary:
         'Built and deployed the core app and cloud infrastructure for an AI computational design platform, and hooked up cloud-hosted scientific algorithms with streaming run state and cost tracking.',
     },
-    tags: ['Next.js', 'Vercel', 'Cloud Run', 'Cloud SQL', 'PostgreSQL', 'OAuth', 'Stripe', 'AWS'],
     screen: 'optagon',
   },
   {
@@ -28,7 +27,6 @@ export const experience: Experience[] = [
     end: { year: 2026, month: 8 },
     summary:
       "Built AI and ML pipelines on Google Cloud that score ultrasound quality and segment medical images with Meta's SAM 3 on a Linux VM. Redesigned the frontend and built the auth and database infrastructure.",
-    tags: ['Python', 'PyTorch', 'Google Cloud', 'Meta SAM 3', 'Supabase', 'Google OAuth'],
     screen: 'ultrasound',
   },
   {
@@ -40,7 +38,6 @@ export const experience: Experience[] = [
     end: { year: 2026, month: 6 },
     summary:
       'Architected a CLI dashboard for Weighted Ensemble simulation workflows. Worked with the core maintainers on requirements, issues and milestones.',
-    tags: ['Python', 'GitHub'],
     screen: 'westpa',
   },
   {
@@ -51,7 +48,6 @@ export const experience: Experience[] = [
     end: { year: 2025, month: 7 },
     summary:
       'Prototyped and tested silver nanoparticle hydrogels for wound care, measuring stretchability, antimicrobial performance and biocompatibility.',
-    tags: [],
     screen: 'nanoscience',
   },
   {
@@ -62,7 +58,6 @@ export const experience: Experience[] = [
     end: { year: 2024, month: 7 },
     summary:
       'Built data pipelines that measure correlation and volatility between stocks and VIX futures, a Flutter iOS app that charts trading metrics, and C# backend features with LINQ.',
-    tags: ['Python', 'Flutter', 'C#'],
     screen: 'tanius',
   },
   {
@@ -75,7 +70,6 @@ export const experience: Experience[] = [
     dateLabel: 'Summer 2024',
     summary:
       'Workshops, hackathons, presentations and one-on-one networking with Cisco engineers and executives.',
-    tags: [],
     screen: 'cisco',
   },
   {
@@ -86,7 +80,6 @@ export const experience: Experience[] = [
     end: { year: 2024, month: 8 },
     dateLabel: 'Summer 2024',
     summary: 'Assisted Ph.D. researchers in chemistry and biology labs with wet lab work and data collection.',
-    tags: [],
     screen: 'stanford',
   },
   {
@@ -97,7 +90,6 @@ export const experience: Experience[] = [
     end: 'present',
     summary:
       'Built, launched and kept improving 10+ mobile apps and browser extensions used by 5,000+ people, including education, productivity and food allergy tools. Several extensions were featured by Google.',
-    tags: ['Swift', 'JavaScript', 'HTML/CSS'],
     screen: 'apps',
   },
 ];

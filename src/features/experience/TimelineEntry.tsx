@@ -3,7 +3,6 @@
 import { motion } from 'motion/react';
 import type { Experience } from '@/content/types';
 import { DateRange } from '@/components/ui/DateRange';
-import { TagList } from '@/components/ui/Tag';
 import { cn } from '@/lib/cn';
 
 interface TimelineEntryProps {
@@ -14,7 +13,7 @@ interface TimelineEntryProps {
   reached: boolean;
 }
 
-/** One job on the timeline: dates, role, company, summary and tags. */
+/** One job on the timeline: dates, role, company and a short summary. */
 export function TimelineEntry({ entry, current, reached }: TimelineEntryProps) {
   return (
     <motion.li
@@ -56,7 +55,6 @@ export function TimelineEntry({ entry, current, reached }: TimelineEntryProps) {
             </p>
           </div>
         )}
-        <TagList items={entry.tags} className="pt-1" />
       </div>
     </motion.li>
   );
