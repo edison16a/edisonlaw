@@ -6,6 +6,7 @@ export const featuredProjectId = 'backbond';
 /**
  * Every project card in the spiral, in display order.
  * Drop a photo into /public/projects and set `image` to replace a generated cover.
+ * List up to four more in `screenshots` to give a project a row of screenshots.
  */
 export const projects: Project[] = [
   {
@@ -109,6 +110,12 @@ export const projects: Project[] = [
       { label: 'GitHub', href: 'https://github.com/edison16a/photo-craft' },
     ],
     image: '/projects/photo-craft.webp',
+    screenshots: [
+      '/projects/photo-craft-2.webp',
+      '/projects/photo-craft-3.webp',
+      '/projects/photo-craft-4.webp',
+      '/projects/photo-craft-5.webp',
+    ],
   },
   {
     id: 'clue-ai',
