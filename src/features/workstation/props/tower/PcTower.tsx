@@ -52,7 +52,7 @@ export function PcTower({ animate }: { animate: boolean }) {
       sheen: new MeshBasicMaterial({
         map: createGlassSheenTexture(),
         transparent: true,
-        opacity: 0.05,
+        opacity: 0.04,
         blending: AdditiveBlending,
         depthWrite: false,
         toneMapped: false,

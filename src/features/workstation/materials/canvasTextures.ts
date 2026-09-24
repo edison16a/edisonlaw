@@ -312,7 +312,8 @@ export function createGlassSheenTexture() {
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, w, h);
     };
-    band(-0.1, 0.14, 0.9);
-    band(0.25, 0.04, 0.6);
+    band(-0.1, 0.2, 0.9);
+    band(0.25, 0.09, 0.45);
   });
 }
+
