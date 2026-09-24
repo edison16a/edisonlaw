@@ -14,7 +14,7 @@ export function Effects() {
       <Bloom mipmapBlur luminanceThreshold={0.95} luminanceSmoothing={0.25} intensity={0.85} radius={0.72} />
       <ToneMapping mode={ToneMappingMode.AGX} />
       <Vignette offset={0.28} darkness={0.62} />
-      <Noise premultiply opacity={0.35} blendFunction={BlendFunction.SOFT_LIGHT} />
+      <Noise opacity={0.045} blendFunction={BlendFunction.OVERLAY} />
     </EffectComposer>
   );
 }
