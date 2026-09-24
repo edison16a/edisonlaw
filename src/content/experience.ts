@@ -10,7 +10,7 @@ export const experience: Experience[] = [
     start: { year: 2026, month: 5 },
     end: 'present',
     summary:
-      'I own the core full-stack platform across APIs, databases, auth, billing, cloud infrastructure, security, observability and analytics, working directly with the CEO and CTO. Shipped Stripe subscriptions and usage metering, multi-user organizations, project ingestion, admin and analytics tooling, and SES/SNS email infrastructure.',
+      'I own the core full-stack platform, from APIs, databases and auth to billing, cloud infrastructure and analytics, and I work directly with the CEO and CTO. I shipped Stripe subscriptions, usage metering, multi-user organizations, project ingestion, admin tooling and SES/SNS email.',
     earlier: {
       role: 'Software Engineer Intern',
       summary:
@@ -64,12 +64,11 @@ export const experience: Experience[] = [
     id: 'cisco',
     role: 'Apprentice',
     company: 'Cisco Career Exploration Program',
-    context: 'Fully sponsored',
     start: { year: 2024, month: 6 },
     end: { year: 2024, month: 8 },
     dateLabel: 'Summer 2024',
     summary:
-      'Workshops, hackathons, presentations and one-on-one networking with Cisco engineers and executives.',
+      'A fully sponsored program. I joined workshops, hackathons and presentations, and met one-on-one with Cisco engineers and executives.',
     screen: 'cisco',
   },
   {
@@ -85,7 +84,8 @@ export const experience: Experience[] = [
   {
     id: 'app-developer',
     role: 'App Developer',
-    company: 'Chrome Web Store & Apple App Store',
+    company: 'Independent',
+    context: 'Chrome Web Store and App Store',
     start: { year: 2022, month: 9 },
     end: 'present',
     summary:
