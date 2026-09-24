@@ -151,7 +151,8 @@ export function drawTranscript(ctx: CanvasRenderingContext2D, grid: TerminalGrid
   let row = -Math.max(0, total - grid.rows);
   ctx.save();
   ctx.beginPath();
-  ctx.rect(grid.x - grid.cellWidth, grid.y, (grid.cols + 2) * grid.cellWidth, grid.rows * grid.cellHeight);
+  // Clip rows only, so full width bands can reach the window edges.
+  ctx.rect(0, grid.y, ctx.canvas.width, grid.rows * grid.cellHeight);
   ctx.clip();
   for (const block of blocks) {
     if (row + block.rows > 0 && row < grid.rows) block.draw(ctx, grid, row);
