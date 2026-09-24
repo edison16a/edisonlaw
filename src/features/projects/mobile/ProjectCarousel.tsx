@@ -85,7 +85,7 @@ export function ProjectCarousel({ projects, onModeChange, heading, className }: 
         className="flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain px-[max(9vw,calc(50%-24rem))] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {projects.map((item, index) => (
-          <li key={item.id} className="w-[82vw] max-w-3xl shrink-0 snap-center">
+          <li key={item.id} className="relative w-[82vw] max-w-3xl shrink-0 snap-center">
             <ProjectImage
               project={item}
               sizes="(min-width: 768px) 768px, 82vw"
