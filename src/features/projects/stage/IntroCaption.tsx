@@ -4,12 +4,21 @@ import { motion } from 'motion/react';
 import { IntroTitle } from '../components/IntroTitle';
 import { useSpiralStore } from '../state/spiralStore';
 
-/** Bottom left of the stage: who this is, and a hint to scroll that bows out after the first scroll. */
+/**
+ * Bottom left of the stage: who this is, and a hint to scroll that bows out
+ * after the first scroll. The caption steps aside while the cards have the stage.
+ */
 export function IntroCaption() {
   const hasScrolled = useSpiralStore((state) => state.hasScrolled);
+  const inDeck = useSpiralStore((state) => state.inDeck);
 
   return (
-    <div className="gutter pointer-events-none absolute bottom-8 left-0 flex flex-col gap-6 lg:bottom-10">
+    <motion.div
+      initial={false}
+      animate={{ opacity: inDeck ? 0 : 1, y: inDeck ? 12 : 0 }}
+      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+      className="gutter pointer-events-none absolute bottom-8 left-0 flex flex-col gap-6 lg:bottom-10"
+    >
       <IntroTitle />
       <motion.p
         aria-hidden={hasScrolled}
@@ -27,6 +36,6 @@ export function IntroCaption() {
         </span>
         Scroll to explore
       </motion.p>
-    </div>
+    </motion.div>
   );
 }

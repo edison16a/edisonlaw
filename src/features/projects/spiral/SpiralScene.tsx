@@ -45,7 +45,7 @@ export function SpiralScene({ projects, startAt, onSelect, onHover }: SpiralScen
 
   const geometry = useMemo(() => new PlaneGeometry(CARD_WIDTH, CARD_HEIGHT, 32, 12), []);
   const [cards] = useState<CardRuntime[]>(() => createCards(count));
-  const [focus] = useState<FocusSnapshot>(() => ({ focused: 0, panel: null, settled: null }));
+  const [focus] = useState<FocusSnapshot>(() => ({ focused: 0, panel: null, settled: null, inDeck: false }));
   const uploadNext = useCardPictures(projects, cards, gl, startAt);
 
   useEffect(() => () => geometry.dispose(), [geometry]);
