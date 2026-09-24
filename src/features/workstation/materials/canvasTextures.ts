@@ -51,11 +51,11 @@ export function createFloorTexture() {
 export function createCorkTexture() {
   return paintTexture(256, 256, (ctx, w, h) => {
     const random = seededRandom(11);
-    ctx.fillStyle = '#8a6446';
+    ctx.fillStyle = '#a57a54';
     ctx.fillRect(0, 0, w, h);
     for (let i = 0; i < 2600; i++) {
-      const shade = random() > 0.5 ? '60, 38, 22' : '176, 136, 98';
-      ctx.fillStyle = `rgba(${shade}, ${0.25 + random() * 0.4})`;
+      const shade = random() > 0.6 ? '84, 56, 34' : '196, 158, 118';
+      ctx.fillStyle = `rgba(${shade}, ${0.2 + random() * 0.35})`;
       ctx.fillRect(random() * w, random() * h, 1 + random() * 2.5, 1 + random() * 2.5);
     }
   });
@@ -227,8 +227,8 @@ export function createMoonTexture() {
       ctx.arc(x, y, radius, 0, Math.PI * 2);
       ctx.fill();
     };
-    for (let i = 0; i < 9; i++) blotch(random() * w, h * (0.25 + random() * 0.5), 14 + random() * 26, 0.28 + random() * 0.2);
-    for (let i = 0; i < 40; i++) blotch(random() * w, random() * h, 2 + random() * 5, 0.25 + random() * 0.25);
+    for (let i = 0; i < 9; i++) blotch(random() * w, h * (0.25 + random() * 0.5), 14 + random() * 26, 0.5 + random() * 0.25);
+    for (let i = 0; i < 40; i++) blotch(random() * w, random() * h, 2 + random() * 5, 0.35 + random() * 0.3);
   });
 }
 
@@ -293,3 +293,4 @@ export function createFibreTexture() {
   texture.wrapT = RepeatWrapping;
   return texture;
 }
+

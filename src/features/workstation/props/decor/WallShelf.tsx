@@ -98,7 +98,7 @@ export function WallShelf({ position }: WallShelfProps) {
     cactusMaterial: new MeshStandardMaterial({ color: '#4f8a3a', roughness: 0.55 }),
     pot: new LatheGeometry(POT.map(([r, y]) => new Vector2(r, y)), 40),
     soil: new MeshStandardMaterial({ color: '#2a1d14', roughness: 1 }),
-    moon: new MeshStandardMaterial({ color: '#000000', emissive: '#ffffff', emissiveMap: createMoonTexture(), emissiveIntensity: 1.35, toneMapped: false }),
+    moon: new MeshStandardMaterial({ color: '#000000', emissive: '#ffffff', emissiveMap: createMoonTexture(), emissiveIntensity: 1.05, toneMapped: false }),
   }));
 
   const [x, y] = position;
