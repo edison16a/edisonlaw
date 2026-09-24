@@ -1,6 +1,8 @@
 'use client';
 
+import { getImageProps } from 'next/image';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent } from 'react';
+import { preload } from 'react-dom';
 import { AnimatePresence } from 'motion/react';
 import type { Project } from '@/content/types';
 import { sound } from '@/features/sound';
@@ -11,9 +13,29 @@ import { ModeToggle } from '../components/ModeToggle';
 import { ProjectDetails } from '../components/ProjectDetails';
 import { ProjectImage } from '../components/ProjectImage';
 import { ProjectStatus } from '../components/ProjectStatus';
+import { CAROUSEL_QUERY } from '../hooks/useSpiralFits';
 import { useSpiralStore, type SpiralMode } from '../state/spiralStore';
 import { CarouselControls } from './CarouselControls';
 import { slideStride, useActiveSlide } from './useActiveSlide';
+
+/** Slide widths for next/image, so phones download a sensible size. */
+const SLIDE_SIZES = '(min-width: 768px) 768px, 82vw';
+
+/**
+ * Asks for the opening photo early, but only on screens that show the carousel.
+ * Desktops render it too until the client knows the screen, and should not fetch it.
+ */
+function preloadPhoto(project: Project) {
+  const { props } = getImageProps({ src: project.image, alt: '', fill: true, sizes: SLIDE_SIZES });
+  if (!props.src) return;
+  preload(props.src, {
+    as: 'image',
+    imageSrcSet: props.srcSet,
+    imageSizes: props.sizes,
+    fetchPriority: 'high',
+    media: CAROUSEL_QUERY,
+  });
+}
 
 interface ProjectCarouselProps {
   projects: Project[];
@@ -32,6 +54,7 @@ export function ProjectCarousel({ projects, onModeChange, heading, className }: 
   // A project chosen in the list opens here, the same way the spiral opens on it.
   const [opening] = useState(() => useSpiralStore.getState().pendingFocus ?? 0);
   const active = useActiveSlide(strip, projects.length, opening);
+  preloadPhoto(projects[opening]);
   const project = projects[active];
   const previous = useRef(active);
 
@@ -89,8 +112,7 @@ export function ProjectCarousel({ projects, onModeChange, heading, className }: 
           <li key={item.id} className="relative w-(--slide) shrink-0 snap-center">
             <ProjectImage
               project={item}
-              sizes="(min-width: 768px) 768px, 82vw"
-              priority={index === 0}
+              sizes={SLIDE_SIZES}
               className={cn(
                 'aspect-[16/10] rounded-2xl transition-[opacity,transform] duration-500 ease-out-expo',
                 index === active ? 'opacity-100' : 'scale-[0.94] opacity-45',

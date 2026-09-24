@@ -9,12 +9,11 @@ interface ProjectImageProps {
   project: Project;
   /** Passed to next/image so phones download a sensible size. */
   sizes: string;
-  priority?: boolean;
   className?: string;
 }
 
 /** The project's photo, filling its box. If the photo cannot load, a quiet grey tile names the project. */
-export function ProjectImage({ project, sizes, priority, className }: ProjectImageProps) {
+export function ProjectImage({ project, sizes, className }: ProjectImageProps) {
   const [failed, setFailed] = useState(false);
 
   return (
@@ -32,7 +31,6 @@ export function ProjectImage({ project, sizes, priority, className }: ProjectIma
           alt=""
           fill
           sizes={sizes}
-          priority={priority}
           onError={() => setFailed(true)}
           className="object-cover"
         />

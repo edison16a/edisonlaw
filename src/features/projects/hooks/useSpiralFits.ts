@@ -9,6 +9,8 @@ import { useWebGLSupport } from '@/lib/hooks/useWebGLSupport';
  * carousel like any other phone.
  */
 export const STAGE_QUERY = '(min-width: 768px) and (min-height: 521px)';
+/** The opposite of STAGE_QUERY: screens that get the carousel whatever WebGL can do. */
+export const CAROUSEL_QUERY = '(max-width: 767px), (max-height: 520px)';
 
 /**
  * Classes that let CSS choose between the stage and the carousel before the
