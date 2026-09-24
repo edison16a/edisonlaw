@@ -20,8 +20,8 @@ interface ArmProps {
 export function Arm({ arm, children }: ArmProps) {
   const materials = useCharacterMaterials();
   const sleeve = useDisposable(() => sleeveGeometry(ARM.sleeve, ARM.sleeveLength, 1.05, 40, ARM.sleeveCap));
-  const upper = useDisposable(() => taperedCapsule(ARM.upperTop, ARM.elbow, BODY.upperArm));
-  const lower = useDisposable(() => taperedCapsule(ARM.elbow, ARM.wrist, BODY.forearm));
+  const upper = useDisposable(() => taperedCapsule(ARM.upperTop, ARM.elbow, BODY.upperArm, 32));
+  const lower = useDisposable(() => taperedCapsule(ARM.elbow, ARM.wrist, BODY.forearm, 32));
 
   return (
     <primitive object={arm.base}>

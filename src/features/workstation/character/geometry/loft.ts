@@ -21,15 +21,73 @@ interface LoftOptions {
   capBottom?: boolean;
   /** Closes the top ring with a point. */
   capTop?: boolean;
+  /** Sections per span between the given rings, interpolated smoothly. 1 keeps the rings as given. */
+  smooth?: number;
 }
 
 const signedPow = (value: number, power: number) => Math.sign(value) * Math.abs(value) ** power;
 
 /**
+ * Tangents for a monotone cubic through evenly spaced samples (Fritsch and Carlson): smooth, and never
+ * swinging past its neighbours, so a smoothed body never bulges out between two sections.
+ */
+function monotoneTangents(values: number[]) {
+  const count = values.length;
+  const slopes = values.slice(1).map((value, i) => value - values[i]);
+  const tangents = values.map((_, i) => {
+    if (i === 0) return slopes[0];
+    if (i === count - 1) return slopes[count - 2];
+    return slopes[i - 1] * slopes[i] <= 0 ? 0 : (slopes[i - 1] + slopes[i]) / 2;
+  });
+  slopes.forEach((slope, i) => {
+    if (slope === 0) {
+      tangents[i] = 0;
+      tangents[i + 1] = 0;
+      return;
+    }
+    const a = tangents[i] / slope;
+    const b = tangents[i + 1] / slope;
+    const length = Math.hypot(a, b);
+    if (length > 3) {
+      tangents[i] = (3 / length) * a * slope;
+      tangents[i + 1] = (3 / length) * b * slope;
+    }
+  });
+  return tangents;
+}
+
+const RING_KEYS = ['y', 'x', 'front', 'back', 'z'] as const;
+
+/** Inserts `steps - 1` smoothly interpolated sections between each pair of rings. */
+function refineRings(rings: LoftRing[], steps: number): LoftRing[] {
+  const curves = RING_KEYS.map((key) => {
+    const values = rings.map((ring) => ring[key] ?? 0);
+    return { key, values, tangents: monotoneTangents(values) };
+  });
+  const refined: LoftRing[] = [];
+  for (let i = 0; i < rings.length - 1; i++) {
+    for (let step = 0; step < steps; step++) {
+      const t = step / steps;
+      const t2 = t * t;
+      const t3 = t2 * t;
+      const ring: LoftRing = { y: 0, x: 0, front: 0, back: 0 };
+      for (const { key, values, tangents } of curves) {
+        ring[key] =
+          (2 * t3 - 3 * t2 + 1) * values[i] + (t3 - 2 * t2 + t) * tangents[i] + (-2 * t3 + 3 * t2) * values[i + 1] + (t3 - t2) * tangents[i + 1];
+      }
+      refined.push(ring);
+    }
+  }
+  refined.push({ ...rings[rings.length - 1] });
+  return refined;
+}
+
+/**
  * Builds a smooth tube through horizontal sections, listed bottom to top.
  * UVs run around the body with the front at u = 0.5 (the seam is at the back) and up the height in v.
  */
-export function loftGeometry(rings: LoftRing[], { radialSegments = 64, squareness = 2, capBottom = false, capTop = false }: LoftOptions = {}) {
+export function loftGeometry(sections: LoftRing[], { radialSegments = 64, squareness = 2, capBottom = false, capTop = false, smooth = 1 }: LoftOptions = {}) {
+  const rings = smooth > 1 ? refineRings(sections, smooth) : sections;
   const positions: number[] = [];
   const uvs: number[] = [];
   const indices: number[] = [];

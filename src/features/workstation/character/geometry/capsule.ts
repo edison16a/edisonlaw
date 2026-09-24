@@ -6,7 +6,7 @@ import { LatheGeometry, Vector2 } from 'three';
  */
 export function taperedCapsule(topRadius: number, bottomRadius: number, length: number, radialSegments = 24) {
   const points: Vector2[] = [];
-  const capSteps = 6;
+  const capSteps = 8;
   for (let i = 0; i <= capSteps; i++) {
     const angle = -Math.PI / 2 + (i / capSteps) * (Math.PI / 2);
     points.push(new Vector2(Math.cos(angle) * bottomRadius, -length + Math.sin(angle) * bottomRadius));

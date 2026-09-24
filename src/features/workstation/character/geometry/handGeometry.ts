@@ -31,7 +31,7 @@ const THUMB_PAD = { y: -0.021, spreadY: 0.014, spreadX: 0.016, depth: 0.0048 } a
  * thumb edge, so the thumb grows out of the hand instead of sticking to its side.
  */
 export function palmGeometry(thumbSide: number) {
-  const loft = loftGeometry(PALM, { radialSegments: 36, squareness: 2.5, capBottom: true, capTop: true });
+  const loft = loftGeometry(PALM, { radialSegments: 36, squareness: 2.5, capBottom: true, capTop: true, smooth: 2 });
   loft.deleteAttribute('uv');
   loft.deleteAttribute('normal');
   // Weld the loft's seam so the normals recomputed after sculpting stay smooth across it.
