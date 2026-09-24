@@ -10,7 +10,7 @@ import { smoothstep } from '@/lib/math';
 export function cardBlur(offset: number, settle: number) {
   const distance = Math.abs(offset);
   const depth = smoothstep(0.45, 3.2, distance);
-  const backdrop = settle * 0.4 * smoothstep(0.25, 0.9, distance);
+  const backdrop = settle * 0.55 * smoothstep(0.25, 0.9, distance);
   return Math.min(1, depth + backdrop);
 }
 
@@ -18,7 +18,7 @@ export function cardBlur(offset: number, settle: number) {
 export function cardBrightness(offset: number, settle: number) {
   const distance = Math.abs(offset);
   const strand = 1 - 0.16 * smoothstep(0.4, 1.6, distance);
-  const backdrop = 1 - settle * 0.34 * smoothstep(0.25, 0.9, distance);
+  const backdrop = 1 - settle * 0.4 * smoothstep(0.25, 0.9, distance);
   return strand * backdrop;
 }
 
