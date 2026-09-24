@@ -6,27 +6,32 @@ import type { Vec3 } from '../../layout';
 import { useRgbMaterial } from '../../lighting/useRgbMaterial';
 import { getMaterials } from '../../materials/materials';
 import { useDisposable } from '../../useDisposable';
-import { FAN_DEPTH, FAN_SIZE } from './fanGeometry';
-import { BACK_INNER_Z, BOARD_FACE_Z, GLASS_INNER_X, GLASS_INNER_Z, INNER_BOTTOM, REAR_INNER_X, TOWER } from './towerSpec';
+import {
+  BACK_INNER_Z,
+  BOARD_FACE_Z,
+  FRONT_FANS_TOP,
+  GLASS_INNER_X,
+  GLASS_INNER_Z,
+  INNER_BOTTOM,
+  RADIATOR,
+  REAR_INNER_X,
+  TOWER,
+} from './towerSpec';
 
 const BOARD = { x: -0.06, y: 0.318, width: 0.27, height: 0.3, thickness: 0.003 };
 const PUMP = { x: -0.068, y: 0.372, radius: 0.03, depth: 0.028 };
 const RAM = { x: 0.018, pitch: 0.0115, y: 0.372, length: 0.13, thickness: 0.007, height: 0.034, bar: 0.008, count: 4 };
 const GPU = { length: 0.3, thickness: 0.05, height: 0.12, y: 0.216 };
 const GPU_X = REAR_INNER_X + 0.012 + GPU.length / 2;
-/** Radiator behind the front fans. */
-const RADIATOR = { depth: 0.027, width: 0.122 };
-const RADIATOR_BACK_X = GLASS_INNER_X - 0.002 - FAN_DEPTH - 0.0005 - RADIATOR.depth;
-const FAN_STACK_TOP = TOWER.shroudTop + 0.004 + FAN_SIZE * 3 + 0.004;
 
 /** AIO hoses from the pump to the top of the radiator. */
 function hoseCurve(offset: number) {
   return new CatmullRomCurve3([
     new Vector3(PUMP.x + PUMP.radius - 0.004, PUMP.y + offset, BOARD_FACE_Z + 0.016),
     new Vector3(PUMP.x + PUMP.radius + 0.03, PUMP.y + offset + 0.012, BOARD_FACE_Z + 0.05),
-    new Vector3(0.09, FAN_STACK_TOP - 0.05 + offset, 0.02),
-    new Vector3(RADIATOR_BACK_X - 0.012, FAN_STACK_TOP - 0.028 + offset * 0.6, -0.03),
-    new Vector3(RADIATOR_BACK_X + 0.002, FAN_STACK_TOP - 0.028 + offset * 0.6, -0.034),
+    new Vector3(0.09, FRONT_FANS_TOP - 0.05 + offset, 0.02),
+    new Vector3(RADIATOR.backX - 0.012, FRONT_FANS_TOP - 0.028 + offset * 0.6, -0.03),
+    new Vector3(RADIATOR.backX + 0.002, FRONT_FANS_TOP - 0.028 + offset * 0.6, -0.034),
   ]);
 }
 
@@ -61,8 +66,9 @@ export function TowerInternals() {
   const gpuZ0 = BOARD_FACE_Z + 0.004;
   const gpuFront = gpuZ0 + GPU.height;
   const shroudFront = GLASS_INNER_Z - 0.003;
-  const shroudLength = RADIATOR_BACK_X - 0.004 - REAR_INNER_X;
-  const radiatorHeight = FAN_STACK_TOP - TOWER.shroudTop - 0.006;
+  // The shroud runs the full length; the fans and the radiator stand on it.
+  const shroudLength = GLASS_INNER_X - 0.002 - REAR_INNER_X;
+  const radiatorHeight = FRONT_FANS_TOP - TOWER.shroudTop - 0.006;
 
   return (
     <group>
@@ -136,7 +142,7 @@ export function TowerInternals() {
         radius={0.002}
         smoothness={2}
         material={parts.armour}
-        position={[RADIATOR_BACK_X + RADIATOR.depth / 2, TOWER.shroudTop + 0.004 + radiatorHeight / 2, (BACK_INNER_Z + GLASS_INNER_Z) / 2]}
+        position={[RADIATOR.backX + RADIATOR.depth / 2, TOWER.shroudTop + 0.004 + radiatorHeight / 2, (BACK_INNER_Z + GLASS_INNER_Z) / 2]}
       />
 
       {/* PSU shroud over the bottom chamber, with a light bar along its front top edge. */}

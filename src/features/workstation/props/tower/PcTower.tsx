@@ -12,16 +12,10 @@ import { createFritGeometry, createGlassGeometry } from './chassisGeometry';
 import { Fan, type FanParts } from './Fan';
 import { createFanBladesGeometry, createFanFrameGeometry, createFanHubGeometry, createFanRingGeometry, FAN_DEPTH, FAN_SIZE } from './fanGeometry';
 import { TowerInternals } from './TowerInternals';
-import { BACK_INNER_Z, GLASS_INNER_X, GLASS_INNER_Z, INNER_BOTTOM, INNER_TOP, REAR_INNER_X, TOWER } from './towerSpec';
+import { BACK_INNER_Z, FRONT_FANS, GLASS_INNER_Z, INNER_BOTTOM, INNER_TOP, REAR_INNER_X, TOWER } from './towerSpec';
 
 /** Turned a little toward the desk so the camera sees both the glass side and the front fans. */
 const YAW = -0.35;
-const FRONT_FAN_COUNT = 3;
-const FAN_GAP = 0.002;
-/** Front fans sit just behind the front glass; the radiator sits behind them. */
-export const FRONT_FAN_X = GLASS_INNER_X - 0.002 - FAN_DEPTH / 2;
-const FRONT_FAN_Z = (BACK_INNER_Z + GLASS_INNER_Z) / 2;
-const FRONT_FAN_START = TOWER.shroudTop + 0.004 + FAN_SIZE / 2;
 const REAR_FAN = { y: 0.395, z: 0.004 };
 
 /**
@@ -112,11 +106,11 @@ export function PcTower({ animate }: { animate: boolean }) {
       <TowerInternals />
 
       {/* Front intake fans, facing out through the front glass. */}
-      {Array.from({ length: FRONT_FAN_COUNT }, (_, index) => (
+      {Array.from({ length: FRONT_FANS.count }, (_, index) => (
         <Fan
           key={index}
           parts={fanParts}
-          position={[FRONT_FAN_X, FRONT_FAN_START + index * (FAN_SIZE + FAN_GAP), FRONT_FAN_Z]}
+          position={[FRONT_FANS.x, FRONT_FANS.firstY + index * (FAN_SIZE + FRONT_FANS.gap), FRONT_FANS.z]}
           rotation={[0, Math.PI / 2, 0]}
           spinning={animate}
         />
