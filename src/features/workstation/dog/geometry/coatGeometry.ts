@@ -12,7 +12,7 @@ import { createFieldSample, type Field } from '../sdf/field';
 import { meshField } from '../sdf/surfaceNets';
 
 /** Grid cell for the coat, in metres. Fine enough for the smallest fur clumps and the lips. */
-export const COAT_CELL = 0.0045;
+export const COAT_CELL = 0.005;
 
 /** Everything the coat mesh needs, as plain arrays so it can be built once and reused. */
 export interface CoatData {
