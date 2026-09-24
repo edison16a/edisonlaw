@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic';
 import { useCallback, useRef, useState, type CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
+import { CanvasBoundary } from '@/components/three/CanvasBoundary';
 import { cn } from '@/lib/cn';
 import type { ScreenId } from './screens/types';
 import { STAGE_ALT, StageRender } from './stage/StageRender';
@@ -38,24 +39,28 @@ export interface WorkstationStageProps {
 /**
  * The desk scene as a drop-in block. It fills its parent.
  * The canvas mounts once the stage comes near the viewport and pauses while off-screen.
- * Phones get a pre-rendered still instead.
+ * Phones, browsers without WebGL and scenes that fail to render get a pre-rendered still instead.
  */
 export function WorkstationStage({ variant, centerScreen, pulseKey, className }: WorkstationStageProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [imageFailed, setImageFailed] = useState(false);
+  const [canvasFailed, setCanvasFailed] = useState(false);
   const [ready, setReady] = useState(false);
   const onReady = useCallback(() => setReady(true), []);
-  const { capturing, showImage, live, ...canvasMode } = useStageMode(ref, variant, imageFailed);
+  const onCanvasFail = useCallback(() => setCanvasFailed(true), []);
+  const { capturing, showImage, live, ...canvasMode } = useStageMode(ref, variant, { imageFailed, canvasFailed });
 
   const canvas = live && (
     <div className={cn('absolute inset-0 transition-opacity duration-1000 ease-out', ready ? 'opacity-100' : 'opacity-0')}>
-      <WorkstationCanvas
-        variant={variant}
-        centerScreen={centerScreen}
-        pulseKey={pulseKey}
-        onReady={onReady}
-        {...canvasMode}
-      />
+      <CanvasBoundary label="desk scene" onFail={onCanvasFail}>
+        <WorkstationCanvas
+          variant={variant}
+          centerScreen={centerScreen}
+          pulseKey={pulseKey}
+          onReady={onReady}
+          {...canvasMode}
+        />
+      </CanvasBoundary>
     </div>
   );
 

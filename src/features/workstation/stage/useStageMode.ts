@@ -4,11 +4,19 @@ import { useState, type RefObject } from 'react';
 import { useInView } from '@/lib/hooks/useInView';
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
 import { useReducedMotion } from '@/lib/hooks/useReducedMotion';
+import { useWebGLSupport } from '@/lib/hooks/useWebGLSupport';
 import type { Frameloop, StageVariant } from '../types';
 import { useCaptureVariant } from './useCaptureVariant';
 
 /** Start loading the scene a full screen before it scrolls in. */
 const NEAR_MARGIN = '100% 0px 100% 0px';
+
+export interface StageFailures {
+  /** The still render could not load. */
+  imageFailed: boolean;
+  /** The live scene threw, for example because the WebGL context could not be created. */
+  canvasFailed: boolean;
+}
 
 export interface StageMode {
   /** This stage is being captured by scripts/capture-renders.mjs. */
@@ -31,12 +39,17 @@ export interface StageMode {
 
 /**
  * Decides how a stage renders from where it is on the page and what the device prefers:
- * a paused, still or fully animated canvas, or the phone render.
+ * a paused, still or fully animated canvas, or the pre-rendered still.
  */
-export function useStageMode(ref: RefObject<HTMLElement | null>, variant: StageVariant, imageFailed: boolean): StageMode {
+export function useStageMode(
+  ref: RefObject<HTMLElement | null>,
+  variant: StageVariant,
+  { imageFailed, canvasFailed }: StageFailures,
+): StageMode {
   const near = useInView(ref, { rootMargin: NEAR_MARGIN });
   const onScreen = useInView(ref);
   const isMobile = useIsMobile();
+  const webgl = useWebGLSupport();
   const reducedMotion = useReducedMotion();
   const capture = useCaptureVariant();
 
@@ -45,7 +58,9 @@ export function useStageMode(ref: RefObject<HTMLElement | null>, variant: StageV
   if (near && !wasNear) setWasNear(true);
 
   const capturing = capture === variant;
-  const showImage = isMobile && !imageFailed && !capture;
+  // Without a working WebGL context the still is all a stage can show, on any screen size.
+  const canvasWorks = webgl && !canvasFailed;
+  const showImage = (isMobile || !canvasWorks) && !imageFailed && !capture;
   const still = reducedMotion || isMobile;
   const animate = capturing || !still;
 
@@ -56,7 +71,7 @@ export function useStageMode(ref: RefObject<HTMLElement | null>, variant: StageV
   return {
     capturing,
     showImage,
-    live: capturing || (!capture && !showImage && wasNear),
+    live: canvasWorks && (capturing || (!capture && !showImage && wasNear)),
     frameloop,
     animate,
     rgbCycle: animate && !capturing,
