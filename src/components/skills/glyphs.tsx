@@ -15,7 +15,6 @@ export function BracesGlyph(props: IconProps) {
   return (
     <IconBase {...props}>
       <path d="M8 4c-2 0-2.5 1-2.5 2.5v2.8c0 1.2-.8 2.2-2 2.7 1.2.5 2 1.5 2 2.7v2.8C5.5 19 6 20 8 20M16 4c2 0 2.5 1 2.5 2.5v2.8c0 1.2.8 2.2 2 2.7-1.2.5-2 1.5-2 2.7v2.8C18.5 19 18 20 16 20" />
-      <path d="M12 12h.01" />
     </IconBase>
   );
 }
