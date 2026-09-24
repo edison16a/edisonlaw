@@ -15,7 +15,7 @@ const NECK = { width: 0.05, depth: 0.018, top: 0 };
 /** How far touching parts sink into each other, so no seam of light shows between them. */
 const OVERLAP = 0.002;
 /** Flat foot on the desk, a little ahead of the neck so the panel looks balanced. */
-const FOOT = { width: 0.22, depth: 0.15, thickness: 0.012, offsetZ: -0.04 };
+const FOOT = { width: 0.2, depth: 0.15, thickness: 0.012, offsetZ: -0.04 };
 
 interface MonitorProps {
   slot: MonitorSlot;
