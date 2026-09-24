@@ -12,7 +12,7 @@ export interface FocusSnapshot {
 }
 
 interface SpiralState extends FocusSnapshot {
-  /** True after the first scroll or drag inside the section. */
+  /** True once the visitor has first moved the spiral, by wheel, drag, key or click. */
   hasScrolled: boolean;
   /** Project under the pointer in the spiral, or null. */
   hovered: number | null;
