@@ -73,6 +73,7 @@ export function ProjectCarousel({ projects, onModeChange, heading, className }: 
       {/*
         Lenis leaves sideways wheel swipes to the strip. Its stylesheet then sets
         overscroll-behavior: contain, so the inline style hands vertical swipes back to the page.
+        Slides stay short enough to fit a phone on its side, and the padding centres the first and last.
       */}
       <ol
         ref={strip}
@@ -82,10 +83,10 @@ export function ProjectCarousel({ projects, onModeChange, heading, className }: 
         data-focus-on-open
         onKeyDown={onKeyDown}
         aria-label="Project photos. Use the left and right arrow keys to move between projects."
-        className="flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain px-[max(9vw,calc(50%-24rem))] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain px-[calc((100%_-_var(--slide))/2)] [--slide:min(82vw,48rem,calc((100dvh_-_8rem)*1.6))] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {projects.map((item, index) => (
-          <li key={item.id} className="relative w-[82vw] max-w-3xl shrink-0 snap-center">
+          <li key={item.id} className="relative w-(--slide) shrink-0 snap-center">
             <ProjectImage
               project={item}
               sizes="(min-width: 768px) 768px, 82vw"

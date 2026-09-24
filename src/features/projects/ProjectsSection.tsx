@@ -3,10 +3,9 @@
 import { useRef } from 'react';
 import { projects as allProjects } from '@/content/projects';
 import type { Project } from '@/content/types';
-import { useIsMobile } from '@/lib/hooks/useIsMobile';
 import { useIsClient } from '@/lib/hooks/useIsClient';
-import { useWebGLSupport } from '@/lib/hooks/useWebGLSupport';
 import { ProjectsIndex } from './components/ProjectsIndex';
+import { CAROUSEL_ONLY, STAGE_ONLY, useSpiralFits } from './hooks/useSpiralFits';
 import { useViewSwitch } from './hooks/useViewSwitch';
 import { ProjectList } from './list/ProjectList';
 import { ProjectCarousel } from './mobile/ProjectCarousel';
@@ -14,20 +13,18 @@ import { SpiralTrack } from './stage/SpiralTrack';
 import { useSpiralMode } from './state/useSpiralMode';
 
 /**
- * The first thing visitors see. Desktop gets the spiral, phones a swipeable
- * strip, and list mode a plain index. Every project is real text in every mode.
+ * The first thing visitors see. Desktop gets the spiral, phones (upright or on
+ * their side) a swipeable strip, and list mode a plain index. Every project is real text in every mode.
  */
 export function ProjectsSection({ projects = allProjects }: { projects?: Project[] }) {
   const mode = useSpiralMode();
-  const isMobile = useIsMobile();
+  const spiralFits = useSpiralFits();
   const isClient = useIsClient();
-  const webgl = useWebGLSupport();
   const section = useRef<HTMLElement>(null);
   const { changeMode, openProject } = useViewSwitch(section);
 
   // Until the client knows the screen size both layouts render and CSS picks one, so phones never flash the stage.
   // Meanwhile the stage's title is the h1. Without WebGL the carousel stands in for the spiral on every screen.
-  const spiralFits = !isMobile && webgl;
   const showStage = !isClient || spiralFits;
   const showCarousel = !isClient || !spiralFits;
 
@@ -43,7 +40,7 @@ export function ProjectsSection({ projects = allProjects }: { projects?: Project
       ) : (
         <>
           {showStage && (
-            <div className="max-md:hidden">
+            <div className={isClient ? undefined : STAGE_ONLY}>
               <SpiralTrack projects={projects} onModeChange={changeMode} />
             </div>
           )}
@@ -52,7 +49,7 @@ export function ProjectsSection({ projects = allProjects }: { projects?: Project
               projects={projects}
               onModeChange={changeMode}
               heading={isClient}
-              className={isClient ? undefined : 'md:hidden'}
+              className={isClient ? undefined : CAROUSEL_ONLY}
             />
           )}
           <ProjectsIndex projects={projects} />
