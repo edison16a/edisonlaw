@@ -13,6 +13,7 @@ import { useStepKeys } from '../input/useStepKeys';
 import { useSpiralStore } from '../state/spiralStore';
 import { DetailPanel } from './DetailPanel';
 import { StageBackdrop } from './StageBackdrop';
+import { StageGallery } from './StageGallery';
 import { StageSurface } from './StageSurface';
 import { StepArrows } from './StepArrows';
 
@@ -64,6 +65,7 @@ export function SpiralStage({ projects }: { projects: Project[] }) {
       {/* The stage melts into the black page below, so the handoff to the next section has no hard edge. */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-[12%] bg-linear-to-b from-transparent to-black" />
       <StepArrows />
+      <StageGallery projects={projects} />
       <DetailPanel projects={projects} columnRef={column} />
     </div>
   );

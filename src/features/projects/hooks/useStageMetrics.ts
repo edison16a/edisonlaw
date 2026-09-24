@@ -16,7 +16,8 @@ const LIFT_SHARE = 0.2;
  * Measures the stage on mount and on every resize. It publishes how far the
  * scene slides aside, or up, to make room for the detail panel, and where the
  * focused card lands as CSS variables on the stage, so the arrows can sit
- * right beside it: --card-left, --card-right and --card-middle, in pixels.
+ * right beside it and the screenshot row right under it: --card-left,
+ * --card-right, --card-middle and --card-bottom, in pixels.
  */
 export function useStageMetrics(stage: RefObject<HTMLElement | null>, column: RefObject<HTMLElement | null>) {
   useEffect(() => {
@@ -43,6 +44,7 @@ export function useStageMetrics(stage: RefObject<HTMLElement | null>, column: Re
       stageNode.style.setProperty('--card-left', `${card.left.toFixed(1)}px`);
       stageNode.style.setProperty('--card-right', `${card.right.toFixed(1)}px`);
       stageNode.style.setProperty('--card-middle', `${((card.top + card.bottom) / 2).toFixed(1)}px`);
+      stageNode.style.setProperty('--card-bottom', `${card.bottom.toFixed(1)}px`);
       wakeSpiral();
     };
 
