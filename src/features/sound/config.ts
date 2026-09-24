@@ -12,7 +12,7 @@ export interface OneShotSettings {
 /** The final mix. The sprite is already balanced by ear, so these are gentle trims. */
 export const SOUNDS: Record<SoundName, OneShotSettings> = {
   tick: { volume: 0.8, throttle: 28, voices: 3 },
-  hover: { volume: 0.8, throttle: 60, voices: 2 },
+  hover: { volume: 0.8, throttle: 90, voices: 2 },
   tab: { volume: 0.8, throttle: 80, voices: 2 },
   toggle: { volume: 0.9, throttle: 80, voices: 2 },
   dot: { volume: 0.8, throttle: 50, voices: 3 },
