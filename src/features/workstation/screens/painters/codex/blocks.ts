@@ -14,6 +14,7 @@ import {
   type TermBlock,
 } from '../../draw/terminal';
 import { wrapWords } from '../../draw/text';
+import { SCREEN_WIDTH } from '../../types';
 import { COMMANDS, type CodexAction } from './session';
 import { CODEX_THEME as T } from './theme';
 
@@ -148,7 +149,7 @@ export function composerBlock(value: string, cursor: boolean): TermBlock {
     draw(ctx, grid, row) {
       // The band runs edge to edge, past the grid padding.
       ctx.fillStyle = T.band;
-      ctx.fillRect(0, rowY(grid, row), ctx.canvas.width, grid.cellHeight * 3);
+      ctx.fillRect(0, rowY(grid, row), SCREEN_WIDTH, grid.cellHeight * 3);
       const at = drawSpans(ctx, grid, 0, row + 1, [span('› ', T.bright, { weight: 700 }), span(value, T.text)], T.text);
       if (cursor) {
         ctx.fillStyle = T.text;

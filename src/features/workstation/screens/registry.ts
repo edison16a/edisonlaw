@@ -1,7 +1,8 @@
 import { loadScreenFonts } from './fonts';
 import { painters } from './painters';
+import { screenResolution, type ScreenResolution } from './resolution';
 import { scheduleTask } from './scheduler';
-import { SCREEN_HEIGHT, SCREEN_WIDTH, type ScreenId, type ScreenPainter } from './types';
+import type { ScreenId, ScreenPainter } from './types';
 
 /**
  * Shared screens, one canvas and painter per id, counted by subscriber.
@@ -18,6 +19,7 @@ interface Subscriber {
 
 interface Screen {
   id: ScreenId;
+  resolution: ScreenResolution;
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
   painter: ScreenPainter;
@@ -44,9 +46,12 @@ function draw(screen: Screen, force: boolean) {
   const key = screen.painter.frameKey(screen.time);
   if (!force && key === screen.key) return;
   screen.key = key;
-  screen.ctx.save();
-  screen.painter.paint(screen.ctx, screen.time);
-  screen.ctx.restore();
+  const { ctx, resolution } = screen;
+  ctx.save();
+  // Painters lay out in screen units, and the transform draws them at the canvas resolution.
+  ctx.setTransform(resolution.scale, 0, 0, resolution.scale, 0, 0);
+  screen.painter.paint(ctx, screen.time);
+  ctx.restore();
   screen.subscribers.forEach((subscriber) => subscriber.onChange());
 }
 
@@ -95,15 +100,17 @@ function ensureScreen(id: ScreenId): Screen {
   const existing = screens.get(id);
   if (existing) return existing;
 
+  const resolution = screenResolution(window.devicePixelRatio || 1);
   const canvas = document.createElement('canvas');
-  canvas.width = SCREEN_WIDTH;
-  canvas.height = SCREEN_HEIGHT;
+  canvas.width = resolution.width;
+  canvas.height = resolution.height;
   const ctx = canvas.getContext('2d', { alpha: false });
   if (!ctx) throw new Error('Canvas 2D is not available for the monitor screens.');
 
   const painter = painters[id]();
   const screen: Screen = {
     id,
+    resolution,
     canvas,
     ctx,
     painter,

@@ -1,6 +1,6 @@
 import { cellX, createGrid, drawSpans, lineWeight, rowY, span, type TerminalGrid } from '../../../draw/terminal';
 import { terminalWindow } from '../../../draw/window';
-import type { PainterFactory } from '../../../types';
+import { SCREEN_WIDTH, type PainterFactory } from '../../../types';
 import { binPanel, fluxPanel, iterationTable, runPanel } from './panels';
 import { FIRST_ITERATION, MAX_ITERATIONS, runKey, runState, SEGMENTS, type RunState } from './run';
 import { WESTPA_THEME as T } from './theme';
@@ -18,7 +18,7 @@ function clock(iteration: number, offset: number) {
 
 function header(ctx: CanvasRenderingContext2D, grid: TerminalGrid, state: RunState) {
   ctx.fillStyle = T.header;
-  ctx.fillRect(0, rowY(grid, 0), ctx.canvas.width, grid.cellHeight);
+  ctx.fillRect(0, rowY(grid, 0), SCREEN_WIDTH, grid.cellHeight);
   const right = `iteration ${state.iteration} of ${MAX_ITERATIONS}   ${clock(state.iteration, Math.floor((state.segments / SEGMENTS) * 280))}`;
   drawSpans(ctx, grid, 0, 0, [span(' WESTPA ', T.background, { weight: 700, bg: T.magenta }), span('  dashboard  ', T.bright, { weight: 700 }), span('west.h5   ~/sims/barnase-barstar', '#9fb3c8')], T.bright);
   drawSpans(ctx, grid, grid.cols - right.length, 0, [span(right, T.bright)], T.bright);

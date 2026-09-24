@@ -3,6 +3,7 @@ import { circle, fillRect, fillRound, strokeRound, type Rect } from '../../../dr
 import { text, textRun } from '../../../draw/text';
 import { avatar, pill } from '../../../draw/widgets';
 import { VIEW_WIDTH } from '../../../draw/view';
+import { pixelScale } from '../../../resolution';
 import { CISCO_THEME as T } from './theme';
 
 /** Video meeting chrome: title bar, participant tiles and the control bar. */
@@ -28,8 +29,8 @@ function cameraFeed(ctx: CanvasRenderingContext2D, rect: Rect, feed: NonNullable
   wall.addColorStop(1, '#141414');
   fillRect(ctx, rect.x, rect.y, rect.w, rect.h, wall);
   const cx = rect.x + rect.w / 2;
-  // Webcams are soft, and the blur hides how simple the shapes are.
-  ctx.filter = 'blur(1.5px)';
+  // Webcams are soft, and the blur hides how simple the shapes are. Filters ignore the transform.
+  ctx.filter = `blur(${1.5 * pixelScale(ctx)}px)`;
   ctx.fillStyle = feed.shirt;
   ctx.beginPath();
   ctx.ellipse(cx, rect.y + rect.h + 8, rect.w * 0.3, rect.h * 0.42, 0, Math.PI, 0);

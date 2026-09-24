@@ -1,5 +1,6 @@
 import { step } from '../../../anim/timeline';
 import { VIEW_HEIGHT, VIEW_WIDTH, zoomIn } from '../../../draw/view';
+import { pixelScale } from '../../../resolution';
 import type { PainterFactory } from '../../../types';
 import { EDIT_COLUMN, ROWS } from './data';
 import { drawViewer, renderMicrograph } from './microscope';
@@ -33,7 +34,7 @@ export const stanford: PainterFactory = () => {
       drawSheetChrome(ctx, cellName, value || `=AVERAGE(${cellName.replace(/\d+/, '2')}:${cellName.replace(/\d+/, String(ROWS.length + 1))})`);
       drawGrid(ctx, row);
       drawSheetTabs(ctx);
-      micrograph ??= renderMicrograph();
+      micrograph ??= renderMicrograph(pixelScale(ctx));
       drawViewer(ctx, { ...VIEWER, h: VIEW_HEIGHT - VIEWER.y - TABS_HEIGHT - 12 }, micrograph, CURSOR_PATH[tick % CURSOR_PATH.length]);
     },
     dispose() {

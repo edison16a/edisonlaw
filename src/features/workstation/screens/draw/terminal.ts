@@ -1,6 +1,7 @@
 import { drawGlyph, type Glyph } from './glyphs';
 import type { Rect } from './shapes';
 import { font } from './text';
+import { SCREEN_WIDTH } from '../types';
 
 /**
  * A character grid for terminal style screens. Everything lines up to cells, the way a real
@@ -154,7 +155,7 @@ export function drawTranscript(ctx: CanvasRenderingContext2D, grid: TerminalGrid
   ctx.save();
   ctx.beginPath();
   // Clip rows only, so full width bands can reach the window edges.
-  ctx.rect(0, grid.y, ctx.canvas.width, grid.rows * grid.cellHeight);
+  ctx.rect(0, grid.y, SCREEN_WIDTH, grid.rows * grid.cellHeight);
   ctx.clip();
   for (const block of blocks) {
     if (row + block.rows > 0 && row < grid.rows) block.draw(ctx, grid, row);

@@ -5,6 +5,7 @@ import { fillRect, fillRound, strokeRound, type Rect } from '../../../draw/shape
 import { measure, text } from '../../../draw/text';
 import { trafficLights } from '../../../draw/window';
 import { pill } from '../../../draw/widgets';
+import { pixelScale } from '../../../resolution';
 import { LAB_SHEET_THEME as T } from './theme';
 
 /**
@@ -31,12 +32,17 @@ function blob(ctx: CanvasRenderingContext2D, x: number, y: number, rx: number, r
   ctx.restore();
 }
 
-export function renderMicrograph(): HTMLCanvasElement {
+/**
+ * Renders the micrograph at `resolution` pixels per unit. The viewer shows it at about one screen
+ * unit per image unit, so the screen's pixel scale keeps it sharp.
+ */
+export function renderMicrograph(resolution: number): HTMLCanvasElement {
   const canvas = document.createElement('canvas');
-  canvas.width = IMAGE_WIDTH;
-  canvas.height = IMAGE_HEIGHT;
+  canvas.width = Math.round(IMAGE_WIDTH * resolution);
+  canvas.height = Math.round(IMAGE_HEIGHT * resolution);
   const ctx = canvas.getContext('2d');
   if (!ctx) return canvas;
+  ctx.scale(resolution, resolution);
   const random = seededRandom(716);
   ctx.fillStyle = '#020303';
   ctx.fillRect(0, 0, IMAGE_WIDTH, IMAGE_HEIGHT);
@@ -78,21 +84,22 @@ const HISTOGRAM = Array.from({ length: 48 }, (_, i) => Math.exp(-((i - 9) ** 2) 
 
 /** The viewer window floating over the sheet: the micrograph with a pixel readout, channels and a histogram. */
 export function drawViewer(ctx: CanvasRenderingContext2D, rect: Rect, image: HTMLCanvasElement, cursor: [number, number]) {
-  // Soft drop shadow so the window floats over the sheet.
+  // Soft drop shadow so the window floats over the sheet. Shadows ignore the transform.
+  const scale = pixelScale(ctx);
   ctx.save();
   ctx.shadowColor = 'rgba(0,0,0,0.6)';
-  ctx.shadowBlur = 20;
-  ctx.shadowOffsetY = 6;
+  ctx.shadowBlur = 20 * scale;
+  ctx.shadowOffsetY = 6 * scale;
   fillRound(ctx, rect.x, rect.y, rect.w, rect.h, 10, T.viewer);
   ctx.restore();
   strokeRound(ctx, rect.x, rect.y, rect.w, rect.h, 10, '#3a3a40');
   trafficLights(ctx, rect.x + 16, rect.y + 14, 5, 16);
   text(ctx, 'img_0716_40x.tif', rect.x + rect.w / 2, rect.y + 15, { size: 11.5, weight: 600, family: 'sans', color: T.text, align: 'center' });
 
-  // The micrograph is rendered once at its own size and scaled into the window.
+  // The micrograph is rendered once and scaled into the window.
   const imageW = rect.w - 20;
-  const scale = imageW / IMAGE_WIDTH;
-  const imageH = IMAGE_HEIGHT * scale;
+  const fit = imageW / IMAGE_WIDTH;
+  const imageH = IMAGE_HEIGHT * fit;
   const imageX = rect.x + 10;
   const imageY = rect.y + 28;
   ctx.imageSmoothingQuality = 'high';
@@ -103,7 +110,7 @@ export function drawViewer(ctx: CanvasRenderingContext2D, rect: Rect, image: HTM
   text(ctx, '40x, NA 0.95', imageX + 8, imageY + 12, { size: 10, family: 'mono', color: '#d0d0d0' });
 
   // Pointer with a pixel readout, which flips to the pointer's left near the image edge.
-  const [cx, cy] = [imageX + cursor[0] * scale, imageY + cursor[1] * scale];
+  const [cx, cy] = [imageX + cursor[0] * fit, imageY + cursor[1] * fit];
   drawGlyph(ctx, 'cross', cx, cy, 16, '#ffffff');
   const readout = `x ${Math.round(cursor[0] * 2.2)}  y ${Math.round(cursor[1] * 2.2)}  GFP ${Math.round(1800 + cursor[0] * 3)}`;
   const style = { size: 9.5, family: 'mono', color: '#e8e8e8' } as const;
