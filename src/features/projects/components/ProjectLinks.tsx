@@ -5,8 +5,9 @@ import { ArrowUpRightIcon } from '@/components/icons';
 import { sound } from '@/features/sound';
 import { cn } from '@/lib/cn';
 
+/** The pill is 36 px tall. An invisible band above and below makes the tap target 44 px. */
 const base =
-  'inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-[background-color,border-color,color,transform] duration-300 ease-out-expo active:scale-95';
+  'relative inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-[background-color,border-color,color,transform] duration-300 ease-out-expo after:absolute after:inset-x-0 after:-inset-y-1 after:content-[""] active:scale-95';
 const primary = 'bg-white text-black hover:bg-grey-200';
 const secondary = 'border border-grey-600 text-white hover:border-white';
 

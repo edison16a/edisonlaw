@@ -36,7 +36,10 @@ interface ToggleWordProps {
   className?: string;
 }
 
-/** On hover the word rolls up and a copy rolls in from below. */
+/**
+ * On hover the word rolls up and a copy rolls in from below. Padding with a
+ * matching negative margin grows the tap target to 44 px without moving the word.
+ */
 function ToggleWord({ label, active, onSelect, className }: ToggleWordProps) {
   return (
     <div className={cn('flex min-w-16', className)}>
@@ -46,18 +49,20 @@ function ToggleWord({ label, active, onSelect, className }: ToggleWordProps) {
         onClick={onSelect}
         onPointerEnter={() => !active && sound.play('hover')}
         className={cn(
-          'group relative overflow-hidden text-lg leading-7 font-medium tracking-tight transition-colors duration-300',
+          'group -mx-2.5 -my-2 rounded-full px-2.5 py-2 text-lg leading-7 font-medium tracking-tight transition-colors duration-300',
           active ? 'text-white' : 'text-grey-400 hover:text-grey-200',
         )}
       >
-        <span className="block transition-transform duration-500 ease-out-expo group-hover:-translate-y-full">
-          {label}
-        </span>
-        <span
-          aria-hidden="true"
-          className="absolute inset-0 translate-y-full transition-transform duration-500 ease-out-expo group-hover:translate-y-0"
-        >
-          {label}
+        <span className="relative block overflow-hidden">
+          <span className="block transition-transform duration-500 ease-out-expo group-hover:-translate-y-full">
+            {label}
+          </span>
+          <span
+            aria-hidden="true"
+            className="absolute inset-0 translate-y-full transition-transform duration-500 ease-out-expo group-hover:translate-y-0"
+          >
+            {label}
+          </span>
         </span>
       </button>
     </div>
