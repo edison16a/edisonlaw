@@ -1,7 +1,7 @@
 import { gridLines, lineChart, scaleOf, stackedBars } from '../../../draw/charts';
 import { circle, fillRect, fillRound, strokeRound, type Rect } from '../../../draw/shapes';
 import { measure, text } from '../../../draw/text';
-import { pill } from '../../../draw/widgets';
+import { pill, pillWidth } from '../../../draw/widgets';
 import { card } from './card';
 import { DAYS, KPIS, KPI_TRENDS, LIVE_KPI, RUNS_PER_DAY, USAGE, USAGE_MAX } from './data';
 import { OPTAGON_THEME as T } from './theme';
@@ -15,7 +15,7 @@ function dayLabel(index: number) {
   return day > 31 ? `Sep ${day - 31}` : `Aug ${day}`;
 }
 
-/** Four KPI cards: label, big value with its change beside it, and a trend line along the bottom. */
+/** Four KPI cards: label, big value, and the change beside a trend line along the bottom. */
 export function drawKpis(ctx: CanvasRenderingContext2D, area: Rect, liveHours: string) {
   const gap = 10;
   const width = (area.w - gap * 3) / 4;
@@ -24,12 +24,13 @@ export function drawKpis(ctx: CanvasRenderingContext2D, area: Rect, liveHours: s
     card(ctx, rect);
     text(ctx, kpi.label, rect.x + 14, rect.y + 18, { size: 11.5, family: 'sans', color: T.muted });
     const live = index === LIVE_KPI;
-    const value = live ? liveHours : kpi.value;
-    const valueStyle = { size: 22, weight: 700, family: 'sans', color: T.text } as const;
-    text(ctx, value, rect.x + 14, rect.y + 42, valueStyle);
-    pill(ctx, kpi.delta, rect.x + 20 + measure(ctx, value, valueStyle), rect.y + 42, { bg: 'rgba(45,212,191,0.14)', color: T.teal, size: 9 });
+    text(ctx, live ? liveHours : kpi.value, rect.x + 14, rect.y + 41, { size: 23, weight: 700, family: 'sans', color: T.text });
+    // The bottom row holds the change, then the trend line in the room left beside it.
+    const deltaW = pillWidth(ctx, kpi.delta, 9);
+    pill(ctx, kpi.delta, rect.x + 14, rect.y + 64, { bg: 'rgba(45,212,191,0.14)', color: T.teal, size: 9 });
     const trend = KPI_TRENDS[index];
-    lineChart(ctx, { x: rect.x + 14, y: rect.y + 56, w: rect.w - 28, h: 14 }, trend, scaleOf(trend), {
+    const trendX = rect.x + 14 + deltaW + 8;
+    lineChart(ctx, { x: trendX, y: rect.y + 56, w: rect.x + rect.w - 14 - trendX, h: 15 }, trend, scaleOf(trend), {
       color: live ? T.violet : T.teal,
       width: 1.6,
       fill: live ? 'rgba(139,124,246,0.25)' : 'rgba(45,212,191,0.2)',
