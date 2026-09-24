@@ -1,0 +1,58 @@
+import { Color, MeshBasicMaterial, MeshPhysicalMaterial } from 'three';
+
+/** Every colour on the dog. Colour is allowed here because it lives inside the 3D scene. */
+export const DOG_PALETTE = {
+  /** Coat tones from the deep gold of the back to the cream of the feathering, see TONE. */
+  coat: ['#b06a26', '#cf8a3e', '#e6b064', '#f5d9a4'],
+  /** Stops of the coat gradient, matching `coat`. */
+  coatStops: [0, 0.3, 0.62, 0.95],
+  coatSheen: '#ffd9a0',
+  /** Dark pigment on the lips and round the eyes. */
+  pigment: '#2b1a12',
+  mouth: '#4a1c1c',
+  tongue: '#e8837f',
+  tongueSheen: '#ffc2bd',
+  nose: '#141112',
+  eye: '#1d110c',
+} as const;
+
+export interface DogMaterials {
+  /** Coat, coloured per vertex. Skinned. */
+  coat: MeshPhysicalMaterial;
+  /** Ears: the same coat, not skinned. */
+  ear: MeshPhysicalMaterial;
+  nose: MeshPhysicalMaterial;
+  tongue: MeshPhysicalMaterial;
+  eye: MeshPhysicalMaterial;
+  eyeShine: MeshBasicMaterial;
+}
+
+/** Soft clay fur: matte, with a warm sheen at grazing angles that reads as fuzz on the silhouette. */
+function furMaterial() {
+  return new MeshPhysicalMaterial({
+    color: '#ffffff',
+    vertexColors: true,
+    roughness: 0.72,
+    sheen: 0.8,
+    sheenColor: new Color(DOG_PALETTE.coatSheen),
+    sheenRoughness: 0.45,
+  });
+}
+
+export function createDogMaterials(): DogMaterials {
+  return {
+    coat: furMaterial(),
+    ear: furMaterial(),
+    nose: new MeshPhysicalMaterial({ color: DOG_PALETTE.nose, roughness: 0.3, clearcoat: 0.8, clearcoatRoughness: 0.25 }),
+    tongue: new MeshPhysicalMaterial({
+      color: DOG_PALETTE.tongue,
+      roughness: 0.35,
+      clearcoat: 0.6,
+      clearcoatRoughness: 0.2,
+      sheen: 0.4,
+      sheenColor: new Color(DOG_PALETTE.tongueSheen),
+    }),
+    eye: new MeshPhysicalMaterial({ color: DOG_PALETTE.eye, roughness: 0.16, clearcoat: 1, clearcoatRoughness: 0.08 }),
+    eyeShine: new MeshBasicMaterial({ color: '#ffffff', toneMapped: false }),
+  };
+}

@@ -1,0 +1,43 @@
+'use client';
+
+import { SphereGeometry } from 'three';
+import { useDisposable } from '../../useDisposable';
+import { mergeParts } from '../../character/geometry/merge';
+import { EYE_RADII, type FaceLayout } from '../anatomy/face';
+import { useDogMaterials } from '../MaterialsContext';
+import type { DogRig } from '../rig/createDogRig';
+
+/** Catch lights, placed the same on both eyes as if lit from one window. */
+const SHINES = [
+  { x: 0.0052, y: 0.0068, radius: 0.0048 },
+  { x: -0.0055, y: -0.0072, radius: 0.0023 },
+] as const;
+
+/** Where a catch light sits on the front of the glossy eye. */
+function shineDepth(x: number, y: number) {
+  const [rx, ry, rz] = EYE_RADII;
+  return rz * Math.sqrt(Math.max(0, 1 - (x / rx) ** 2 - (y / ry) ** 2)) - 0.0006;
+}
+
+function shineGeometry() {
+  return mergeParts(
+    SHINES.map(({ x, y, radius }) => new SphereGeometry(1, 12, 8).scale(radius, radius, radius * 0.35).translate(x, y, shineDepth(x, y))),
+  );
+}
+
+/** Big, dark, glossy eyes with white catch lights, seated on the skull. Head space. */
+export function Eyes({ rig, face }: { rig: DogRig; face: FaceLayout }) {
+  const materials = useDogMaterials();
+  const eye = useDisposable(() => new SphereGeometry(1, 28, 20));
+  const shine = useDisposable(shineGeometry);
+  return (
+    <>
+      {rig.eyes.map((group, index) => (
+        <primitive key={group.name} object={group} position={face.eyes[index].position} quaternion={face.eyes[index].quaternion}>
+          <mesh geometry={eye} material={materials.eye} scale={EYE_RADII} />
+          <mesh geometry={shine} material={materials.eyeShine} />
+        </primitive>
+      ))}
+    </>
+  );
+}

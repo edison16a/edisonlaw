@@ -27,40 +27,18 @@ export interface MeshOptions {
 /** Cells along one edge of a block. */
 const BLOCK = 4;
 const CORNERS = BLOCK + 1;
+/** How much faster than the point moves a distance may change: the ellipsoid bound is not exact. */
+const LIPSCHITZ_SLACK = 1.15;
 
-/** The eight corners of a cell and the twelve edges between them. */
-const CORNER_OFFSETS = [
-  [0, 0, 0],
-  [1, 0, 0],
-  [0, 1, 0],
-  [1, 1, 0],
-  [0, 0, 1],
-  [1, 0, 1],
-  [0, 1, 1],
-  [1, 1, 1],
-] as const;
-const EDGES = [
-  [0, 1],
-  [2, 3],
-  [4, 5],
-  [6, 7],
-  [0, 2],
-  [1, 3],
-  [4, 6],
-  [5, 7],
-  [0, 4],
-  [1, 5],
-  [2, 6],
-  [3, 7],
-] as const;
+/** The eight corners of a cell as offsets along X, Y and Z, and the twelve edges between them. */
+const CORNER_U = Int8Array.from([0, 1, 0, 1, 0, 1, 0, 1]);
+const CORNER_V = Int8Array.from([0, 0, 1, 1, 0, 0, 1, 1]);
+const CORNER_W = Int8Array.from([0, 0, 0, 0, 1, 1, 1, 1]);
+const EDGE_A = Int8Array.from([0, 2, 4, 6, 0, 1, 4, 5, 0, 1, 2, 3]);
+const EDGE_B = Int8Array.from([1, 3, 5, 7, 2, 3, 6, 7, 4, 5, 6, 7]);
 
-/** Tetrahedron directions for four sample gradients. */
-const TETRA = [
-  [1, -1, -1],
-  [-1, -1, 1],
-  [-1, 1, -1],
-  [1, 1, 1],
-] as const;
+/** Tetrahedron directions for four sample gradients, as X, Y, Z triples. */
+const TETRA = Int8Array.from([1, -1, -1, -1, -1, 1, -1, 1, -1, 1, 1, 1]);
 
 interface Block {
   /** Shapes that can affect this block, in field order. */
@@ -93,8 +71,10 @@ export function meshField(field: Field, { cell, bounds }: MeshOptions): SurfaceM
         for (let i = lo[0]; i <= hi[0]; i++) (lists[blockIndex(i, j, k)] ??= []).push(index);
   });
 
-  // Evaluate the corners of blocks the surface might cross.
+  // Evaluate the corners of blocks the surface might cross. Blocks are visited in order, so a corner on a
+  // face shared with an earlier block is copied from it rather than evaluated again.
   const blocks: (Block | undefined)[] = new Array(bx * by * bz);
+  const evaluated: (Float32Array | undefined)[] = new Array(bx * by * bz);
   const halfDiagonal = (blockSize * Math.sqrt(3)) / 2;
   for (let k = 0; k < bz; k++)
     for (let j = 0; j < by; j++)
@@ -108,22 +88,25 @@ export function meshField(field: Field, { cell, bounds }: MeshOptions): SurfaceM
         // Vertices may drift up to a cell out of their block while they settle onto the surface.
         const shapes = field.cull(list, cx, cy, cz, halfDiagonal + cell);
         if (shapes.length === 0 || field.shapes[shapes[0]].carve) continue;
-        // Distances grow at most about as fast as the point moves, with some slack for the ellipsoid bound.
-        if (Math.abs(field.distance(cx, cy, cz, shapes)) > halfDiagonal * 1.5 + cell) continue;
+        // Distances grow about as fast as the point moves; the slack covers the ellipsoid bound.
+        if (Math.abs(field.distance(cx, cy, cz, shapes)) > halfDiagonal * LIPSCHITZ_SLACK + cell * 0.25) continue;
+        const west = i > 0 ? evaluated[index - 1] : undefined;
+        const south = j > 0 ? evaluated[index - bx] : undefined;
+        const below = k > 0 ? evaluated[index - bx * by] : undefined;
         const corners = new Float32Array(CORNERS ** 3);
         let inside = 0;
         for (let c = 0, w = 0; w < CORNERS; w++)
           for (let v = 0; v < CORNERS; v++)
             for (let u = 0; u < CORNERS; u++, c++) {
-              const value = field.distance(
-                origin[0] + (i * BLOCK + u) * cell,
-                origin[1] + (j * BLOCK + v) * cell,
-                origin[2] + (k * BLOCK + w) * cell,
-                shapes,
-              );
+              let value: number;
+              if (u === 0 && west) value = west[c + BLOCK];
+              else if (v === 0 && south) value = south[c + BLOCK * CORNERS];
+              else if (w === 0 && below) value = below[c + BLOCK * CORNERS * CORNERS];
+              else value = field.distance(origin[0] + (i * BLOCK + u) * cell, origin[1] + (j * BLOCK + v) * cell, origin[2] + (k * BLOCK + w) * cell, shapes);
               corners[c] = value;
               if (value < 0) inside++;
             }
+        evaluated[index] = corners;
         if (inside === 0 || inside === corners.length) continue;
         blocks[index] = { shapes, corners, cells: new Int32Array(BLOCK ** 3).fill(-1) };
       }
@@ -143,8 +126,7 @@ export function meshField(field: Field, { cell, bounds }: MeshOptions): SurfaceM
         for (let u = 0; u < BLOCK; u++) {
           let mask = 0;
           for (let c = 0; c < 8; c++) {
-            const [du, dv, dw] = CORNER_OFFSETS[c];
-            values[c] = cornerAt(block, u + du, v + dv, w + dw);
+            values[c] = cornerAt(block, u + CORNER_U[c], v + CORNER_V[c], w + CORNER_W[c]);
             if (values[c] < 0) mask |= 1 << c;
           }
           if (mask === 0 || mask === 255) continue;
@@ -152,16 +134,16 @@ export function meshField(field: Field, { cell, bounds }: MeshOptions): SurfaceM
           let sy = 0;
           let sz = 0;
           let crossings = 0;
-          for (const [a, b] of EDGES) {
+          for (let e = 0; e < 12; e++) {
+            const a = EDGE_A[e];
+            const b = EDGE_B[e];
             const va = values[a];
             const vb = values[b];
             if (va < 0 === vb < 0) continue;
             const t = va / (va - vb);
-            const [au, av, aw] = CORNER_OFFSETS[a];
-            const [bu, bv, bw] = CORNER_OFFSETS[b];
-            sx += au + (bu - au) * t;
-            sy += av + (bv - av) * t;
-            sz += aw + (bw - aw) * t;
+            sx += CORNER_U[a] + (CORNER_U[b] - CORNER_U[a]) * t;
+            sy += CORNER_V[a] + (CORNER_V[b] - CORNER_V[a]) * t;
+            sz += CORNER_W[a] + (CORNER_W[b] - CORNER_W[a]) * t;
             crossings++;
           }
           block.cells[(w * BLOCK + v) * BLOCK + u] = positions.length / 3;
@@ -215,12 +197,12 @@ export function meshField(field: Field, { cell, bounds }: MeshOptions): SurfaceM
   const sampleGradient = (x: number, y: number, z: number, shapes: Int32Array) => {
     gradient[0] = gradient[1] = gradient[2] = 0;
     let mean = 0;
-    for (const [tx, ty, tz] of TETRA) {
-      const value = field.distance(x + tx * eps, y + ty * eps, z + tz * eps, shapes);
+    for (let t = 0; t < 12; t += 3) {
+      const value = field.distance(x + TETRA[t] * eps, y + TETRA[t + 1] * eps, z + TETRA[t + 2] * eps, shapes);
       mean += value / 4;
-      gradient[0] += (tx * value) / (4 * eps);
-      gradient[1] += (ty * value) / (4 * eps);
-      gradient[2] += (tz * value) / (4 * eps);
+      gradient[0] += (TETRA[t] * value) / (4 * eps);
+      gradient[1] += (TETRA[t + 1] * value) / (4 * eps);
+      gradient[2] += (TETRA[t + 2] * value) / (4 * eps);
     }
     return mean;
   };
@@ -234,7 +216,7 @@ export function meshField(field: Field, { cell, bounds }: MeshOptions): SurfaceM
     for (let step = 0; step < 3; step++) {
       const value = sampleGradient(x, y, z, shapes);
       const length2 = gradient[0] ** 2 + gradient[1] ** 2 + gradient[2] ** 2;
-      if (step === 2 || length2 < 1e-20 || Math.abs(value) < cell * 1e-4) break;
+      if (step === 2 || length2 < 1e-20 || Math.abs(value) < cell * 1e-3) break;
       const scale = value / length2;
       let mx = -gradient[0] * scale;
       let my = -gradient[1] * scale;
@@ -250,8 +232,12 @@ export function meshField(field: Field, { cell, bounds }: MeshOptions): SurfaceM
       z += mz;
     }
     const length = Math.sqrt(gradient[0] ** 2 + gradient[1] ** 2 + gradient[2] ** 2) || 1;
-    finalPositions.set([x, y, z], n * 3);
-    normals.set([gradient[0] / length, gradient[1] / length, gradient[2] / length], n * 3);
+    finalPositions[n * 3] = x;
+    finalPositions[n * 3 + 1] = y;
+    finalPositions[n * 3 + 2] = z;
+    normals[n * 3] = gradient[0] / length;
+    normals[n * 3 + 1] = gradient[1] / length;
+    normals[n * 3 + 2] = gradient[2] / length;
   }
 
   const shapesAt = vertexBlock.map((index) => (blocks[index] as Block).shapes);

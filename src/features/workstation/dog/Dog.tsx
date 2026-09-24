@@ -1,7 +1,13 @@
 'use client';
 
-import { DOG_PAT_POINT } from '../layout';
+import { Suspense, use, useState } from 'react';
+import { DogBody } from './DogBody';
+import type { DogData } from './geometry/dogData';
+import { loadDogData } from './geometry/loadDogData';
+import { DogMaterialsProvider } from './MaterialsContext';
 import { DOG_PLACEMENT } from './placement';
+import { createDogRig } from './rig/createDogRig';
+import { useDogMotion } from './rig/useDogMotion';
 
 export interface DogProps {
   /** False freezes the idle animation, for reduced motion. */
@@ -9,22 +15,29 @@ export interface DogProps {
 }
 
 /**
- * Placeholder golden retriever with the final props: a body and a head whose top sits at DOG_PAT_POINT.
- * The real model replaces the body of this component.
+ * Edison's golden retriever, sculpted procedurally in the same soft clay style as him. It stands at his
+ * left side with the top of its head under his hand at DOG_PAT_POINT (see layout.ts), wagging, panting
+ * and leaning into the petting. In its own space it faces +Z; DOG_PLACEMENT puts it in the room.
+ * The sculpt is built in a worker, and the dog appears as soon as it is ready without holding up the room.
  */
 export function Dog({ animate = true }: DogProps) {
-  void animate;
-  const [x, , z] = DOG_PLACEMENT.position;
   return (
-    <group>
-      <mesh position={[x, 0.3, z]} rotation-y={DOG_PLACEMENT.rotationY}>
-        <capsuleGeometry args={[0.12, 0.3, 8, 16]} />
-        <meshStandardMaterial color="#d49a4f" />
-      </mesh>
-      <mesh position={[DOG_PAT_POINT[0], DOG_PAT_POINT[1] - 0.09, DOG_PAT_POINT[2]]}>
-        <sphereGeometry args={[0.09, 24, 16]} />
-        <meshStandardMaterial color="#d49a4f" />
-      </mesh>
-    </group>
+    <Suspense fallback={null}>
+      <LoadedDog animate={animate} data={loadDogData()} />
+    </Suspense>
+  );
+}
+
+function LoadedDog({ animate, data: pending }: { animate: boolean; data: Promise<DogData> }) {
+  const data = use(pending);
+  const [rig] = useState(createDogRig);
+  useDogMotion(rig, animate);
+
+  return (
+    <DogMaterialsProvider>
+      <group name="dog" position={DOG_PLACEMENT.position} rotation-y={DOG_PLACEMENT.rotationY}>
+        <DogBody rig={rig} data={data} />
+      </group>
+    </DogMaterialsProvider>
   );
 }

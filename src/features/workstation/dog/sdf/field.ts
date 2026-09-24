@@ -1,5 +1,9 @@
 import type { Matrix4 } from 'three';
-import { packedDistance, STRIDE, type Bounds, type Primitive } from './primitives';
+import { packedDistance, STRIDE as PACKED_STRIDE, type Bounds, type Primitive } from './primitives';
+
+// Local copies for the hot loops: some bundlers read imported bindings through getters.
+const STRIDE = PACKED_STRIDE;
+const evaluate = packedDistance;
 
 /**
  * A sculpture as an ordered list of shapes. Each shape is smoothly added to everything listed
@@ -77,7 +81,7 @@ export class Field {
 
   /** Distance from one shape alone. */
   shapeDistance(index: number, x: number, y: number, z: number) {
-    return packedDistance(this.kinds[index], this.program, index * STRIDE, x, y, z);
+    return evaluate(this.kinds[index], this.program, index * STRIDE, x, y, z);
   }
 
   /** Signed distance at a point, from the shapes in `list` only (all of them by default). */
@@ -86,7 +90,7 @@ export class Field {
     let d = Infinity;
     for (let i = 0; i < list.length; i++) {
       const s = list[i];
-      const di = packedDistance(kinds[s], program, s * STRIDE, x, y, z);
+      const di = evaluate(kinds[s], program, s * STRIDE, x, y, z);
       d = carves[s] ? cut(d, di, blends[s]) : unite(d, di, blends[s]);
     }
     return d;
