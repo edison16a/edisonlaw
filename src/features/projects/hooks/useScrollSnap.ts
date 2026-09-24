@@ -18,11 +18,11 @@ const SNAP_LERP = 0.075;
  * neighbour when the visitor nudged away from a locked card. Never snaps before
  * the first card or after the last, so the page can always be scrolled out of.
  */
-export function useScrollSnap(enabled: boolean) {
+export function useScrollSnap() {
   const lenis = useLenis();
 
   useEffect(() => {
-    if (!lenis || !enabled) return;
+    if (!lenis) return;
     let timer = 0;
     // The card locked in place when the current gesture began. Nudging away from it commits to the neighbour.
     let anchor: number | null = null;
@@ -61,5 +61,5 @@ export function useScrollSnap(enabled: boolean) {
       window.removeEventListener('touchend', schedule);
       unsubscribe();
     };
-  }, [lenis, enabled]);
+  }, [lenis]);
 }

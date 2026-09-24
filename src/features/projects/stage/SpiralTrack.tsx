@@ -20,7 +20,7 @@ import { IntroCaption } from './IntroCaption';
 import { StageBackdrop } from './StageBackdrop';
 import { StageSurface } from './StageSurface';
 
-const SpiralCanvas = dynamic(() => import('../spiral/SpiralCanvas').then((module) => module.SpiralCanvas), {
+const SpiralCanvas = dynamic(() => import('../spiral/SpiralCanvas').then((loaded) => loaded.SpiralCanvas), {
   ssr: false,
 });
 
@@ -41,7 +41,7 @@ export function SpiralTrack({ projects, onModeChange }: SpiralTrackProps) {
 
   useTrackMetrics({ track, stage, column }, count);
   const startAt = useOpeningCard();
-  useScrollSnap(true);
+  useScrollSnap();
   useSpiralSounds();
 
   const near = useInView(track, { rootMargin: '25% 0px' });
