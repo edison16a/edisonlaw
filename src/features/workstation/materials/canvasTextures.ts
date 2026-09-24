@@ -211,3 +211,39 @@ export function createDeskMatTexture(width: number, depth: number) {
     ctx.stroke();
   });
 }
+
+/** The moon lamp's face: a warm pale disc with soft grey maria and a few small craters. */
+export function createMoonTexture() {
+  return paintTexture(256, 128, (ctx, w, h) => {
+    const random = seededRandom(31);
+    ctx.fillStyle = '#fff1dc';
+    ctx.fillRect(0, 0, w, h);
+    const blotch = (x: number, y: number, radius: number, alpha: number) => {
+      const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
+      gradient.addColorStop(0, `rgba(150, 128, 104, ${alpha})`);
+      gradient.addColorStop(1, 'rgba(150, 128, 104, 0)');
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.fill();
+    };
+    for (let i = 0; i < 9; i++) blotch(random() * w, h * (0.25 + random() * 0.5), 14 + random() * 26, 0.28 + random() * 0.2);
+    for (let i = 0; i < 40; i++) blotch(random() * w, random() * h, 2 + random() * 5, 0.25 + random() * 0.25);
+  });
+}
+
+/** A book spine in `color` with two foil bands and a short title line. */
+export function createSpineTexture(color: string, foil: string, seed: number) {
+  return paintTexture(64, 256, (ctx, w, h) => {
+    const random = seededRandom(seed);
+    ctx.fillStyle = color;
+    ctx.fillRect(0, 0, w, h);
+    ctx.fillStyle = foil;
+    const top = 0.1 + random() * 0.05;
+    ctx.fillRect(0, h * top, w, h * 0.02);
+    ctx.fillRect(0, h * (0.86 - random() * 0.04), w, h * 0.02);
+    ctx.globalAlpha = 0.85;
+    ctx.fillRect(w * 0.3, h * (top + 0.1), w * 0.4, h * (0.3 + random() * 0.2));
+    ctx.globalAlpha = 1;
+  });
+}
