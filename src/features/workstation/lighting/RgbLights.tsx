@@ -18,8 +18,8 @@ interface RgbLightSpec {
 const [towerX, , towerZ] = PC_TOWER.position;
 
 const LIGHTS: RgbLightSpec[] = [
-  // Inside the tower, just behind the glass, so colour spills on the floor, desk leg and wall.
-  { position: [towerX, 0.3, towerZ + 0.16], hueOffset: 0, intensity: 1.1, distance: 3 },
+  // Inside the tower, so colour spills out through the glass onto the floor, desk leg and wall.
+  { position: [towerX, 0.32, towerZ + 0.02], hueOffset: 0, intensity: 1.1, distance: 3 },
   // Behind the monitors, washing the back wall like a bias light.
   { position: [0, 1.02, ROOM.backWallZ + 0.16], hueOffset: 0.06, intensity: 0.9, distance: 2.6 },
   // Under the desk, a low glow on the floor and rug.
