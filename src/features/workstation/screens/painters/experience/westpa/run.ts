@@ -17,8 +17,6 @@ const LOOP_ITERATIONS = 3;
 export interface IterationRow {
   iteration: number;
   bins: number;
-  minWeight: string;
-  maxWeight: string;
   flux: string;
   time: string;
 }
@@ -30,16 +28,13 @@ export function fluxAt(iteration: number) {
 }
 
 /** Scientific notation with a two digit exponent, the way the tools print it. */
-export const formatFlux = (value: number) => value.toExponential(2).replace(/e-(\d)$/, 'e-0$1');
+const formatFlux = (value: number) => value.toExponential(2).replace(/e-(\d)$/, 'e-0$1');
 
 export function rowFor(iteration: number): IterationRow {
   const random = seededRandom(iteration * 977);
-  const exponent = 9 + Math.floor(random() * 2);
   return {
     iteration,
     bins: 21 + Math.floor(random() * 4),
-    minWeight: `${(1 + random() * 8).toFixed(2)}e-${String(exponent).padStart(2, '0')}`,
-    maxWeight: `${(2 + random() * 6).toFixed(2)}e-02`,
     flux: formatFlux(fluxAt(iteration)),
     time: `4m ${String(38 + Math.floor(random() * 20)).padStart(2, '0')}s`,
   };

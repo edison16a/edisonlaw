@@ -1,6 +1,6 @@
 import { lineChart } from '../../../draw/charts';
 import { smooth } from '../../../draw/series';
-import { cellX, drawSpans, rowY, span, type TerminalGrid } from '../../../draw/terminal';
+import { cellX, drawSpans, lineWeight, rowY, span, type TerminalGrid } from '../../../draw/terminal';
 import { BINS, binCounts, fluxAt, MAX_ITERATIONS, rowFor, SEGMENTS, type RunState } from './run';
 import { WESTPA_THEME as T } from './theme';
 import { bar, panel, spinner } from './tui';
@@ -28,7 +28,7 @@ export function runPanel(ctx: CanvasRenderingContext2D, grid: TerminalGrid, col:
   spinner(ctx, grid, x + 12, row + 6, state.spinner, state.resampling ? T.yellow : T.cyan);
   const status = state.resampling ? 'resampling walkers across bins' : `propagating iteration ${state.iteration}`;
   drawSpans(ctx, grid, x + 14, row + 6, [span(status, state.resampling ? T.yellow : T.text)], T.text);
-  drawSpans(ctx, grid, x, row + 7, [span('Simulated   ', T.dim), span('1.84 μs aggregate, 2 ps per segment', T.text)], T.text);
+  drawSpans(ctx, grid, x, row + 7, [span('Simulated   ', T.dim), span('1.84 μs total, 2 ps per step', T.text)], T.text);
 }
 
 export function fluxPanel(ctx: CanvasRenderingContext2D, grid: TerminalGrid, col: number, row: number, cols: number, state: RunState) {
@@ -42,15 +42,16 @@ export function fluxPanel(ctx: CanvasRenderingContext2D, grid: TerminalGrid, col
     drawSpans(ctx, grid, col + 2, row + 1 + index * 2, [span(label.padStart(6), T.dim)], T.dim);
   });
   ctx.fillStyle = T.track;
-  for (let i = 0; i <= 3; i++) ctx.fillRect(plot.x, Math.round(plot.y + (i / 3) * plot.h), plot.w, 1);
+  for (let i = 0; i <= 3; i++) ctx.fillRect(plot.x, Math.round(plot.y + (i / 3) * plot.h), plot.w, lineWeight(grid) / 2);
   const scaled = { ...plot, w: plot.w * (values.length / MAX_ITERATIONS) };
-  lineChart(ctx, scaled, values, { min: 0, max: 3.4e-7 }, { color: T.green, width: 1.6, fill: 'rgba(126,231,135,0.18)' });
+  lineChart(ctx, scaled, values, { min: 0, max: 3.4e-7 }, { color: T.green, width: lineWeight(grid), fill: 'rgba(126,231,135,0.18)' });
   drawSpans(ctx, grid, col + 9, row + 7, [span('0'), span('iteration'.padStart(Math.floor((cols - 12) / 2) + 4), T.dim)], T.dim);
   drawSpans(ctx, grid, col + cols - 6, row + 7, [span(String(MAX_ITERATIONS), T.dim)], T.dim);
 }
 
-const COLUMNS = ['iter', 'segs', 'bins', 'min weight', 'max weight', 'flux', 'time'];
-const WIDTHS = [6, 6, 6, 12, 12, 11, 9];
+/** The columns that fit the half width panel. */
+const COLUMNS = ['iter', 'segs', 'bins', 'flux', 'time'];
+const WIDTHS = [5, 5, 5, 10, 8];
 
 export function iterationTable(ctx: CanvasRenderingContext2D, grid: TerminalGrid, col: number, row: number, cols: number, rows: number, state: RunState) {
   panel(ctx, grid, col, row, cols, rows, 'Iterations', T.cyan);
@@ -61,7 +62,7 @@ export function iterationTable(ctx: CanvasRenderingContext2D, grid: TerminalGrid
     at += WIDTHS[index] + 2;
   });
   ctx.fillStyle = T.border;
-  ctx.fillRect(cellX(grid, x), Math.round(rowY(grid, row + 2) + grid.cellHeight / 2), (at - x) * grid.cellWidth, 1);
+  ctx.fillRect(cellX(grid, x), Math.round(rowY(grid, row + 2) + grid.cellHeight / 2), (at - x) * grid.cellWidth, lineWeight(grid) / 2);
 
   const visible = rows - 4;
   for (let i = 0; i < visible; i++) {
@@ -74,11 +75,11 @@ export function iterationTable(ctx: CanvasRenderingContext2D, grid: TerminalGrid
     }
     const data = rowFor(iteration);
     const cells = current
-      ? [String(iteration), String(state.segments), '...', '...', '...', '...', 'running']
-      : [String(iteration), String(SEGMENTS), String(data.bins), data.minWeight, data.maxWeight, data.flux, data.time];
+      ? [String(iteration), String(state.segments), '...', '...', 'running']
+      : [String(iteration), String(SEGMENTS), String(data.bins), data.flux, data.time];
     let cellAt = x;
     cells.forEach((value, index) => {
-      const color = current ? (index === 6 ? T.yellow : T.bright) : index === 5 ? T.green : T.text;
+      const color = current ? (index === 4 ? T.yellow : T.bright) : index === 3 ? T.green : T.text;
       drawSpans(ctx, grid, cellAt, y, [span(value.padStart(WIDTHS[index]), color)], color);
       cellAt += WIDTHS[index] + 2;
     });
@@ -91,7 +92,7 @@ function mix(a: number[], b: number[], t: number) {
 
 export function binPanel(ctx: CanvasRenderingContext2D, grid: TerminalGrid, col: number, row: number, cols: number, rows: number, state: RunState) {
   panel(ctx, grid, col, row, cols, rows, 'Bin occupancy', T.blue);
-  drawSpans(ctx, grid, col + 2, row + 1, [span('walkers per bin, pcoord RMSD to bound pose (Å)', T.dim)], T.dim);
+  drawSpans(ctx, grid, col + 2, row + 1, [span('walkers per bin, RMSD to bound pose (Å)', T.dim)], T.dim);
   const counts = binCounts(state.iteration);
   const left = cellX(grid, col + 3);
   const width = (cols - 6) * grid.cellWidth;
@@ -104,7 +105,7 @@ export function binPanel(ctx: CanvasRenderingContext2D, grid: TerminalGrid, col:
     ctx.fillRect(Math.round(left + bin * slot + 2), Math.round(bottom - h), Math.round(slot - 4), Math.round(h));
   });
   ctx.fillStyle = T.border;
-  ctx.fillRect(left, bottom + 1, width, 1);
+  ctx.fillRect(left, bottom + 1, width, lineWeight(grid) / 2);
   drawSpans(ctx, grid, col + 3, row + rows - 2, [span('0.5 Å  bound', T.dim)], T.dim);
   drawSpans(ctx, grid, col + cols - 19, row + rows - 2, [span('unbound  18.0 Å', T.dim)], T.dim);
 }

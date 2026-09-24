@@ -1,13 +1,13 @@
-import { cellX, createGrid, drawSpans, rowY, span, type TerminalGrid } from '../../../draw/terminal';
+import { cellX, createGrid, drawSpans, lineWeight, rowY, span, type TerminalGrid } from '../../../draw/terminal';
 import { terminalWindow } from '../../../draw/window';
 import type { PainterFactory } from '../../../types';
 import { binPanel, fluxPanel, iterationTable, runPanel } from './panels';
-import { fluxAt, FIRST_ITERATION, formatFlux, MAX_ITERATIONS, runKey, runState, SEGMENTS, type RunState } from './run';
+import { FIRST_ITERATION, MAX_ITERATIONS, runKey, runState, SEGMENTS, type RunState } from './run';
 import { WESTPA_THEME as T } from './theme';
-import { panel } from './tui';
 
-const FONT_SIZE = 14;
-const LINE_HEIGHT = 20;
+/** Large enough to read on the monitor. The dashboard keeps the panels that fit at this size. */
+const FONT_SIZE = 22;
+const LINE_HEIGHT = 30;
 const PADDING = 18;
 
 function clock(iteration: number, offset: number) {
@@ -24,26 +24,6 @@ function header(ctx: CanvasRenderingContext2D, grid: TerminalGrid, state: RunSta
   drawSpans(ctx, grid, grid.cols - right.length, 0, [span(right, T.bright)], T.bright);
 }
 
-function logLines(state: RunState) {
-  const lines: [string, string][] = [];
-  for (let iteration = state.iteration - 2; iteration < state.iteration; iteration++) {
-    lines.push(
-      [clock(iteration, 280), `iteration ${iteration} finished in 4m 51s, ${SEGMENTS} segments`],
-      [clock(iteration, 280), `flux into bound state ${formatFlux(fluxAt(iteration))}`],
-      [clock(iteration, 281), `resampled ${SEGMENTS} walkers across 23 bins`],
-    );
-  }
-  lines.push([clock(state.iteration, 0), `propagating iteration ${state.iteration}`]);
-  return lines.slice(-5);
-}
-
-function logPanel(ctx: CanvasRenderingContext2D, grid: TerminalGrid, row: number, state: RunState) {
-  panel(ctx, grid, 0, row, grid.cols, 7, 'Log', T.yellow);
-  logLines(state).forEach(([time, message], index) => {
-    drawSpans(ctx, grid, 2, row + 1 + index, [span(`[${time}] `, T.dim), span('INFO  ', T.blue), span(message, T.text)], T.text);
-  });
-}
-
 function footer(ctx: CanvasRenderingContext2D, grid: TerminalGrid, row: number) {
   const keys = [
     ['q', 'quit'],
@@ -57,7 +37,7 @@ function footer(ctx: CanvasRenderingContext2D, grid: TerminalGrid, row: number) 
     col = drawSpans(ctx, grid, col, row, [span(` ${key} `, T.background, { weight: 700, bg: T.cyan }), span(` ${label}   `, T.dim)], T.dim);
   }
   ctx.fillStyle = T.track;
-  ctx.fillRect(cellX(grid, col), rowY(grid, row) + grid.cellHeight / 2, (grid.cols - col) * grid.cellWidth, 1);
+  ctx.fillRect(cellX(grid, col), rowY(grid, row) + grid.cellHeight / 2, (grid.cols - col) * grid.cellWidth, lineWeight(grid) / 2);
 }
 
 /** The WESTPA CLI dashboard following a weighted ensemble run. */
@@ -72,9 +52,8 @@ export const westpa: PainterFactory = () => ({
     header(ctx, grid, state);
     runPanel(ctx, grid, 0, 2, split, state);
     fluxPanel(ctx, grid, split + 1, 2, grid.cols - split - 1, state);
-    iterationTable(ctx, grid, 0, 11, split, 13, state);
-    binPanel(ctx, grid, split + 1, 11, grid.cols - split - 1, 13, state);
-    logPanel(ctx, grid, 24, state);
+    iterationTable(ctx, grid, 0, 11, split, 10, state);
+    binPanel(ctx, grid, split + 1, 11, grid.cols - split - 1, 10, state);
     footer(ctx, grid, grid.rows - 1);
   },
 });
