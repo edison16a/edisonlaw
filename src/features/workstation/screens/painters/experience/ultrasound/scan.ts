@@ -37,46 +37,84 @@ function speckleGrid(seed: number) {
   return smeared;
 }
 
-function renderFrame(seed: number) {
-  const width = Math.ceil(SCAN_BOUNDS.w * SCALE);
-  const height = Math.ceil(SCAN_BOUNDS.h * SCALE);
-  const canvas = document.createElement('canvas');
-  canvas.width = width;
-  canvas.height = height;
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return canvas;
-  const image = ctx.createImageData(width, height);
-  const speckle = speckleGrid(seed);
-  const apexX = (SECTOR.apexX - SCAN_BOUNDS.x) * SCALE;
+const WIDTH = Math.ceil(SCAN_BOUNDS.w * SCALE);
+const HEIGHT = Math.ceil(SCAN_BOUNDS.h * SCALE);
 
-  for (let py = 0; py < height; py++) {
-    for (let px = 0; px < width; px++) {
+/**
+ * Mean brightness and speckle cell for every pixel of the fan, or -1 outside it. The anatomy is
+ * the same in every frame, so this is worked out once and only the speckle changes.
+ */
+function tissueMap() {
+  const brightness = new Float32Array(WIDTH * HEIGHT).fill(-1);
+  const cells = new Uint32Array(WIDTH * HEIGHT);
+  const apexX = (SECTOR.apexX - SCAN_BOUNDS.x) * SCALE;
+  for (let py = 0; py < HEIGHT; py++) {
+    for (let px = 0; px < WIDTH; px++) {
       const dx = px - apexX;
-      const dy = py;
-      const radius = Math.hypot(dx, dy) / SCALE;
-      const angle = Math.atan2(dx, dy);
+      const radius = Math.hypot(dx, py) / SCALE;
+      const angle = Math.atan2(dx, py);
       if (radius < SECTOR.near || radius > SECTOR.far || Math.abs(angle) > SECTOR.halfAngle) continue;
       const radial = (radius - SECTOR.near) / (SECTOR.far - SECTOR.near);
-      const lateral = angle / SECTOR.halfAngle;
       const flatX = dx / SCALE / SECTOR.far;
-      const flatD = (dy / SCALE - SECTOR.near) / (SECTOR.far - SECTOR.near);
-      const cellI = Math.min(THETA_CELLS - 1, Math.floor(((lateral + 1) / 2) * THETA_CELLS));
+      const flatD = (py / SCALE - SECTOR.near) / (SECTOR.far - SECTOR.near);
+      const cellI = Math.min(THETA_CELLS - 1, Math.floor(((angle / SECTOR.halfAngle + 1) / 2) * THETA_CELLS));
       const cellJ = Math.min(DEPTH_CELLS - 1, Math.floor(radial * DEPTH_CELLS));
-      const value = Math.min(1, echo(flatX, flatD, radial) * speckle[cellJ * THETA_CELLS + cellI]);
-      // Slightly warm grey, like a medical display.
-      const index = (py * width + px) * 4;
-      const level = Math.pow(value, 0.9) * 255;
-      image.data[index] = level;
-      image.data[index + 1] = level * 0.98;
-      image.data[index + 2] = level * 0.93;
-      image.data[index + 3] = 255;
+      const index = py * WIDTH + px;
+      brightness[index] = echo(flatX, flatD, radial);
+      cells[index] = cellJ * THETA_CELLS + cellI;
     }
+  }
+  return { brightness, cells };
+}
+
+function renderFrame(tissue: ReturnType<typeof tissueMap>, seed: number) {
+  const canvas = document.createElement('canvas');
+  canvas.width = WIDTH;
+  canvas.height = HEIGHT;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return canvas;
+  const image = ctx.createImageData(WIDTH, HEIGHT);
+  const speckle = speckleGrid(seed);
+  const { brightness, cells } = tissue;
+  for (let index = 0; index < brightness.length; index++) {
+    const mean = brightness[index];
+    if (mean < 0) continue;
+    // Slightly warm grey, like a medical display.
+    const level = Math.pow(Math.min(1, mean * speckle[cells[index]]), 0.9) * 255;
+    const offset = index * 4;
+    image.data[offset] = level;
+    image.data[offset + 1] = level * 0.98;
+    image.data[offset + 2] = level * 0.93;
+    image.data[offset + 3] = 255;
   }
   ctx.putImageData(image, 0, 0);
   return canvas;
 }
 
-/** Renders `count` speckle variations of the same anatomy. */
-export function renderScanFrames(count: number): HTMLCanvasElement[] {
-  return Array.from({ length: count }, (_, index) => renderFrame(1000 + index * 77));
+export interface ScanFrames {
+  /** Speckle variation `index`, rendered the first time it is asked for. */
+  frame(index: number): HTMLCanvasElement;
+  dispose(): void;
+}
+
+/** Speckle variations of the same anatomy, built lazily so the first paint stays quick. */
+export function createScanFrames(count: number): ScanFrames {
+  let tissue: ReturnType<typeof tissueMap> | null = null;
+  const frames: HTMLCanvasElement[] = [];
+  return {
+    frame(index) {
+      const slot = index % count;
+      tissue ??= tissueMap();
+      frames[slot] ??= renderFrame(tissue, 1000 + slot * 77);
+      return frames[slot];
+    },
+    dispose() {
+      frames.forEach((canvas) => {
+        canvas.width = 0;
+        canvas.height = 0;
+      });
+      frames.length = 0;
+      tissue = null;
+    },
+  };
 }

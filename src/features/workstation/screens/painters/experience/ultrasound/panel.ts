@@ -54,7 +54,7 @@ export function drawSegmentation(ctx: CanvasRenderingContext2D, rect: Rect, late
   });
 }
 
-export function drawFrames(ctx: CanvasRenderingContext2D, rect: Rect, frames: HTMLCanvasElement[], active: number) {
+export function drawFrames(ctx: CanvasRenderingContext2D, rect: Rect, scan: HTMLCanvasElement, active: number) {
   card(ctx, rect, 'Recent frames');
   const scores = ['0.81', '0.85', '0.87', '0.86'];
   const gap = 10;
@@ -64,7 +64,7 @@ export function drawFrames(ctx: CanvasRenderingContext2D, rect: Rect, frames: HT
     const x = rect.x + 18 + index * (w + gap);
     const y = rect.y + 44;
     fillRound(ctx, x, y, w, h, 6, '#000000');
-    ctx.drawImage(frames[index % frames.length], x + 2, y + 2, w - 4, h - 4);
+    ctx.drawImage(scan, x + 2, y + 2, w - 4, h - 4);
     strokeRound(ctx, x, y, w, h, 6, index === active ? T.cyan : T.border, index === active ? 2 : 1);
     text(ctx, score, x + w / 2, y + h + 14, { size: 11.5, family: 'sans', color: index === active ? T.text : T.muted, align: 'center' });
   });

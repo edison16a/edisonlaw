@@ -5,7 +5,7 @@ import { pill } from '../../../draw/widgets';
 import { SCREEN_HEIGHT, SCREEN_WIDTH, type PainterFactory } from '../../../types';
 import { drawMasks, drawScanAnnotations } from './overlay';
 import { drawFindings, drawFrames, drawQuality, drawSegmentation } from './panel';
-import { renderScanFrames, SCAN_BOUNDS } from './scan';
+import { createScanFrames, SCAN_BOUNDS, type ScanFrames } from './scan';
 import { ULTRASOUND_THEME as T } from './theme';
 
 const HEADER = 50;
@@ -43,22 +43,22 @@ function header(ctx: CanvasRenderingContext2D, frameNumber: number) {
 
 /** Ultrasound quality scoring and SAM segmentation, on a live looking thyroid scan. */
 export const ultrasound: PainterFactory = () => {
-  let frames: HTMLCanvasElement[] | null = null;
-  const scanFrames = () => (frames ??= renderScanFrames(SPECKLE_FRAMES));
+  let scans: ScanFrames | null = null;
 
   return {
     stillTime: 0,
     frameKey: (time) => String(step(time, RATE)),
     paint(ctx, time) {
       const tick = step(time, RATE);
-      const images = scanFrames();
+      scans ??= createScanFrames(SPECKLE_FRAMES);
+      const current = scans.frame(tick);
       const frameNumber = 214 + tick;
       fillRect(ctx, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, T.background);
       header(ctx, frameNumber);
 
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
-      ctx.drawImage(images[tick % images.length], SCAN_BOUNDS.x, SCAN_BOUNDS.y, SCAN_BOUNDS.w, SCAN_BOUNDS.h);
+      ctx.drawImage(current, SCAN_BOUNDS.x, SCAN_BOUNDS.y, SCAN_BOUNDS.w, SCAN_BOUNDS.h);
       drawMasks(ctx, (tick % 6) / 6);
       drawScanAnnotations(ctx, frameNumber);
 
@@ -67,15 +67,12 @@ export const ultrasound: PainterFactory = () => {
       const slow = Math.floor(tick / 8);
       drawQuality(ctx, { x, y: HEADER + 16, w, h: 192 }, SCORES[slow % SCORES.length]);
       drawSegmentation(ctx, { x, y: HEADER + 220, w, h: 150 }, LATENCIES[slow % LATENCIES.length]);
-      drawFrames(ctx, { x, y: HEADER + 382, w, h: 150 }, images, 2);
+      drawFrames(ctx, { x, y: HEADER + 382, w, h: 150 }, current, 2);
       drawFindings(ctx, { x, y: HEADER + 544, w, h: SCREEN_HEIGHT - HEADER - 562 });
     },
     dispose() {
-      frames?.forEach((canvas) => {
-        canvas.width = 0;
-        canvas.height = 0;
-      });
-      frames = null;
+      scans?.dispose();
+      scans = null;
     },
   };
 };
