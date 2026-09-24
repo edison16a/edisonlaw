@@ -25,6 +25,7 @@ export const projects: Project[] = [
     description:
       'Low-cost robotic platform for growing neuron cultures. It handles X, Y and Z motion, motorized pipetting, imaging and environmental control, so cultures can be kept alive and fed automatically for weeks.',
     links: [],
+    image: '/projects/autolab.webp',
   },
   {
     id: 'westpa-dashboard',
