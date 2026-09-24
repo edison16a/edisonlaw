@@ -19,7 +19,7 @@ export const LOOP_PAD = 0.05;
 /**
  * MP3 decoders put this many samples of delay before the first real one: LAME's 576 sample
  * encoder delay plus the 529 sample delay of the decoder filter bank.
- * Checked against Chromium's decoder with npm run sounds:check.
+ * Checked against Chromium's decoder by scripts/sounds/check.ts.
  */
 export const DECODER_DELAY = 1105;
 
