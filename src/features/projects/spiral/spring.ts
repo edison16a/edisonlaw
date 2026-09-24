@@ -10,17 +10,23 @@ export interface SpringState {
 }
 
 /**
- * Moves `state` toward `target` over roughly `smoothTime` seconds.
- * Mutates `state` in place so the render loop allocates nothing.
+ * Moves `state` toward `target` over roughly `smoothTime` seconds, never
+ * faster than about `maxSpeed` units per second, so a far target is reached at
+ * a steady pace instead of in a rush. Mutates `state` in place so the render
+ * loop allocates nothing.
  */
-export function stepSpring(state: SpringState, target: number, smoothTime: number, delta: number) {
+export function stepSpring(state: SpringState, target: number, smoothTime: number, delta: number, maxSpeed = Infinity) {
   if (delta <= 0) return state;
-  const omega = 2 / Math.max(0.0001, smoothTime);
+  const time = Math.max(0.0001, smoothTime);
+  const omega = 2 / time;
   const x = omega * delta;
   const decay = 1 / (1 + x + 0.48 * x * x + 0.235 * x * x * x);
-  const change = state.value - target;
+  // Chasing a point at most this far ahead is what caps the speed.
+  const reach = maxSpeed * time;
+  const change = Math.min(reach, Math.max(-reach, state.value - target));
+  const goal = state.value - change;
   const temp = (state.velocity + omega * change) * delta;
-  let next = target + (change + temp) * decay;
+  let next = goal + (change + temp) * decay;
   let velocity = (state.velocity - omega * temp) * decay;
 
   // Never pass the target: stop exactly on it instead.

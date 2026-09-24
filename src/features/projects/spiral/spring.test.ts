@@ -26,4 +26,26 @@ describe('stepSpring', () => {
     stepSpring(state, 5, 0.3, 0);
     expect(state).toEqual({ value: 1, velocity: 2 });
   });
+
+  it('keeps to the speed limit on a long trip and still arrives', () => {
+    const state: SpringState = { value: 0, velocity: 0 };
+    let fastest = 0;
+    for (let frame = 0; frame < 600; frame++) {
+      stepSpring(state, 20, 0.3, 1 / 60, 5);
+      fastest = Math.max(fastest, state.velocity);
+    }
+    expect(fastest).toBeLessThanOrEqual(5.01);
+    expect(fastest).toBeGreaterThan(4.5);
+    expect(state.value).toBeCloseTo(20, 3);
+  });
+
+  it('leaves a short hop untouched by the speed limit', () => {
+    const limited: SpringState = { value: 0, velocity: 0 };
+    const free: SpringState = { value: 0, velocity: 0 };
+    for (let frame = 0; frame < 30; frame++) {
+      stepSpring(limited, 1, 0.3, 1 / 60, 5);
+      stepSpring(free, 1, 0.3, 1 / 60);
+    }
+    expect(limited.value).toBeCloseTo(free.value, 6);
+  });
 });
