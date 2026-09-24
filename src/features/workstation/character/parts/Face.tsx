@@ -2,10 +2,10 @@
 
 import { useMemo } from 'react';
 import { CatmullRomCurve3, SphereGeometry, type Vector3 } from 'three';
+import { useDisposable } from '../../useDisposable';
 import { surfaceFrame, surfacePoint } from '../geometry/headShape';
 import { mergeParts } from '../geometry/merge';
 import { strokeTaper, sweepGeometry } from '../geometry/sweep';
-import { useGeometry } from '../geometry/useGeometry';
 import { useCharacterMaterials } from '../MaterialsContext';
 import type { Rig } from '../rig/types';
 
@@ -62,10 +62,10 @@ function shineGeometry() {
 /** Glossy black eyes with catch lights, small soft brows, a hint of a nose and a small smile. */
 export function Face({ rig }: { rig: Rig }) {
   const materials = useCharacterMaterials();
-  const sphere = useGeometry(() => new SphereGeometry(1, 28, 18));
-  const shine = useGeometry(shineGeometry);
-  const brows = useGeometry(() => mergeParts([1, -1].map((side) => strokeGeometry(BROW, side, 0.0024, 0.0046, 0.0026))));
-  const mouth = useGeometry(() => strokeGeometry(MOUTH, 1, 0.0006, 0.0034, 0.0022));
+  const sphere = useDisposable(() => new SphereGeometry(1, 28, 18));
+  const shine = useDisposable(shineGeometry);
+  const brows = useDisposable(() => mergeParts([1, -1].map((side) => strokeGeometry(BROW, side, 0.0024, 0.0046, 0.0026))));
+  const mouth = useDisposable(() => strokeGeometry(MOUTH, 1, 0.0006, 0.0034, 0.0022));
   const eyeFrames = useMemo(() => [1, -1].map((side) => surfaceFrame(EYE.theta, side * EYE.phi, EYE.lift)), []);
   const nose = useMemo(() => surfaceFrame(NOSE.theta, 0, NOSE.lift), []);
 

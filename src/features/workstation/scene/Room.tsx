@@ -1,9 +1,9 @@
 'use client';
 
-import { useMemo } from 'react';
 import { PlaneGeometry } from 'three';
 import { ROOM } from '../layout';
 import { getMaterials } from '../materials/materials';
+import { useDisposable } from '../useDisposable';
 
 /** How far the room reaches past the desk, to the right and toward the camera. */
 const RIGHT_X = 4.4;
@@ -26,7 +26,7 @@ export function Room() {
   const depth = FRONT_Z - ROOM.backWallZ;
   const midX = (RIGHT_X + ROOM.leftWallX) / 2;
   const midZ = (FRONT_Z + ROOM.backWallZ) / 2;
-  const floorGeometry = useMemo(() => tiledPlane(width, depth, PLANK_TILE), [width, depth]);
+  const floorGeometry = useDisposable(() => tiledPlane(width, depth, PLANK_TILE));
 
   return (
     <group>

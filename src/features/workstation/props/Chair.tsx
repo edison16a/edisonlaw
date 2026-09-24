@@ -1,12 +1,12 @@
 'use client';
 
 import { RoundedBox } from '@react-three/drei';
-import { useEffect, useMemo } from 'react';
 import { TubeGeometry, Vector3 } from 'three';
 import { roundedPath } from '../geometry/roundedPath';
 import { CHAIR, type Vec3 } from '../layout';
 import { getMaterials } from '../materials/materials';
 import type { StageVariant } from '../types';
+import { useDisposable } from '../useDisposable';
 
 const TUBE_RADIUS = 0.011;
 const FRAME_HALF_WIDTH = 0.19;
@@ -42,11 +42,9 @@ export function Chair({ variant }: { variant: StageVariant }) {
   const materials = getMaterials();
   const pose = CHAIR_POSES[variant];
 
-  const frame = useMemo(
-    () => [-1, 1].map((side) => new TubeGeometry(sideFrame(side * FRAME_HALF_WIDTH), 96, TUBE_RADIUS, 10)),
-    [],
+  const frame = useDisposable(() =>
+    [-1, 1].map((side) => new TubeGeometry(sideFrame(side * FRAME_HALF_WIDTH), 96, TUBE_RADIUS, 10)),
   );
-  useEffect(() => () => frame.forEach((geometry) => geometry.dispose()), [frame]);
 
   const seatY = CHAIR.seatHeight - SEAT.thickness / 2;
 

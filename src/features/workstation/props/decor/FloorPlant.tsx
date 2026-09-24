@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
 import { DoubleSide, LatheGeometry, MeshStandardMaterial, Vector2 } from 'three';
 import { seededRandom } from '@/lib/math';
 import { createLeafGeometry } from '../../geometry/leafGeometry';
 import type { Vec3 } from '../../layout';
 import { getMaterials } from '../../materials/materials';
+import { useDisposable } from '../../useDisposable';
 
 const LEAF_COUNT = 9;
 const POT_HEIGHT = 0.3;
@@ -26,7 +26,7 @@ const POT_PROFILE: [number, number][] = [
 export function FloorPlant({ position }: { position: Vec3 }) {
   const materials = getMaterials();
 
-  const parts = useMemo(() => {
+  const parts = useDisposable(() => {
     const random = seededRandom(3);
     const leaves = Array.from({ length: LEAF_COUNT }, (_, index) => {
       const length = 0.42 + random() * 0.26;
@@ -41,16 +41,7 @@ export function FloorPlant({ position }: { position: Vec3 }) {
       leaves,
       leafMaterial: new MeshStandardMaterial({ color: '#3f7f2c', roughness: 0.55, side: DoubleSide }),
     };
-  }, []);
-
-  useEffect(
-    () => () => {
-      parts.pot.dispose();
-      parts.leaves.forEach(({ geometry }) => geometry.dispose());
-      parts.leafMaterial.dispose();
-    },
-    [parts],
-  );
+  });
 
   return (
     <group position={position}>

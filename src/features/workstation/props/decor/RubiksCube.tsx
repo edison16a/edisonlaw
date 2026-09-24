@@ -1,11 +1,12 @@
 'use client';
 
 import { RoundedBox } from '@react-three/drei';
-import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import { Color, InstancedMesh, Object3D } from 'three';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
 import { seededRandom } from '@/lib/math';
 import type { Vec3 } from '../../layout';
+import { useDisposable } from '../../useDisposable';
 
 const SIZE = 0.056;
 const CELL = SIZE / 3;
@@ -24,8 +25,7 @@ const FACES: [number[], number[], number[]][] = [
 /** A slightly scrambled Rubik's cube: one black body and 54 instanced stickers. */
 export function RubiksCube({ position, rotationY = 0 }: { position: Vec3; rotationY?: number }) {
   const stickers = useRef<InstancedMesh>(null);
-  const geometry = useMemo(() => new RoundedBoxGeometry(STICKER, STICKER, 0.0016, 2, 0.0007), []);
-  useEffect(() => () => geometry.dispose(), [geometry]);
+  const geometry = useDisposable(() => new RoundedBoxGeometry(STICKER, STICKER, 0.0016, 2, 0.0007));
 
   useLayoutEffect(() => {
     const mesh = stickers.current;

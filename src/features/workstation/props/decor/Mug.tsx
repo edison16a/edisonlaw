@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
 import { LatheGeometry, Vector2 } from 'three';
 import type { Vec3 } from '../../layout';
 import { getMaterials } from '../../materials/materials';
+import { useDisposable } from '../../useDisposable';
 
 /** Outer wall, lip and inner wall of the mug, bottom to top and back down. */
 const PROFILE: [number, number][] = [
@@ -20,8 +20,7 @@ const PROFILE: [number, number][] = [
 /** Coffee mug, half full. */
 export function Mug({ position, rotationY = 0 }: { position: Vec3; rotationY?: number }) {
   const materials = getMaterials();
-  const body = useMemo(() => new LatheGeometry(PROFILE.map(([r, y]) => new Vector2(r, y)), 32), []);
-  useEffect(() => () => body.dispose(), [body]);
+  const body = useDisposable(() => new LatheGeometry(PROFILE.map(([r, y]) => new Vector2(r, y)), 32));
 
   return (
     <group position={position} rotation-y={rotationY}>

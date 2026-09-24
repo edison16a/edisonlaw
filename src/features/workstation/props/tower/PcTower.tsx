@@ -1,10 +1,11 @@
 'use client';
 
 import { RoundedBox } from '@react-three/drei';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { MeshPhysicalMaterial, MeshStandardMaterial } from 'three';
 import { PC_TOWER } from '../../layout';
 import { useRgbMaterial } from '../../lighting/useRgbMaterial';
+import { useDisposable } from '../../useDisposable';
 import { Fan, type FanParts } from './Fan';
 import { createFanBladesGeometry, createFanFrameGeometry, createFanHubGeometry, createFanRingGeometry, FAN_DEPTH, FAN_SIZE } from './fanGeometry';
 import { TowerInternals } from './TowerInternals';
@@ -24,47 +25,30 @@ export function PcTower({ animate }: PcTowerProps) {
   const bladeMaterial = useRgbMaterial({ intensity: 0.32, saturation: 0.8 });
   const strip = useRgbMaterial({ hueOffset: 0.03, intensity: 2.6 });
 
-  const shell = useMemo(
-    () => ({
-      body: new MeshStandardMaterial({ color: '#111216', roughness: 0.42, metalness: 0.45 }),
-      glass: new MeshPhysicalMaterial({
-        color: '#0b0d12',
-        roughness: 0.04,
-        metalness: 0,
-        clearcoat: 1,
-        transparent: true,
-        opacity: 0.16,
-        depthWrite: false,
-        envMapIntensity: 2.2,
-      }),
+  const shell = useDisposable(() => ({
+    body: new MeshStandardMaterial({ color: '#111216', roughness: 0.42, metalness: 0.45 }),
+    glass: new MeshPhysicalMaterial({
+      color: '#0b0d12',
+      roughness: 0.04,
+      metalness: 0,
+      clearcoat: 1,
+      transparent: true,
+      opacity: 0.16,
+      depthWrite: false,
+      envMapIntensity: 2.2,
     }),
-    [],
-  );
+  }));
+  const fanGeometry = useDisposable(() => ({
+    frame: createFanFrameGeometry(),
+    blades: createFanBladesGeometry(),
+    ring: createFanRingGeometry(),
+    hub: createFanHubGeometry(),
+  }));
 
+  // Materials here are owned by the hooks above, so this object only groups them for the fans.
   const fanParts = useMemo<FanParts>(
-    () => ({
-      frame: createFanFrameGeometry(),
-      blades: createFanBladesGeometry(),
-      ring: createFanRingGeometry(),
-      hub: createFanHubGeometry(),
-      frameMaterial: shell.body,
-      hubMaterial: shell.body,
-      ringMaterial,
-      bladeMaterial,
-    }),
-    [shell, ringMaterial, bladeMaterial],
-  );
-
-  useEffect(
-    () => () => {
-      shell.body.dispose();
-      shell.glass.dispose();
-      fanParts.frame.dispose();
-      fanParts.blades.dispose();
-      fanParts.ring.dispose();
-      fanParts.hub.dispose();
-    },
-    [shell, fanParts],
+    () => ({ ...fanGeometry, frameMaterial: shell.body, hubMaterial: shell.body, ringMaterial, bladeMaterial }),
+    [fanGeometry, shell, ringMaterial, bladeMaterial],
   );
 
   const { length: L, height: H, depth: D, wall, foot } = TOWER;

@@ -1,16 +1,15 @@
 'use client';
 
 import { RoundedBox } from '@react-three/drei';
-import { useEffect, useMemo } from 'react';
 import { ROOM, type Vec3 } from '../../layout';
 import { createPictureTexture } from '../../materials/canvasTextures';
+import { useDisposable } from '../../useDisposable';
 
 const FRAME = { width: 0.46, height: 0.35, depth: 0.03, border: 0.04 };
 
 /** Soft blue frame around a small night landscape. */
 export function FramedPicture({ position }: { position: Vec3 }) {
-  const picture = useMemo(() => createPictureTexture(), []);
-  useEffect(() => () => picture.dispose(), [picture]);
+  const picture = useDisposable(createPictureTexture);
   const [x, y] = position;
 
   return (

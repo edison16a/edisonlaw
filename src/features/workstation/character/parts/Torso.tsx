@@ -1,8 +1,8 @@
 'use client';
 
 import { TorusGeometry } from 'three';
+import { useDisposable } from '../../useDisposable';
 import { loftGeometry, type LoftRing } from '../geometry/loft';
-import { useGeometry } from '../geometry/useGeometry';
 import { useCharacterMaterials } from '../MaterialsContext';
 
 /** T-shirt body from the hem up to the neck hole, in the chest's space. Listed bottom to top. */
@@ -25,8 +25,8 @@ const COLLAR = { y: 0.205, radius: 0.053, tube: 0.0085, depth: 0.93 } as const;
 /** The shirt with its chest print and a ribbed collar. */
 export function Torso() {
   const materials = useCharacterMaterials();
-  const shirt = useGeometry(() => loftGeometry(SHIRT, { radialSegments: 56 }));
-  const collar = useGeometry(() => new TorusGeometry(COLLAR.radius, COLLAR.tube, 10, 40));
+  const shirt = useDisposable(() => loftGeometry(SHIRT, { radialSegments: 56 }));
+  const collar = useDisposable(() => new TorusGeometry(COLLAR.radius, COLLAR.tube, 10, 40));
 
   return (
     <group>

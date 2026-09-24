@@ -1,7 +1,7 @@
 'use client';
 
+import { useDisposable } from '../../useDisposable';
 import { loftGeometry, type LoftRing } from '../geometry/loft';
-import { useGeometry } from '../geometry/useGeometry';
 import { useCharacterMaterials } from '../MaterialsContext';
 
 /** Seat of the trousers around the pelvis joint, from under the shirt down to a round bottom. */
@@ -16,6 +16,6 @@ const TROUSERS: LoftRing[] = [
 
 export function Hips() {
   const materials = useCharacterMaterials();
-  const trousers = useGeometry(() => loftGeometry(TROUSERS, { radialSegments: 40, capBottom: true }));
+  const trousers = useDisposable(() => loftGeometry(TROUSERS, { radialSegments: 40, capBottom: true }));
   return <mesh geometry={trousers} material={materials.pants} castShadow receiveShadow />;
 }

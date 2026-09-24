@@ -1,8 +1,8 @@
 'use client';
 
 import { useFrame } from '@react-three/fiber';
-import { useEffect, useMemo } from 'react';
 import { MeshBasicMaterial } from 'three';
+import { useDisposable } from '../useDisposable';
 import { useRgbClock } from './RgbClockProvider';
 import { writeRgb } from './rgbClock';
 
@@ -21,9 +21,7 @@ interface RgbMaterialOptions {
  */
 export function useRgbMaterial({ hueOffset = 0, intensity = 2, saturation = 1 }: RgbMaterialOptions = {}) {
   const clock = useRgbClock();
-  const material = useMemo(() => new MeshBasicMaterial({ toneMapped: false }), []);
-
-  useEffect(() => () => material.dispose(), [material]);
+  const material = useDisposable(() => new MeshBasicMaterial({ toneMapped: false }));
 
   useFrame(({ clock: time }) => {
     clock.sample(time.elapsedTime);

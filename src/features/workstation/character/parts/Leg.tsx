@@ -1,8 +1,8 @@
 'use client';
 
+import { useDisposable } from '../../useDisposable';
 import { BODY } from '../dimensions';
 import { sleeveGeometry, taperedCapsule } from '../geometry/capsule';
-import { useGeometry } from '../geometry/useGeometry';
 import { useCharacterMaterials } from '../MaterialsContext';
 import type { LimbRig } from '../rig/types';
 import { Shoe } from './Shoe';
@@ -12,9 +12,9 @@ const LEG = { hip: 0.071, knee: 0.062, hemFlare: 1.05, trouserLength: 0.2, sock:
 /** Black trouser leg, a glimpse of sock and a sneaker along the leg's bones. */
 export function Leg({ leg }: { leg: LimbRig }) {
   const materials = useCharacterMaterials();
-  const thigh = useGeometry(() => taperedCapsule(LEG.hip, LEG.knee, BODY.thigh));
-  const shin = useGeometry(() => sleeveGeometry(LEG.knee, LEG.trouserLength, LEG.hemFlare));
-  const sock = useGeometry(() => taperedCapsule(LEG.sock * 1.1, LEG.sock, BODY.shin, 16));
+  const thigh = useDisposable(() => taperedCapsule(LEG.hip, LEG.knee, BODY.thigh));
+  const shin = useDisposable(() => sleeveGeometry(LEG.knee, LEG.trouserLength, LEG.hemFlare));
+  const sock = useDisposable(() => taperedCapsule(LEG.sock * 1.1, LEG.sock, BODY.shin, 16));
 
   return (
     <primitive object={leg.base}>

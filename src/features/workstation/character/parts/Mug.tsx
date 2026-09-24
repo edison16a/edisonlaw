@@ -1,9 +1,9 @@
 'use client';
 
 import { CircleGeometry, LatheGeometry, TorusGeometry, Vector2 } from 'three';
+import { useDisposable } from '../../useDisposable';
 import { MUG } from '../dimensions';
 import { mergeParts } from '../geometry/merge';
-import { useGeometry } from '../geometry/useGeometry';
 import { useCharacterMaterials } from '../MaterialsContext';
 
 const WALL = 0.0045;
@@ -38,8 +38,8 @@ function mugShell() {
 /** A chunky ceramic mug of coffee. Its base is the origin and it stands along +Y, handle toward +X. */
 export function Mug() {
   const materials = useCharacterMaterials();
-  const shell = useGeometry(mugShell);
-  const coffee = useGeometry(() => new CircleGeometry(MUG.radius - WALL, 32).rotateX(-Math.PI / 2));
+  const shell = useDisposable(mugShell);
+  const coffee = useDisposable(() => new CircleGeometry(MUG.radius - WALL, 32).rotateX(-Math.PI / 2));
 
   return (
     <group>

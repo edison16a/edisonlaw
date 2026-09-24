@@ -1,10 +1,10 @@
 'use client';
 
 import { RoundedBox } from '@react-three/drei';
-import { useEffect, useMemo } from 'react';
 import { ROOM, type Vec3 } from '../../layout';
 import { createCorkTexture, createNoteTexture } from '../../materials/canvasTextures';
 import { getMaterials } from '../../materials/materials';
+import { useDisposable } from '../../useDisposable';
 
 const BOARD = { width: 0.92, height: 0.6, frame: 0.035, depth: 0.03 };
 
@@ -18,20 +18,10 @@ const NOTES: [number, number, number, number, string, string][] = [
 /** Framed cork board with pinned notes, like the one in the reference. */
 export function CorkBoard({ position }: { position: Vec3 }) {
   const materials = getMaterials();
-  const textures = useMemo(
-    () => ({
-      cork: createCorkTexture(),
-      notes: NOTES.map(([, , , , paper, ink], index) => createNoteTexture(paper, ink, 21 + index)),
-    }),
-    [],
-  );
-  useEffect(
-    () => () => {
-      textures.cork.dispose();
-      textures.notes.forEach((texture) => texture.dispose());
-    },
-    [textures],
-  );
+  const textures = useDisposable(() => ({
+    cork: createCorkTexture(),
+    notes: NOTES.map(([, , , , paper, ink], index) => createNoteTexture(paper, ink, 21 + index)),
+  }));
 
   const [x, y] = position;
   const face = BOARD.depth / 2;

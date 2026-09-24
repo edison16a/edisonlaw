@@ -95,7 +95,3 @@ export function createCharacterMaterials(shirtMap: Texture): CharacterMaterials 
     coffee: new MeshPhysicalMaterial({ color: PALETTE.coffee, roughness: 0.12, clearcoat: 1 }),
   };
 }
-
-export function disposeCharacterMaterials(materials: CharacterMaterials) {
-  for (const material of Object.values(materials)) material.dispose();
-}

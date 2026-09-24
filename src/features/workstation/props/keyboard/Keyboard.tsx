@@ -2,12 +2,13 @@
 
 import { RoundedBox } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import type { InstancedMesh } from 'three';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
 import { KEYBOARD } from '../../layout';
 import { useRgbClock } from '../../lighting/RgbClockProvider';
 import { getMaterials } from '../../materials/materials';
+import { useDisposable } from '../../useDisposable';
 import { createKeycapMaterial } from './keycapMaterial';
 import { KeyboardAnimator } from './KeyboardAnimator';
 import { KEYS, LAYOUT_WIDTH_U } from './keyLayout';
@@ -32,7 +33,7 @@ export function Keyboard({ typing, animate }: KeyboardProps) {
   const clock = useRgbClock();
   const caps = useRef<InstancedMesh>(null);
 
-  const [parts] = useState(() => ({
+  const parts = useDisposable(() => ({
     geometry: new RoundedBoxGeometry(UNIT - GAP, CAP_HEIGHT, UNIT - GAP, 2, 0.0017),
     material: createKeycapMaterial(CAP_HEIGHT),
     animator: new KeyboardAnimator({
@@ -42,14 +43,6 @@ export function Keyboard({ typing, animate }: KeyboardProps) {
       pressDepth: 0.0022,
     }),
   }));
-  useEffect(
-    () => () => {
-      parts.geometry.dispose();
-      parts.material.dispose();
-      parts.animator.dispose();
-    },
-    [parts],
-  );
 
   useFrame(({ clock: time }, delta) => {
     if (!caps.current) return;
