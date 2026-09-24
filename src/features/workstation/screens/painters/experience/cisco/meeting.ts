@@ -2,7 +2,7 @@ import { drawIcon, type IconName } from '../../../draw/icons';
 import { circle, fillRect, fillRound, strokeRound, type Rect } from '../../../draw/shapes';
 import { text, textRun } from '../../../draw/text';
 import { avatar, pill } from '../../../draw/widgets';
-import { SCREEN_WIDTH } from '../../../types';
+import { VIEW_WIDTH } from '../../../draw/view';
 import { CISCO_THEME as T } from './theme';
 
 /** Video meeting chrome: title bar, participant tiles and the control bar. */
@@ -90,37 +90,37 @@ function micIcon(ctx: CanvasRenderingContext2D, x: number, y: number, muted: boo
 }
 
 export function drawParticipants(ctx: CanvasRenderingContext2D, area: Rect, speaker: number, pulse: number) {
-  const gap = 10;
+  const gap = 8;
   const h = (area.h - gap * (PEOPLE.length - 1)) / PEOPLE.length;
   PEOPLE.forEach((person, index) => {
     const rect = { x: area.x, y: area.y + index * (h + gap), w: area.w, h };
     ctx.save();
     ctx.beginPath();
-    ctx.roundRect(rect.x, rect.y, rect.w, rect.h, 10);
+    ctx.roundRect(rect.x, rect.y, rect.w, rect.h, 8);
     ctx.clip();
     if (person.feed) cameraFeed(ctx, rect, person.feed);
     else {
       fillRect(ctx, rect.x, rect.y, rect.w, rect.h, T.tile);
-      avatar(ctx, 'EL', rect.x + rect.w / 2, rect.y + rect.h / 2 - 6, 30, '#3b5bdb');
+      avatar(ctx, 'EL', rect.x + rect.w / 2, rect.y + rect.h / 2 - 8, 20, '#3b5bdb');
     }
     ctx.restore();
-    const labelWidth = pill(ctx, person.name, rect.x + 8, rect.y + rect.h - 18, { bg: 'rgba(0,0,0,0.55)', color: '#ffffff', size: 11.5 });
-    micIcon(ctx, rect.x + labelWidth + 22, rect.y + rect.h - 18, person.muted);
-    if (index === speaker) strokeRound(ctx, rect.x, rect.y, rect.w, rect.h, 10, `rgba(62,207,142,${0.65 + pulse * 0.35})`, 3);
+    const labelWidth = pill(ctx, person.name, rect.x + 6, rect.y + rect.h - 14, { bg: 'rgba(0,0,0,0.6)', color: '#ffffff', size: 10 });
+    micIcon(ctx, rect.x + labelWidth + 18, rect.y + rect.h - 14, person.muted);
+    if (index === speaker) strokeRound(ctx, rect.x, rect.y, rect.w, rect.h, 8, `rgba(62,207,142,${0.65 + pulse * 0.35})`, 2.5);
   });
 }
 
 export function drawTitleBar(ctx: CanvasRenderingContext2D, height: number, elapsed: string) {
-  fillRect(ctx, 0, 0, SCREEN_WIDTH, height, T.chrome);
-  const after = textRun(ctx, 'Network design review', 20, height / 2 + 1, { size: 14, weight: 700, family: 'sans', color: T.text });
-  text(ctx, 'Career Exploration Program', after + 14, height / 2 + 1, { size: 13, family: 'sans', color: T.muted });
-  circle(ctx, SCREEN_WIDTH - 196, height / 2, 5, T.red);
-  text(ctx, `REC  ${elapsed}`, SCREEN_WIDTH - 184, height / 2 + 1, { size: 12.5, weight: 600, family: 'mono', color: T.text });
-  (['grid', 'users'] as IconName[]).forEach((icon, index) => drawIcon(ctx, icon, SCREEN_WIDTH - 64 + index * 30, height / 2, 17, T.muted, 1.4));
+  fillRect(ctx, 0, 0, VIEW_WIDTH, height, T.chrome);
+  const after = textRun(ctx, 'Network design review', 14, height / 2 + 1, { size: 13, weight: 700, family: 'sans', color: T.text });
+  text(ctx, 'Career Exploration Program', after + 12, height / 2 + 1, { size: 11.5, family: 'sans', color: T.muted });
+  circle(ctx, VIEW_WIDTH - 156, height / 2, 4, T.red);
+  text(ctx, `REC  ${elapsed}`, VIEW_WIDTH - 146, height / 2 + 1, { size: 11, weight: 600, family: 'mono', color: T.text });
+  (['grid', 'users'] as IconName[]).forEach((icon, index) => drawIcon(ctx, icon, VIEW_WIDTH - 50 + index * 24, height / 2, 15, T.muted, 1.4));
 }
 
 export function drawControls(ctx: CanvasRenderingContext2D, top: number, height: number) {
-  fillRect(ctx, 0, top, SCREEN_WIDTH, height, T.chrome);
+  fillRect(ctx, 0, top, VIEW_WIDTH, height, T.chrome);
   const middle = top + height / 2;
   const buttons: { icon: IconName | 'mic' | 'camera' | 'share'; label: string; active?: boolean }[] = [
     { icon: 'mic', label: 'Unmute' },
@@ -130,18 +130,18 @@ export function drawControls(ctx: CanvasRenderingContext2D, top: number, height:
     { icon: 'users', label: 'People' },
     { icon: 'more', label: 'More' },
   ];
-  const spacing = 76;
-  const start = SCREEN_WIDTH / 2 - ((buttons.length - 1) * spacing) / 2;
+  const spacing = 56;
+  const start = VIEW_WIDTH / 2 - ((buttons.length - 1) * spacing) / 2;
   buttons.forEach((button, index) => {
     const x = start + index * spacing;
-    fillRound(ctx, x - 22, middle - 26, 44, 36, 10, button.active ? 'rgba(0,188,235,0.22)' : '#2a2b2e');
+    fillRound(ctx, x - 18, middle - 20, 36, 26, 8, button.active ? 'rgba(0,188,235,0.22)' : '#2a2b2e');
     const color = button.active ? T.cyan : '#e6e6e6';
-    if (button.icon === 'mic') micIcon(ctx, x, middle - 8, true);
-    else if (button.icon === 'camera') cameraIcon(ctx, x, middle - 8, color);
-    else if (button.icon === 'share') shareIcon(ctx, x, middle - 8, color);
-    else drawIcon(ctx, button.icon, x, middle - 8, 18, color, 1.5);
-    text(ctx, button.label, x, middle + 22, { size: 11, family: 'sans', color: button.active ? T.cyan : T.muted, align: 'center' });
+    if (button.icon === 'mic') micIcon(ctx, x, middle - 7, true);
+    else if (button.icon === 'camera') cameraIcon(ctx, x, middle - 7, color);
+    else if (button.icon === 'share') shareIcon(ctx, x, middle - 7, color);
+    else drawIcon(ctx, button.icon, x, middle - 7, 16, color, 1.5);
+    text(ctx, button.label, x, middle + 16, { size: 9.5, family: 'sans', color: button.active ? T.cyan : T.muted, align: 'center' });
   });
-  fillRound(ctx, SCREEN_WIDTH - 118, middle - 18, 98, 36, 18, T.red);
-  text(ctx, 'Leave', SCREEN_WIDTH - 69, middle + 1, { size: 13.5, weight: 700, family: 'sans', color: '#ffffff', align: 'center' });
+  fillRound(ctx, VIEW_WIDTH - 88, middle - 14, 74, 28, 14, T.red);
+  text(ctx, 'Leave', VIEW_WIDTH - 51, middle + 1, { size: 12, weight: 700, family: 'sans', color: '#ffffff', align: 'center' });
 }

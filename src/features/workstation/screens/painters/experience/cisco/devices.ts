@@ -81,7 +81,8 @@ function cloud(ctx: CanvasRenderingContext2D, x: number, y: number) {
   ctx.arc(x - 4, y - 8, 16, Math.PI, Math.PI * 1.85);
   ctx.arc(x + 18, y, 13, Math.PI * 1.3, Math.PI * 0.5);
   ctx.closePath();
-  ctx.fillStyle = 'rgba(95,211,243,0.14)';
+  // Opaque, so the uplink stops at the cloud's edge now that the label sits beside it.
+  ctx.fillStyle = '#123754';
   ctx.fill();
   ctx.strokeStyle = T.link;
   ctx.lineWidth = 1.6;
@@ -134,9 +135,10 @@ export function drawDevice(ctx: CanvasRenderingContext2D, device: Device, origin
       endpoint(ctx, device.kind, x, y);
   }
   if (device.label) {
-    const below = device.kind === 'cloud' ? 0 : 30;
-    const labelX = device.kind === 'cloud' ? x : device.kind === 'firewall' ? x + 60 : x;
-    const labelY = device.kind === 'cloud' ? y + 2 : device.kind === 'firewall' ? y : y + below;
-    text(ctx, device.label, labelX, labelY, { size: 11.5, weight: 600, family: 'sans', color: '#d7eef8', align: 'center' });
+    // The cloud and the firewall carry their labels to the right, every other device underneath.
+    const beside = device.kind === 'cloud' || device.kind === 'firewall';
+    const labelX = beside ? x + 62 : x;
+    const labelY = beside ? y + 2 : y + 30;
+    text(ctx, device.label, labelX, labelY, { size: 13.5, weight: 600, family: 'sans', color: '#d7eef8', align: 'center' });
   }
 }

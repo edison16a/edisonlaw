@@ -25,7 +25,7 @@ function links(ctx: CanvasRenderingContext2D, x: number, y: number) {
     ctx.lineTo(x + b.x, y + b.y);
     ctx.strokeStyle = link.standby ? T.standby : T.link;
     ctx.globalAlpha = link.weight ? 0.9 : link.standby ? 0.7 : 0.55;
-    ctx.lineWidth = link.weight ?? 1.2;
+    ctx.lineWidth = link.weight ?? 1.6;
     ctx.setLineDash(link.standby ? [5, 5] : []);
     ctx.stroke();
   }
@@ -73,31 +73,31 @@ export function drawSlide(ctx: CanvasRenderingContext2D, rect: Rect, time: numbe
   background.addColorStop(1, T.slideBottom);
   fillRect(ctx, rect.x, rect.y, rect.w, rect.h, background);
 
-  text(ctx, 'Campus network, three tier design', rect.x + 40, rect.y + 52, { size: 28, weight: 700, family: 'sans', color: '#ffffff' });
-  text(ctx, 'Core, distribution and access layers with redundant uplinks', rect.x + 40, rect.y + 84, { size: 15, family: 'sans', color: T.cyan });
+  text(ctx, 'Campus network, three tier design', rect.x + 40, rect.y + 54, { size: 34, weight: 700, family: 'sans', color: '#ffffff' });
+  text(ctx, 'Core, distribution and access layers with redundant uplinks', rect.x + 40, rect.y + 92, { size: 18, family: 'sans', color: T.cyan });
 
   LAYERS.forEach((layer) => {
-    text(ctx, layer.label.toUpperCase(), rect.x + 40, rect.y + layer.y, { size: 11, weight: 700, family: 'sans', color: '#6f8aa6' });
+    text(ctx, layer.label.toUpperCase(), rect.x + 40, rect.y + layer.y, { size: 14, weight: 700, family: 'sans', color: '#6f8aa6' });
   });
   links(ctx, rect.x, rect.y);
   packets(ctx, rect.x, rect.y, time);
   DEVICES.forEach((device) => drawDevice(ctx, device, rect.x, rect.y));
 
   // Legend on the right.
-  const legendX = rect.x + rect.w - 150;
-  fillRect(ctx, legendX, rect.y + 150, 22, 2, T.link);
-  text(ctx, 'Active link', legendX + 30, rect.y + 151, { size: 11.5, family: 'sans', color: '#b9d3e6' });
-  ctx.setLineDash([5, 5]);
+  const legendX = rect.x + rect.w - 180;
+  fillRect(ctx, legendX, rect.y + 150, 26, 3, T.link);
+  text(ctx, 'Active link', legendX + 36, rect.y + 151, { size: 14, family: 'sans', color: '#b9d3e6' });
+  ctx.setLineDash([6, 5]);
   ctx.strokeStyle = T.standby;
-  ctx.lineWidth = 1.5;
+  ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.moveTo(legendX, rect.y + 172);
-  ctx.lineTo(legendX + 22, rect.y + 172);
+  ctx.moveTo(legendX, rect.y + 178);
+  ctx.lineTo(legendX + 26, rect.y + 178);
   ctx.stroke();
   ctx.setLineDash([]);
-  text(ctx, 'STP standby', legendX + 30, rect.y + 172, { size: 11.5, family: 'sans', color: '#b9d3e6' });
+  text(ctx, 'STP standby', legendX + 36, rect.y + 178, { size: 14, family: 'sans', color: '#b9d3e6' });
 
-  fillRect(ctx, rect.x + 40, rect.y + rect.h - 30, rect.w - 80, 1, 'rgba(255,255,255,0.12)');
-  text(ctx, 'Cisco Career Exploration Program, Summer 2024', rect.x + 40, rect.y + rect.h - 15, { size: 11, family: 'sans', color: '#7d93ab' });
-  text(ctx, '7', rect.x + rect.w - 40, rect.y + rect.h - 15, { size: 11, family: 'sans', color: '#7d93ab', align: 'right' });
+  fillRect(ctx, rect.x + 40, rect.y + rect.h - 32, rect.w - 80, 1.5, 'rgba(255,255,255,0.12)');
+  text(ctx, 'Cisco Career Exploration Program, Summer 2024', rect.x + 40, rect.y + rect.h - 16, { size: 13, family: 'sans', color: '#7d93ab' });
+  text(ctx, '7', rect.x + rect.w - 40, rect.y + rect.h - 16, { size: 13, family: 'sans', color: '#7d93ab', align: 'right' });
 }
