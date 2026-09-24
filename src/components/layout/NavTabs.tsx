@@ -37,7 +37,7 @@ export function NavTabs() {
                 }}
                 className={cn(
                   'relative block py-5 text-sm font-medium tracking-tight transition-opacity duration-300',
-                  isActive ? 'opacity-100' : 'opacity-45 hover:opacity-80',
+                  isActive ? 'opacity-100' : 'opacity-60 hover:opacity-90',
                 )}
               >
                 <span className="hidden sm:inline">{section.label}</span>
