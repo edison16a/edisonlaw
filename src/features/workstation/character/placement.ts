@@ -14,14 +14,17 @@ export interface Placement {
  * He sits a little forward of the chair centre so his short arms reach the keyboard with soft elbows.
  */
 export const SEATED_PLACEMENT: Placement = {
-  position: [CHAIR.position[0], CHAIR.seatHeight, CHAIR.position[2] - 0.05],
+  position: [CHAIR.position[0], CHAIR.seatHeight, CHAIR.position[2] - 0.08],
   rotationY: Math.PI,
 };
 
-/** Origin of the standing pose is the floor between the feet. A step back from the desk, facing the centre monitor. */
+/**
+ * Origin of the standing pose is the floor between the feet. A step back from the right end of the desk,
+ * turned toward the centre monitor, and clear of the seated pose's line of sight from the work camera.
+ */
 export const STANDING_PLACEMENT: Placement = {
-  position: [0.66, 0, 0.56],
-  rotationY: Math.PI + 0.62,
+  position: [0.98, 0, 0.44],
+  rotationY: Math.PI + 0.72,
 };
 
 /**
@@ -29,6 +32,6 @@ export const STANDING_PLACEMENT: Placement = {
  * floor from a standard seat, so his feet rest flat on an under-desk footrest whose top is at this height.
  */
 export const SEATED_FOOT_REST: { left: Vec3; right: Vec3 } = {
-  left: [CHAIR.position[0] - 0.1, 0.2, 0.06],
-  right: [CHAIR.position[0] + 0.1, 0.2, 0.06],
+  left: [CHAIR.position[0] - 0.1, 0.2, CHAIR.position[2] - 0.33],
+  right: [CHAIR.position[0] + 0.1, 0.2, CHAIR.position[2] - 0.33],
 };
