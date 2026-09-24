@@ -2,6 +2,7 @@
 
 import { CircleGeometry, LatheGeometry, TorusGeometry, Vector2 } from 'three';
 import { MUG } from '../dimensions';
+import { mergeParts } from '../geometry/merge';
 import { useGeometry } from '../geometry/useGeometry';
 import { useCharacterMaterials } from '../MaterialsContext';
 
@@ -23,27 +24,27 @@ function mugBody() {
     new Vector2(radius - WALL, WALL * 2),
     new Vector2(0.0001, WALL * 2),
   ];
-  return new LatheGeometry(points, 40);
+  return new LatheGeometry(points, 32);
+}
+
+/** Mug body and its handle as one piece. The handle is a half ring standing out along +X. */
+function mugShell() {
+  const handle = new TorusGeometry(0.02, 0.0062, 10, 24, Math.PI)
+    .rotateZ(-Math.PI / 2)
+    .translate(MUG.radius - 0.003, MUG.height * 0.5, 0);
+  return mergeParts([mugBody(), handle]);
 }
 
 /** A chunky ceramic mug of coffee. Its base is the origin and it stands along +Y, handle toward +X. */
 export function Mug() {
   const materials = useCharacterMaterials();
-  const body = useGeometry(mugBody);
-  const handle = useGeometry(() => new TorusGeometry(0.02, 0.0062, 12, 28, Math.PI));
-  const coffee = useGeometry(() => new CircleGeometry(MUG.radius - WALL, 32));
+  const shell = useGeometry(mugShell);
+  const coffee = useGeometry(() => new CircleGeometry(MUG.radius - WALL, 32).rotateX(-Math.PI / 2));
 
   return (
     <group>
-      <mesh geometry={body} material={materials.mug} castShadow receiveShadow />
-      <mesh
-        geometry={handle}
-        material={materials.mug}
-        position={[MUG.radius - 0.003, MUG.height * 0.5, 0]}
-        rotation={[0, 0, -Math.PI / 2]}
-        castShadow
-      />
-      <mesh geometry={coffee} material={materials.coffee} position={[0, MUG.height - COFFEE_DEPTH, 0]} rotation={[-Math.PI / 2, 0, 0]} />
+      <mesh geometry={shell} material={materials.mug} castShadow receiveShadow />
+      <mesh geometry={coffee} material={materials.coffee} position={[0, MUG.height - COFFEE_DEPTH, 0]} />
     </group>
   );
 }

@@ -1,10 +1,14 @@
+import { Color } from 'three';
+import { PALETTE } from '../materials';
 import { loftGeometry, type LoftRing } from './loft';
+import { mergeParts, paintSolid } from './merge';
 
 /**
  * A clean chunky sneaker in the foot bone's space: the ankle joint is the origin, toes point +Z
- * and the sole touches y = -ankleHeight. Three pieces: white upper, pale sole, dark stripe.
+ * and the sole touches y = -ankleHeight. White upper, pale sole and a dark stripe, coloured per vertex
+ * so the whole shoe is one mesh.
  */
-export function shoeGeometries(ankleHeight: number) {
+export function shoeGeometry(ankleHeight: number) {
   const floor = -ankleHeight;
   const z = 0.032;
   const upper: LoftRing[] = [
@@ -25,9 +29,9 @@ export function shoeGeometries(ankleHeight: number) {
     { y: floor + 0.018, x: 0.0437, front: 0.0893, back: 0.0595, z },
     { y: floor + 0.023, x: 0.0438, front: 0.0895, back: 0.0596, z },
   ];
-  return {
-    upper: loftGeometry(upper, { radialSegments: 48, capTop: true }),
-    sole: loftGeometry(sole, { radialSegments: 48, capBottom: true }),
-    stripe: loftGeometry(stripe, { radialSegments: 48 }),
-  };
+  return mergeParts([
+    paintSolid(loftGeometry(upper, { radialSegments: 40, capTop: true }), new Color(PALETTE.shoe)),
+    paintSolid(loftGeometry(sole, { radialSegments: 40, capBottom: true }), new Color(PALETTE.sole)),
+    paintSolid(loftGeometry(stripe, { radialSegments: 40 }), new Color(PALETTE.shoeAccent)),
+  ]);
 }

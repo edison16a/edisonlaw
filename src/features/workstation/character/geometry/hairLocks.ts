@@ -1,7 +1,7 @@
 import { CatmullRomCurve3, Float32BufferAttribute, Vector3, type BufferGeometry } from 'three';
-import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { anglesOf, headRadius, surfacePoint } from './headShape';
 import { hairOffsetAt, hairToneAt } from './hairShape';
+import { mergeParts } from './merge';
 import { lockTaper, sweepGeometry } from './sweep';
 
 /** A chunky lock of hair laid over the cap, described on his left side and mirrored to the right. */
@@ -76,8 +76,8 @@ function lockGeometry(lock: Lock, side: number) {
   );
   const taper = lockTaper(lock.peak, 0.55);
   const geometry = sweepGeometry(curve, {
-    segments: 48,
-    radialSegments: 18,
+    segments: 36,
+    radialSegments: 14,
     width: (s) => lock.width * taper(s),
     thickness: (s) => lock.thickness * taper(s),
     normalAt: outward,
@@ -100,8 +100,5 @@ function paintTone(geometry: BufferGeometry) {
 
 /** Every lock on both sides as one mesh, centred on the head centre. */
 export function hairLocksGeometry() {
-  const parts = LOCKS.flatMap((lock) => [lockGeometry(lock, 1), lockGeometry(lock, -1)]);
-  const merged = mergeGeometries(parts);
-  for (const part of parts) part.dispose();
-  return merged;
+  return mergeParts(LOCKS.flatMap((lock) => [lockGeometry(lock, 1), lockGeometry(lock, -1)]));
 }

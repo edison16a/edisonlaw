@@ -3,6 +3,7 @@
 import { useMemo } from 'react';
 import { CatmullRomCurve3, SphereGeometry, type Vector3 } from 'three';
 import { surfaceFrame, surfacePoint } from '../geometry/headShape';
+import { mergeParts } from '../geometry/merge';
 import { strokeTaper, sweepGeometry } from '../geometry/sweep';
 import { useGeometry } from '../geometry/useGeometry';
 import { useCharacterMaterials } from '../MaterialsContext';
@@ -34,8 +35,8 @@ function strokeGeometry(points: [number, number][], side: number, lift: number, 
   const curve = new CatmullRomCurve3(points.map(([theta, phi]) => surfacePoint(theta, side * phi, lift)));
   const taper = strokeTaper(0.28);
   return sweepGeometry(curve, {
-    segments: 24,
-    radialSegments: 12,
+    segments: 20,
+    radialSegments: 10,
     width: (s) => halfWidth * taper(s),
     thickness: (s) => halfThickness * taper(s),
     normalAt: outward,
@@ -49,12 +50,21 @@ function shineDepth(x: number, y: number) {
   return rz * Math.sqrt(Math.max(0, 1 - (x / rx) ** 2 - (y / ry) ** 2)) - 0.0012;
 }
 
+/** Both catch lights of one eye as a single flattened pair of dots, in the eye's space. */
+function shineGeometry() {
+  return mergeParts(
+    SHINES.map(({ x, y, radius }) =>
+      new SphereGeometry(1, 12, 8).scale(radius, radius, radius * 0.35).translate(x, y, shineDepth(x, y)),
+    ),
+  );
+}
+
 /** Glossy black eyes with catch lights, small soft brows, a hint of a nose and a small smile. */
 export function Face({ rig }: { rig: Rig }) {
   const materials = useCharacterMaterials();
-  const sphere = useGeometry(() => new SphereGeometry(1, 32, 20));
-  const leftBrow = useGeometry(() => strokeGeometry(BROW, 1, 0.0024, 0.0046, 0.0026));
-  const rightBrow = useGeometry(() => strokeGeometry(BROW, -1, 0.0024, 0.0046, 0.0026));
+  const sphere = useGeometry(() => new SphereGeometry(1, 28, 18));
+  const shine = useGeometry(shineGeometry);
+  const brows = useGeometry(() => mergeParts([1, -1].map((side) => strokeGeometry(BROW, side, 0.0024, 0.0046, 0.0026))));
   const mouth = useGeometry(() => strokeGeometry(MOUTH, 1, 0.0006, 0.0034, 0.0022));
   const eyeFrames = useMemo(() => [1, -1].map((side) => surfaceFrame(EYE.theta, side * EYE.phi, EYE.lift)), []);
   const nose = useMemo(() => surfaceFrame(NOSE.theta, 0, NOSE.lift), []);
@@ -65,20 +75,11 @@ export function Face({ rig }: { rig: Rig }) {
         <primitive key={eye.name} object={eye} position={eyeFrames[index].position} quaternion={eyeFrames[index].quaternion}>
           <mesh geometry={sphere} material={materials.eye} scale={EYE.radius} />
           <primitive object={rig.shines[index]}>
-            {SHINES.map(({ x, y, radius }) => (
-              <mesh
-                key={radius}
-                geometry={sphere}
-                material={materials.eyeShine}
-                position={[x, y, shineDepth(x, y)]}
-                scale={[radius, radius, radius * 0.35]}
-              />
-            ))}
+            <mesh geometry={shine} material={materials.eyeShine} />
           </primitive>
         </primitive>
       ))}
-      <mesh geometry={leftBrow} material={materials.brow} />
-      <mesh geometry={rightBrow} material={materials.brow} />
+      <mesh geometry={brows} material={materials.brow} />
       <mesh geometry={sphere} material={materials.body} position={nose.position} quaternion={nose.quaternion} scale={NOSE.radius} />
       <mesh geometry={mouth} material={materials.lips} />
     </group>

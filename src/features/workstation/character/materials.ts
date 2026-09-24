@@ -40,9 +40,8 @@ export interface CharacterMaterials {
   sleeve: MeshPhysicalMaterial;
   shirtRib: MeshPhysicalMaterial;
   pants: MeshPhysicalMaterial;
+  /** Sneakers, coloured per vertex: upper, sole and stripe. */
   shoe: MeshPhysicalMaterial;
-  sole: MeshStandardMaterial;
-  shoeAccent: MeshStandardMaterial;
   sock: MeshStandardMaterial;
   mug: MeshPhysicalMaterial;
   coffee: MeshPhysicalMaterial;
@@ -90,9 +89,7 @@ export function createCharacterMaterials(shirtMap: Texture): CharacterMaterials 
     sleeve: fabric(PALETTE.shirt, '#6f8ae0'),
     shirtRib: fabric(PALETTE.shirtRib, '#6f8ae0'),
     pants: fabric(PALETTE.pants, PALETTE.pantsSheen, 0.86),
-    shoe: new MeshPhysicalMaterial({ color: PALETTE.shoe, roughness: 0.55, sheen: 0.3, sheenColor: new Color('#ffffff') }),
-    sole: new MeshStandardMaterial({ color: PALETTE.sole, roughness: 0.7 }),
-    shoeAccent: new MeshStandardMaterial({ color: PALETTE.shoeAccent, roughness: 0.6 }),
+    shoe: new MeshPhysicalMaterial({ color: '#ffffff', vertexColors: true, roughness: 0.58, sheen: 0.3, sheenColor: new Color('#ffffff') }),
     sock: new MeshStandardMaterial({ color: PALETTE.sock, roughness: 0.9 }),
     mug: new MeshPhysicalMaterial({ color: PALETTE.mug, roughness: 0.28, clearcoat: 0.6, clearcoatRoughness: 0.2 }),
     coffee: new MeshPhysicalMaterial({ color: PALETTE.coffee, roughness: 0.12, clearcoat: 1 }),
