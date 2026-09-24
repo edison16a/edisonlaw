@@ -1,8 +1,8 @@
 'use client';
 
-import { useThree } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useMemo, useRef } from 'react';
-import type { CanvasTexture } from 'three';
+import type { Texture } from 'three';
 import { ScreenBinding } from './ScreenBinding';
 import type { ScreenId } from './types';
 
@@ -13,9 +13,9 @@ interface Options {
 
 /**
  * Returns a texture showing `id`. Screens are painted once per id and shared, so this hook only
- * owns a light CanvasTexture over the shared canvas. Call inside an R3F Canvas.
+ * owns a light texture over the shared canvas. Call inside an R3F Canvas.
  */
-export function useScreenTexture(id: ScreenId, { animate = true }: Options = {}): CanvasTexture {
+export function useScreenTexture(id: ScreenId, { animate = true }: Options = {}): Texture {
   const anisotropy = useThree((state) => state.gl.capabilities.getMaxAnisotropy());
   const invalidate = useThree((state) => state.invalidate);
 
@@ -32,6 +32,11 @@ export function useScreenTexture(id: ScreenId, { animate = true }: Options = {})
     animateRef.current = animate;
     binding.setAnimate(animate);
   }, [binding, animate]);
+
+  // A repaint that has to wait for the upload slot asks for another frame to try again.
+  useFrame(() => {
+    if (binding.update()) invalidate();
+  });
 
   return binding.texture;
 }
