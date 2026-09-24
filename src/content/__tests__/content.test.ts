@@ -21,6 +21,12 @@ describe('projects', () => {
     }
   });
 
+  it('have a logo for every stack item', () => {
+    for (const item of projects.flatMap((project) => project.stack)) {
+      expect(getSkillIcon(item), item).toBeDefined();
+    }
+  });
+
   it('only link to secure urls', () => {
     for (const link of projects.flatMap((project) => project.links)) {
       expect(isUrl(link.href), link.href).toBe(true);
