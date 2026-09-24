@@ -110,10 +110,23 @@ function refresh(screen: Screen) {
   }
 }
 
+/** Repaints every screen, one per animation frame, so a font swap never paints them all in one go. */
+function repaintAll() {
+  const pending = [...screens.values()];
+  const next = () => {
+    const screen = pending.shift();
+    if (!screen) return;
+    // Skip screens disposed while waiting their turn.
+    if (screens.get(screen.id) === screen) draw(screen, true);
+    requestAnimationFrame(next);
+  };
+  next();
+}
+
 function hookFonts() {
   if (fontsHooked) return;
   fontsHooked = true;
-  void loadScreenFonts().then(() => screens.forEach((screen) => draw(screen, true)));
+  void loadScreenFonts().then(repaintAll);
 }
 
 function ensureScreen(id: ScreenId): Screen {
