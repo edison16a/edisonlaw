@@ -48,7 +48,8 @@ function StepButton({ direction, label, left, path }: StepButtonProps) {
       data-step={direction}
       onClick={() => stepSpiral(direction)}
       style={{ left, top: 'var(--card-middle, 50%)', width: SIZE, height: SIZE }}
-      className="absolute flex -translate-y-1/2 items-center justify-center rounded-full bg-black/80 text-white opacity-0 transition-opacity duration-200 focus-visible:opacity-100"
+      // Hidden, it lets clicks through to the card underneath. Shown by keyboard focus, it takes them.
+      className="absolute flex -translate-y-1/2 items-center justify-center rounded-full bg-black/80 text-white opacity-0 transition-opacity duration-200 focus-visible:pointer-events-auto focus-visible:opacity-100"
     >
       <IconBase size={20} strokeWidth={1.75}>
         <path d={path} />
