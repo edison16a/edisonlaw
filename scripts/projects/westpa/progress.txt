@@ -1,0 +1,29 @@
+WESTPA Progress
+Data file: /home/user/edison16a/odld/west.h5
+Updated: 09:42:34    west.h5 modified: 09:42:34
+
+Run Status
+Run state:                  Running
+Phase:                      Finalizing Iteration
+Live status updated:        09:42:34
+
+Iterations
+Current iteration:          425
+Latest completed:           424
+Requested total:            1000
+Progress:                   424 / 1000 iterations (42.4%)
+
+Current Iteration Segments
+Prepared:                   0 / 940
+Failed:                     0 / 940
+
+Timing
+Recent walltimes:           0.1s, 0.1s, 0.1s, 0.1s, 0.1s
+Current iter elapsed:       0.1s
+Avg iteration time:         0.1s
+Completed walltime:         25.4s
+ETA:                        34.3s
+
+Completed segments:         384970
+Refresh Rate:               1.0s
+Press Ctrl-C to close

@@ -36,6 +36,7 @@ export const projects: Project[] = [
     description:
       'Command line dashboard for Weighted Ensemble simulations. It tracks iteration summaries and reports molecular dynamics data, and I built it with the MDAnalysis and WESTPA maintainers.',
     links: [{ label: 'WESTPA on GitHub', href: 'https://github.com/westpa/westpa' }],
+    image: '/projects/westpa-dashboard.webp',
   },
   {
     id: 'senseplan',
