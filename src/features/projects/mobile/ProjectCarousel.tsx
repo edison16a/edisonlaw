@@ -12,6 +12,7 @@ import { IntroTitle } from '../components/IntroTitle';
 import { ProjectDetails } from '../components/ProjectDetails';
 import { ProjectImage } from '../components/ProjectImage';
 import { ProjectStatus } from '../components/ProjectStatus';
+import { featuredIndex } from '../featured';
 import { CAROUSEL_QUERY } from '../hooks/useSpiralFits';
 import { CarouselControls } from './CarouselControls';
 import { slideStride, useActiveSlide } from './useActiveSlide';
@@ -44,12 +45,14 @@ interface ProjectCarouselProps {
 
 /**
  * A swipeable strip of photos with the details of the centred one below. No 3D.
- * Phones get it, and so does any screen without WebGL.
+ * Phones get it, and so does any screen without WebGL. Like the spiral, it
+ * opens on the featured project.
  */
 export function ProjectCarousel({ projects, heading, className }: ProjectCarouselProps) {
   const strip = useRef<HTMLOListElement>(null);
-  const active = useActiveSlide(strip, projects.length);
-  preloadPhoto(projects[0]);
+  const opening = featuredIndex(projects);
+  const active = useActiveSlide(strip, projects.length, opening);
+  preloadPhoto(projects[opening]);
   const project = projects[active];
   const previous = useRef(active);
 

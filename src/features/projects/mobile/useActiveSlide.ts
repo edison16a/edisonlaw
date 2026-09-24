@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, type RefObject } from 'react';
+import { useEffect, useLayoutEffect, useState, type RefObject } from 'react';
 
 /** Distance from one slide to the next in a horizontal strip, in pixels. */
 export function slideStride(strip: HTMLElement) {
@@ -10,9 +10,19 @@ export function slideStride(strip: HTMLElement) {
   return Math.max(1, second ? second.offsetLeft - first.offsetLeft : first.offsetWidth);
 }
 
-/** Index of the slide nearest the centre of a horizontal scroll snap strip. */
-export function useActiveSlide(strip: RefObject<HTMLElement | null>, count: number) {
-  const [active, setActive] = useState(0);
+/**
+ * Index of the slide nearest the centre of a horizontal scroll snap strip.
+ * The strip opens on slide `start`, placed before the first paint.
+ */
+export function useActiveSlide(strip: RefObject<HTMLElement | null>, count: number, start = 0) {
+  // Only where it opens counts. After that the visitor moves the strip.
+  const [opening] = useState(start);
+  const [active, setActive] = useState(opening);
+
+  useLayoutEffect(() => {
+    const node = strip.current;
+    if (node && opening > 0) node.scrollTo({ left: opening * slideStride(node), behavior: 'instant' });
+  }, [strip, opening]);
 
   useEffect(() => {
     const node = strip.current;
