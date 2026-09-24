@@ -31,7 +31,7 @@ export const projects: Project[] = [
     id: 'westpa-dashboard',
     name: 'WESTPA CLI Dashboard',
     org: 'NumFOCUS',
-    badges: ['Open source'],
+    badges: [],
     stack: ['Python', 'WESTPA', 'MDAnalysis'],
     description:
       'Command line dashboard for Weighted Ensemble simulations. It tracks iteration summaries and reports molecular dynamics data, and I built it with the MDAnalysis and WESTPA maintainers.',
@@ -97,7 +97,7 @@ export const projects: Project[] = [
   {
     id: 'photo-craft',
     name: 'Photo Craft',
-    badges: ['Open source'],
+    badges: [],
     stack: ['Next.js', 'TypeScript', 'Konva', 'ONNX Runtime Web'],
     description:
       'Free photo editor with one-click background removal that runs entirely in the browser, so nothing gets uploaded. It exports transparent PNGs at any size, which Canva charges for.',
