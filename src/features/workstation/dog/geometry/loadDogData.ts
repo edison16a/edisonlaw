@@ -1,13 +1,32 @@
 import { buildDogData, type DogData } from './dogData';
 
-let pending: Promise<DogData> | null = null;
+/**
+ * A promise that also says when it has settled, in the shape React's `use` reads: once fulfilled,
+ * `use` returns the value straight away instead of suspending for a frame.
+ */
+type TrackedPromise<T> = Promise<T> & { status?: 'pending' | 'fulfilled' | 'rejected'; value?: T };
+
+let pending: TrackedPromise<DogData> | null = null;
 
 /**
  * The dog's meshes, sculpted once per page in a worker. Mounts share the same arrays and only wrap them
  * in fresh GPU buffers. Without workers (or if one fails) it builds on the main thread instead.
  */
 export function loadDogData(): Promise<DogData> {
-  pending ??= buildInWorker().catch(buildOnMainThread);
+  if (!pending) {
+    const promise: TrackedPromise<DogData> = buildInWorker().catch(buildOnMainThread);
+    promise.status = 'pending';
+    promise.then(
+      (value) => {
+        promise.status = 'fulfilled';
+        promise.value = value;
+      },
+      () => {
+        promise.status = 'rejected';
+      },
+    );
+    pending = promise;
+  }
   return pending;
 }
 
