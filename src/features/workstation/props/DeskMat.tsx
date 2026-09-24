@@ -1,18 +1,17 @@
 'use client';
 
 import { RoundedBox } from '@react-three/drei';
-import { DESK } from '../layout';
-
-const MAT = { width: 0.84, depth: 0.27, thickness: 0.003 };
+import { DESK_MAT } from '../layout';
 
 /** Felt mat under the keyboard and mouse. */
 export function DeskMat() {
+  const [x, top, z] = DESK_MAT.center;
   return (
     <RoundedBox
-      args={[MAT.width, MAT.thickness, MAT.depth]}
+      args={[DESK_MAT.width, DESK_MAT.thickness, DESK_MAT.depth]}
       radius={0.0014}
       smoothness={2}
-      position={[0.1, DESK.height + MAT.thickness / 2, -0.1]}
+      position={[x, top - DESK_MAT.thickness / 2, z]}
     >
       <meshStandardMaterial color="#1d1e24" roughness={0.95} />
     </RoundedBox>

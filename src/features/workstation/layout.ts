@@ -41,11 +41,24 @@ export const MONITORS: { slot: MonitorSlot; position: Vec3; rotationY: number }[
   { slot: 'right', position: [0.69, MONITOR.centerY, -0.5], rotationY: -0.42 },
 ];
 
-/** Keyboard top centre. */
+/** Felt mat under the keyboard and mouse. `center` is the middle of its top face. */
+export const DESK_MAT = {
+  width: 0.84,
+  depth: 0.27,
+  thickness: 0.003,
+  center: [0.1, DESK.height + 0.003, -0.1] as Vec3,
+} as const;
+
+/**
+ * Keyboard on the mat. `position` is the top of the keycaps at the middle of the board, where the
+ * seated hands aim. The case is a wedge `frontHeight` tall at the typist's edge and `backHeight` at the back.
+ */
 export const KEYBOARD = {
-  position: [0, 0.755, -0.09] as Vec3,
+  position: [0, 0.771, -0.09] as Vec3,
   width: 0.44,
   depth: 0.145,
+  frontHeight: 0.012,
+  backHeight: 0.02,
 } as const;
 
 export const MOUSE = { position: [0.34, 0.748, -0.08] as Vec3 } as const;

@@ -1,37 +1,40 @@
 import { Color, DataTexture, Object3D, RGBAFormat, SRGBColorSpace, type InstancedMesh } from 'three';
 import type { RgbClock } from '../../lighting/rgbClock';
-import { writeRgb } from '../../lighting/rgbClock';
+import { FLASH_BLUE, writeKeyboardBlue } from './keyboardBlue';
 import { KEYS, LAYOUT_WIDTH_U } from './keyLayout';
 import { createTypingModel } from './typingModel';
 
-/** Hue change from the left edge of the board to the right edge. */
-const WAVE_SPREAD = 0.45;
-const BASE_GLOW = 0.5;
-const FLASH_GLOW = 3.2;
+const BASE_GLOW = 0.55;
+const FLASH_GLOW = 3;
+/** The pool of light under each key, relative to the glow at the foot of its cap. */
+const HALO_GAIN = 1.5;
 /** How fast a struck key's flash fades, roughly 1 / seconds. */
 const FLASH_FADE = 7;
-const PLATE_TEXELS = 32;
+/** Brightness of the plate between the keys, a dim wash under the halos. */
+const PLATE_GLOW = 0.28;
+const PLATE_TEXELS = 64;
 
 export interface KeycapMetrics {
   unit: number;
-  gap: number;
-  /** Resting height of the keycap centres. */
+  /** Resting height of the keycap centres above the plate. */
   restY: number;
   pressDepth: number;
 }
 
 /**
- * Drives the keyboard every frame: the typing simulation, key flashes and travel,
- * the rolling RGB wave on the caps and the matching gradient on the plate.
+ * Drives the keyboard every frame: the typing simulation, key flashes and travel, and the shimmering
+ * navy to sky blue gradient on the caps and on the plate between them. The shared RGB clock only
+ * lends its pulse, so a new timeline entry still brightens the board.
  */
 export class KeyboardAnimator {
-  /** 32 x 1 gradient shown on the plate between the keys. */
+  /** Gradient shown on the plate between the keys, one texel row across the board. */
   readonly plate: DataTexture;
   private readonly flashes = new Float32Array(KEYS.length);
   private readonly indexByLabel = new Map(KEYS.map((key, index) => [key.label, index]));
   private readonly typing = createTypingModel(7);
   private readonly dummy = new Object3D();
   private readonly color = new Color();
+  private readonly haloColor = new Color();
 
   constructor(private readonly metrics: KeycapMetrics) {
     this.plate = new DataTexture(new Uint8Array(PLATE_TEXELS * 4), PLATE_TEXELS, 1, RGBAFormat);
@@ -43,46 +46,55 @@ export class KeyboardAnimator {
    * @param elapsed seconds since start, frozen at 0 when motion is reduced
    * @param typing whether Edison is typing right now
    */
-  update(mesh: InstancedMesh, clock: RgbClock, delta: number, elapsed: number, typing: boolean) {
+  update(caps: InstancedMesh, halos: InstancedMesh, clock: RgbClock, delta: number, elapsed: number, typing: boolean) {
     if (typing) {
       this.typing.advance(Math.min(delta, 0.1), (label) => {
         const index = this.indexByLabel.get(label);
         if (index !== undefined) this.flashes[index] = 1;
       });
     }
-    this.updateCaps(mesh, clock, delta, elapsed);
-    this.updatePlate(clock);
+    this.updateCaps(caps, halos, clock, delta, elapsed);
+    this.updatePlate(clock, elapsed);
   }
 
-  private updateCaps(mesh: InstancedMesh, clock: RgbClock, delta: number, elapsed: number) {
-    const { unit, gap, restY, pressDepth } = this.metrics;
-    const { flashes, dummy, color } = this;
+  /** Lays the halos flat on the plate under their keys. They never move, so this runs once. */
+  placeHalos(halos: InstancedMesh) {
+    const { dummy } = this;
+    KEYS.forEach((key, index) => {
+      dummy.position.set(key.x * this.metrics.unit, 0, key.z * this.metrics.unit);
+      dummy.updateMatrix();
+      halos.setMatrixAt(index, dummy.matrix);
+    });
+    halos.instanceMatrix.needsUpdate = true;
+  }
+
+  private updateCaps(caps: InstancedMesh, halos: InstancedMesh, clock: RgbClock, delta: number, elapsed: number) {
+    const { unit, restY, pressDepth } = this.metrics;
+    const { flashes, dummy, color, haloColor } = this;
     const fade = Math.exp(-FLASH_FADE * delta);
 
     KEYS.forEach((key, index) => {
       const flash = flashes[index];
       flashes[index] = flash < 0.01 ? 0 : flash * fade;
-      const across = key.x / LAYOUT_WIDTH_U;
-      // A soft brightness band rolls across the board on top of the hue gradient.
-      const wave = 0.72 + 0.28 * Math.sin((across * 1.4 - elapsed * 0.32) * Math.PI * 2);
-      const glow = BASE_GLOW * wave * clock.boost + flash * FLASH_GLOW;
-      writeRgb(color, clock.hue + across * WAVE_SPREAD, glow, 1 - flash * 0.55);
-      mesh.setColorAt(index, color);
+      writeKeyboardBlue(color, key.x / LAYOUT_WIDTH_U + 0.5, elapsed, BASE_GLOW * clock.boost);
+      if (flash > 0) color.lerp(FLASH_BLUE, flash).multiplyScalar(1 + flash * (FLASH_GLOW - 1));
+      caps.setColorAt(index, color);
+      halos.setColorAt(index, haloColor.copy(color).multiplyScalar(HALO_GAIN));
 
       dummy.position.set(key.x * unit, restY - pressDepth * Math.min(1, flash * 1.8), key.z * unit);
-      dummy.scale.set((key.width * unit - gap) / (unit - gap), 1, (key.depth * unit - gap) / (unit - gap));
       dummy.updateMatrix();
-      mesh.setMatrixAt(index, dummy.matrix);
+      caps.setMatrixAt(index, dummy.matrix);
     });
-    mesh.instanceMatrix.needsUpdate = true;
-    if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+    caps.instanceMatrix.needsUpdate = true;
+    if (caps.instanceColor) caps.instanceColor.needsUpdate = true;
+    if (halos.instanceColor) halos.instanceColor.needsUpdate = true;
   }
 
-  private updatePlate(clock: RgbClock) {
+  private updatePlate(clock: RgbClock, elapsed: number) {
     const data = this.plate.image.data as Uint8Array;
     const { color } = this;
     for (let i = 0; i < PLATE_TEXELS; i++) {
-      writeRgb(color, clock.hue + (i / (PLATE_TEXELS - 1) - 0.5) * WAVE_SPREAD, clock.boost);
+      writeKeyboardBlue(color, i / (PLATE_TEXELS - 1), elapsed, PLATE_GLOW * clock.boost);
       color.convertLinearToSRGB();
       data[i * 4] = Math.min(255, color.r * 255);
       data[i * 4 + 1] = Math.min(255, color.g * 255);

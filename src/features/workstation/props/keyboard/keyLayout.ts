@@ -59,7 +59,7 @@ const ROWS: RowSpec[] = [
 
 /** Total size of the key field in units. */
 export const LAYOUT_WIDTH_U = 22.5;
-const LAYOUT_DEPTH_U = 6.25;
+export const LAYOUT_DEPTH_U = 6.25;
 
 export interface KeyCap {
   label: string;
