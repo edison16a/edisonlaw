@@ -113,3 +113,11 @@ npm run screenshots  # recapture the README screenshots (needs a running build o
 - **Project photos.** Drop a 1280 x 800 WebP into `public/projects/<project-id>.webp`. `node scripts/projects/capture.mjs <project-id>` recreates the current ones.
 - **Desk scene stills.** Run `npm run dev`, then `node scripts/capture-renders.mjs http://localhost:3000`.
 - **Sounds.** Edit a recipe in `scripts/sounds/recipes`, run `npm run sounds`, then `npx tsx scripts/sounds/check.ts out.png` to plot and check the result.
+
+## Copyright and usage
+
+Copyright (c) 2026 Edison Law. All rights reserved. The full terms are in [LICENSE](LICENSE).
+
+- You may copy parts of the site for your own personal, non-commercial use only with attribution: credit Edison Law and link to the site or this repository. Copying it for personal use without attribution is prohibited.
+- Any other use, including commercial use, republishing and presenting the work as your own, needs Edison's written permission.
+- Third-party logos, fonts and libraries stay under their own licenses.
