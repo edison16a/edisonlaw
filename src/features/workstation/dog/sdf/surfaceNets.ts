@@ -242,7 +242,47 @@ export function meshField(field: Field, { cell, bounds }: MeshOptions): SurfaceM
   }
 
   const shapesAt = vertexBlock.map((index) => (blocks[index] as Block).shapes);
-  return { positions: finalPositions, normals, indices: triangulate(quads, finalPositions), shapesAt };
+  const indices = weld(triangulate(quads, finalPositions), finalPositions, cell * WELD);
+  return { positions: finalPositions, normals, indices, shapesAt };
+}
+
+/** Vertices closer than this share of a cell have settled onto the same spot. */
+const WELD = 0.15;
+
+/**
+ * Joins vertices that settled onto the same spot and drops the triangles folded flat between them.
+ * Where the surface runs along a grid face, the vertices of the cells on both sides of it land together,
+ * and the quads round that face would otherwise meet in a pinch. The joined vertex keeps the index of
+ * one of them; the other is left unused.
+ */
+function weld(indices: Uint32Array, positions: Float32Array, tolerance: number) {
+  const parent = Int32Array.from({ length: positions.length / 3 }, (_, i) => i);
+  const find = (i: number): number => {
+    while (parent[i] !== i) {
+      parent[i] = parent[parent[i]];
+      i = parent[i];
+    }
+    return i;
+  };
+  const limit = tolerance * tolerance;
+  for (let t = 0; t < indices.length; t += 3) {
+    for (let e = 0; e < 3; e++) {
+      const a = indices[t + e];
+      const b = indices[t + ((e + 1) % 3)];
+      const dx = positions[a * 3] - positions[b * 3];
+      const dy = positions[a * 3 + 1] - positions[b * 3 + 1];
+      const dz = positions[a * 3 + 2] - positions[b * 3 + 2];
+      if (dx * dx + dy * dy + dz * dz < limit) parent[find(a)] = find(b);
+    }
+  }
+  const kept: number[] = [];
+  for (let t = 0; t < indices.length; t += 3) {
+    const a = find(indices[t]);
+    const b = find(indices[t + 1]);
+    const c = find(indices[t + 2]);
+    if (a !== b && b !== c && c !== a) kept.push(a, b, c);
+  }
+  return Uint32Array.from(kept);
 }
 
 /** Stores a quad wound so its front faces out of the solid. */
