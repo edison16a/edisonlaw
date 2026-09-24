@@ -2,7 +2,8 @@ import { step } from '../../../anim/timeline';
 import { drawIcon } from '../../../draw/icons';
 import { fillRect, fillRound, strokeRound } from '../../../draw/shapes';
 import { text } from '../../../draw/text';
-import { SCREEN_HEIGHT, SCREEN_WIDTH, type PainterFactory } from '../../../types';
+import { VIEW_HEIGHT, VIEW_WIDTH, zoomIn } from '../../../draw/view';
+import type { PainterFactory } from '../../../types';
 import { COMPUTE_HOURS, DAYS } from './data';
 import { drawKpis, drawRuns, drawUsage } from './panels';
 import { drawSidebar, SIDEBAR_WIDTH } from './sidebar';
@@ -12,6 +13,7 @@ import { OPTAGON_THEME as T } from './theme';
 /** Seconds the hover tooltip rests on each bar. */
 const HOVER_STEP = 0.9;
 const STILL_HOVER = 24;
+const MARGIN = 18;
 
 function frame(time: number) {
   const hover = (STILL_HOVER + step(time, 1 / HOVER_STEP)) % DAYS;
@@ -20,18 +22,18 @@ function frame(time: number) {
 }
 
 function header(ctx: CanvasRenderingContext2D, x: number) {
-  text(ctx, 'Usage', x, 38, { size: 21, weight: 700, family: 'sans', color: T.text });
-  text(ctx, 'Compute, storage and runs across this workspace', x, 60, { size: 12.5, family: 'sans', color: T.muted });
-  const right = SCREEN_WIDTH - 28;
-  fillRound(ctx, right - 96, 24, 96, 34, 8, T.teal);
-  text(ctx, 'Export', right - 48, 42, { size: 13, weight: 600, family: 'sans', color: '#042f2e', align: 'center' });
-  fillRound(ctx, right - 244, 24, 136, 34, 8, T.panel);
-  strokeRound(ctx, right - 244, 24, 136, 34, 8, T.panelBorder);
-  drawIcon(ctx, 'grid', right - 224, 41, 15, T.muted, 1.4);
-  text(ctx, 'Last 30 days', right - 206, 42, { size: 13, family: 'sans', color: T.text });
+  text(ctx, 'Usage', x, 26, { size: 20, weight: 700, family: 'sans', color: T.text });
+  text(ctx, 'Compute, storage and runs in this workspace', x, 45, { size: 11.5, family: 'sans', color: T.muted });
+  const right = VIEW_WIDTH - MARGIN;
+  fillRound(ctx, right - 64, 16, 64, 28, 7, T.teal);
+  text(ctx, 'Export', right - 32, 31, { size: 12, weight: 600, family: 'sans', color: '#042f2e', align: 'center' });
+  fillRound(ctx, right - 180, 16, 108, 28, 7, T.panel);
+  strokeRound(ctx, right - 180, 16, 108, 28, 7, T.panelBorder);
+  drawIcon(ctx, 'grid', right - 164, 30, 13, T.muted, 1.4);
+  text(ctx, 'Last 30 days', right - 150, 31, { size: 12, family: 'sans', color: T.text });
 }
 
-/** The Backbond usage page for a demo workspace: KPIs, metered usage, runs and projects. */
+/** The Backbond usage page for a demo workspace, zoomed in: KPIs, metered usage, runs and projects. */
 export const optagon: PainterFactory = () => ({
   stillTime: 0,
   frameKey: (time) => {
@@ -40,16 +42,17 @@ export const optagon: PainterFactory = () => ({
   },
   paint(ctx, time) {
     const { hover, hours } = frame(time);
-    fillRect(ctx, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, T.background);
+    zoomIn(ctx);
+    fillRect(ctx, 0, 0, VIEW_WIDTH, VIEW_HEIGHT, T.background);
     drawSidebar(ctx);
-    const x = SIDEBAR_WIDTH + 28;
-    const w = SCREEN_WIDTH - x - 28;
+    const x = SIDEBAR_WIDTH + MARGIN;
+    const w = VIEW_WIDTH - x - MARGIN;
     header(ctx, x);
-    drawKpis(ctx, { x, y: 82, w, h: 102 }, hours.toLocaleString('en-US'));
-    const chartsY = 198;
-    const runsW = 352;
-    drawUsage(ctx, { x, y: chartsY, w: w - runsW - 16, h: 258 }, hover);
-    drawRuns(ctx, { x: x + w - runsW, y: chartsY, w: runsW, h: 258 });
-    drawProjects(ctx, { x, y: 470, w, h: SCREEN_HEIGHT - 470 - 18 });
+    drawKpis(ctx, { x, y: 60, w, h: 80 }, hours.toLocaleString('en-US'));
+    const chartsY = 150;
+    const runsW = 184;
+    drawUsage(ctx, { x, y: chartsY, w: w - runsW - 10, h: 156 }, hover);
+    drawRuns(ctx, { x: x + w - runsW, y: chartsY, w: runsW, h: 156 });
+    drawProjects(ctx, { x, y: 316, w, h: VIEW_HEIGHT - 316 - 14 });
   },
 });
