@@ -29,7 +29,7 @@ export function ExperienceSection() {
       aria-labelledby="experience-title"
       className="relative flex flex-col border-t border-grey-900 lg:grid lg:grid-cols-2"
     >
-      <div className="gutter pt-[calc(var(--spacing-nav)+4rem)] pb-[40vh]">
+      <div className="gutter pt-16 lg:pt-[calc(var(--spacing-nav)+4rem)] pb-[40vh]">
         <SectionHeader
           index="02"
           id="experience-title"
@@ -39,7 +39,7 @@ export function ExperienceSection() {
         />
         <Timeline listRef={listRef} active={active} />
       </div>
-      <div className="order-first aspect-[4/3] w-full lg:sticky lg:top-nav lg:order-none lg:aspect-auto lg:h-[calc(100dvh-var(--spacing-nav))]">
+      <div className="order-first mt-nav aspect-[4/3] w-full lg:sticky lg:mt-0 lg:top-nav lg:order-none lg:aspect-auto lg:h-[calc(100dvh-var(--spacing-nav))]">
         <WorkstationStage variant="work" centerScreen={current.screen} pulseKey={Math.max(active, 0)} />
       </div>
     </section>
