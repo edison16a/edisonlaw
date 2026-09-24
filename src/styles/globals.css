@@ -1,0 +1,85 @@
+@import 'tailwindcss';
+@import 'lenis/dist/lenis.css';
+
+/*
+  The one rule: black, white and greys. The default Tailwind palette is
+  removed so no accent colour can sneak into the UI. Colour only lives
+  inside the 3D scenes.
+*/
+@theme {
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+  --color-black: #000;
+  --color-white: #fff;
+  --color-grey-50: #f2f2f2;
+  --color-grey-100: #e0e0e0;
+  --color-grey-200: #c4c4c4;
+  --color-grey-300: #a3a3a3;
+  --color-grey-400: #858585;
+  --color-grey-500: #6b6b6b;
+  --color-grey-600: #4d4d4d;
+  --color-grey-700: #333333;
+  --color-grey-800: #1f1f1f;
+  --color-grey-900: #121212;
+  --color-grey-950: #0a0a0a;
+
+  --font-display: var(--font-satoshi), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+
+  --spacing-nav: 4rem;
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html {
+    background: var(--color-black);
+    scroll-padding-top: var(--spacing-nav);
+  }
+
+  body {
+    @apply bg-black font-sans text-white antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    @apply bg-white text-black;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-white);
+    outline-offset: 3px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display;
+    letter-spacing: -0.02em;
+  }
+}
+
+@layer utilities {
+  .gutter {
+    @apply px-5 sm:px-8 lg:px-12;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
