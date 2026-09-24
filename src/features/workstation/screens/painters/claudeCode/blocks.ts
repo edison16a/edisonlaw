@@ -1,5 +1,5 @@
 import { drawGlyph } from '../../draw/glyphs';
-import { toSpans, tokenize } from '../../draw/syntax';
+import { diffCodeSpans, type DiffLine } from '../../draw/diff';
 import {
   cellX,
   drawCellBox,
@@ -9,13 +9,12 @@ import {
   linesBlock,
   rowY,
   span,
-  withBackground,
   type Line,
   type Span,
   type TermBlock,
 } from '../../draw/terminal';
 import { wrapWords } from '../../draw/text';
-import { SLASH_COMMANDS, type DiffLine, type ToolCall, type ToolResult } from './session';
+import { SLASH_COMMANDS, type ToolCall, type ToolResult } from './session';
 import { CLAUDE_THEME as T } from './theme';
 
 /** Transcript pieces: the user's message, Claude's replies, tool calls, spinner and prompt. */
@@ -32,17 +31,11 @@ export function sayBlock(message: string, cols: number): TermBlock {
 }
 
 function diffLines(diff: DiffLine[]): Line[] {
-  const tokens = tokenize(
-    diff.map((line) => line.code),
-    'tsx',
-  );
+  const code = diffCodeSpans(diff, { add: T.addStrong, remove: T.removeStrong });
   return diff.map((line, index) => {
     const bg = line.sign === '+' ? T.addBg : line.sign === '-' ? T.removeBg : undefined;
-    const strong = line.sign === '+' ? T.addStrong : T.removeStrong;
-    let code: Span[] = toSpans(tokens[index]);
-    if (line.changed) code = withBackground(code, line.changed[0], line.changed[1], strong);
     const gutter = `${String(line.number).padStart(4)} ${line.sign} `;
-    return { spans: [span(gutter, line.sign === ' ' ? T.faint : T.dim), ...code], bg, indent: 5 };
+    return { spans: [span(gutter, line.sign === ' ' ? T.faint : T.dim), ...code[index]], bg, indent: 5 };
   });
 }
 

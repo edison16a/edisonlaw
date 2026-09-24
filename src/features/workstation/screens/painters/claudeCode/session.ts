@@ -1,17 +1,10 @@
 import type { AgentStep } from '../../anim/agentSession';
+import type { DiffLine } from '../../draw/diff';
 
 /**
  * The Claude Code session the left monitor plays on a loop, working in this very repo.
  * It ends with /clear, which brings back the welcome screen the loop starts on.
  */
-
-export interface DiffLine {
-  number: number;
-  sign: ' ' | '+' | '-';
-  code: string;
-  /** Characters of `code` that changed, drawn with a stronger background. */
-  changed?: [number, number];
-}
 
 export interface ToolResult {
   summary: string;
