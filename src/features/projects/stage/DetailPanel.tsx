@@ -32,13 +32,10 @@ export function DetailPanel({ projects, columnRef }: DetailPanelProps) {
         transition={{ duration: 0.6 }}
         className="pointer-events-none absolute inset-y-0 right-0 w-full bg-[linear-gradient(to_top,rgb(0_0_0/0.92),rgb(0_0_0/0.8)_34%,transparent_58%)] lg:w-[calc(var(--panel-r)+var(--panel-w)+8rem)] lg:bg-[linear-gradient(to_left,rgb(0_0_0/0.85),rgb(0_0_0/0.7)_calc(100%_-_8rem),transparent)]"
       />
-      {/*
-        Below lg the panel spans the bottom of the stage, wide enough for the stack to take a
-        column of its own, and stops above the Work Experience cue.
-      */}
+      {/* Below lg the panel spans the bottom of the stage, wide enough for the stack to take a column of its own. */}
       <div
         ref={columnRef}
-        className="pointer-events-none absolute right-0 bottom-0 flex w-full justify-center px-8 pb-16 lg:inset-y-0 lg:right-(--panel-r) lg:w-(--panel-w) lg:items-center lg:pr-12 lg:pb-0 lg:pl-0"
+        className="pointer-events-none absolute right-0 bottom-0 flex w-full justify-center px-8 pb-10 lg:inset-y-0 lg:right-(--panel-r) lg:w-(--panel-w) lg:items-center lg:pr-12 lg:pb-0 lg:pl-0"
       >
         <AnimatePresence mode="wait">
           {project && panel !== null && (

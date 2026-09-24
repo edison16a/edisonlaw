@@ -1,48 +1,36 @@
 import { create } from 'zustand';
 
 export interface FocusSnapshot {
-  /** Card nearest the focus slot. */
-  focused: number;
   /** Card whose details the panel shows, or null while the spiral travels. */
   panel: number | null;
   /** Card that has locked into focus, or null while anything is still moving. */
   settled: number | null;
-  /** True while the spiral rests in the intro, before the first card. */
-  inIntro: boolean;
 }
 
 interface SpiralState extends FocusSnapshot {
-  /** True once the visitor has first moved the spiral, by wheel, drag, key or click. */
-  hasScrolled: boolean;
+  /** True once the spiral has drawn its first frame, so the controls around it can show. */
+  ready: boolean;
   /** Project under the pointer in the spiral, or null. */
   hovered: number | null;
   /** True once the spiral canvas has failed, so the carousel takes over for the rest of the visit. */
   spiralFailed: boolean;
 
   syncFocus: (snapshot: FocusSnapshot) => void;
-  markScrolled: () => void;
   setHovered: (index: number | null) => void;
   failSpiral: () => void;
 }
 
 export const useSpiralStore = create<SpiralState>((set, get) => ({
-  focused: 0,
   panel: null,
   settled: null,
-  inIntro: true,
-  hasScrolled: false,
+  ready: false,
   hovered: null,
   spiralFailed: false,
 
-  syncFocus: ({ focused, panel, settled, inIntro }) => {
+  syncFocus: ({ panel, settled }) => {
     const state = get();
-    const same =
-      state.focused === focused && state.panel === panel && state.settled === settled && state.inIntro === inIntro;
-    if (!same) set({ focused, panel, settled, inIntro });
-  },
-
-  markScrolled: () => {
-    if (!get().hasScrolled) set({ hasScrolled: true });
+    if (state.ready && state.panel === panel && state.settled === settled) return;
+    set({ panel, settled, ready: true });
   },
 
   setHovered: (index) => {

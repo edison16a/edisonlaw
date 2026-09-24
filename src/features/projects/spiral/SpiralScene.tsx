@@ -14,7 +14,7 @@ import { cardViewport } from './cardMaterial';
 import { readFocus } from './focus';
 import { CARD_HEIGHT, CARD_WIDTH } from './geometry';
 import { frameCamera } from './lens';
-import { isAtRest, isInIntro, stepMotion } from './motionStep';
+import { isAtRest, stepMotion } from './motionStep';
 import { tickDetents } from './ticks';
 import { useCardPictures } from './useCardPictures';
 
@@ -30,7 +30,7 @@ export interface SpiralSceneProps {
 
 /** Cards turned further than this from the camera ignore the pointer. */
 const MIN_FACING = 0.2;
-/** Pointer travel in pixels beyond which a press is a drag, not a click. */
+/** Pointer travel in pixels beyond which a press is a swipe, not a click. */
 const CLICK_SLOP = 6;
 /** Faster than this, in cards per second, the card under a resting pointer changes too quickly to name. */
 const HOVER_SPEED = 1.5;
@@ -47,7 +47,7 @@ export function SpiralScene({ projects, startAt, onSelect, onHover }: SpiralScen
 
   const geometry = useMemo(() => new PlaneGeometry(CARD_WIDTH, CARD_HEIGHT, 32, 12), []);
   const [cards] = useState<CardRuntime[]>(() => createCards(count));
-  const [focus] = useState<FocusSnapshot>(() => ({ focused: 0, panel: null, settled: null, inIntro: true }));
+  const [focus] = useState<FocusSnapshot>(() => ({ panel: null, settled: null }));
   const uploadNext = useCardPictures(projects, cards, gl, startAt);
 
   useEffect(() => () => geometry.dispose(), [geometry]);
@@ -66,15 +66,13 @@ export function SpiralScene({ projects, startAt, onSelect, onHover }: SpiralScen
     stepMotion(spiralMotion, delta, reducedMotion);
     tickDetents(previous, spiralMotion.value, spiralMotion.velocity, performance.now());
     const { value, velocity, settle } = spiralMotion;
-    syncFocus(readFocus(value, velocity, settle, count, isInIntro(spiralMotion), focus));
+    syncFocus(readFocus(value, velocity, settle, count, focus));
     if (spiralMotion.hoverSlot !== null && Math.abs(velocity) > HOVER_SPEED) {
       spiralMotion.hoverSlot = null;
       onHover(null);
     }
 
-    const { focusShift, focusLift } = stageMetrics;
-    const engaged = spiralMotion.engaged;
-    frameCamera(camera, state.size.width, state.size.height, focusShift * engaged, focusLift * engaged);
+    frameCamera(camera, state.size.width, state.size.height, stageMetrics.focusShift, stageMetrics.focusLift);
     gl.getDrawingBufferSize(cardViewport);
     let busy = uploadNext();
     for (const card of cards) busy = updateCard(card, spiralMotion, cards.length, delta, reducedMotion) || busy;

@@ -1,18 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import type { SpiralMotion } from '../state/spiralMotion';
-import { INTRO_INDEX } from './loop';
-import { isAtRest, isInIntro, stepMotion } from './motionStep';
+import { isAtRest, stepMotion } from './motionStep';
 
-const create = (value: number, introAt: number | null = null): SpiralMotion => ({
+const create = (value: number): SpiralMotion => ({
   target: value,
   value,
   velocity: 0,
-  dragging: false,
   settle: 0,
-  engaged: 0,
   reveal: 0,
   hoverSlot: null,
-  introAt,
 });
 
 const run = (motion: SpiralMotion, target: number, seconds: number, reducedMotion = false) => {
@@ -22,34 +18,66 @@ const run = (motion: SpiralMotion, target: number, seconds: number, reducedMotio
 };
 
 describe('stepMotion', () => {
-  it('eases the index to the target and settles on a card', () => {
-    const motion = run(create(2.6), 3, 2);
-    expect(motion.value).toBeCloseTo(3, 3);
+  it('eases to the next card and comes to rest on it', () => {
+    const motion = run(create(3), 4, 2);
+    expect(motion.value).toBeCloseTo(4, 3);
     expect(motion.settle).toBeGreaterThan(0.95);
   });
 
   it('settles on cards past either end of the list', () => {
-    expect(run(create(-3.3), -4, 2).settle).toBeGreaterThan(0.95);
-    expect(run(create(40.2), 41, 2).settle).toBeGreaterThan(0.95);
+    expect(run(create(-3), -4, 2).settle).toBeGreaterThan(0.95);
+    expect(run(create(40), 41, 2).settle).toBeGreaterThan(0.95);
+  });
+
+  it('takes its time over one card, so the move reads as weighty', () => {
+    const motion = run(create(0), 1, 0.25);
+    expect(motion.value).toBeGreaterThan(0.2);
+    expect(motion.value).toBeLessThan(0.85);
+  });
+
+  it('lets go of the resting card as soon as a move starts', () => {
+    const motion = run(create(3), 3, 2);
+    run(motion, 4, 0.25);
+    expect(motion.settle).toBeLessThan(0.2);
   });
 
   it('never settles between cards', () => {
     expect(run(create(3.4), 3.4, 2).settle).toBeLessThan(0.01);
-    expect(run(create(INTRO_INDEX, INTRO_INDEX), INTRO_INDEX, 2).settle).toBeLessThan(0.01);
   });
 
-  it('lets go of a settled card as soon as it moves', () => {
-    const motion = run(create(3), 3, 2);
-    run(motion, 3.6, 0.25);
-    expect(motion.settle).toBeLessThan(0.2);
+  it('spins through a queue of cards at a steady pace', () => {
+    const motion = create(0);
+    motion.target = 3;
+    let fastest = 0;
+    for (let frame = 0; frame < 120; frame++) {
+      stepMotion(motion, 1 / 60, false);
+      fastest = Math.max(fastest, motion.velocity);
+    }
+    expect(fastest).toBeLessThanOrEqual(5.01);
+    expect(motion.value).toBeCloseTo(3, 2);
   });
 
-  it('eases a big jump over several frames, and faster for reduced motion', () => {
-    const weighty = run(create(0), 3, 0.2);
-    const calm = run(create(0), 3, 0.2, true);
-    expect(weighty.value).toBeGreaterThan(0.5);
-    expect(weighty.value).toBeLessThan(2.8);
-    expect(calm.value).toBeGreaterThan(weighty.value);
+  it('turns round smoothly when the target flips mid move', () => {
+    const motion = run(create(0), 1, 0.2);
+    const turnedAt = motion.value;
+    let previous = motion.value;
+    let biggestStep = 0;
+    motion.target = -1;
+    for (let frame = 0; frame < 120; frame++) {
+      stepMotion(motion, 1 / 60, false);
+      biggestStep = Math.max(biggestStep, Math.abs(motion.value - previous));
+      previous = motion.value;
+    }
+    expect(turnedAt).toBeGreaterThan(0);
+    expect(biggestStep).toBeLessThan(0.12);
+    expect(motion.value).toBeCloseTo(-1, 2);
+  });
+
+  it('moves quickly for reduced motion', () => {
+    const weighty = run(create(0), 1, 0.15);
+    const calm = run(create(0), 1, 0.15, true);
+    expect(calm.value).toBeGreaterThan(0.95);
+    expect(weighty.value).toBeLessThan(calm.value);
   });
 
   it('brings the cards in once and keeps them there', () => {
@@ -58,47 +86,13 @@ describe('stepMotion', () => {
   });
 });
 
-describe('the intro', () => {
-  it('stays centred in the opening pose', () => {
-    const motion = run(create(INTRO_INDEX, INTRO_INDEX), INTRO_INDEX, 1);
-    expect(motion.engaged).toBe(0);
-    expect(isInIntro(motion)).toBe(true);
-  });
-
-  it('slides aside for the panel on the way to a card, in either direction', () => {
-    const forward = run(create(INTRO_INDEX, INTRO_INDEX), 0, 2);
-    expect(forward.engaged).toBe(1);
-    expect(forward.introAt).toBeNull();
-    const back = run(create(INTRO_INDEX, INTRO_INDEX), -1, 2);
-    expect(back.engaged).toBe(1);
-    expect(isInIntro(back)).toBe(false);
-  });
-
-  it('never comes back once over, even halfway between two cards', () => {
-    const motion = run(create(INTRO_INDEX, INTRO_INDEX), 0, 2);
-    run(motion, INTRO_INDEX, 2);
-    expect(motion.engaged).toBe(1);
-    expect(isInIntro(motion)).toBe(false);
-  });
-});
-
 describe('isAtRest', () => {
   it('rests once the spiral has settled on a card and the entrance is done', () => {
     expect(isAtRest(run(create(3), 3, 5))).toBe(true);
   });
 
-  it('rests in the intro too, where nothing settles', () => {
-    expect(isAtRest(run(create(INTRO_INDEX, INTRO_INDEX), INTRO_INDEX, 5))).toBe(true);
-  });
-
   it('keeps drawing while the spiral travels, settles or rises in', () => {
     expect(isAtRest(run(create(2), 3, 0.1))).toBe(false);
     expect(isAtRest(run(create(3), 3, 0.05))).toBe(false);
-  });
-
-  it('keeps drawing while the stage is being dragged', () => {
-    const motion = run(create(3), 3, 5);
-    motion.dragging = true;
-    expect(isAtRest(motion)).toBe(false);
   });
 });

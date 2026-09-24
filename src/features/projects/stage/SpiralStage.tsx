@@ -1,50 +1,43 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import type { Project } from '@/content/types';
 import { CanvasBoundary } from '@/components/three/CanvasBoundary';
 import { sound } from '@/features/sound';
-import { cn } from '@/lib/cn';
 import { useInView } from '@/lib/hooks/useInView';
 import { useOpeningCard } from '../hooks/useOpeningCard';
 import { useSpiralSounds } from '../hooks/useSpiralSounds';
 import { useStageMetrics } from '../hooks/useStageMetrics';
-import { spinTo, stopSpin } from '../input/steering';
-import { useSpinKeys } from '../input/useSpinKeys';
-import { useStageHome } from '../input/useStageHome';
-import { useWheelSpin } from '../input/useWheelSpin';
+import { moveSpiralTo } from '../input/steering';
+import { useStepKeys } from '../input/useStepKeys';
 import { useSpiralStore } from '../state/spiralStore';
 import { DetailPanel } from './DetailPanel';
 import { HoverLabel } from './HoverLabel';
-import { IntroCaption } from './IntroCaption';
-import { NextSectionCue } from './NextSectionCue';
 import { StageBackdrop } from './StageBackdrop';
 import { StageSurface } from './StageSurface';
+import { StageTitle } from './StageTitle';
+import { StepArrows } from './StepArrows';
 
 const SpiralCanvas = dynamic(() => import('../spiral/SpiralCanvas').then((loaded) => loaded.SpiralCanvas), {
   ssr: false,
 });
 
 /**
- * One viewport under the navbar, and the page stands still on it. The wheel,
- * the trackpad, drags and the arrow keys spin the spiral through the projects
- * forever, in either direction. The cue at the bottom, the navbar, the
- * scrollbar and PageDown carry on to Work Experience.
+ * One viewport under the navbar, and the page scrolls past it like any other
+ * section. The spiral always shows one project up close, starting on the
+ * featured one. The arrows beside it, the left and right arrow keys, sideways
+ * swipes and clicks on the cards around it turn the spiral from project to
+ * project, round and round forever.
  */
 export function SpiralStage({ projects }: { projects: Project[] }) {
   const stage = useRef<HTMLDivElement>(null);
-  const surface = useRef<HTMLDivElement>(null);
   const column = useRef<HTMLDivElement>(null);
-  const count = projects.length;
 
   useStageMetrics(stage, column);
-  const startAt = useOpeningCard(count);
-  const home = useStageHome(stage);
-  useWheelSpin(stage);
-  useSpinKeys(stage, surface, count);
+  const startAt = useOpeningCard(projects);
+  useStepKeys(stage);
   useSpiralSounds();
-  useEffect(() => stopSpin, []);
 
   const near = useInView(stage, { rootMargin: '25% 0px' });
   const [mounted, setMounted] = useState(false);
@@ -64,28 +57,28 @@ export function SpiralStage({ projects }: { projects: Project[] }) {
   return (
     // On wide screens the panel sits beside the spiral. It keeps to a composition at most
     // 160dvh wide, so on screens wider than 16:10 it does not drift away to the far edge.
-    // While the stage is home, no touch anywhere on it pans the page, though a pinch still zooms.
+    // Touch screens pan the page up and down here, and sideways swipes turn the spiral.
     <div
       ref={stage}
-      className={cn(
-        'relative h-[calc(100dvh-var(--spacing-nav))] overflow-hidden [--panel-r:max(0px,calc((100%-160dvh)/2))] [--panel-w:clamp(21rem,29vw,27rem)]',
-        home ? 'touch-pinch-zoom' : 'touch-pan-y touch-pinch-zoom',
-      )}
+      role="group"
+      aria-roledescription="carousel"
+      aria-label="Project spiral"
+      className="relative h-[calc(100dvh-var(--spacing-nav))] touch-pan-y touch-pinch-zoom overflow-hidden [--panel-r:max(0px,calc((100%-160dvh)/2))] [--panel-w:clamp(21rem,29vw,27rem)]"
     >
       <StageBackdrop />
-      <StageSurface ref={surface}>
+      <StageSurface>
         {mounted && (
           <CanvasBoundary label="project spiral" onFail={fallBack}>
-            <SpiralCanvas projects={projects} startAt={startAt} active={near} onSelect={spinTo} onHover={onHover} />
+            <SpiralCanvas projects={projects} startAt={startAt} active={near} onSelect={moveSpiralTo} onHover={onHover} />
           </CanvasBoundary>
         )}
       </StageSurface>
       {/* The stage melts into the black page below, so the handoff to the next section has no hard edge. */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-[12%] bg-linear-to-b from-transparent to-black" />
-      <IntroCaption />
+      <StageTitle />
       <HoverLabel projects={projects} />
+      <StepArrows />
       <DetailPanel projects={projects} columnRef={column} />
-      <NextSectionCue />
     </div>
   );
 }

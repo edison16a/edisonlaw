@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, type RefObject } from 'react';
+import { focusCardRect } from '../spiral/anchor';
 import { setStageMetrics } from '../state/stageMetrics';
 import { wakeSpiral } from '../state/spiralWake';
 
@@ -12,8 +13,10 @@ const SHIFT_SHARE = 0.8;
 const LIFT_SHARE = 0.2;
 
 /**
- * Measures the stage on mount and on every resize, and publishes how far the
- * scene slides aside, or up, to make room for the detail panel.
+ * Measures the stage on mount and on every resize. It publishes how far the
+ * scene slides aside, or up, to make room for the detail panel, and where the
+ * focused card lands as CSS variables on the stage, so the arrows can sit
+ * right beside it: --card-left, --card-right and --card-middle, in pixels.
  */
 export function useStageMetrics(stage: RefObject<HTMLElement | null>, column: RefObject<HTMLElement | null>) {
   useEffect(() => {
@@ -22,13 +25,20 @@ export function useStageMetrics(stage: RefObject<HTMLElement | null>, column: Re
     const sidePanel = window.matchMedia(SIDE_PANEL_QUERY);
 
     const measure = () => {
+      const width = stageNode.clientWidth;
+      const height = stageNode.clientHeight;
+      if (width === 0 || height === 0) return;
       // The composition is centred, so half the panel's width puts the focused card
       // at the centre of the space left of the panel.
       const panelWidth = column.current?.offsetWidth ?? 0;
-      setStageMetrics({
-        focusShift: sidePanel.matches ? (panelWidth / 2) * SHIFT_SHARE : 0,
-        focusLift: sidePanel.matches ? 0 : stageNode.clientHeight * LIFT_SHARE,
-      });
+      const focusShift = sidePanel.matches ? (panelWidth / 2) * SHIFT_SHARE : 0;
+      const focusLift = sidePanel.matches ? 0 : height * LIFT_SHARE;
+      setStageMetrics({ focusShift, focusLift });
+
+      const card = focusCardRect(width, height, focusShift, focusLift);
+      stageNode.style.setProperty('--card-left', `${card.left.toFixed(1)}px`);
+      stageNode.style.setProperty('--card-right', `${card.right.toFixed(1)}px`);
+      stageNode.style.setProperty('--card-middle', `${((card.top + card.bottom) / 2).toFixed(1)}px`);
       wakeSpiral();
     };
 

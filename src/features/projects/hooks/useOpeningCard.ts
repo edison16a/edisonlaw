@@ -1,21 +1,22 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { INTRO_INDEX, projectAt } from '../spiral/loop';
-import { resetSpiralMotion, spiralMotion } from '../state/spiralMotion';
+import type { Project } from '@/content/types';
+import { featuredIndex } from '../featured';
+import { projectAt } from '../spiral/loop';
+import { openingCard, placeSpiral } from '../state/spiralMotion';
 
 /**
- * Where the spiral opens. The first time it is the intro, halfway before the
- * first project. If the stage comes back later in the visit, after a resize
- * for example, it opens on the card it was showing. Returns the project to
- * load first.
+ * Where the spiral opens: on the featured project the first time, and on the
+ * card it was showing if the stage comes back later in the visit, after a
+ * resize for example. Returns that project, so its picture loads first.
  */
-export function useOpeningCard(count: number) {
-  const [opening] = useState(() => (spiralMotion.introAt === null ? Math.round(spiralMotion.target) : INTRO_INDEX));
+export function useOpeningCard(projects: Project[]) {
+  const [opening] = useState(() => openingCard(featuredIndex(projects)));
 
   useEffect(() => {
-    resetSpiralMotion(opening);
+    placeSpiral(opening);
   }, [opening]);
 
-  return projectAt(opening, count);
+  return projectAt(opening, projects.length);
 }

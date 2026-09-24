@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { INTRO_INDEX, nearestCardOf, projectAt, stepFrom } from './loop';
+import { MAX_LEAD, projectAt, stepTarget } from './loop';
 
 describe('projectAt', () => {
   it('wraps the index onto the projects in both directions', () => {
@@ -14,7 +14,6 @@ describe('projectAt', () => {
   it('counts a continuous index as its nearest card', () => {
     expect(projectAt(3.4, 12)).toBe(3);
     expect(projectAt(-0.6, 12)).toBe(11);
-    expect(projectAt(INTRO_INDEX, 12)).toBe(0);
   });
 
   it('survives an empty deck', () => {
@@ -22,41 +21,46 @@ describe('projectAt', () => {
   });
 });
 
-describe('nearestCardOf', () => {
-  it('finds the closest card showing a project, whichever way round', () => {
-    expect(nearestCardOf(3, 0, 12)).toBe(3);
-    expect(nearestCardOf(11, 0, 12)).toBe(-1);
-    expect(nearestCardOf(0, 23, 12)).toBe(24);
-    expect(nearestCardOf(5, -30, 12)).toBe(-31);
+describe('stepTarget', () => {
+  it('moves one card from rest', () => {
+    expect(stepTarget(3, 3, 1)).toBe(4);
+    expect(stepTarget(3, 3, -1)).toBe(2);
+    expect(stepTarget(-5, -5, -1)).toBe(-6);
   });
 
-  it('always lands on a card that shows the project', () => {
-    for (const from of [-17.3, -1, 0, 6.5, 40]) {
-      for (let project = 0; project < 12; project++) {
-        const card = nearestCardOf(project, from, 12);
-        expect(projectAt(card, 12)).toBe(project);
-        expect(Math.abs(card - Math.round(from))).toBeLessThanOrEqual(6);
-      }
+  it('wraps from the last project to the first and back', () => {
+    expect(projectAt(stepTarget(11, 11, 1), 12)).toBe(0);
+    expect(projectAt(stepTarget(0, 0, -1), 12)).toBe(11);
+  });
+
+  it('goes round forever in either direction', () => {
+    let forward = 0;
+    let back = 0;
+    for (let press = 0; press < 1000; press++) {
+      forward = stepTarget(forward, forward, 1);
+      back = stepTarget(back, back, -1);
     }
-  });
-});
-
-describe('stepFrom', () => {
-  it('moves one card from a whole card', () => {
-    expect(stepFrom(3, 1)).toBe(4);
-    expect(stepFrom(3, -1)).toBe(2);
-    expect(stepFrom(-5, -1)).toBe(-6);
+    expect(projectAt(forward, 12)).toBe(1000 % 12);
+    expect(projectAt(back, 12)).toBe(12 - (1000 % 12));
   });
 
-  it('moves to the next card in that direction from between two', () => {
-    expect(stepFrom(INTRO_INDEX, 1)).toBe(0);
-    expect(stepFrom(INTRO_INDEX, -1)).toBe(-1);
-    expect(stepFrom(3.4, 1)).toBe(4);
-    expect(stepFrom(3.4, -1)).toBe(3);
+  it('queues quick presses on top of the card it is heading for', () => {
+    expect(stepTarget(5, 4.3, 1)).toBe(6);
+    expect(stepTarget(6, 4.6, 1)).toBe(7);
   });
 
-  it('treats a value a hair off a card as that card', () => {
-    expect(stepFrom(2.9999999, 1)).toBe(4);
-    expect(stepFrom(3.0000001, -1)).toBe(2);
+  it('turns round smoothly when a press goes the other way mid move', () => {
+    expect(stepTarget(7, 4.5, -1)).toBe(6);
+    expect(stepTarget(4, 3.8, -1)).toBe(3);
+  });
+
+  it('never queues more than the lead ahead of the cards', () => {
+    expect(stepTarget(4 + MAX_LEAD, 4, 1)).toBe(4 + MAX_LEAD);
+    expect(stepTarget(4 - MAX_LEAD, 4, -1)).toBe(4 - MAX_LEAD);
+  });
+
+  it('always lands on a whole card', () => {
+    expect(stepTarget(2.7, 2.2, 1)).toBe(4);
+    expect(Number.isInteger(stepTarget(2.7, 2.2, -1))).toBe(true);
   });
 });

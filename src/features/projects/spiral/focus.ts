@@ -9,24 +9,15 @@ const PANEL_SPEED = 1.5;
 const SETTLED = 0.5;
 
 /**
- * Which project is nearest, which one the panel should describe and which one
- * has locked into focus. `value` is the looping card index, so every answer is
- * a project index. Writes into `out` so the render loop allocates nothing.
+ * Which project the panel should describe and which one has locked into
+ * focus. `value` is the looping card index, so every answer is a project
+ * index. Writes into `out` so the render loop allocates nothing.
  */
-export function readFocus(
-  value: number,
-  velocity: number,
-  settle: number,
-  count: number,
-  inIntro: boolean,
-  out: FocusSnapshot,
-) {
+export function readFocus(value: number, velocity: number, settle: number, count: number, out: FocusSnapshot) {
   const nearest = Math.round(value);
   const project = projectAt(nearest, count);
-  const close = !inIntro && Math.abs(value - nearest) < PANEL_DISTANCE && Math.abs(velocity) < PANEL_SPEED;
-  out.focused = project;
+  const close = Math.abs(value - nearest) < PANEL_DISTANCE && Math.abs(velocity) < PANEL_SPEED;
   out.panel = close ? project : null;
   out.settled = settle > SETTLED ? project : null;
-  out.inIntro = inIntro;
   return out;
 }
