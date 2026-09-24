@@ -109,6 +109,8 @@ export function standingPose(t: number, motion: number, seed: number, pose: Body
   pose.chest.set(0.02 - 0.012 * breath + 0.02 * think, 0.04 * think, -weight * 0.012);
   pose.shrug.left = 0.004 * breath + 0.006 * think;
   pose.shrug.right = 0.004 * breath + 0.004 * sip;
+  pose.reach.left = 0.012 * think;
+  pose.reach.right = 0.006 * sip;
 
   const { left, center, right } = STANDING_TARGETS.looks;
   const toSide = 0.8 * looking;

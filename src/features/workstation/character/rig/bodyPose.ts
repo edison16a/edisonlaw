@@ -16,6 +16,8 @@ export interface BodyPose {
   head: Euler;
   /** Extra lift of each shoulder joint, in metres. */
   shrug: Record<LimbName, number>;
+  /** How far each shoulder joint rolls forward, in metres. */
+  reach: Record<LimbName, number>;
   arms: Record<LimbName, LimbGoal>;
   legs: Record<LimbName, LimbGoal>;
   /** Curl of index, middle, ring and little finger, in radians. */
@@ -34,6 +36,7 @@ export function createBodyPose(): BodyPose {
     neck: new Euler(0, 0, 0, 'YXZ'),
     head: new Euler(0, 0, 0, 'YXZ'),
     shrug: { left: 0, right: 0 },
+    reach: { left: 0, right: 0 },
     arms: { left: createLimbGoal(), right: createLimbGoal() },
     legs: { left: createLimbGoal(), right: createLimbGoal() },
     fingers: { left: [0, 0, 0, 0], right: [0, 0, 0, 0] },
@@ -62,6 +65,7 @@ export function applyBodyPose(rig: Rig, pose: BodyPose) {
   for (const name of LIMB_NAMES) {
     const arm = rig.arms[name];
     arm.base.position.y = BODY.shoulder.y + pose.shrug[name];
+    arm.base.position.z = BODY.shoulder.z + pose.reach[name];
     arm.base.updateMatrix();
     baseMatrix.multiplyMatrices(chestMatrix, arm.base.matrix);
     poseLimb(arm, baseMatrix, pose.arms[name], LIMBS.arm.upper, LIMBS.arm.lower);
@@ -75,6 +79,10 @@ export function applyBodyPose(rig: Rig, pose: BodyPose) {
   }
 
   const open = 1 - 0.93 * pose.blink;
-  rig.eyes[0].scale.y = open;
-  rig.eyes[1].scale.y = open;
+  const shine = Math.max(0, 1 - pose.blink * 2.5);
+  for (let i = 0; i < 2; i++) {
+    rig.eyes[i].scale.y = open;
+    rig.shines[i].scale.setScalar(shine);
+    rig.shines[i].visible = shine > 0;
+  }
 }

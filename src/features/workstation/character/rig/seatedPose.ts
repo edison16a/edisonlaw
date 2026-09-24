@@ -49,18 +49,19 @@ function typingHand(side: Side, stroke: Keystroke, typing: number, out: LimbGoal
   facing.set(side * 0.3, 1, 0.1);
   aimRotation(along, facing, out.rotation);
   jointFor(point, out.rotation, KNUCKLES, out.target);
-  out.pole.set(side, -0.8, -0.3);
+  // Elbows lift out to the sides: at an adult desk his forearms stay level with the keys.
+  out.pole.set(side, -0.28, -0.4);
 }
 
 /** Right hand cupped over the mouse, drifting a little as he moves the pointer. */
 function mouseHand(t: number, seed: number, out: LimbGoal) {
   const target = SEATED_TARGETS.mouse;
-  point.set(target.x + noise(t * 0.9, seed + 5) * 0.012, target.y + 0.036, target.z - 0.014 + noise(t * 0.7, seed + 6) * 0.01);
+  point.set(target.x + noise(t * 0.9, seed + 5) * 0.012, target.y + 0.036, target.z - 0.03 + noise(t * 0.7, seed + 6) * 0.01);
   along.set(0.12, -0.22, 1);
   facing.set(-0.22, 1, 0);
   aimRotation(along, facing, out.rotation);
   jointFor(point, out.rotation, PALM, out.target);
-  out.pole.set(-1, -0.7, -0.4);
+  out.pole.set(-1, -0.35, -0.45);
 }
 
 function blendGoal(from: LimbGoal, to: LimbGoal, weight: number, out: LimbGoal) {
@@ -98,11 +99,13 @@ export function seatedPose(t: number, motion: number, seed: number, pose: BodyPo
 
   pose.pelvisPosition.set(0, BODY.seatedPelvisHeight, 0);
   pose.pelvis.set(0, 0, 0);
-  pose.spine.set(0.13 + 0.008 * breath, -0.07 * onMouse, 0.035 * onMouse);
+  pose.spine.set(0.13 + 0.008 * breath + 0.04 * onMouse, -0.12 * onMouse, 0.06 * onMouse);
   const sway = 0.012 * (strokes.left.press * typing - strokes.right.press * rightTyping);
-  pose.chest.set(0.07 - 0.014 * breath + 0.012 * typing, -0.1 * onMouse + sway, 0);
+  pose.chest.set(0.07 - 0.014 * breath + 0.012 * typing, -0.14 * onMouse + sway, 0.03 * onMouse);
   pose.shrug.left = 0.004 * breath + 0.003 * typing;
   pose.shrug.right = 0.004 * breath + 0.003 * rightTyping + 0.006 * onMouse;
+  pose.reach.left = 0.004 * typing;
+  pose.reach.right = 0.004 * rightTyping + 0.028 * onMouse;
 
   // Head: on the centre screen, turning to a side screen during a glance, and toward the right while mousing.
   const { left, center, right } = SEATED_TARGETS.looks;
