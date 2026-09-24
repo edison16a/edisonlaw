@@ -81,7 +81,8 @@ const lock = (path: Vec3[], width: number, flatness: number, facing: Vec3, blend
  * thin tip hanging free reads as a drip rather than as fur.
  */
 function frill(): Shape[] {
-  const locks = [-0.034, 0, 0.034].flatMap((x) =>
+  // Thick enough, and melted in softly enough, that their edges never form a crease down the chest.
+  const locks = [-0.03, 0, 0.03].flatMap((x) =>
     flatLock({
       path: [
         [x, 0.44, 0.28],
@@ -89,10 +90,10 @@ function frill(): Shape[] {
         [x * 1.1, 0.29, 0.29],
       ],
       width: 0.032,
-      flatness: 0.24,
+      flatness: 0.46,
       facing: [x * 8, 0.15, 1],
       tones: [TONE.light + 0.05, TONE.cream],
-      blend: 0.026,
+      blend: 0.04,
       part: PART.body,
       segments: 7,
     }),
