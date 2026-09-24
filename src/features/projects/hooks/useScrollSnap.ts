@@ -52,8 +52,16 @@ export function useScrollSnap() {
       lenis.scrollTo(destination, { lerp: SNAP_LERP });
     };
 
+    // Only a gesture that starts among the cards has a locked card to nudge away from. From
+    // below the track the spiral rests on the last card, but coming back in should not skip it.
+    const lockedCard = () => {
+      const position = rawIndexFromScroll(window.scrollY, stageMetrics);
+      const inside = position > -0.01 && position < stageMetrics.count - 1 + 0.01;
+      return inside ? useSpiralStore.getState().settled : null;
+    };
+
     const schedule = () => {
-      if (idle) anchor = useSpiralStore.getState().settled;
+      if (idle) anchor = lockedCard();
       idle = false;
       window.clearTimeout(timer);
       timer = window.setTimeout(snap, IDLE_MS);
