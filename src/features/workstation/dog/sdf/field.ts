@@ -34,10 +34,15 @@ export const createFieldSample = (partCount: number): FieldSample => ({ distance
 
 const clamp01 = (value: number) => (value < 0 ? 0 : value > 1 ? 1 : value);
 
-/** Smooth union of the accumulated distance `d` with a new shape at `di`. */
+/**
+ * Smooth union of the accumulated distance `d` with a new shape at `di`. Outside the blend it returns
+ * the nearer value untouched rather than recomputing it, so a shape the mesher culled as too far to
+ * matter leaves exactly the same number behind, and blocks that share a grid corner agree on its sign.
+ */
 function unite(d: number, di: number, k: number) {
   if (d === Infinity) return di;
-  if (k <= 0) return d < di ? d : di;
+  if (di - d >= k) return d;
+  if (d - di >= k) return di;
   const keep = clamp01(0.5 + (0.5 * (di - d)) / k);
   return di + (d - di) * keep - k * keep * (1 - keep);
 }
