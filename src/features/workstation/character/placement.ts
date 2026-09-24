@@ -19,12 +19,12 @@ export const SEATED_PLACEMENT: Placement = {
 };
 
 /**
- * Origin of the standing pose is the floor between the feet. A step back from the right end of the desk,
- * turned toward the centre monitor, and clear of the seated pose's line of sight from the work camera.
+ * Origin of the standing pose is the floor between the feet. In front of the middle of the desk,
+ * a step back from its edge, turned a little toward the left monitors and the about camera.
  */
 export const STANDING_PLACEMENT: Placement = {
-  position: [0.98, 0, 0.44],
-  rotationY: Math.PI + 0.4,
+  position: [0.3, 0, 0.42],
+  rotationY: Math.PI + 0.15,
 };
 
 /**
