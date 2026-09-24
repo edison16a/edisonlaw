@@ -18,7 +18,7 @@ export interface DogData {
 }
 
 /** Grid cells for the small parts: finer than the coat because they are small and seen up close. */
-const CELLS = { ear: 0.0025, nose: 0.0012, tongue: 0.0012 } as const;
+const CELLS = { ear: 0.003, nose: 0.0015, tongue: 0.0015 } as const;
 
 /** Sculpts and meshes the whole dog. Costly: about a million distance samples, so it runs in a worker. */
 export function buildDogData(): DogData {

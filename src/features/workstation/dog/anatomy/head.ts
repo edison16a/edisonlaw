@@ -113,7 +113,7 @@ export function headFur(): Shape[] {
 /** The open mouth: a slot between the lips and the jaw that turns up into a smile at the corners. */
 export function mouthCarves(): Shape[] {
   return [
-    carve(ellipsoid(FACE.mouth.center, FACE.mouth.radii, CUT), 0.004),
-    ...bothSides((side) => [carve(cone(sided([0.012, -0.1665, 0.11], side), sided(FACE.mouthCorner, side), 0.011, 0.0065, CUT), 0.006)]),
+    carve(ellipsoid(FACE.mouth.center, FACE.mouth.radii, CUT), 0.007),
+    ...bothSides((side) => [carve(cone(sided([0.012, -0.1665, 0.11], side), sided(FACE.mouthCorner, side), 0.011, 0.0065, CUT), 0.008)]),
   ];
 }
