@@ -23,13 +23,14 @@ export const LANDSCAPE_ASPECT = 1.4;
 export const CAMERA_FRAMINGS: Record<StageVariant, CameraFraming> = {
   // Elevated three-quarter view from behind and to the right, like the reference.
   work: {
-    portrait: { position: [2.6, 2.85, 3.5], target: [0.28, 0.82, -0.3], fov: 36 },
-    landscape: { position: [2.45, 2.7, 3.2], target: [0.3, 0.9, -0.3], fov: 31 },
+    portrait: { position: [3.0, 3.25, 4.4], target: [0.36, 0.72, -0.3], fov: 37 },
+    landscape: { position: [2.6, 2.85, 3.6], target: [0.35, 0.9, -0.3], fov: 32 },
   },
-  // Lower and from the front left, so the standing figure reads in three-quarter profile.
+  // From the left, near eye level, so the standing figure reads in three-quarter profile against
+  // the glowing screens. The camera sits past the left wall, which is single sided and so invisible.
   about: {
-    portrait: { position: [-2.0, 1.72, 2.75], target: [0.22, 0.92, -0.18], fov: 36 },
-    landscape: { position: [-1.85, 1.62, 2.45], target: [0.2, 0.98, -0.22], fov: 31 },
+    portrait: { position: [-4.3, 1.95, 2.0], target: [0.14, 0.9, -0.06], fov: 35 },
+    landscape: { position: [-4.3, 1.95, 2.0], target: [0.1, 0.94, -0.1], fov: 23 },
   },
 };
 
