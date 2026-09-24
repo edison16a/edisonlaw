@@ -1,0 +1,39 @@
+import { MeshPhysicalMaterial, MeshStandardMaterial } from 'three';
+import { createFloorTexture } from './canvasTextures';
+import { withEdgeFade } from './edgeFade';
+
+/**
+ * Materials shared by several props. Built once on first use and reused by every
+ * scene on the page, so repeated surfaces cost one shader and one upload.
+ */
+function createMaterials() {
+  const floorMap = createFloorTexture();
+  floorMap.repeat.set(1.6, 1.6);
+
+  return {
+    /** Near black charcoal with a hint of warmth. */
+    wall: withEdgeFade(new MeshStandardMaterial({ color: '#27221f', roughness: 0.96 })),
+    skirting: withEdgeFade(new MeshStandardMaterial({ color: '#1a1715', roughness: 0.8 })),
+    floor: withEdgeFade(new MeshStandardMaterial({ map: floorMap, color: '#b4a497', roughness: 0.62 })),
+    /** Pale off-white laminate, catches the screen light. */
+    deskTop: new MeshPhysicalMaterial({ color: '#e7e2d9', roughness: 0.5, clearcoat: 0.25, clearcoatRoughness: 0.5 }),
+    lightWood: new MeshStandardMaterial({ color: '#b98d62', roughness: 0.62 }),
+    /** Glossy white plastic for the chair shell, pots and the mug. */
+    whitePlastic: new MeshPhysicalMaterial({ color: '#efece6', roughness: 0.38, clearcoat: 0.4, clearcoatRoughness: 0.35 }),
+    brushedMetal: new MeshStandardMaterial({ color: '#9ca0a8', metalness: 0.85, roughness: 0.32 }),
+    aluminium: new MeshStandardMaterial({ color: '#c9ccd1', metalness: 0.8, roughness: 0.34 }),
+    /** Satin graphite for bezels, the keyboard case and small electronics. */
+    darkPlastic: new MeshStandardMaterial({ color: '#17181c', roughness: 0.55, metalness: 0.1 }),
+    blackMatte: new MeshStandardMaterial({ color: '#0b0b0d', roughness: 0.8 }),
+    rubber: new MeshStandardMaterial({ color: '#232326', roughness: 0.9 }),
+  };
+}
+
+export type SharedMaterials = ReturnType<typeof createMaterials>;
+
+let shared: SharedMaterials | null = null;
+
+export function getMaterials(): SharedMaterials {
+  shared ??= createMaterials();
+  return shared;
+}
