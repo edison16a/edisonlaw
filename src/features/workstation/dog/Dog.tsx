@@ -8,6 +8,7 @@ import { DogMaterialsProvider } from './MaterialsContext';
 import { DOG_PLACEMENT } from './placement';
 import { createDogRig } from './rig/createDogRig';
 import { useDogMotion } from './rig/useDogMotion';
+import { Shadow } from './parts/Shadow';
 
 export interface DogProps {
   /** False freezes the idle animation, for reduced motion. */
@@ -36,6 +37,7 @@ function LoadedDog({ animate, data: pending }: { animate: boolean; data: Promise
   return (
     <DogMaterialsProvider>
       <group name="dog" position={DOG_PLACEMENT.position} rotation-y={DOG_PLACEMENT.rotationY}>
+        <Shadow />
         <DogBody rig={rig} data={data} />
       </group>
     </DogMaterialsProvider>
