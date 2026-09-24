@@ -1,5 +1,5 @@
 import type { Vec3 } from '../../layout';
-import { JOINTS, PART, TONE } from '../dimensions';
+import { JOINTS, PART, PAWS, TONE } from '../dimensions';
 import type { Shape } from '../sdf/field';
 import { ball, bothSides, cone, ellipsoid, flatLock, sided } from './sculpt';
 
@@ -41,7 +41,7 @@ function frontLeg(side: 1 | -1): Shape[] {
   const elbow = sided([0.068, 0.18, 0.066], side);
   const wrist = sided([0.064, 0.066, 0.094], side);
   const ankle = sided([0.064, 0.034, 0.104], side);
-  const paw: Vec3 = [0.064 * side, 0.026, 0.118];
+  const paw: Vec3 = [PAWS.front[0] * side, 0.026, PAWS.front[1]];
   return [
     cone(shoulder, elbow, 0.052, 0.043, body(TONE.coat, 0.045)),
     cone(elbow, wrist, 0.039, 0.033, body(TONE.coat, 0.02)),
@@ -55,7 +55,7 @@ function rearLeg(side: 1 | -1): Shape[] {
   const stifle = sided([0.077, 0.175, -0.108], side);
   const hock = sided([0.072, 0.08, -0.178], side);
   const ankle = sided([0.07, 0.034, -0.158], side);
-  const paw: Vec3 = [0.07 * side, 0.026, -0.14];
+  const paw: Vec3 = [PAWS.rear[0] * side, 0.026, PAWS.rear[1]];
   return [
     // Thigh, full and rounded, leaning forward toward the stifle.
     ellipsoid(sided([0.07, 0.25, -0.145], side), [0.058, 0.096, 0.08], body(TONE.coat, 0.045), [0, 1, -0.28]),
@@ -114,25 +114,21 @@ function feathering(side: 1 | -1): Shape[] {
       0.019,
       [side * 0.3, 0, -1],
     ),
-    // Britches: full cream fur on the backs of the thighs, following the curve of the thigh down.
-    ...lock(
-      [
-        [x * 1.02, 0.3, -0.2],
-        [x * 1.04, 0.25, -0.222],
-        [x * 1.02, 0.2, -0.205],
+    // Britches: soft cream fur lying down the backs of the thighs.
+    ...flatLock({
+      path: [
+        [x * 1.02, 0.3, -0.198],
+        [x * 1.04, 0.25, -0.218],
+        [x * 1.02, 0.2, -0.2],
       ],
-      0.03,
-      [side * 0.8, 0, -1],
-    ),
-    ...lock(
-      [
-        [x * 0.9, 0.245, -0.205],
-        [x * 0.92, 0.2, -0.214],
-        [x * 0.9, 0.165, -0.196],
-      ],
-      0.022,
-      [side * 0.6, 0, -1],
-    ),
+      width: 0.028,
+      flatness: 0.36,
+      facing: [side * 0.8, 0, -1],
+      tones: [TONE.light, TONE.cream],
+      blend: 0.018,
+      part: PART.body,
+      segments: 5,
+    }),
   ];
 }
 

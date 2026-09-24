@@ -13,7 +13,7 @@ import { cone, flatLock } from './sculpt';
 export const TAIL_PATH: Vec3[] = [JOINTS.tail, [0, 0.395, -0.262], [0, 0.43, -0.318], [0, 0.448, -0.37]];
 
 /** Radius of the tail core at each point of the path. */
-const CORE_RADII = [0.034, 0.029, 0.023, 0.016];
+const CORE_RADII = [0.037, 0.031, 0.025, 0.018];
 
 const tail = (tone: number, blend: number) => ({ tone, blend, part: PART.tail });
 
@@ -25,27 +25,45 @@ export function tailForms(): Shape[] {
   return shapes;
 }
 
-/** Plume locks: where along the tail they grow (0 root, 1 tip), how far they hang, and how far back they run. */
+/** Where plume locks grow along the tail (0 root, 1 tip) and how long each one streams back. */
 const PLUME = [
-  { at: 0.08, drop: 0.05, run: 0.075, width: 0.026 },
-  { at: 0.34, drop: 0.058, run: 0.09, width: 0.029 },
-  { at: 0.62, drop: 0.05, run: 0.085, width: 0.026 },
+  { at: 0.04, length: 0.1 },
+  { at: 0.24, length: 0.11 },
+  { at: 0.44, length: 0.105 },
+  { at: 0.64, length: 0.095 },
+  { at: 0.84, length: 0.08 },
 ];
 
-/** The flag: long cream locks hanging from the underside and streaming back past the tip. */
+/** How far below the line of the tail the plume streams, in radians. */
+const PLUME_DROP = 0.5;
+
+/**
+ * The flag: long cream locks laid along the underside like shingles, each starting further out and
+ * streaming back past the one before, so together they make one feathered plume.
+ */
 export function tailFur(): Shape[] {
   const curve = new CatmullRomCurve3(TAIL_PATH.map(([x, y, z]) => new Vector3(x, y, z)));
   const point = new Vector3();
-  const plume = PLUME.flatMap(({ at, drop, run, width }) => {
+  const along = new Vector3();
+  const below = new Vector3();
+  const stream = new Vector3();
+  const plume = PLUME.flatMap(({ at, length }) => {
     curve.getPointAt(at, point);
-    const root: Vec3 = [point.x, point.y - 0.012, point.z];
+    curve.getTangentAt(at, along);
+    // Square to the tail in its upright plane, on the underside.
+    below.set(0, -along.z, along.y);
+    if (below.y > 0) below.negate();
+    stream.copy(along).multiplyScalar(Math.cos(PLUME_DROP)).addScaledVector(below, Math.sin(PLUME_DROP));
+    const at0 = point.clone().addScaledVector(below, 0.01);
+    const at1 = at0.clone().addScaledVector(stream, length * 0.5).addScaledVector(below, length * 0.06);
+    const at2 = at0.clone().addScaledVector(stream, length).addScaledVector(below, length * 0.18);
     return flatLock({
-      path: [root, [root[0], root[1] - drop * 0.6, root[2] - run * 0.4], [root[0], root[1] - drop, root[2] - run]],
-      width,
-      flatness: 0.55,
+      path: [at0.toArray(), at1.toArray(), at2.toArray()],
+      width: 0.027,
+      flatness: 0.5,
       facing: [1, 0, 0],
       tones: [TONE.light, TONE.cream],
-      blend: 0.018,
+      blend: 0.016,
       part: PART.tail,
       segments: 6,
     });
@@ -54,7 +72,7 @@ export function tailFur(): Shape[] {
   const [tip, beforeTip] = [TAIL_PATH[TAIL_PATH.length - 1], TAIL_PATH[TAIL_PATH.length - 2]];
   const end = flatLock({
     path: [beforeTip, tip, [tip[0], tip[1] + 0.002, tip[2] - 0.055]],
-    width: 0.021,
+    width: 0.022,
     flatness: 0.6,
     facing: [1, 0, 0],
     tones: [TONE.coat, TONE.light],

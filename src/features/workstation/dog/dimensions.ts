@@ -37,6 +37,12 @@ export const JOINTS = {
   tail: [0, 0.35, -0.2] as Vec3,
 } as const;
 
+/** Paw centres of the left legs on the floor plan, as X and Z. The right paws mirror them. */
+export const PAWS = {
+  front: [0.064, 0.118] as const,
+  rear: [0.07, -0.14] as const,
+} as const;
+
 /** Bone groups a coat shape can belong to, for skinning. */
 export const PART = { body: 0, neck: 1, head: 2, jaw: 3, tail: 4 } as const;
 export const PART_COUNT = 5;
