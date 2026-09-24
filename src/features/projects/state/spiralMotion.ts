@@ -17,8 +17,6 @@ export interface SpiralMotion extends SpringState {
   settle: number;
   /** 0 to 1, the entrance. Cards rise into place as it grows. */
   reveal: number;
-  /** Slot under the pointer, or null. */
-  hoverSlot: number | null;
 }
 
 export const spiralMotion: SpiralMotion = {
@@ -27,7 +25,6 @@ export const spiralMotion: SpiralMotion = {
   velocity: 0,
   settle: 0,
   reveal: 0,
-  hoverSlot: null,
 };
 
 /** False until the spiral first opens. After that a remount keeps the card it was on. */
@@ -46,5 +43,4 @@ export function placeSpiral(index: number) {
   spiralMotion.velocity = 0;
   spiralMotion.settle = 0;
   spiralMotion.reveal = 0;
-  spiralMotion.hoverSlot = null;
 }

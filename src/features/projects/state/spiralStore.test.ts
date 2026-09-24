@@ -15,11 +15,10 @@ describe('spiral store', () => {
   it('hides the controls and forgets the focus again when the canvas goes away', () => {
     const store = useSpiralStore.getState();
     store.syncFocus({ panel: 2, settled: 2 });
-    store.setHovered(5);
     store.markReady();
     store.resetSpiral();
-    const { ready, panel, settled, hovered } = useSpiralStore.getState();
-    expect({ ready, panel, settled, hovered }).toEqual({ ready: false, panel: null, settled: null, hovered: null });
+    const { ready, panel, settled } = useSpiralStore.getState();
+    expect({ ready, panel, settled }).toEqual({ ready: false, panel: null, settled: null });
   });
 
   it('only updates when the focus changes', () => {

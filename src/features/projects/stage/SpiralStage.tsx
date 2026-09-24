@@ -1,10 +1,9 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { useCallback, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import type { Project } from '@/content/types';
 import { CanvasBoundary } from '@/components/three/CanvasBoundary';
-import { sound } from '@/features/sound';
 import { useInView } from '@/lib/hooks/useInView';
 import { useOpeningCard } from '../hooks/useOpeningCard';
 import { useSpiralSounds } from '../hooks/useSpiralSounds';
@@ -13,7 +12,6 @@ import { moveSpiralTo } from '../input/steering';
 import { useStepKeys } from '../input/useStepKeys';
 import { useSpiralStore } from '../state/spiralStore';
 import { DetailPanel } from './DetailPanel';
-import { HoverLabel } from './HoverLabel';
 import { StageBackdrop } from './StageBackdrop';
 import { StageSurface } from './StageSurface';
 import { StageTitle } from './StageTitle';
@@ -43,16 +41,7 @@ export function SpiralStage({ projects }: { projects: Project[] }) {
   const [mounted, setMounted] = useState(false);
   if (near && !mounted) setMounted(true);
 
-  const setHovered = useSpiralStore((state) => state.setHovered);
   const fallBack = useSpiralStore((state) => state.failSpiral);
-
-  const onHover = useCallback(
-    (project: number | null) => {
-      setHovered(project);
-      if (project !== null) sound.play('hover');
-    },
-    [setHovered],
-  );
 
   return (
     // On wide screens the panel sits beside the spiral. It keeps to a composition at most
@@ -69,14 +58,13 @@ export function SpiralStage({ projects }: { projects: Project[] }) {
       <StageSurface>
         {mounted && (
           <CanvasBoundary label="project spiral" onFail={fallBack}>
-            <SpiralCanvas projects={projects} startAt={startAt} active={near} onSelect={moveSpiralTo} onHover={onHover} />
+            <SpiralCanvas projects={projects} startAt={startAt} active={near} onSelect={moveSpiralTo} />
           </CanvasBoundary>
         )}
       </StageSurface>
       {/* The stage melts into the black page below, so the handoff to the next section has no hard edge. */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-[12%] bg-linear-to-b from-transparent to-black" />
       <StageTitle />
-      <HoverLabel projects={projects} />
       <StepArrows />
       <DetailPanel projects={projects} columnRef={column} />
     </div>

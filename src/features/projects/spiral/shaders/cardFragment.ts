@@ -11,7 +11,6 @@ export const cardFragmentShader = /* glsl */ `
   uniform float uCornerRadius;
   uniform float uBrightness;
   uniform float uOpacity;
-  uniform float uHover;
   uniform vec2 uViewport;
   uniform vec3 uFog;
 
@@ -45,11 +44,10 @@ export const cardFragmentShader = /* glsl */ `
     // Seen from behind, flip the picture so it still reads the right way round.
     vec2 uv = vec2(mix(vUv.x, 1.0 - vUv.x, backFace), vUv.y);
     uv = coverUv(uv);
-    uv = (uv - 0.5) / (1.0 + 0.04 * uHover) + 0.5;
     uv.y = mix(uv.y, 1.0 - uv.y, uFlipY);
     vec3 color = texture2D(uMap, uv).rgb;
 
-    color *= uBrightness * (1.0 - 0.12 * backFace) * (1.0 + 0.08 * uHover);
+    color *= uBrightness * (1.0 - 0.12 * backFace);
     float fog = smoothstep(7.0, 10.5, vDepth);
     color = mix(color, uFog, fog * 0.28);
 

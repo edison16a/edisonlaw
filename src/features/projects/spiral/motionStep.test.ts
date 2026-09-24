@@ -8,7 +8,6 @@ const create = (value: number): SpiralMotion => ({
   velocity: 0,
   settle: 0,
   reveal: 0,
-  hoverSlot: null,
 });
 
 const run = (motion: SpiralMotion, target: number, seconds: number, reducedMotion = false) => {

@@ -15,6 +15,7 @@ import { cardViewport } from './cardMaterial';
 import { readFocus } from './focus';
 import { CARD_HEIGHT, CARD_WIDTH } from './geometry';
 import { frameCamera } from './lens';
+import { createPointerCursor } from './pointerCursor';
 import { isAtRest, stepMotion } from './motionStep';
 import { tickDetents } from './ticks';
 import { useCardPictures } from './useCardPictures';
@@ -25,19 +26,15 @@ export interface SpiralSceneProps {
   startAt: number;
   /** A card facing the camera was clicked. Receives the card's place on the looping index. */
   onSelect: (index: number) => void;
-  /** The pointer moved onto a card facing the camera, or off every card. */
-  onHover: (project: number | null) => void;
 }
 
 /** Cards turned further than this from the camera ignore the pointer. */
 const MIN_FACING = 0.2;
 /** Pointer travel in pixels beyond which a press is a swipe, not a click. */
 const CLICK_SLOP = 6;
-/** Faster than this, in cards per second, the card under a resting pointer changes too quickly to name. */
-const HOVER_SPEED = 1.5;
 
 /** The strand of cards and the one frame loop that drives it. */
-export function SpiralScene({ projects, startAt, onSelect, onHover }: SpiralSceneProps) {
+export function SpiralScene({ projects, startAt, onSelect }: SpiralSceneProps) {
   const gl = useThree((state) => state.gl);
   const camera = useThree((state) => state.camera) as PerspectiveCamera;
   const invalidate = useThree((state) => state.invalidate);
@@ -52,6 +49,7 @@ export function SpiralScene({ projects, startAt, onSelect, onHover }: SpiralScen
   const [cards] = useState<CardRuntime[]>(() => createCards(count));
   const [focus] = useState<FocusSnapshot>(() => ({ panel: null, settled: null }));
   const uploadNext = useCardPictures(projects, cards, gl, startAt);
+  const [cursor] = useState(createPointerCursor);
 
   useEffect(() => () => geometry.dispose(), [geometry]);
   useEffect(() => () => cards.forEach((card) => card.material.dispose()), [cards]);
@@ -72,33 +70,27 @@ export function SpiralScene({ projects, startAt, onSelect, onHover }: SpiralScen
     tickDetents(previous, spiralMotion.value, spiralMotion.velocity, performance.now());
     const { value, velocity, settle } = spiralMotion;
     syncFocus(readFocus(value, velocity, settle, count, focus));
-    if (spiralMotion.hoverSlot !== null && Math.abs(velocity) > HOVER_SPEED) {
-      spiralMotion.hoverSlot = null;
-      onHover(null);
-    }
 
     frameCamera(camera, state.size.width, state.size.height, stageMetrics.focusShift, stageMetrics.focusLift);
     gl.getDrawingBufferSize(cardViewport);
     let busy = uploadNext();
     for (const card of cards) busy = updateCard(card, spiralMotion, cards.length, delta, reducedMotion) || busy;
     if (focusCardShown(cards)) markReady();
+    cursor.update(velocity, gl.domElement);
 
     resting.current = !busy && isAtRest(spiralMotion);
     if (!resting.current) state.invalidate();
   });
 
-  const hover = (card: CardRuntime) => (event: ThreeEvent<PointerEvent>) => {
+  const point = (card: CardRuntime) => (event: ThreeEvent<PointerEvent>) => {
     if (card.facing < MIN_FACING) return;
     event.stopPropagation();
-    spiralMotion.hoverSlot = card.slot;
-    onHover(card.project);
+    cursor.enter(card);
     invalidate();
   };
 
-  const leave = (card: CardRuntime) => () => {
-    if (spiralMotion.hoverSlot !== card.slot) return;
-    spiralMotion.hoverSlot = null;
-    onHover(null);
+  const unpoint = (card: CardRuntime) => () => {
+    cursor.leave(card);
     invalidate();
   };
 
@@ -119,8 +111,8 @@ export function SpiralScene({ projects, startAt, onSelect, onHover }: SpiralScen
       geometry={geometry}
       material={card.material}
       visible={false}
-      onPointerOver={hover(card)}
-      onPointerOut={leave(card)}
+      onPointerOver={point(card)}
+      onPointerOut={unpoint(card)}
       onClick={select(card)}
     />
   ));

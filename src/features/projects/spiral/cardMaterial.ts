@@ -20,8 +20,6 @@ export interface CardUniforms {
   uSweep: IUniform<number>;
   uBrightness: IUniform<number>;
   uOpacity: IUniform<number>;
-  /** 0 to 1 while the pointer rests on the card. */
-  uHover: IUniform<number>;
   /** Drawing buffer size in pixels, for the fade at the stage edges. */
   uViewport: IUniform<Vector2>;
   /** Colour far cards sink toward, in linear space. */
@@ -48,7 +46,6 @@ export function createCardMaterial(): CardMaterial {
     uSweep: { value: SPIRAL.sweep },
     uBrightness: { value: 1 },
     uOpacity: { value: 0 },
-    uHover: { value: 0 },
     uViewport: { value: cardViewport },
     uFog: { value: FOG },
   };

@@ -1,5 +1,5 @@
 import type { Mesh } from 'three';
-import { clamp, damp, smoothstep } from '@/lib/math';
+import { clamp, smoothstep } from '@/lib/math';
 import type { CardPicture } from '../media/cardPicture';
 import type { SpiralMotion } from '../state/spiralMotion';
 import { cardBend, cardBow, cardBrightness } from './appearance';
@@ -13,7 +13,6 @@ export interface CardRuntime {
   project: number;
   material: CardMaterial;
   mesh: Mesh | null;
-  hover: number;
   /** Seconds since the picture reached the GPU, or -1 while it is on its way. */
   shownFor: number;
   /** Mirrors the pose so pointer handlers can ignore cards turned away. */
@@ -28,8 +27,6 @@ const FADE_IN = 0.7;
 const VISIBLE_RANGE = 8.5;
 /** Share of the entrance each card spends rising, the rest is its stagger. */
 const RISE = 0.7;
-/** Closer than this to its goal, a card's hover counts as done easing. */
-const SETTLED = 0.001;
 
 const pose = createPose();
 
@@ -45,7 +42,6 @@ export function createCards(projects: number): CardRuntime[] {
     project: slot % projects,
     material: createCardMaterial(),
     mesh: null,
-    hover: 0,
     shownFor: -1,
     facing: 0,
     offset: 0,
@@ -69,8 +65,7 @@ export function showPicture(card: CardRuntime, picture: CardPicture) {
 /**
  * Places one card for this frame and writes its uniforms. `calm` drops the
  * speed effects for visitors who prefer reduced motion. Returns true while the
- * card is still fading in or easing its hover, so the canvas knows to draw
- * another frame.
+ * card is still fading in, so the canvas knows to draw another frame.
  */
 export function updateCard(card: CardRuntime, motion: SpiralMotion, slots: number, delta: number, calm: boolean): boolean {
   const mesh = card.mesh;
@@ -96,14 +91,10 @@ export function updateCard(card: CardRuntime, motion: SpiralMotion, slots: numbe
   mesh.scale.setScalar(pose.scale);
 
   const velocity = calm ? 0 : motion.velocity;
-  const hoverGoal = motion.hoverSlot === card.slot ? 1 : 0;
-  card.hover = damp(card.hover, hoverGoal, 10, delta);
-
   const uniforms = card.material.uniforms;
   uniforms.uCurvature.value = cardBend(velocity, pose.focus) / SPIRAL.radius;
   uniforms.uBow.value = cardBow(velocity);
   uniforms.uBrightness.value = cardBrightness(offset, motion.settle);
   uniforms.uOpacity.value = opacity;
-  uniforms.uHover.value = card.hover;
-  return fading || Math.abs(card.hover - hoverGoal) > SETTLED;
+  return fading;
 }
