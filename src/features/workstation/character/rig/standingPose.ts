@@ -3,7 +3,8 @@ import { lerp } from '@/lib/math';
 import { BODY, HAND, MUG } from '../dimensions';
 import type { BodyPose } from './bodyPose';
 import { aimRotation, jointFor, type LimbGoal } from './limbs';
-import { aimHead } from './look';
+import { footOnSurface } from './feet';
+import { aimEyes, aimHead } from './look';
 import { STANDING_TARGETS } from './targets';
 import { breathAt, createOccurrence, noise, occurrence, type Recurring } from './timeline';
 import type { LimbName, Side } from './types';
@@ -31,8 +32,6 @@ const MUG_IN_HAND = new Vector3(...MUG.centerInHand);
 const HANG = new Vector3(0.195, 0.588, 0.03);
 const CHIN = new Vector3(0.018, 1.03, 0.168);
 const KNUCKLES = new Vector3(0, -HAND.palmLength - 0.012, -0.012);
-const SOLE_MIDDLE = new Vector3(0, -BODY.ankle, 0.046);
-const Y_AXIS = new Vector3(0, 1, 0);
 
 /** Finger curls, index to little. */
 const CURLS = { mug: [0.95, 1.05, 1.1, 1.15], loose: [0.3, 0.38, 0.45, 0.52], fist: 1.5 } as const;
@@ -46,7 +45,6 @@ const along = new Vector3();
 const facing = new Vector3();
 const hangRotation = new Quaternion();
 const chinRotation = new Quaternion();
-const footTurn = new Quaternion();
 
 /** Planted feet, toes turned out, the right one a little behind. */
 const FEET: Record<LimbName, { x: number; z: number; turn: number }> = {
@@ -56,10 +54,7 @@ const FEET: Record<LimbName, { x: number; z: number; turn: number }> = {
 
 function plantedFoot(side: Side, name: LimbName, out: LimbGoal) {
   const foot = FEET[name];
-  footTurn.setFromAxisAngle(Y_AXIS, foot.turn);
-  out.rotation.copy(footTurn);
-  point.set(foot.x, 0, foot.z);
-  jointFor(point, out.rotation, SOLE_MIDDLE, out.target);
+  footOnSurface(point.set(foot.x, 0, foot.z), foot.turn, 0, out);
   out.pole.set(side * 0.2, 0, 1);
 }
 
@@ -112,13 +107,16 @@ export function standingPose(t: number, motion: number, seed: number, pose: Body
   pose.reach.left = 0.012 * think;
   pose.reach.right = 0.006 * sip;
 
+  // Head on the centre screen with glances to a side screen, eyes leading. While sipping he faces the mug.
   const { left, center, right } = STANDING_TARGETS.looks;
-  const toSide = 0.8 * looking;
   const target = glance.roll < 0.5 ? left : right;
-  // While sipping he looks down his nose at the mug, straight ahead.
-  const yaw = lerp(lerp(center.yaw, target.yaw, toSide) + noise(t * 0.21, seed + 3) * 0.06 * motion, 0, sip);
-  const pitch = lerp(center.pitch, target.pitch, toSide) + noise(t * 0.27, seed + 4) * 0.04 * motion + 0.16 * tip - 0.06 * think;
+  const drift = noise(t * 0.21, seed + 3) * 0.06 * motion;
+  const yaw = lerp(lerp(center.yaw, target.yaw, 0.8 * looking) + drift, 0, sip);
+  const pitch = lerp(center.pitch, target.pitch, 0.8 * looking) + noise(t * 0.27, seed + 4) * 0.04 * motion + 0.16 * tip - 0.06 * think;
   aimHead(pose, yaw, pitch, noise(t * 0.15, seed + 5) * 0.05 * motion - 0.12 * think + 0.03);
+  const lead = 1 - (1 - looking) ** 3;
+  const eyeYaw = lerp(lerp(center.yaw, target.yaw, lead) + noise(t * 1.5, seed + 6) * 0.02 * motion, 0, sip);
+  aimEyes(pose, eyeYaw, lerp(center.pitch, target.pitch, lead) - 0.1 * sip, yaw, pitch);
 
   mugHand(sip, tip, breath, pose.arms.right);
   thinkingHand(think, 0.004 * breath, pose.arms.left);

@@ -1,9 +1,10 @@
-import { Quaternion, Vector3 } from 'three';
+import { Vector3 } from 'three';
 import { lerp } from '@/lib/math';
 import { BODY, HAND } from '../dimensions';
 import type { BodyPose } from './bodyPose';
 import { aimRotation, createLimbGoal, jointFor, type LimbGoal } from './limbs';
-import { aimHead } from './look';
+import { footOnSurface } from './feet';
+import { aimEyes, aimHead } from './look';
 import { SEATED_TARGETS } from './targets';
 import { breathAt, createOccurrence, noise, occurrence, type Recurring } from './timeline';
 import { createKeystroke, keystrokeAt, type Keystroke } from './typing';
@@ -19,11 +20,9 @@ const TIMING = {
   click: { period: 0.9, duration: 0.18, ease: 0.06, chance: 0.55 },
 } satisfies Record<string, Recurring>;
 
-/** Hand and foot reference points, in their own bone's space. */
+/** Hand reference points, in the hand bone's space. */
 const KNUCKLES = new Vector3(0, -HAND.palmLength, 0);
 const PALM = new Vector3(0, -HAND.palmLength * 0.55, -HAND.palmThickness * 0.5);
-const SOLE_MIDDLE = new Vector3(0, -BODY.ankle, 0.046);
-const Y_AXIS = new Vector3(0, 1, 0);
 
 const burst = createOccurrence();
 const mouse = createOccurrence();
@@ -35,7 +34,6 @@ const mouseGoal = createLimbGoal();
 const point = new Vector3();
 const along = new Vector3();
 const facing = new Vector3();
-const footTurn = new Quaternion();
 
 /** Hand hovering over the home row, knuckles up, fingers reaching down to the keys. */
 function typingHand(side: Side, stroke: Keystroke, typing: number, out: LimbGoal) {
@@ -64,6 +62,22 @@ function mouseHand(t: number, seed: number, out: LimbGoal) {
   out.pole.set(-1, -0.35, -0.45);
 }
 
+interface Look {
+  yaw: number;
+  pitch: number;
+}
+
+const head: Look = { yaw: 0, pitch: 0 };
+const eyes: Look = { yaw: 0, pitch: 0 };
+
+/** A look direction part way from the centre screen toward the right and left screens. */
+function lookBetween(toRight: number, toLeft: number, out: Look) {
+  const { left, center, right } = SEATED_TARGETS.looks;
+  out.yaw = center.yaw + (right.yaw - center.yaw) * toRight + (left.yaw - center.yaw) * toLeft;
+  out.pitch = center.pitch + (right.pitch - center.pitch) * toRight + (left.pitch - center.pitch) * toLeft;
+  return out;
+}
+
 function blendGoal(from: LimbGoal, to: LimbGoal, weight: number, out: LimbGoal) {
   out.target.lerpVectors(from.target, to.target, weight);
   out.rotation.slerpQuaternions(from.rotation, to.rotation, weight);
@@ -75,11 +89,9 @@ function typingFingers(stroke: Keystroke, typing: number, out: [number, number, 
   for (let i = 0; i < 4; i++) out[i] = curl + (i === stroke.finger ? 0.55 : -0.06) * stroke.press * typing;
 }
 
-/** Feet resting flat on the footrest, toes turned out a touch. */
-function seatedFoot(side: Side, name: LimbName, out: LimbGoal) {
-  footTurn.setFromAxisAngle(Y_AXIS, side * 0.1);
-  out.rotation.copy(footTurn);
-  jointFor(SEATED_TARGETS.feet[name], out.rotation, SOLE_MIDDLE, out.target);
+/** Feet resting on the footrest, toes turned out a touch, a heel bouncing while he thinks. */
+function seatedFoot(side: Side, name: LimbName, heelLift: number, out: LimbGoal) {
+  footOnSurface(SEATED_TARGETS.feet[name], side * 0.1, heelLift, out);
   out.pole.set(side * 0.15, 0.3, 1);
 }
 
@@ -107,15 +119,17 @@ export function seatedPose(t: number, motion: number, seed: number, pose: BodyPo
   pose.reach.left = 0.004 * typing;
   pose.reach.right = 0.004 * rightTyping + 0.028 * onMouse;
 
-  // Head: on the centre screen, turning to a side screen during a glance, and toward the right while mousing.
-  const { left, center, right } = SEATED_TARGETS.looks;
-  const toRight = 0.85 * Math.max(glance.roll < 0.45 ? looking : 0, onMouse * 0.5);
-  const toLeft = 0.85 * (glance.roll < 0.45 ? 0 : looking) * (1 - onMouse);
-  const yaw = center.yaw + (right.yaw - center.yaw) * toRight + (left.yaw - center.yaw) * toLeft;
-  const pitch = center.pitch + (right.pitch - center.pitch) * toRight + (left.pitch - center.pitch) * toLeft;
+  // Head on the centre screen, turning to a side screen during a glance and toward the right while mousing.
+  // The eyes get there first and the head follows most of the way.
+  const glanceRight = glance.roll < 0.45;
+  const lead = 1 - (1 - looking) ** 3;
   const drift = noise(t * 0.23, seed + 3) * 0.05 * motion;
   const nod = noise(t * 0.31, seed + 4) * 0.035 * motion - 0.02 * typing;
-  aimHead(pose, yaw + drift, pitch + nod, noise(t * 0.17, seed + 9) * 0.05 * motion + (1 - typing) * 0.04 * motion);
+  lookBetween(0.85 * Math.max(glanceRight ? looking : 0, onMouse * 0.5), 0.85 * (glanceRight ? 0 : looking) * (1 - onMouse), head);
+  lookBetween(Math.max(glanceRight ? lead : 0, onMouse * 0.6), (glanceRight ? 0 : lead) * (1 - onMouse), eyes);
+  aimHead(pose, head.yaw + drift, head.pitch + nod, noise(t * 0.17, seed + 9) * 0.05 * motion + (1 - typing) * 0.04 * motion);
+  const dart = noise(t * 1.7, seed + 21) * 0.02 * motion;
+  aimEyes(pose, eyes.yaw + dart, eyes.pitch - 0.03 * typing, head.yaw + drift, head.pitch + nod);
 
   typingHand(1, strokes.left, typing, pose.arms.left);
   typingHand(-1, strokes.right, rightTyping, typingGoal);
@@ -129,6 +143,8 @@ export function seatedPose(t: number, motion: number, seed: number, pose: BodyPo
   pose.thumbs.left = 0.35;
   pose.thumbs.right = lerp(0.35, 0.15, onMouse);
 
-  seatedFoot(1, 'left', pose.legs.left);
-  seatedFoot(-1, 'right', pose.legs.right);
+  // While he pauses to think, his right heel bounces.
+  const idle = motion * (1 - burst.weight) * (1 - mouse.weight);
+  seatedFoot(1, 'left', 0, pose.legs.left);
+  seatedFoot(-1, 'right', 0.22 * idle * (0.5 + 0.5 * Math.sin(t * Math.PI * 3.4)) ** 2, pose.legs.right);
 }
