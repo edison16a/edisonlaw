@@ -39,9 +39,14 @@ export function ProjectCarousel({ projects, onModeChange, className }: ProjectCa
         <ModeToggle mode="spiral" onChange={onModeChange} />
       </div>
       <IntroTitle className="gutter mb-8" />
+      {/*
+        Lenis leaves sideways wheel swipes to the strip. Its stylesheet then sets
+        overscroll-behavior: contain, so the inline style hands vertical swipes back to the page.
+      */}
       <ol
         ref={strip}
-        data-lenis-prevent
+        data-lenis-prevent-horizontal
+        style={{ overscrollBehaviorY: 'auto' }}
         aria-label="Project photos"
         className="flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain px-[9vw] pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
