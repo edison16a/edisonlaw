@@ -42,6 +42,8 @@
   html {
     background: var(--color-black);
     scroll-padding-top: var(--spacing-nav);
+    /* Keeps focused elements clear of the fixed sound toggle. */
+    scroll-padding-bottom: 6rem;
   }
 
   body {
