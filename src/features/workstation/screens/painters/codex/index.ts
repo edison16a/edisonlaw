@@ -6,9 +6,10 @@ import { actionBlock, composerBlock, footerBlock, headerBlock, introBlock, sayBl
 import { SESSION, type CodexAction } from './session';
 import { CODEX_THEME as T } from './theme';
 
-const FONT_SIZE = 14;
-const LINE_HEIGHT = 20;
-const PADDING = 18;
+/** Large enough to read on the monitor, which shows the canvas at a fifth of its size or less. */
+const FONT_SIZE = 26;
+const LINE_HEIGHT = 36;
+const PADDING = 24;
 
 const session = createAgentSession(SESSION, { typeRate: 14, streamRate: 70, actionSteps: 6 });
 

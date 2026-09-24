@@ -5,6 +5,7 @@ import {
   drawLine,
   drawSpans,
   glyphSpan,
+  lineWeight,
   linesBlock,
   rowY,
   span,
@@ -71,8 +72,9 @@ function planBlock(steps: { text: string; done: boolean }[]): TermBlock {
         const end = drawSpans(ctx, grid, start, row + 1 + index, [span(item.text, item.done ? T.dim : T.text)], T.text);
         if (item.done) {
           // Finished steps are struck through, the way Codex marks them.
+          const weight = lineWeight(grid) * 0.7;
           ctx.fillStyle = T.dim;
-          ctx.fillRect(cellX(grid, start), Math.round(rowY(grid, row + 1 + index) + grid.cellHeight / 2 + 1), (end - start) * grid.cellWidth, 1);
+          ctx.fillRect(cellX(grid, start), Math.round(rowY(grid, row + 1 + index) + grid.cellHeight / 2), (end - start) * grid.cellWidth, weight);
         }
       });
     },
@@ -83,11 +85,13 @@ function workedBlock(label: string): TermBlock {
   return {
     rows: 1,
     draw(ctx, grid, row) {
-      const y = Math.round(rowY(grid, row) + grid.cellHeight / 2);
+      const weight = lineWeight(grid) * 0.7;
+      const y = Math.round(rowY(grid, row) + grid.cellHeight / 2 - weight / 2);
       ctx.fillStyle = T.faint;
-      ctx.fillRect(cellX(grid, 0), y, grid.cellWidth * 1.5, 1);
+      ctx.fillRect(cellX(grid, 0), y, grid.cellWidth * 1.5, weight);
       const end = drawSpans(ctx, grid, 2, row, [span(label, T.dim)], T.dim);
-      ctx.fillRect(cellX(grid, end + 1), y, (grid.cols - end - 1) * grid.cellWidth, 1);
+      ctx.fillStyle = T.faint;
+      ctx.fillRect(cellX(grid, end + 1), y, (grid.cols - end - 1) * grid.cellWidth, weight);
     },
   };
 }
