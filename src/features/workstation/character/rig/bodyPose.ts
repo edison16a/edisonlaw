@@ -25,6 +25,8 @@ export interface BodyPose {
   thumbs: Record<LimbName, number>;
   /** 0 open, 1 shut. */
   blink: number;
+  /** Where the eyes look within the face, -1 to 1: +x toward his left, +y up. */
+  gaze: { x: number; y: number };
 }
 
 export function createBodyPose(): BodyPose {
@@ -42,10 +44,13 @@ export function createBodyPose(): BodyPose {
     fingers: { left: [0, 0, 0, 0], right: [0, 0, 0, 0] },
     thumbs: { left: 0, right: 0 },
     blink: 0,
+    gaze: { x: 0, y: 0 },
   };
 }
 
 const LIMB_NAMES: readonly LimbName[] = ['left', 'right'];
+/** How far the eyes slide across the face at full gaze, in metres. */
+const GAZE_SHIFT = { x: 0.0045, y: 0.003 } as const;
 const chestMatrix = new Matrix4();
 const baseMatrix = new Matrix4();
 
@@ -82,6 +87,7 @@ export function applyBodyPose(rig: Rig, pose: BodyPose) {
   const shine = Math.max(0, 1 - pose.blink * 2.5);
   for (let i = 0; i < 2; i++) {
     rig.eyes[i].scale.y = open;
+    rig.gazes[i].position.set(pose.gaze.x * GAZE_SHIFT.x, pose.gaze.y * GAZE_SHIFT.y, 0);
     rig.shines[i].scale.setScalar(shine);
     rig.shines[i].visible = shine > 0;
   }

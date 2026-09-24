@@ -48,6 +48,7 @@ export function createRig(): Rig {
     neck: bone('neck', 0, BODY.neck, 0),
     head: bone('head', 0, BODY.headPivot, 0),
     eyes: [bone('leftEye'), bone('rightEye')],
+    gazes: [bone('leftGaze'), bone('rightGaze')],
     shines: [bone('leftEyeShine'), bone('rightEyeShine')],
     arms: { left: createArm(1, 'left'), right: createArm(-1, 'right') },
     legs: { left: createLeg(1, 'left'), right: createLeg(-1, 'right') },

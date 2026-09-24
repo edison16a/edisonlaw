@@ -73,9 +73,11 @@ export function Face({ rig }: { rig: Rig }) {
     <group>
       {rig.eyes.map((eye, index) => (
         <primitive key={eye.name} object={eye} position={eyeFrames[index].position} quaternion={eyeFrames[index].quaternion}>
-          <mesh geometry={sphere} material={materials.eye} scale={EYE.radius} />
-          <primitive object={rig.shines[index]}>
-            <mesh geometry={shine} material={materials.eyeShine} />
+          <primitive object={rig.gazes[index]}>
+            <mesh geometry={sphere} material={materials.eye} scale={EYE.radius} />
+            <primitive object={rig.shines[index]}>
+              <mesh geometry={shine} material={materials.eyeShine} />
+            </primitive>
           </primitive>
         </primitive>
       ))}
