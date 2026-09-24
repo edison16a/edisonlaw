@@ -32,9 +32,15 @@ export interface DogMaterials {
   mouth: MeshPhysicalMaterial;
 }
 
+/**
+ * Scales the fur's sheen by how light the painted coat is under it, so dark paint such as the lips and
+ * the lids round the eyes stays dark at grazing angles instead of washing out to cream.
+ */
+const SHEEN_BY_COAT = /* glsl */ `material.sheenColor = sheenColor * smoothstep( 0.03, 0.2, dot( vColor.rgb, vec3( 0.2126, 0.7152, 0.0722 ) ) );`;
+
 /** Soft clay fur: matte, with a warm sheen at grazing angles that reads as fuzz on the silhouette. */
 function furMaterial() {
-  return new MeshPhysicalMaterial({
+  const material = new MeshPhysicalMaterial({
     color: '#ffffff',
     vertexColors: true,
     roughness: 0.72,
@@ -42,6 +48,14 @@ function furMaterial() {
     sheenColor: new Color(DOG_PALETTE.coatSheen),
     sheenRoughness: 0.45,
   });
+  material.onBeforeCompile = (shader) => {
+    shader.fragmentShader = shader.fragmentShader.replace(
+      '#include <lights_physical_fragment>',
+      `#include <lights_physical_fragment>\n#ifdef USE_SHEEN\n${SHEEN_BY_COAT}\n#endif`,
+    );
+  };
+  material.customProgramCacheKey = () => 'dogFur';
+  return material;
 }
 
 /**
