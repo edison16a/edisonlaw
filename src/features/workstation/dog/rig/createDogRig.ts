@@ -31,8 +31,8 @@ export interface DogRig {
   bones: Bone[];
   /** Inverse of each bone's resting matrix in dog space, in skin index order. */
   restInverses: Matrix4[];
-  /** Resting rotations, which the pose offsets. */
-  rest: { head: Quaternion; ears: [Quaternion, Quaternion] };
+  /** Resting rotations of the ears, which the pose offsets. */
+  rest: { ears: [Quaternion, Quaternion] };
 }
 
 /** Skin indices of the bones, matching `DogRig.bones`. */
@@ -90,7 +90,7 @@ export function createDogRig(): DogRig {
   // The root has no parent yet, so world matrices are in dog space: exactly the bind pose.
   root.updateMatrixWorld(true);
   const restInverses = bones.map((b) => b.matrixWorld.clone().invert());
-  const rest = { head: head.quaternion.clone(), ears: [ears[0].quaternion.clone(), ears[1].quaternion.clone()] as [Quaternion, Quaternion] };
+  const rest = { ears: [ears[0].quaternion.clone(), ears[1].quaternion.clone()] as [Quaternion, Quaternion] };
   return { root, body, chest, tail, head, headOrigin: crown.negate(), jaw, ears, eyes, bones, restInverses, rest };
 }
 

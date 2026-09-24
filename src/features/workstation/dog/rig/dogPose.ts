@@ -2,6 +2,7 @@ import { Euler, Quaternion } from 'three';
 import { lerp } from '@/lib/math';
 import { blinkAt } from '../../character/rig/blink';
 import { createOccurrence, noise, occurrence, type Recurring } from '../../character/rig/timeline';
+import { HEAD } from '../dimensions';
 import type { DogRig } from './createDogRig';
 import { TAIL_BONES } from './createDogRig';
 
@@ -13,7 +14,7 @@ export interface DogPose {
   rock: number;
   /** -1 to 1 through a breath. */
   breath: number;
-  /** Head turn toward its left, nose lift and crown tilt toward its right, on top of the rest pose. */
+  /** Head turn toward its left, nose lift and crown tilt toward its right, in dog space (see HEAD.rest). */
   head: { yaw: number; pitch: number; tilt: number };
   /** How far the mouth is open. */
   jaw: number;
@@ -50,8 +51,15 @@ const TIMING = {
   bliss: { period: 6.5, duration: 3.4, ease: 0.9, chance: 0.7 },
 } satisfies Record<string, Recurring>;
 
-/** The head offset for looking up at Edison, who stands to its right and far above. */
-const LOOK_UP = { yaw: -0.62, pitch: 0.34, tilt: -0.08 } as const;
+/**
+ * The head when it looks up at Edison. He stands just behind it and far above as the about camera sees
+ * it, so lifting the chin while still facing the camera reads as looking up at him, and keeps the
+ * neck from twisting.
+ */
+const LOOK_UP = { yaw: 0.9, pitch: 0.62, tilt: 0.02 } as const;
+
+/** How much of the head's swing the ears undo, hanging back toward the floor. */
+const EAR_GRAVITY = 0.75;
 
 const lookUp = createOccurrence();
 const bliss = createOccurrence();
@@ -75,13 +83,17 @@ export function dogPose(t: number, motion: number, seed: number, pose: DogPose) 
 
   // Nuzzling up into the hand while it pets, and looking up at him now and then.
   const nuzzle = Math.sin(t * 1.25 + seed) * 0.5 + 0.5;
-  pose.head.yaw = LOOK_UP.yaw * looking + 0.05 * noise(t * 0.4, seed + 3) * motion;
-  pose.head.pitch = LOOK_UP.pitch * looking + (0.04 * nuzzle + 0.03 * blissful) * motion * (1 - looking);
-  pose.head.tilt = LOOK_UP.tilt * looking + (0.05 * noise(t * 0.3, seed + 4) + 0.06 * blissful) * motion;
+  const rest = HEAD.rest;
+  const idleYaw = rest.yaw + 0.05 * noise(t * 0.4, seed + 3) * motion;
+  const idlePitch = rest.pitch + (0.04 * nuzzle + 0.03 * blissful) * motion;
+  const idleTilt = rest.tilt + (0.05 * noise(t * 0.3, seed + 4) + 0.06 * blissful) * motion;
+  pose.head.yaw = lerp(idleYaw, LOOK_UP.yaw, looking);
+  pose.head.pitch = lerp(idlePitch, LOOK_UP.pitch, looking);
+  pose.head.tilt = lerp(idleTilt, LOOK_UP.tilt, looking);
 
   // Light, happy panting, a little quicker than the breath.
   const pant = Math.sin(t * Math.PI * 2 * 1.7) * 0.5 + 0.5;
-  pose.jaw = lerp(0.07, 0.05 + 0.05 * pant, motion) - 0.03 * blissful;
+  pose.jaw = lerp(0.1, 0.08 + 0.05 * pant, motion) - 0.04 * blissful;
 
   // The wag grows and settles in waves, and the tail is carried a little higher while it looks up.
   const energy = lerp(0.62, 0.85 + 0.15 * noise(t * 0.25, seed + 5), motion) + 0.2 * looking;
@@ -91,12 +103,14 @@ export function dogPose(t: number, motion: number, seed: number, pose: DogPose) 
   }
   pose.tailLift = 0.06 * looking + 0.02 * Math.sin(t * Math.PI * 2 * WAG.rate * 2) * motion;
 
-  // Ears ride the head's motion with a little bounce, and flop back a touch while it looks up.
+  // Ears hang back toward the floor as the head swings, with a little bounce of their own.
+  const lift = pose.head.pitch - rest.pitch;
+  const roll = pose.head.tilt - rest.tilt;
   for (let side = 0; side < 2; side++) {
     const sign = side === 0 ? 1 : -1;
     const bounce = Math.sin(t * 3.1 + side * 1.7 + seed) * 0.03 * motion;
-    pose.ears[side].out = 0.04 * blissful + bounce + sign * pose.head.tilt * 0.35;
-    pose.ears[side].forward = -0.12 * looking + 0.02 * noise(t * 0.8, seed + 20 + side) * motion;
+    pose.ears[side].out = 0.04 * blissful + bounce - sign * roll * EAR_GRAVITY;
+    pose.ears[side].forward = -lift * EAR_GRAVITY + 0.02 * noise(t * 0.8, seed + 20 + side) * motion;
   }
 
   pose.blink = motion > 0 ? Math.max(blinkAt(t, seed), 0.55 * blissful) : 0;
@@ -112,7 +126,7 @@ export function applyDogPose(rig: DogRig, pose: DogPose) {
   rig.chest.scale.set(1 + 0.014 * pose.breath, 1 + 0.02 * pose.breath, 1 + 0.008 * pose.breath);
 
   euler.set(-pose.head.pitch, pose.head.yaw, pose.head.tilt);
-  rig.head.quaternion.copy(rig.rest.head).multiply(offset.setFromEuler(euler));
+  rig.head.quaternion.setFromEuler(euler);
   rig.jaw.rotation.x = pose.jaw;
 
   for (let i = 0; i < rig.tail.length; i++) rig.tail[i].rotation.set(i === 0 ? pose.tailLift : 0, pose.tail[i], 0);
