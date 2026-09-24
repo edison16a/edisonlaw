@@ -1,10 +1,12 @@
 import { ringGauge } from '../../../draw/charts';
 import { fillRound, strokeRound, type Rect } from '../../../draw/shapes';
 import { text } from '../../../draw/text';
-import { pill, progressBar } from '../../../draw/widgets';
+import { pill, pillWidth, progressBar } from '../../../draw/widgets';
 import { ULTRASOUND_THEME as T } from './theme';
 
 /** The right hand column: quality score, segmentation details and the finding. */
+
+const BADGE_SIZE = 10;
 
 function card(ctx: CanvasRenderingContext2D, rect: Rect, title: string) {
   fillRound(ctx, rect.x, rect.y, rect.w, rect.h, 8, T.panel);
@@ -13,8 +15,9 @@ function card(ctx: CanvasRenderingContext2D, rect: Rect, title: string) {
 }
 
 /** A pill in the card's top right corner. */
-function badge(ctx: CanvasRenderingContext2D, rect: Rect, label: string, width: number, color: string, bg: string, dot = false) {
-  pill(ctx, label, rect.x + rect.w - 14 - width, rect.y + 20, { bg, color, size: 10, dot: dot ? color : undefined });
+function badge(ctx: CanvasRenderingContext2D, rect: Rect, label: string, color: string, bg: string, dot = false) {
+  const x = rect.x + rect.w - 14 - pillWidth(ctx, label, BADGE_SIZE, dot);
+  pill(ctx, label, x, rect.y + 20, { bg, color, size: BADGE_SIZE, dot: dot ? color : undefined });
 }
 
 const SUB_SCORES = [
@@ -26,7 +29,7 @@ const SUB_SCORES = [
 
 export function drawQuality(ctx: CanvasRenderingContext2D, rect: Rect, score: number) {
   card(ctx, rect, 'Image quality');
-  badge(ctx, rect, 'Diagnostic', 78, T.green, 'rgba(74,222,128,0.14)', true);
+  badge(ctx, rect, 'Diagnostic', T.green, 'rgba(74,222,128,0.14)', true);
   const cx = rect.x + 56;
   const cy = rect.y + 84;
   ringGauge(ctx, cx, cy, 33, 8, score, T.green, '#1c2530');
@@ -45,7 +48,7 @@ export function drawQuality(ctx: CanvasRenderingContext2D, rect: Rect, score: nu
 
 export function drawSegmentation(ctx: CanvasRenderingContext2D, rect: Rect, latency: number) {
   card(ctx, rect, 'Segmentation');
-  badge(ctx, rect, 'SAM 3', 44, T.cyan, 'rgba(34,211,238,0.14)');
+  badge(ctx, rect, 'SAM 3', T.cyan, 'rgba(34,211,238,0.14)');
   const rows = [
     ['Prompts', '3 points, 1 box'],
     ['Mask IoU', '0.93'],
@@ -61,7 +64,7 @@ export function drawSegmentation(ctx: CanvasRenderingContext2D, rect: Rect, late
 
 export function drawFindings(ctx: CanvasRenderingContext2D, rect: Rect) {
   card(ctx, rect, 'Findings');
-  badge(ctx, rect, 'TI-RADS 3', 70, T.amber, 'rgba(251,191,36,0.14)');
+  badge(ctx, rect, 'TI-RADS 3', T.amber, 'rgba(251,191,36,0.14)');
   text(ctx, 'Solid nodule, 14 by 9 mm.', rect.x + 14, rect.y + 45, { size: 12, family: 'sans', color: T.text });
   text(ctx, 'Follow up scan in 12 months.', rect.x + 14, rect.y + 63, { size: 11.5, family: 'sans', color: T.muted });
 

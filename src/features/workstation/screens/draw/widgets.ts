@@ -11,12 +11,19 @@ interface PillOptions {
   dot?: string;
 }
 
+const pillStyle = (size: number) => ({ size, weight: 600, family: 'sans' }) as const;
+
+/** Width `pill` will take for `label`, so a pill can be lined up on its right edge. */
+export function pillWidth(ctx: CanvasRenderingContext2D, label: string, size = 12, dot = false) {
+  return measure(ctx, label, pillStyle(size)) + size * 1.5 + (dot ? size * 0.9 : 0);
+}
+
 /** Rounded label. Returns its width. `y` is the vertical middle. */
 export function pill(ctx: CanvasRenderingContext2D, label: string, x: number, y: number, { bg, color, size = 12, dot }: PillOptions) {
-  const style = { size, weight: 600, family: 'sans', color } as const;
+  const style = { ...pillStyle(size), color };
   const padding = size * 0.75;
   const dotSpace = dot ? size * 0.9 : 0;
-  const width = measure(ctx, label, style) + padding * 2 + dotSpace;
+  const width = pillWidth(ctx, label, size, Boolean(dot));
   const height = size * 1.75;
   fillRound(ctx, x, y - height / 2, width, height, height / 2, bg);
   if (dot) circle(ctx, x + padding + size * 0.25, y, size * 0.25, dot);
