@@ -28,8 +28,12 @@ export interface StrokeRead {
   step: -1 | 0 | 1;
 }
 
-/** Quiet for this long, in milliseconds, and the next event starts a new gesture. */
-export const IDLE_GAP = 140;
+/**
+ * Quiet for this long, in milliseconds, and the next event starts a new
+ * gesture. Long enough that a busy moment on the page, after which the browser
+ * hands over the waiting events as one, does not read as a pause.
+ */
+export const IDLE_GAP = 200;
 /** Pixels of travel before a trackpad stroke turns the spiral, so a brush of the pad does nothing. */
 const COMMIT = 4;
 /** A single event this big straight after a pause is a mouse wheel notch, in pixels. */
@@ -49,9 +53,8 @@ const MIN_RISE = 0.4;
 /** Line and page sizes in pixels, so every event can be measured the same way. */
 const LINE = 16;
 const PAGE = 800;
-/** Time between events is read within these bounds, in milliseconds, when working out a speed. */
+/** Time between events is read as at least this, in milliseconds, when working out a speed. */
 const FRAME_MIN = 8;
-const FRAME_MAX = 50;
 
 interface Stroke {
   /** A notch turns the spiral at once. A glide waits for COMMIT pixels of travel first. */
@@ -139,7 +142,7 @@ export function createWheelStrokes() {
       const size = Math.max(Math.abs(x), Math.abs(y));
       if (idle) stroke = null;
       if (size === 0) return { idle, begins: false, step: NONE };
-      const rate = size / Math.min(FRAME_MAX, Math.max(FRAME_MIN, gap));
+      const rate = size / Math.min(IDLE_GAP, Math.max(FRAME_MIN, gap));
 
       // Lines and pages only come from mouse wheels, and so does a big jump out of a pause.
       const notch =

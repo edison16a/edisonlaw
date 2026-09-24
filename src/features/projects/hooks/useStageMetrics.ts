@@ -6,7 +6,7 @@ import { setStageMetrics } from '../state/stageMetrics';
 import { wakeSpiral } from '../state/spiralWake';
 
 /** Screens this wide show the panel beside the spiral, so the scene slides left to make room. */
-const SIDE_PANEL_QUERY = '(min-width: 1024px)';
+export const SIDE_PANEL_QUERY = '(min-width: 1024px)';
 /** Share of the way to the centre of the free space. A little less keeps the spiral from hugging the left. */
 const SHIFT_SHARE = 0.8;
 /** On narrower screens the panel sits at the bottom, so the scene rises by this share of the stage height. */

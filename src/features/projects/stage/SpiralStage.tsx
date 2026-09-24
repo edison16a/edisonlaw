@@ -9,6 +9,7 @@ import { useOpeningCard } from '../hooks/useOpeningCard';
 import { useSpiralSounds } from '../hooks/useSpiralSounds';
 import { useStageMetrics } from '../hooks/useStageMetrics';
 import { moveSpiralTo } from '../input/steering';
+import { useSpiralWheel } from '../input/useSpiralWheel';
 import { useStepKeys } from '../input/useStepKeys';
 import { useSpiralStore } from '../state/spiralStore';
 import { DetailPanel } from './DetailPanel';
@@ -35,6 +36,7 @@ export function SpiralStage({ projects }: { projects: Project[] }) {
   useStageMetrics(stage, column);
   const startAt = useOpeningCard(projects);
   useStepKeys(stage);
+  useSpiralWheel(stage, column);
   useSpiralSounds();
 
   const near = useInView(stage, { rootMargin: '25% 0px' });
