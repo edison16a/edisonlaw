@@ -20,7 +20,7 @@ export function AboutSection() {
       <div className="mt-nav aspect-[4/3] w-full lg:sticky lg:top-nav lg:mt-0 lg:aspect-auto lg:h-[calc(100dvh-var(--spacing-nav))]">
         <WorkstationStage variant="about" />
       </div>
-      <div className="gutter flex flex-col gap-14 pt-16 pb-24 lg:pt-[calc(var(--spacing-nav)+4rem)]">
+      <div className="gutter flex flex-col gap-16 pt-16 pb-24 lg:pt-[calc(var(--spacing-nav)+4rem)]">
         <SectionHeader id="about-title" title="About Me" />
         <div className="flex max-w-xl flex-col gap-4 text-lg leading-relaxed text-grey-100 sm:text-xl">
           {intro.map((paragraph) => (

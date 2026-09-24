@@ -13,7 +13,7 @@ export function AboutBlock({ label, children }: { label: string; children: React
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '0px 0px -10% 0px' }}
       transition={{ duration: 0.9, ease: EASE_OUT_EXPO }}
-      className="flex flex-col gap-5 border-t border-grey-900 pt-8"
+      className="flex flex-col gap-5"
     >
       <h3 className="text-xs font-medium tracking-[0.18em] text-grey-400 uppercase">{label}</h3>
       {children}

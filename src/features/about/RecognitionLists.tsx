@@ -3,7 +3,7 @@ import { activities, honors } from '@/content/about';
 /** Name on the left, a quiet detail on the right. */
 function Row({ name, detail }: { name: string; detail: string }) {
   return (
-    <li className="flex items-baseline justify-between gap-4 border-b border-grey-900 py-2.5 last:border-b-0">
+    <li className="flex items-baseline justify-between gap-4 py-2">
       <span className="text-grey-100">{name}</span>
       {detail && <span className="shrink-0 text-sm text-grey-400 tabular-nums">{detail}</span>}
     </li>
