@@ -19,7 +19,7 @@ export function Decor() {
     <group>
       <WallShelf position={[-0.86, 1.74, 0]} />
       <CorkBoard position={[0.42, 1.86, 0]} />
-      <FramedPicture position={[1.52, 1.52, 0]} />
+      <FramedPicture position={[1.34, 1.4, 0]} />
       <FloorPlant position={[ROOM.leftWallX + 0.62, 0, -0.62]} />
       <Penguin position={[-0.9, top, -0.05]} rotationY={0.5} />
       <PencilCup position={[-0.98, top, -0.58]} />
