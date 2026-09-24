@@ -1,6 +1,6 @@
 import { Quaternion, Vector3 } from 'three';
 import { lerp } from '@/lib/math';
-import { BODY, HAND, MUG } from '../dimensions';
+import { BODY, HAND, HEAD_ABOVE_PELVIS, MUG } from '../dimensions';
 import type { BodyPose } from './bodyPose';
 import { aimRotation, jointFor, type LimbGoal } from './limbs';
 import { footOnSurface } from './feet';
@@ -20,9 +20,12 @@ const TIMING = {
 const GESTURES = ['sip', 'idle', 'think', 'idle', 'sip', 'idle', 'think', 'sip', 'idle'] as const;
 const gestureIn = (slot: number) => GESTURES[((slot % GESTURES.length) + GESTURES.length) % GESTURES.length];
 
+/** Skull centre height when standing, the reference for everything the hands bring to the face. */
+const HEAD_Y = BODY.standingPelvisHeight + HEAD_ABOVE_PELVIS;
+
 /** Mug positions in his own space: held at the belly, and raised to the lips. */
 const MUG_REST = new Vector3(-0.075, 0.8, 0.175);
-const MUG_SIP = new Vector3(-0.004, 1.072, 0.232);
+const MUG_SIP = new Vector3(-0.004, HEAD_Y - 0.103, 0.232);
 const AXIS_REST = new Vector3(0.06, 1, 0.08).normalize();
 const AXIS_SIP = new Vector3(0.03, 0.74, -0.67).normalize();
 const MUG_OUTWARD = new Vector3(-1, 0.05, -0.3).normalize();
@@ -30,7 +33,7 @@ const MUG_IN_HAND = new Vector3(...MUG.centerInHand);
 
 /** Left hand: hanging loose, or a soft fist under the chin. */
 const HANG = new Vector3(0.195, 0.588, 0.03);
-const CHIN = new Vector3(0.018, 1.03, 0.168);
+const CHIN = new Vector3(0.018, HEAD_Y - 0.145, 0.168);
 const KNUCKLES = new Vector3(0, -HAND.palmLength - 0.012, -0.012);
 
 /** Finger curls, index to little. */

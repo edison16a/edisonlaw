@@ -32,6 +32,9 @@ export const BODY = {
   forearm: 0.165,
 } as const;
 
+/** Height of the skull centre above the pelvis joint with the spine upright. */
+export const HEAD_ABOVE_PELVIS = BODY.spine + BODY.chest + BODY.neck + BODY.headPivot + BODY.headCenter.y;
+
 /** Hand proportions, in the hand's own space: the wrist is the origin and the fingers point down -Y. */
 export const HAND = {
   palmLength: 0.052,

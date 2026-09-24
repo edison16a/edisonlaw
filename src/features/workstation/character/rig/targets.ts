@@ -1,6 +1,6 @@
 import { Vector3 } from 'three';
 import { KEYBOARD, MONITORS, MOUSE, type MonitorSlot, type Vec3 } from '../../layout';
-import { BODY } from '../dimensions';
+import { BODY, HEAD_ABOVE_PELVIS } from '../dimensions';
 import { SEATED_FOOT_REST, SEATED_PLACEMENT, STANDING_PLACEMENT, type Placement } from '../placement';
 
 const UP = new Vector3(0, 1, 0);
@@ -26,9 +26,9 @@ function monitorLooks(placement: Placement, eyes: Vector3): LookSet {
   return looks;
 }
 
-/** Approximate eye height in each pose, enough to aim the head at the screens. */
-const SEATED_EYES = new Vector3(0, BODY.seatedPelvisHeight + 0.6, 0.1);
-const STANDING_EYES = new Vector3(0, BODY.standingPelvisHeight + 0.6, 0.03);
+/** Approximate eye position in each pose (a little below the skull centre), enough to aim the head at the screens. */
+const SEATED_EYES = new Vector3(0, BODY.seatedPelvisHeight + HEAD_ABOVE_PELVIS - 0.03, 0.1);
+const STANDING_EYES = new Vector3(0, BODY.standingPelvisHeight + HEAD_ABOVE_PELVIS - 0.02, 0.03);
 
 /** Desk targets for the seated pose, in his own space. */
 export const SEATED_TARGETS = {
