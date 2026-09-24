@@ -25,12 +25,13 @@ export const cardFragmentShader = /* glsl */ `
   }
 
   // Like CSS object-fit: cover. The picture fills the card and is never stretched.
+  // Height is trimmed from the bottom only, so a screenshot keeps the header along its top.
   vec2 coverUv(vec2 uv) {
     float planeAspect = uSize.x / uSize.y;
     vec2 scale = planeAspect > uImageAspect
       ? vec2(1.0, uImageAspect / planeAspect)
       : vec2(planeAspect / uImageAspect, 1.0);
-    return (uv - 0.5) * scale + 0.5;
+    return vec2((uv.x - 0.5) * scale.x + 0.5, 1.0 - (1.0 - uv.y) * scale.y);
   }
 
   vec2 textureUv(vec2 uv) {
