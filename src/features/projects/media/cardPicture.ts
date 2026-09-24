@@ -12,8 +12,10 @@ export interface CardPicture {
 }
 
 /**
- * Widest a photo is kept on the GPU. The focused card is under 600 CSS pixels
- * wide, so this stays sharp at twice the pixel density and saves memory.
+ * Widest a photo is kept on the GPU. The focused card is under 640 CSS pixels
+ * wide, so this stays sharp at twice the pixel density and saves memory. The
+ * photos in public/projects are exported at this width, so only a larger one
+ * dropped in by hand is scaled here.
  */
 const MAX_WIDTH = 1280;
 

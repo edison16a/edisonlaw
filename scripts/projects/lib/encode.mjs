@@ -1,11 +1,16 @@
 /**
- * Turns a full resolution capture into the final card photo: 1600 x 1000 WebP.
+ * Turns a full resolution capture into the final card photo: 1280 x 800 WebP.
  * Encoding happens in Chromium's canvas, so no image library is needed.
  */
 import { openPage } from './browser.mjs';
 
+/** The canvas composed layouts are drawn on. Their pixel sizes assume it. */
 export const CARD_WIDTH = 1600;
 export const CARD_HEIGHT = 1000;
+
+/** The saved photo, as wide as the spiral ever draws a card on a high density screen. */
+const PHOTO_WIDTH = 1280;
+const PHOTO_HEIGHT = 800;
 
 /** Files over this size are encoded again at a slightly lower quality. */
 const MAX_BYTES = 250 * 1024;
@@ -27,8 +32,8 @@ export async function encodeWebp(browser, png, crop) {
         source,
         crop: crop ?? null,
         quality,
-        width: CARD_WIDTH,
-        height: CARD_HEIGHT,
+        width: PHOTO_WIDTH,
+        height: PHOTO_HEIGHT,
       });
       bytes = Buffer.from(dataUrl.slice(dataUrl.indexOf(',') + 1), 'base64');
       if (bytes.length <= MAX_BYTES) break;

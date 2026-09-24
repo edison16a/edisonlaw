@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Recreates the project card photos in public/projects: one 1600 x 1000 WebP per project.
+ * Recreates the project card photos in public/projects: one 1280 x 800 WebP per project.
  *
  *   node scripts/projects/capture.mjs                  every project
  *   node scripts/projects/capture.mjs betterbart trashgo   only the ones named
