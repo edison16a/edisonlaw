@@ -45,7 +45,7 @@ function ToggleWord({ label, active, onSelect, className }: ToggleWordProps) {
         onPointerEnter={() => !active && sound.play('hover')}
         className={cn(
           'group relative overflow-hidden text-lg leading-7 font-medium tracking-tight transition-colors duration-300',
-          active ? 'text-white' : 'text-grey-500 hover:text-grey-200',
+          active ? 'text-white' : 'text-grey-400 hover:text-grey-200',
         )}
       >
         <span className="block transition-transform duration-500 ease-out-expo group-hover:-translate-y-full">

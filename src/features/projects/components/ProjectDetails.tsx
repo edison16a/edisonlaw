@@ -42,7 +42,7 @@ export function ProjectDetails({ project, index, total, className }: ProjectDeta
       exit="gone"
       className={cn('flex flex-col items-start gap-4', className)}
     >
-      <motion.p variants={item} className="font-mono text-xs tracking-widest text-grey-500">
+      <motion.p variants={item} className="font-mono text-xs tracking-widest text-grey-400">
         <span className="text-white">{padIndex(index + 1)}</span> / {padIndex(total)}
       </motion.p>
       <motion.div variants={item} className="flex flex-col gap-1.5">

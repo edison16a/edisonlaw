@@ -23,7 +23,7 @@ export function ProjectList({ projects, onModeChange, onOpen }: ProjectListProps
       </div>
       <div className="mb-10 flex flex-wrap items-end justify-between gap-6">
         <IntroTitle />
-        <p className="font-mono text-xs tracking-widest text-grey-500">{projects.length} projects</p>
+        <p className="font-mono text-xs tracking-widest text-grey-400">{projects.length} projects</p>
       </div>
       <motion.ol
         initial="hidden"
