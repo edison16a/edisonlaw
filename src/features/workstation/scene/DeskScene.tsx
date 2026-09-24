@@ -17,6 +17,7 @@ import { Mouse } from '../props/Mouse';
 import { PcTower } from '../props/tower/PcTower';
 import type { ScreenId } from '../screens/types';
 import type { StageVariant } from '../types';
+import { GroundShadow } from './GroundShadow';
 import { ReadySignal } from './ReadySignal';
 import { Room } from './Room';
 import { Rug } from './Rug';
@@ -48,6 +49,7 @@ export function DeskScene(props: DeskSceneProps) {
       <Lighting />
       <Room />
       <Rug />
+      <GroundShadow />
       <Desk />
       <Monitors centerScreen={centerScreen} live={screensLive} />
       <DeskMat />
