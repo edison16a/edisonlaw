@@ -5,6 +5,10 @@ import { clamp, wrap } from '@/lib/math';
 const HUE_SPEED = 1 / 26;
 /** Hue shown when motion is reduced: a calm violet. */
 const FROZEN_HUE = 0.74;
+/** The cycle lingers around this hue (violet) and hurries through the opposite side (green). */
+const FAVOURED_HUE = 0.76;
+/** 0 is an even cycle. 0.6 spends four times longer at the favoured hue than at its opposite. */
+const LINGER = 0.6;
 /** Length of the pulse surge, in seconds. */
 export const PULSE_DURATION = 0.7;
 /** Extra brightness at the peak of a pulse, so the peak reads 1.8x. */
@@ -25,6 +29,15 @@ export interface RgbClock {
   setFrozen(frozen: boolean): void;
   /** Starts a pulse at the next sampled frame. */
   pulse(): void;
+}
+
+/**
+ * Maps an evenly advancing phase to a hue that still covers the whole wheel but slows down
+ * around violet, blue and magenta, where the room looks best.
+ */
+export function warpHue(phase: number) {
+  const offset = phase - FAVOURED_HUE;
+  return wrap(phase - (LINGER * Math.sin(2 * Math.PI * offset)) / (2 * Math.PI), 0, 1);
 }
 
 /** Eased bump from 0 up to 1 and back to 0 over `progress` 0 to 1. */
@@ -50,7 +63,7 @@ export function createRgbClock(frozen = false): RgbClock {
         pulseStart = elapsed;
         pulsePending = false;
       }
-      clock.hue = clock.frozen ? FROZEN_HUE : wrap(0.62 + elapsed * HUE_SPEED, 0, 1);
+      clock.hue = clock.frozen ? FROZEN_HUE : warpHue(0.62 + elapsed * HUE_SPEED);
       clock.boost = 1 + PULSE_GAIN * pulseEnvelope((elapsed - pulseStart) / PULSE_DURATION);
     },
     pulse() {
