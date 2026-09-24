@@ -7,7 +7,7 @@ import { Matrix4, Quaternion, Vector3 } from 'three';
  */
 
 /** Semi axes of the base ellipsoid: a wide, soft, slightly squashed chibi skull. */
-export const SKULL = { x: 0.206, y: 0.197, z: 0.19 } as const;
+const SKULL = { x: 0.206, y: 0.197, z: 0.19 } as const;
 
 const DEG = Math.PI / 180;
 
@@ -49,7 +49,7 @@ export function headRadius(dx: number, dy: number, dz: number) {
 }
 
 /** Unit direction for crown angle `theta` and turn angle `phi`, both in radians. */
-export function directionAt(theta: number, phi: number, out = new Vector3()) {
+function directionAt(theta: number, phi: number, out = new Vector3()) {
   const sinTheta = Math.sin(theta);
   return out.set(sinTheta * Math.sin(phi), Math.cos(theta), sinTheta * Math.cos(phi));
 }
@@ -65,7 +65,7 @@ const probeB = new Vector3();
 const probeC = new Vector3();
 
 /** Outward surface normal of the skull at angles given in degrees, found numerically. */
-export function surfaceNormal(thetaDeg: number, phiDeg: number, out = new Vector3()) {
+function surfaceNormal(thetaDeg: number, phiDeg: number, out = new Vector3()) {
   const step = 0.4;
   surfacePoint(thetaDeg, phiDeg, 0, probeA);
   surfacePoint(thetaDeg + step, phiDeg, 0, probeB).sub(probeA);

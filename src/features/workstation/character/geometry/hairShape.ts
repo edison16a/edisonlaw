@@ -67,7 +67,7 @@ export const undercutLineAt = periodicSpline(
 export const coveredLineAt = (phiDeg: number) => Math.max(hairlineAt(phiDeg), undercutLineAt(phiDeg));
 
 /** How far the top layer stands off the skull: full on top, springy over the forehead, closer at the sides. */
-export function volumeAt(thetaDeg: number, phiDeg: number) {
+function volumeAt(thetaDeg: number, phiDeg: number) {
   const phi = phiDeg * DEG;
   const side = Math.abs(Math.sin(phi));
   const back = Math.max(0, -Math.cos(phi));
@@ -81,7 +81,7 @@ export function volumeAt(thetaDeg: number, phiDeg: number) {
 }
 
 /** The centre part: a groove from the forehead back to the crown, with the hair lifting either side of it. */
-export function partAt(x: number, y: number, z: number) {
+function partAt(x: number, y: number, z: number) {
   const along = smoothstep(-0.13, -0.06, z) * smoothstep(0.03, 0.09, y);
   if (along <= 0) return 0;
   const groove = -0.011 * Math.exp(-((x / 0.0068) ** 2));
@@ -93,7 +93,7 @@ export function partAt(x: number, y: number, z: number) {
  * Soft clumps that follow the flow of the cut: over the top they run out sideways from the part,
  * over the back and sides they fall from the crown and line up with the strand tips.
  */
-export function clumpsAt(thetaDeg: number, phiDeg: number, x: number, z: number) {
+function clumpsAt(thetaDeg: number, phiDeg: number, x: number, z: number) {
   const fromPart = smoothstep(0.006, 0.03, Math.abs(x)) * (1 - smoothstep(55, 80, thetaDeg));
   const overTop = Math.cos(z * 150 + Math.abs(x) * 30) * fromPart * smoothstep(-0.07, 0.0, z);
   const down = (clumpWave(phiDeg) - 0.3) * smoothstep(20, 60, thetaDeg) * behind(phiDeg);
