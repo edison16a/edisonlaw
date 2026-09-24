@@ -1,0 +1,51 @@
+import { SAMPLE_RATE, silence, type Signal } from './signal';
+
+const TAU = Math.PI * 2;
+
+/** A frequency in Hz, fixed or following a curve over time in seconds. */
+export type Frequency = number | ((t: number) => number);
+
+const frequencyAt = (frequency: Frequency, t: number) => (typeof frequency === 'number' ? frequency : frequency(t));
+
+/** Phase continuous sine, so pitch glides stay smooth. */
+export function sine(seconds: number, frequency: Frequency, phase = 0): Signal {
+  const out = silence(seconds);
+  let angle = phase;
+  for (let i = 0; i < out.length; i++) {
+    out[i] = Math.sin(angle);
+    angle += (TAU * frequencyAt(frequency, i / SAMPLE_RATE)) / SAMPLE_RATE;
+    if (angle > TAU) angle -= TAU;
+  }
+  return out;
+}
+
+export interface Mode {
+  frequency: number;
+  amplitude: number;
+  /** Time constant of the exponential decay, in seconds. */
+  decay: number;
+  phase?: number;
+}
+
+/**
+ * Modal synthesis: a sum of exponentially decaying sines.
+ * This is the ringing body of anything struck, from a wood block to a key cap.
+ */
+export function modes(seconds: number, list: Mode[]): Signal {
+  const out = silence(seconds);
+  for (const { frequency, amplitude, decay, phase = 0 } of list) {
+    if (frequency >= SAMPLE_RATE / 2) continue;
+    const step = (TAU * frequency) / SAMPLE_RATE;
+    const fall = Math.exp(-1 / (decay * SAMPLE_RATE));
+    let level = amplitude;
+    for (let i = 0; i < out.length; i++) {
+      out[i] += Math.sin(phase + step * i) * level;
+      level *= fall;
+      if (level < 1e-6) break;
+    }
+  }
+  return out;
+}
+
+/** Nearest frequency that fits a whole number of cycles in `seconds`, so tones loop without a seam. */
+export const loopableFrequency = (frequency: number, seconds: number) => Math.max(1, Math.round(frequency * seconds)) / seconds;
