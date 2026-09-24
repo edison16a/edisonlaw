@@ -38,7 +38,7 @@ export const SPIRAL = {
   rise: 0.5,
   /** Height of the focus slot. */
   focusHeight: 0.12,
-  /** Cards on the strand. Every project appears twice so the spiral never runs out. */
+  /** Cards on the strand. Every project appears twice, so the loop always has cards to show. */
   slots: 24,
   /** How far the strand sweeps right at the top and bottom, per unit of height squared. */
   sweep: 0.1,
@@ -53,7 +53,7 @@ export const FOCUS = {
   reach: 0.5,
 } as const;
 
-/** How far a hidden spiral sinks, for the entrance and the switch to list mode. */
+/** How far a hidden spiral sinks, for the entrance. */
 const HIDDEN_DROP = 1.5;
 
 /**
@@ -63,15 +63,6 @@ const HIDDEN_DROP = 1.5;
 export function slotOffset(slot: number, index: number, slots: number = SPIRAL.slots) {
   const half = slots / 2;
   return ((((slot - index + half) % slots) + slots) % slots) - half;
-}
-
-/**
- * True when `slot` sits past either end of a deck of `count` projects, where
- * the strand wraps round to the other end of the list.
- */
-export function isPastDeck(slot: number, index: number, count: number, slots: number = SPIRAL.slots) {
-  const place = index + slotOffset(slot, index, slots);
-  return place < -0.5 || place > count - 0.5;
 }
 
 /** Smoothest step, zero first and second derivatives at both ends. */

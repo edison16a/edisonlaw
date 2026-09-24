@@ -30,22 +30,16 @@ export function isCardDetent(detent: number, perCard = DETENTS_PER_CARD) {
 }
 
 /**
- * Card to settle on once scrolling stops at `position`, or null outside the
- * track so the visitor can always scroll in and out freely.
- * `anchor` is the card that was locked before the scroll started: moving even
- * a little away from it commits to the neighbour, like a detent wheel.
+ * Card to settle on once input stops at `position`. The index loops, so every
+ * position has a card to settle on. `anchor` is the card that was locked
+ * before the input started: moving even a little away from it commits to the
+ * neighbour, like a detent wheel.
  */
-export function snapTarget(position: number, anchor: number | null, count: number, threshold = SNAP_THRESHOLD) {
-  if (count < 1 || position < 0 || position > count - 1) return null;
-  const nearest = Math.round(position);
-  let target = nearest;
+export function snapTarget(position: number, anchor: number | null, threshold = SNAP_THRESHOLD) {
+  // Adding zero turns the -0 that rounding can return into 0.
+  const nearest = Math.round(position) + 0;
   if (anchor !== null && nearest === anchor && Math.abs(position - anchor) >= threshold) {
-    target = anchor + Math.sign(position - anchor);
+    return anchor + Math.sign(position - anchor);
   }
-  return Math.min(count - 1, Math.max(0, target));
-}
-
-/** Nearest card to a continuous index, kept inside the deck. */
-export function nearestCard(position: number, count: number) {
-  return Math.min(count - 1, Math.max(0, Math.round(position)));
+  return nearest;
 }

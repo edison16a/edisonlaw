@@ -6,7 +6,7 @@ import { useIsClient } from '@/lib/hooks/useIsClient';
 import { ProjectsIndex } from './components/ProjectsIndex';
 import { CAROUSEL_ONLY, STAGE_ONLY, useSpiralFits } from './hooks/useSpiralFits';
 import { ProjectCarousel } from './mobile/ProjectCarousel';
-import { SpiralTrack } from './stage/SpiralTrack';
+import { SpiralStage } from './stage/SpiralStage';
 
 /**
  * The first thing visitors see. Desktops and tablets get the spiral, phones
@@ -27,7 +27,7 @@ export function ProjectsSection({ projects = allProjects }: { projects?: Project
     <section id="projects" aria-labelledby="projects-title" className="relative pt-nav">
       {showStage && (
         <div className={isClient ? undefined : STAGE_ONLY}>
-          <SpiralTrack projects={projects} />
+          <SpiralStage projects={projects} />
         </div>
       )}
       {showCarousel && (

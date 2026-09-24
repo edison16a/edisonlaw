@@ -1,20 +1,21 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { indexFromScroll } from '../spiral/track';
-import { resetSpiralMotion } from '../state/spiralMotion';
-import { stageMetrics } from '../state/stageMetrics';
+import { INTRO_INDEX, projectAt } from '../spiral/loop';
+import { resetSpiralMotion, spiralMotion } from '../state/spiralMotion';
 
 /**
- * Where the spiral opens: wherever the page already is. Returns the card the
- * spiral opens on, so its picture can load first. Call after the track is measured.
+ * Where the spiral opens. The first time it is the intro, halfway before the
+ * first project. If the stage comes back later in the visit, after a resize
+ * for example, it opens on the card it was showing. Returns the project to
+ * load first.
  */
-export function useOpeningCard() {
-  const [startAt] = useState(0);
+export function useOpeningCard(count: number) {
+  const [opening] = useState(() => (spiralMotion.introAt === null ? Math.round(spiralMotion.target) : INTRO_INDEX));
 
   useEffect(() => {
-    resetSpiralMotion(indexFromScroll(window.scrollY, stageMetrics));
-  }, []);
+    resetSpiralMotion(opening);
+  }, [opening]);
 
-  return startAt;
+  return projectAt(opening, count);
 }

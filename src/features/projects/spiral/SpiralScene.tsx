@@ -7,23 +7,23 @@ import type { Project } from '@/content/types';
 import { useReducedMotion } from '@/lib/hooks/useReducedMotion';
 import { spiralMotion } from '../state/spiralMotion';
 import { useSpiralStore, type FocusSnapshot } from '../state/spiralStore';
+import { onSpiralWake } from '../state/spiralWake';
 import { stageMetrics } from '../state/stageMetrics';
 import { createCards, updateCard, type CardRuntime } from './cardFrame';
 import { cardViewport } from './cardMaterial';
 import { readFocus } from './focus';
 import { CARD_HEIGHT, CARD_WIDTH } from './geometry';
 import { frameCamera } from './lens';
-import { isAtRest, stepMotion } from './motionStep';
+import { isAtRest, isInIntro, stepMotion } from './motionStep';
 import { tickDetents } from './ticks';
-import { firstIndex, indexFromScroll } from './track';
 import { useCardPictures } from './useCardPictures';
 
 export interface SpiralSceneProps {
   projects: Project[];
-  /** Card the spiral opens on. */
+  /** Project whose picture loads first. */
   startAt: number;
-  /** A card facing the camera was clicked. */
-  onSelect: (project: number) => void;
+  /** A card facing the camera was clicked. Receives the card's place on the looping index. */
+  onSelect: (index: number) => void;
   /** The pointer moved onto a card facing the camera, or off every card. */
   onHover: (project: number | null) => void;
 }
@@ -53,17 +53,9 @@ export function SpiralScene({ projects, startAt, onSelect, onHover }: SpiralScen
   useEffect(() => () => geometry.dispose(), [geometry]);
   useEffect(() => () => cards.forEach((card) => card.material.dispose()), [cards]);
 
-  // The canvas only draws while something moves. Scrolling, resizing and the pointer wake it.
+  // The canvas only draws while something moves. Input and resizes wake it.
   const resting = useRef(false);
-  useEffect(() => {
-    const wake = () => invalidate();
-    window.addEventListener('scroll', wake, { passive: true });
-    window.addEventListener('resize', wake);
-    return () => {
-      window.removeEventListener('scroll', wake);
-      window.removeEventListener('resize', wake);
-    };
-  }, [invalidate]);
+  useEffect(() => onSpiralWake(() => invalidate()), [invalidate]);
   // Coming back on screen switches the loop on again, which should draw at least once.
   useEffect(() => invalidate(), [frameloop, invalidate]);
 
@@ -71,16 +63,13 @@ export function SpiralScene({ projects, startAt, onSelect, onHover }: SpiralScen
     // A long pause (a hidden tab, or the canvas resting) should not fling the spiral.
     const delta = resting.current ? 1 / 60 : Math.min(rawDelta, 0.1);
     const previous = spiralMotion.value;
-    const target = indexFromScroll(window.scrollY, stageMetrics);
-    stepMotion(spiralMotion, target, count, delta, reducedMotion);
+    stepMotion(spiralMotion, delta, reducedMotion);
     tickDetents(previous, spiralMotion.value, spiralMotion.velocity, performance.now());
-    syncFocus(readFocus(spiralMotion.value, spiralMotion.velocity, spiralMotion.settle, count, focus));
-    if (spiralMotion.hoverSlot !== null && Math.abs(spiralMotion.velocity) > HOVER_SPEED) {
+    const { value, velocity, settle } = spiralMotion;
+    syncFocus(readFocus(value, velocity, settle, count, isInIntro(spiralMotion), focus));
+    if (spiralMotion.hoverSlot !== null && Math.abs(velocity) > HOVER_SPEED) {
       spiralMotion.hoverSlot = null;
       onHover(null);
-    }
-    if (Math.abs(target - firstIndex()) > 0.04 && !useSpiralStore.getState().hasScrolled) {
-      useSpiralStore.getState().markScrolled();
     }
 
     const { focusShift, focusLift } = stageMetrics;
@@ -88,12 +77,7 @@ export function SpiralScene({ projects, startAt, onSelect, onHover }: SpiralScen
     frameCamera(camera, state.size.width, state.size.height, focusShift * engaged, focusLift * engaged);
     gl.getDrawingBufferSize(cardViewport);
     let busy = uploadNext();
-    for (const card of cards) busy = updateCard(card, spiralMotion, cards.length, count, delta, reducedMotion) || busy;
-    const hovered = spiralMotion.hoverSlot === null ? null : cards[spiralMotion.hoverSlot];
-    if (hovered?.scenery) {
-      spiralMotion.hoverSlot = null;
-      onHover(null);
-    }
+    for (const card of cards) busy = updateCard(card, spiralMotion, cards.length, delta, reducedMotion) || busy;
 
     resting.current = !busy && isAtRest(spiralMotion);
     if (!resting.current) state.invalidate();
@@ -102,7 +86,6 @@ export function SpiralScene({ projects, startAt, onSelect, onHover }: SpiralScen
   const hover = (card: CardRuntime) => (event: ThreeEvent<PointerEvent>) => {
     if (card.facing < MIN_FACING) return;
     event.stopPropagation();
-    if (card.scenery) return;
     spiralMotion.hoverSlot = card.slot;
     onHover(card.project);
     invalidate();
@@ -118,7 +101,7 @@ export function SpiralScene({ projects, startAt, onSelect, onHover }: SpiralScen
   const select = (card: CardRuntime) => (event: ThreeEvent<MouseEvent>) => {
     if (card.facing < MIN_FACING) return;
     event.stopPropagation();
-    if (!card.scenery && event.delta <= CLICK_SLOP) onSelect(card.project);
+    if (event.delta <= CLICK_SLOP) onSelect(Math.round(spiralMotion.value + card.offset));
   };
 
   return cards.map((card) => (

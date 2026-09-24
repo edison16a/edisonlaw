@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { detentCrossed, isCardDetent, nearestCard, snapTarget } from './detents';
+import { detentCrossed, isCardDetent, snapTarget } from './detents';
 
 describe('detentCrossed', () => {
   it('returns null while staying between two lines', () => {
@@ -26,30 +26,31 @@ describe('detentCrossed', () => {
 });
 
 describe('snapTarget', () => {
-  it('never snaps outside the deck', () => {
-    expect(snapTarget(-0.2, 0, 12)).toBeNull();
-    expect(snapTarget(11.3, 11, 12)).toBeNull();
-  });
-
   it('settles back when barely moved from the locked card', () => {
-    expect(snapTarget(3.05, 3, 12)).toBe(3);
-    expect(snapTarget(2.96, 3, 12)).toBe(3);
+    expect(snapTarget(3.05, 3)).toBe(3);
+    expect(snapTarget(2.96, 3)).toBe(3);
   });
 
   it('commits to the neighbour once past the threshold', () => {
-    expect(snapTarget(3.1, 3, 12)).toBe(4);
-    expect(snapTarget(2.9, 3, 12)).toBe(2);
+    expect(snapTarget(3.1, 3)).toBe(4);
+    expect(snapTarget(2.9, 3)).toBe(2);
   });
 
   it('uses the nearest card once travel passes the halfway point', () => {
-    expect(snapTarget(4.09, 3, 12)).toBe(4);
-    expect(snapTarget(5.7, 3, 12)).toBe(6);
-    expect(snapTarget(5.4, null, 12)).toBe(5);
+    expect(snapTarget(4.09, 3)).toBe(4);
+    expect(snapTarget(5.7, 3)).toBe(6);
+    expect(snapTarget(5.4, null)).toBe(5);
   });
 
-  it('stays inside the deck at both ends', () => {
-    expect(snapTarget(0.1, 0, 12)).toBe(1);
-    expect(snapTarget(10.95, 11, 12)).toBe(11);
-    expect(nearestCard(13, 12)).toBe(11);
+  it('has no ends, so it settles past the last project and before the first', () => {
+    expect(snapTarget(11.3, 11)).toBe(12);
+    expect(snapTarget(-0.2, 0)).toBe(-1);
+    expect(snapTarget(-7.6, null)).toBe(-8);
+    expect(snapTarget(250.2, null)).toBe(250);
+  });
+
+  it('leaves the intro for the card in the direction of travel', () => {
+    expect(snapTarget(-0.45, null)).toBe(0);
+    expect(snapTarget(-0.55, null)).toBe(-1);
   });
 });
