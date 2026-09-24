@@ -60,6 +60,6 @@ if (flags.selector) {
 }
 if (flags.scroll) await page.evaluate((y) => window.scrollTo(0, y), Number(flags.scroll));
 await page.waitForTimeout(wait);
-await page.screenshot({ path: out, fullPage: Boolean(flags.full) });
+await page.screenshot({ path: out, fullPage: Boolean(flags.full), timeout: 180000 });
 await browser.close();
 console.log(`saved ${out}`);
