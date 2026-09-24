@@ -128,7 +128,7 @@ export function actionBlock(action: CodexAction, done: boolean, progress: number
   }
 }
 
-/** "• Working (12s, esc to interrupt)" with a bright sweep through the word. */
+/** A bullet, then "Working (12s, esc to interrupt)" with a bright sweep through the word. */
 export function statusBlock(verb: string, seconds: number, frame: number, shimmer: number): TermBlock {
   const letters = [...verb].map((letter, index) => {
     const distance = Math.abs(index - shimmer);

@@ -13,7 +13,7 @@ export type CodexAction =
   | { kind: 'run'; command: string; output: string[] }
   | { kind: 'worked'; label: string };
 
-const PLAN = ['Find where the timeline animates', 'Add a reduced motion branch', 'Run the typecheck'];
+const PLAN = ['Find where the timeline animates', 'Add a reduced motion branch', 'Run the linter'];
 const plan = (done: number): CodexAction => ({
   kind: 'plan',
   steps: PLAN.map((text, index) => ({ text, done: index < done })),
@@ -55,12 +55,12 @@ export const SESSION: AgentStep<CodexAction>[] = [
       ],
     },
   },
-  { kind: 'act', seconds: 2.6, action: { kind: 'run', command: 'npm run typecheck', output: ['> edisonlaw@0.1.0 typecheck', '> tsc --noEmit'] } },
+  { kind: 'act', seconds: 2.6, action: { kind: 'run', command: 'npm run lint', output: ['> edisonlaw@0.1.0 lint', '> eslint .'] } },
   { kind: 'act', seconds: 0.6, action: plan(3) },
   { kind: 'act', seconds: 0.3, action: { kind: 'worked', label: 'Worked for 13s' } },
   {
     kind: 'say',
-    text: 'The timeline now respects reduced motion. When the system asks for less motion, the dots fill instantly and the line draws without easing. Typecheck passes.',
+    text: 'The timeline now respects reduced motion. When the system asks for less motion, the dots fill instantly and the line draws without easing. Lint passes.',
   },
   { kind: 'idle', seconds: 4.5 },
   { kind: 'type', text: '/new' },
