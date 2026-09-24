@@ -15,7 +15,8 @@ import { useSpiralMode } from './state/useSpiralMode';
 
 /**
  * The first thing visitors see. Desktop gets the spiral, phones (upright or on
- * their side) a swipeable strip, and list mode a plain index. Every project is real text in every mode.
+ * their side) a swipeable strip, and list mode a plain index. Every project is
+ * real text in every mode.
  */
 export function ProjectsSection({ projects = allProjects }: { projects?: Project[] }) {
   const mode = useSpiralMode();
