@@ -52,8 +52,12 @@ export const HAND = {
 export const MUG = {
   radius: 0.036,
   height: 0.082,
-  /** Centre of the mug in the right hand's space. Its axis runs along the hand's +X, the thumb side. */
-  centerInHand: [0, -0.036, -(HAND.palmThickness / 2 + 0.036 + 0.001)] as const,
+  /**
+   * Centre of the mug in the right hand's space. Its axis runs along the hand's +X, the thumb side, and
+   * it sits a little toward the thumb so the hand holds it below the middle and the thumb lands on its
+   * side rather than over the rim.
+   */
+  centerInHand: [0.018, -0.036, -(HAND.palmThickness / 2 + 0.036 + 0.001)] as const,
 } as const;
 
 /** Where a two bone limb bends, measured along its bones. */
