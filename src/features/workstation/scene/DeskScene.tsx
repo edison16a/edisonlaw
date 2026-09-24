@@ -13,7 +13,7 @@ import { Footrest } from '../props/Footrest';
 import { Decor } from '../props/decor/Decor';
 import { DeskMat } from '../props/DeskMat';
 import { Keyboard } from '../props/keyboard/Keyboard';
-import { MacMini } from '../props/MacMini';
+import { MacMini } from '../props/apple/MacMini';
 import { Monitors } from '../props/Monitors';
 import { Mouse } from '../props/Mouse';
 import { PcTower } from '../props/tower/PcTower';

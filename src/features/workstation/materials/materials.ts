@@ -22,6 +22,13 @@ function createMaterials() {
     whitePlastic: new MeshPhysicalMaterial({ color: '#efece6', roughness: 0.38, clearcoat: 0.4, clearcoatRoughness: 0.35 }),
     brushedMetal: new MeshStandardMaterial({ color: '#9ca0a8', metalness: 0.85, roughness: 0.32 }),
     aluminium: new MeshStandardMaterial({ color: '#c9ccd1', metalness: 0.8, roughness: 0.34 }),
+    /** Apple's bead blasted finishes: half metal so they stay readable in the dim room. */
+    silverAluminium: new MeshStandardMaterial({ color: '#d9dbdf', metalness: 0.55, roughness: 0.3 }),
+    spaceGrey: new MeshStandardMaterial({ color: '#5d6066', metalness: 0.6, roughness: 0.32 }),
+    /** Mirror polished Apple logos. */
+    polishedChrome: new MeshStandardMaterial({ color: '#eef0f3', metalness: 1, roughness: 0.08 }),
+    /** Black glass and gloss, for displays and the inside of the laptop. */
+    blackGlass: new MeshStandardMaterial({ color: '#050507', roughness: 0.08, metalness: 0.2 }),
     /** Satin graphite for bezels, the keyboard case and small electronics. */
     darkPlastic: new MeshStandardMaterial({ color: '#17181c', roughness: 0.55, metalness: 0.1 }),
     blackMatte: new MeshStandardMaterial({ color: '#0b0b0d', roughness: 0.8 }),

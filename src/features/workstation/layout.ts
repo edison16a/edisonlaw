@@ -63,7 +63,13 @@ export const KEYBOARD = {
 
 export const MOUSE = { position: [0.34, 0.748, -0.08] as Vec3 } as const;
 
-export const MAC_MINI = { position: [-0.8, 0.74, -0.3] as Vec3, size: [0.2, 0.036, 0.2] as Vec3 } as const;
+/** Mac mini at the left end of the desk. `size` is width, height and depth; `position` is the middle of its foot. */
+export const MAC_MINI = {
+  position: [-0.82, 0.74, -0.28] as Vec3,
+  size: [0.15, 0.054, 0.15] as Vec3,
+  /** Turned so the front with its status light faces the room. */
+  rotationY: -0.32,
+} as const;
 
 /**
  * Tower stands on the floor to the right of the desk. `size` is length, height and depth in the
