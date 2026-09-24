@@ -25,7 +25,7 @@ export const FACE = {
   /** Where the left ear hangs from, on the side of the skull above and behind the eye. */
   earRoot: [0.055, -0.026, -0.018] as Vec3,
   /** Back of the skull, where the neck joins. */
-  nape: [0, -0.078, -0.058] as Vec3,
+  nape: [0, -0.095, -0.068] as Vec3,
   /** Under the back of the jaw, where the throat joins. */
   throat: [0, -0.122, -0.004] as Vec3,
 } as const;

@@ -13,16 +13,18 @@ import { DOG_PAT_POINT, type Vec3 } from '../layout';
 export const HEAD = {
   /**
    * The crown contact point in dog space: as high as DOG_PAT_POINT, since the dog stands on the floor,
-   * a neck's length ahead of the shoulders and a little to the dog's right, toward Edison's hand.
+   * a neck's length ahead of the shoulders and to the dog's right of its body, toward Edison's hand, so
+   * the body itself stands clear of his leg.
    */
-  top: [-0.048, DOG_PAT_POINT[1], 0.3] as Vec3,
+  top: [-0.07, DOG_PAT_POINT[1], 0.37] as Vec3,
   /** Head space is sculpted at a real retriever's size; the clay head is this much bigger. */
   scale: 1.1,
   /**
-   * Resting pose of the head, in radians: turned toward its left (the about camera), nose lifted a
-   * touch, and the crown tilted a little toward its right, into Edison's hand.
+   * Resting pose of the head, in radians: turned a little toward its left (the about camera) so the face
+   * shows three quarters on, nose lifted a touch, and the crown tilted a little toward its right, into
+   * Edison's hand. Turned any further, the ear on the far side would sink into the neck.
    */
-  rest: { yaw: 1.2, pitch: 0.1, tilt: 0.08 },
+  rest: { yaw: 0.65, pitch: 0.1, tilt: 0.08 },
   /**
    * The palm meets the head on the upper slope of its right side, toward Edison, rather than dead on
    * top, so the round skull sits a little toward the camera and clear of his leg. Radians from vertical.
