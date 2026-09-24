@@ -4,8 +4,13 @@ import { useEffect, type RefObject } from 'react';
 import { useReducedMotion } from '@/lib/hooks/useReducedMotion';
 import { EASE_OUT_EXPO_CSS } from '@/lib/easing';
 
-/** Bar height when sound is off: a row of dots. */
-export const FLAT = 0.15;
+/**
+ * Bar heights while sound is off: a paused equaliser. Varied heights read as audio,
+ * where a row of equal dots looked like a menu button.
+ */
+export const PAUSED = [0.35, 0.6, 0.45, 0.3];
+
+export const pausedHeight = (index: number) => PAUSED[index % PAUSED.length];
 
 /**
  * Each bar's own rhythm. Different lengths keep the bars drifting in and out of step,
@@ -42,8 +47,8 @@ export function useEqualizer(bars: RefObject<(HTMLElement | null)[]>, active: bo
       bar.getAnimations().forEach((animation) => animation.cancel());
 
       const rhythm = RHYTHMS[index % RHYTHMS.length];
-      const target = !active ? FLAT : reduced ? STILL[index % STILL.length] : rhythm.heights[0];
-      const settle = bar.animate([{ transform: from === 'none' ? scale(FLAT) : from }, { transform: scale(target) }], {
+      const target = !active ? pausedHeight(index) : reduced ? STILL[index % STILL.length] : rhythm.heights[0];
+      const settle = bar.animate([{ transform: from === 'none' ? scale(pausedHeight(index)) : from }, { transform: scale(target) }], {
         duration: reduced ? 0 : SETTLE_MS,
         delay: active && !reduced ? index * STAGGER_MS : 0,
         easing: EASE_OUT_EXPO_CSS,

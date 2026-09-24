@@ -2,11 +2,11 @@
 
 import { useRef } from 'react';
 import { cn } from '@/lib/cn';
-import { FLAT, useEqualizer } from './useEqualizer';
+import { pausedHeight, useEqualizer } from './useEqualizer';
 
 const BARS = 4;
 
-/** Four thin bars: gently moving while sound is on, a flat row of dots while it is off. */
+/** Four thin bars: gently moving while sound is on, paused at mixed heights while it is off. */
 export function EqualizerBars({ active }: { active: boolean }) {
   const bars = useRef<(HTMLSpanElement | null)[]>([]);
   useEqualizer(bars, active);
@@ -19,7 +19,7 @@ export function EqualizerBars({ active }: { active: boolean }) {
           ref={(node) => {
             bars.current[index] = node;
           }}
-          style={{ transform: `scaleY(${FLAT})` }}
+          style={{ transform: `scaleY(${pausedHeight(index)})` }}
           className={cn(
             'h-full w-[2px] rounded-full transition-colors duration-500 will-change-transform',
             active ? 'bg-white' : 'bg-grey-300 group-hover:bg-white',
