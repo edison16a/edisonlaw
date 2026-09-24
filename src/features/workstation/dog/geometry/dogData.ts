@@ -1,7 +1,6 @@
 import { earShapes } from '../anatomy/ear';
 import { faceLayout, type FaceLayout } from '../anatomy/face';
 import { noseShapes } from '../anatomy/nose';
-import { tongueShapes } from '../anatomy/tongue';
 import { PART_COUNT } from '../dimensions';
 import { Field } from '../sdf/field';
 import { buildCoatData, type CoatData } from './coatGeometry';
@@ -13,12 +12,11 @@ export interface DogData {
   /** The left ear; the right one is its mirror image. */
   ear: PartData;
   nose: PartData;
-  tongue: PartData;
   face: FaceLayout;
 }
 
 /** Grid cells for the small parts: finer than the coat because they are small and seen up close. */
-const CELLS = { ear: 0.003, nose: 0.0015, tongue: 0.0015 } as const;
+const CELLS = { ear: 0.003, nose: 0.0012 } as const;
 
 /** Sculpts and meshes the whole dog. Costly: about a million distance samples, so it runs in a worker. */
 export function buildDogData(): DogData {
@@ -26,14 +24,13 @@ export function buildDogData(): DogData {
     coat: buildCoatData(),
     ear: meshPart(new Field(earShapes(), PART_COUNT), CELLS.ear, true),
     nose: meshPart(new Field(noseShapes(), PART_COUNT), CELLS.nose),
-    tongue: meshPart(new Field(tongueShapes(), PART_COUNT), CELLS.tongue),
     face: faceLayout(),
   };
 }
 
 /** The typed array buffers inside the data, to hand over to the page without copying. */
 export function dogDataBuffers(data: DogData): ArrayBuffer[] {
-  const parts: object[] = [data.coat, data.ear, data.nose, data.tongue];
+  const parts: object[] = [data.coat, data.ear, data.nose];
   return parts.flatMap((part) =>
     Object.values(part).flatMap((value) => (ArrayBuffer.isView(value) && value.buffer instanceof ArrayBuffer ? [value.buffer] : [])),
   );

@@ -3,7 +3,7 @@ import { createFieldSample, type Field } from '../sdf/field';
 import { meshField } from '../sdf/surfaceNets';
 import { toneColor } from './paint';
 
-/** A small rigid part (ear, nose, tongue) as plain arrays. */
+/** A small rigid part (ear, nose) as plain arrays. */
 export interface PartData {
   positions: Float32Array;
   normals: Float32Array;

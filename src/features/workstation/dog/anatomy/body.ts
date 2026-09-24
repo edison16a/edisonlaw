@@ -1,30 +1,32 @@
 import type { Vec3 } from '../../layout';
-import { JOINTS, PART, PAWS, TONE } from '../dimensions';
+import { JOINTS, PART, PAWS, RIBS, TONE } from '../dimensions';
 import type { Shape } from '../sdf/field';
 import { ball, bothSides, cone, ellipsoid, flatLock, sided } from './sculpt';
 
 /**
- * The torso and legs in dog space: a deep rounded chest, a level back, a soft tuck at the loin and a
- * round rump, on short sturdy legs with big round paws. Chibi proportions: compact and plump.
+ * The torso and legs in dog space: a deep rib cage reaching down to the elbows, a level back, a gentle
+ * tuck at the loin and a round croup, on long straight forelegs and well bent hind legs with neat round
+ * paws. Grown proportions, softened into clay.
  */
 
 const body = (tone: number, blend: number) => ({ tone, blend, part: PART.body });
 
 function torso(): Shape[] {
-  const [, chestY, chestZ] = JOINTS.chest;
   return [
-    // Rib cage, deepest just behind the front legs.
-    ellipsoid([0, chestY, chestZ], [0.106, 0.113, 0.12], body(TONE.coat, 0)),
-    // Loin, a little narrower and tucked up underneath.
-    ellipsoid([0, 0.3, -0.06], [0.092, 0.088, 0.1], body(TONE.coat, 0.06)),
-    // Rump.
-    ellipsoid([0, 0.296, -0.138], [0.097, 0.094, 0.088], body(TONE.coat, 0.055)),
+    // Rib cage, deepest just behind the elbows.
+    ellipsoid(JOINTS.chest, RIBS, body(TONE.coat, 0)),
+    // Loin, narrower and tucked up underneath.
+    ellipsoid([0, 0.432, -0.1], [0.082, 0.08, 0.12], body(TONE.coat, 0.07)),
+    // Croup and hindquarters.
+    ellipsoid([0, 0.424, -0.212], [0.09, 0.088, 0.09], body(TONE.coat, 0.06)),
     // Level topline from the withers to the croup.
-    cone([0, 0.35, 0.07], [0, 0.337, -0.162], 0.058, 0.058, body(TONE.saddle, 0.055)),
-    // Withers, the rise over the shoulders.
-    ellipsoid([0, 0.356, 0.08], [0.08, 0.05, 0.07], body(TONE.saddle, 0.045)),
-    // Breast bone, pushing the chest forward between the front legs.
-    ellipsoid([0, 0.266, 0.14], [0.074, 0.08, 0.062], body(TONE.light, 0.05)),
+    cone([0, 0.466, 0.13], [0, 0.458, -0.232], 0.052, 0.052, body(TONE.saddle, 0.06)),
+    // Withers, the rise over the shoulder blades.
+    ellipsoid([0, 0.478, 0.13], [0.07, 0.048, 0.078], body(TONE.saddle, 0.05)),
+    // Forechest, the breast bone pushing forward between the shoulders.
+    ellipsoid([0, 0.372, 0.224], [0.076, 0.094, 0.07], body(TONE.light, 0.06)),
+    // Brisket, the lowest line of the chest between and behind the forelegs.
+    ellipsoid([0, 0.3, 0.115], [0.07, 0.042, 0.1], body(TONE.light, 0.05)),
   ];
 }
 
@@ -32,103 +34,100 @@ function torso(): Shape[] {
 function toes(center: Vec3, side: number): Shape[] {
   const [x, , z] = center;
   return [-1.5, -0.5, 0.5, 1.5].map((slot) =>
-    ball([x + side * slot * 0.0175, 0.017 - Math.abs(slot) * 0.001, z + 0.03 - Math.abs(slot) * 0.0055], 0.0132, body(TONE.light, 0.008)),
+    ball([x + side * slot * 0.0165, 0.016 - Math.abs(slot) * 0.001, z + 0.029 - Math.abs(slot) * 0.0055], 0.0125, body(TONE.light, 0.008)),
   );
 }
 
 function frontLeg(side: 1 | -1): Shape[] {
-  const shoulder = sided([0.07, 0.29, 0.085], side);
-  const elbow = sided([0.068, 0.18, 0.066], side);
-  const wrist = sided([0.064, 0.066, 0.094], side);
-  const ankle = sided([0.064, 0.034, 0.104], side);
-  const paw: Vec3 = [PAWS.front[0] * side, 0.026, PAWS.front[1]];
+  const point = sided([0.078, 0.36, 0.212], side);
+  const elbow = sided([0.074, 0.284, 0.15], side);
+  const wrist = sided([0.068, 0.074, 0.17], side);
+  const ankle = sided([0.067, 0.036, 0.186], side);
+  const paw: Vec3 = [PAWS.front[0] * side, 0.025, PAWS.front[1]];
   return [
-    cone(shoulder, elbow, 0.052, 0.043, body(TONE.coat, 0.045)),
-    cone(elbow, wrist, 0.039, 0.033, body(TONE.coat, 0.02)),
-    cone(wrist, ankle, 0.033, 0.031, body(TONE.light, 0.012)),
-    ellipsoid(paw, [0.038, 0.026, 0.044], body(TONE.light, 0.016)),
+    // Shoulder blade, sloping back from the point of the shoulder toward the withers.
+    ellipsoid(sided([0.072, 0.41, 0.16], side), [0.046, 0.1, 0.064], body(TONE.coat, 0.05), [0, 1, -0.6]),
+    cone(point, elbow, 0.05, 0.042, body(TONE.coat, 0.04)),
+    cone(elbow, wrist, 0.037, 0.029, body(TONE.light, 0.03)),
+    cone(wrist, ankle, 0.029, 0.028, body(TONE.light, 0.015)),
+    ellipsoid(paw, [0.035, 0.025, 0.043], body(TONE.light, 0.018)),
     ...toes(paw, side),
   ];
 }
 
 function rearLeg(side: 1 | -1): Shape[] {
-  const stifle = sided([0.077, 0.175, -0.108], side);
-  const hock = sided([0.072, 0.08, -0.178], side);
-  const ankle = sided([0.07, 0.034, -0.158], side);
-  const paw: Vec3 = [PAWS.rear[0] * side, 0.026, PAWS.rear[1]];
+  const stifle = sided([0.078, 0.274, -0.15], side);
+  const hock = sided([0.074, 0.12, -0.268], side);
+  const ankle = sided([0.072, 0.036, -0.246], side);
+  const paw: Vec3 = [PAWS.rear[0] * side, 0.025, PAWS.rear[1]];
   return [
-    // Thigh, full and rounded, leaning forward toward the stifle.
-    ellipsoid(sided([0.07, 0.25, -0.145], side), [0.058, 0.096, 0.08], body(TONE.coat, 0.045), [0, 1, -0.28]),
-    cone(stifle, hock, 0.046, 0.033, body(TONE.coat, 0.025)),
-    cone(hock, ankle, 0.033, 0.03, body(TONE.light, 0.012)),
-    ellipsoid(paw, [0.037, 0.026, 0.042], body(TONE.light, 0.016)),
+    // Thigh, full and muscled, running from the hip down and forward to the stifle.
+    ellipsoid(sided([0.075, 0.36, -0.198], side), [0.058, 0.108, 0.08], body(TONE.coat, 0.05), [0, 0.86, -0.5]),
+    // The flank, a soft web of skin from the belly to the stifle, so the knee never reads as a knob.
+    ellipsoid(sided([0.056, 0.325, -0.118], side), [0.042, 0.042, 0.052], body(TONE.coat + 0.05, 0.045)),
+    cone(stifle, hock, 0.045, 0.03, body(TONE.coat, 0.03)),
+    cone(hock, ankle, 0.03, 0.028, body(TONE.light, 0.015)),
+    ellipsoid(paw, [0.034, 0.025, 0.041], body(TONE.light, 0.018)),
     ...toes(paw, side),
   ];
 }
 
+const lock = (path: Vec3[], width: number, flatness: number, facing: Vec3, blend: number, tones: [number, number] = [TONE.light, TONE.cream]) =>
+  flatLock({ path, width, flatness, facing, tones, blend, part: PART.body, segments: 5 });
+
 /**
- * The fluffy cream bib on the front of the chest: a soft puff with one lock pointing down the middle
- * and two sweeping back along the sides, so it reads as fur flowing off the chest, not as lumps.
+ * The cream frill down the front of the chest: a soft bib over the breast bone that hangs a little below
+ * the brisket between the forelegs, with broad locks lying down it. Every lock ends on the bib, since a
+ * thin tip hanging free reads as a drip rather than as fur.
  */
-function ruff(): Shape[] {
-  const lock = (path: Vec3[], width: number, facing: Vec3) =>
-    flatLock({ path, width, flatness: 0.45, facing, tones: [TONE.light, TONE.cream], blend: 0.02, part: PART.body, segments: 5 });
-  return [
-    ellipsoid([0, 0.285, 0.17], [0.08, 0.09, 0.055], body(TONE.light + 0.12, 0.045)),
-    ...lock(
-      [
-        [0, 0.262, 0.208],
-        [0, 0.228, 0.216],
-        [0, 0.202, 0.204],
+function frill(): Shape[] {
+  const locks = [-0.034, 0, 0.034].flatMap((x) =>
+    flatLock({
+      path: [
+        [x, 0.44, 0.28],
+        [x * 1.1, 0.36, 0.302],
+        [x * 1.1, 0.29, 0.29],
       ],
-      0.03,
-      [0, -0.2, 1],
-    ),
-    ...bothSides((side) =>
-      lock(
-        [
-          [0.05 * side, 0.282, 0.19],
-          [0.07 * side, 0.248, 0.168],
-          [0.078 * side, 0.218, 0.14],
-        ],
-        0.026,
-        [side, -0.2, 0.6],
-      ),
-    ),
-  ];
+      width: 0.032,
+      flatness: 0.24,
+      facing: [x * 8, 0.15, 1],
+      tones: [TONE.light + 0.05, TONE.cream],
+      blend: 0.026,
+      part: PART.body,
+      segments: 7,
+    }),
+  );
+  return [ellipsoid([0, 0.34, 0.258], [0.062, 0.092, 0.042], body(TONE.light + 0.16, 0.04)), ...locks];
 }
 
-/** Feathering: longer cream fur down the backs of the forelegs and on the britches. */
+/** Feathering: long cream fur down the backs of the forelegs and on the britches. */
 function feathering(side: 1 | -1): Shape[] {
-  const x = 0.068 * side;
-  const lock = (path: Vec3[], width: number, facing: Vec3) =>
-    flatLock({ path, width, flatness: 0.5, facing, tones: [TONE.light, TONE.cream], blend: 0.014, part: PART.body, segments: 5 });
   return [
-    // A soft fringe down the back of each foreleg, lying along it and ending in a rounded tip.
+    // A fringe down the back of each foreleg, from the elbow to a rounded tip above the wrist.
     ...lock(
       [
-        [x, 0.175, 0.02],
-        [x, 0.13, 0.034],
-        [x * 0.98, 0.092, 0.05],
+        [0.07 * side, 0.27, 0.124],
+        [0.07 * side, 0.2, 0.124],
+        [0.068 * side, 0.14, 0.138],
       ],
-      0.019,
+      0.021,
+      0.5,
       [side * 0.3, 0, -1],
+      0.014,
     ),
     // Britches: soft cream fur lying down the backs of the thighs.
-    ...flatLock({
-      path: [
-        [x * 1.02, 0.3, -0.198],
-        [x * 1.04, 0.25, -0.218],
-        [x * 1.02, 0.2, -0.2],
+    ...lock(
+      [
+        [0.068 * side, 0.43, -0.276],
+        [0.072 * side, 0.365, -0.288],
+        [0.068 * side, 0.315, -0.262],
       ],
-      width: 0.028,
-      flatness: 0.36,
-      facing: [side * 0.8, 0, -1],
-      tones: [TONE.light, TONE.cream],
-      blend: 0.018,
-      part: PART.body,
-      segments: 5,
-    }),
+      0.028,
+      0.34,
+      [side * 0.8, 0, -1],
+      0.02,
+      [TONE.coat + 0.1, TONE.light + 0.18],
+    ),
   ];
 }
 
@@ -139,5 +138,5 @@ export function bodyForms(): Shape[] {
 
 /** Fur details, added after every big form so broad blends never soften them. */
 export function bodyFur(): Shape[] {
-  return [...ruff(), ...bothSides(feathering)];
+  return [...frill(), ...bothSides(feathering)];
 }

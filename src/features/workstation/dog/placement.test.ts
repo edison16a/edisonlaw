@@ -46,11 +46,11 @@ describe('dog placement', () => {
     }
   });
 
-  it('is about 0.40 to 0.46 at the shoulder', () => {
+  it('is a grown retriever, 0.50 to 0.55 at the shoulder', () => {
     // Just behind the neck, over the shoulder blades.
-    const withers = surfaceBelow(0, 0.01);
-    expect(withers).toBeGreaterThan(0.4);
-    expect(withers).toBeLessThan(0.46);
+    const withers = surfaceBelow(0, 0.12);
+    expect(withers).toBeGreaterThan(0.5);
+    expect(withers).toBeLessThan(0.55);
   });
 
   it('keeps clear of Edison and of the desk legs', () => {

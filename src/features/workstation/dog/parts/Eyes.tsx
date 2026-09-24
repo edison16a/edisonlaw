@@ -9,8 +9,8 @@ import type { DogRig } from '../rig/createDogRig';
 
 /** Catch lights, placed the same on both eyes as if lit from one window. */
 const SHINES = [
-  { x: 0.0052, y: 0.0068, radius: 0.0048 },
-  { x: -0.0055, y: -0.0072, radius: 0.0023 },
+  { x: 0.0042, y: 0.0048, radius: 0.0036 },
+  { x: -0.0045, y: -0.0052, radius: 0.0017 },
 ] as const;
 
 /** Where a catch light sits on the front of the glossy eye. */

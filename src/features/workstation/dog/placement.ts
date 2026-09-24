@@ -12,11 +12,12 @@ export interface DogPlacement {
 }
 
 /**
- * Facing the desk alongside Edison, on his left, the side the about camera sees. Its head turns back
+ * Facing the desk alongside Edison, on his left, the side the about camera sees, turned a little further
+ * toward the left monitors than he is, so the camera sees its whole length side on. Its head turns back
  * toward the camera, and the position follows from the contract: the crown lands exactly on
  * DOG_PAT_POINT, under his hand.
  */
-const ROTATION_Y = Math.PI;
+const ROTATION_Y = Math.PI + 0.36;
 
 const crown = new Vector3(...HEAD.top).applyAxisAngle(new Vector3(0, 1, 0), ROTATION_Y);
 

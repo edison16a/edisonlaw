@@ -2,10 +2,10 @@ import { BufferGeometry, Color, Float32BufferAttribute, Uint16BufferAttribute, U
 import { smoothstep } from '@/lib/math';
 import { coatField } from '../anatomy/coat';
 import { headRestMatrix } from '../anatomy/headPose';
-import { faceLayout } from '../anatomy/face';
+import { EYE_RADII, faceLayout } from '../anatomy/face';
 import { neckAxis } from '../anatomy/neck';
 import { TAIL_PATH } from '../anatomy/tail';
-import { HEAD, JOINTS, PART } from '../dimensions';
+import { HEAD, JOINTS, PART, RIBS } from '../dimensions';
 import { DOG_PALETTE } from '../materials';
 import { toneColor } from './paint';
 import { BONE, TAIL_BONES } from '../rig/createDogRig';
@@ -26,7 +26,6 @@ export interface CoatData {
 }
 
 const pigment = new Color(DOG_PALETTE.pigment);
-const mouth = new Color(DOG_PALETTE.mouth);
 
 /** Positions along the tail path, in joint units: 0 at the root, 1 at the second joint and so on. */
 function tailParam(point: Vector3) {
@@ -47,6 +46,12 @@ function tailParam(point: Vector3) {
   return param;
 }
 
+/** Heights over which the legs hand over from the planted paws to the body, which leans. */
+const PLANTED = { from: 0.06, to: 0.24 } as const;
+
+/** Dark lids round each eye: full pigment within `inner` eye widths of its centre, none past `outer`. */
+const LIDS = { inner: 1.1, outer: 1.42, strength: 0.6 } as const;
+
 interface Influence {
   bone: number;
   weight: number;
@@ -63,10 +68,10 @@ function influences(point: Vector3, parts: Float32Array, neck: { base: Vector3; 
     if (weight > 1e-4) list.push({ bone, weight });
   };
 
-  const planted = 1 - smoothstep(0.05, 0.2, point.y);
-  const dx = point.x / 0.11;
-  const dy = (point.y - JOINTS.chest[1]) / 0.12;
-  const dz = (point.z - JOINTS.chest[2]) / 0.13;
+  const planted = 1 - smoothstep(PLANTED.from, PLANTED.to, point.y);
+  const dx = point.x / RIBS[0];
+  const dy = (point.y - JOINTS.chest[1]) / RIBS[1];
+  const dz = (point.z - JOINTS.chest[2]) / RIBS[2];
   const ribs = Math.exp(-(dx * dx + dy * dy + dz * dz) * 1.2) * (1 - planted);
 
   const along = point.clone().sub(neck.base).dot(neck.direction) / neck.length;
@@ -77,7 +82,6 @@ function influences(point: Vector3, parts: Float32Array, neck: { base: Vector3; 
   add(BONE.chest, body * ribs);
   add(BONE.body, body * (1 - planted - ribs));
   add(BONE.head, parts[PART.head] + parts[PART.neck] * toHead);
-  add(BONE.jaw, parts[PART.jaw]);
 
   const tail = parts[PART.tail];
   if (tail > 1e-4) {
@@ -96,7 +100,7 @@ function influences(point: Vector3, parts: Float32Array, neck: { base: Vector3; 
   return kept.map(({ bone, weight }) => ({ bone, weight: weight / total }));
 }
 
-/** Meshes the coat sculpture and paints it: colours, lip and eye rim pigment, and skin weights. */
+/** Meshes the coat sculpture and paints it: colours, eye lid pigment, and skin weights. */
 export function buildCoatData(cell = COAT_CELL, field: Field = coatField()): CoatData {
   const mesh = meshField(field, { cell });
   const count = mesh.positions.length / 3;
@@ -104,10 +108,11 @@ export function buildCoatData(cell = COAT_CELL, field: Field = coatField()): Coa
   const skinIndices = new Uint16Array(count * 4);
   const skinWeights = new Float32Array(count * 4);
 
-  const carves = field.shapes.flatMap((shape, index) => (shape.carve ? [index] : []));
   const headToDog = headRestMatrix();
   const eyes = faceLayout().eyes.map((eye) => new Vector3(...eye.position).applyMatrix4(headToDog));
   const neck = neckAxis(headToDog);
+  const lidInner = EYE_RADII[0] * LIDS.inner * HEAD.scale;
+  const lidOuter = EYE_RADII[0] * LIDS.outer * HEAD.scale;
   const sample = createFieldSample(field.partCount);
   const point = new Vector3();
   const color = new Color();
@@ -121,14 +126,10 @@ export function buildCoatData(cell = COAT_CELL, field: Field = coatField()): Coa
     const tone = sample.tone + 0.2 * Math.max(0, -ny) - 0.08 * Math.max(0, ny);
     toneColor(tone, color);
 
-    let cut = Infinity;
-    for (const index of carves) cut = Math.min(cut, field.shapeDistance(index, point.x, point.y, point.z));
-    const inside = smoothstep(0.0026, 0.0008, cut);
-    const lip = smoothstep(0.0048, 0.0026, cut) * (1 - inside);
-    // A faint shadow of dark lashes round each eye, too soft to read as a ring.
+    // Dark lids round each eye, softened outward so they read as a soulful rim rather than a ring.
     let rim = 0;
-    for (const eye of eyes) rim = Math.max(rim, smoothstep(0.022 * HEAD.scale, 0.0175 * HEAD.scale, eye.distanceTo(point)));
-    color.lerp(pigment, Math.max(lip * 0.9, rim * 0.35)).lerp(mouth, inside);
+    for (const eye of eyes) rim = Math.max(rim, smoothstep(lidOuter, lidInner, eye.distanceTo(point)));
+    color.lerp(pigment, rim * LIDS.strength);
     color.toArray(colors, n * 3);
 
     influences(point, sample.parts, neck).forEach(({ bone, weight }, slot) => {

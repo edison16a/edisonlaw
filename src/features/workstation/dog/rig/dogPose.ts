@@ -16,8 +16,6 @@ export interface DogPose {
   breath: number;
   /** Head turn toward its left, nose lift and crown tilt toward its right, in dog space (see HEAD.rest). */
   head: { yaw: number; pitch: number; tilt: number };
-  /** How far the mouth is open. */
-  jaw: number;
   /** Side to side swing of each tail joint, root first, and how high the whole tail is carried. */
   tail: number[];
   tailLift: number;
@@ -33,7 +31,6 @@ export function createDogPose(): DogPose {
     rock: 0,
     breath: 0,
     head: { yaw: 0, pitch: 0, tilt: 0 },
-    jaw: 0,
     tail: new Array(TAIL_BONES).fill(0),
     tailLift: 0,
     ears: [
@@ -52,11 +49,13 @@ const TIMING = {
 } satisfies Record<string, Recurring>;
 
 /**
- * The head when it looks up at Edison. He stands just behind it and far above as the about camera sees
- * it, so lifting the chin while still facing the camera reads as looking up at him, and keeps the
- * neck from twisting.
+ * The head when it looks up at Edison, who stands on its right and far above: turned back toward him
+ * and the chin lifted, while the face still shows to the about camera on its left.
  */
-const LOOK_UP = { yaw: 0.9, pitch: 0.62, tilt: 0.02 } as const;
+const LOOK_UP = { yaw: 0.72, pitch: 0.5, tilt: -0.02 } as const;
+
+/** Breaths a second: slow and calm, a grown dog at ease. */
+const BREATH_RATE = 0.36;
 
 /** How much of the head's swing the ears undo, hanging back toward the floor. */
 const EAR_GRAVITY = 0.55;
@@ -68,12 +67,12 @@ const bliss = createOccurrence();
 const WAG = { rate: 2.3, lag: 0.55 } as const;
 
 /**
- * The dog's idle as a pure function of time: a happy wag, quick breathing and light panting, leaning
- * into Edison's hand with little nuzzles, blinks, ear flops and now and then a look up at him.
- * `motion` 0 gives a lovely still pose for reduced motion.
+ * The dog's idle as a pure function of time: a happy wag, calm breathing, leaning into Edison's hand
+ * with little nuzzles, blinks, ear flops and now and then a look up at him. `motion` 0 gives a lovely
+ * still pose for reduced motion.
  */
 export function dogPose(t: number, motion: number, seed: number, pose: DogPose) {
-  const breath = Math.sin(t * Math.PI * 2 * 0.62) * motion;
+  const breath = Math.sin(t * Math.PI * 2 * BREATH_RATE) * motion;
   const looking = occurrence(t, TIMING.lookUp, seed + 7, lookUp).weight * motion;
   const blissful = occurrence(t, TIMING.bliss, seed + 13, bliss).weight * motion * (1 - looking);
 
@@ -91,15 +90,11 @@ export function dogPose(t: number, motion: number, seed: number, pose: DogPose) 
   pose.head.pitch = lerp(idlePitch, LOOK_UP.pitch, looking);
   pose.head.tilt = lerp(idleTilt, LOOK_UP.tilt, looking);
 
-  // Light, happy panting, a little quicker than the breath.
-  const pant = Math.sin(t * Math.PI * 2 * 1.7) * 0.5 + 0.5;
-  pose.jaw = lerp(0.1, 0.08 + 0.05 * pant, motion) - 0.04 * blissful;
-
   // The wag grows and settles in waves, and the tail is carried a little higher while it looks up.
   const energy = lerp(0.62, 0.85 + 0.15 * noise(t * 0.25, seed + 5), motion) + 0.2 * looking;
   for (let i = 0; i < TAIL_BONES; i++) {
     const swing = motion > 0 ? Math.sin(t * Math.PI * 2 * WAG.rate - i * WAG.lag) : 0.55;
-    pose.tail[i] = swing * energy * (0.22 + 0.1 * i);
+    pose.tail[i] = swing * energy * (0.2 + 0.065 * i);
   }
   pose.tailLift = 0.06 * looking + 0.02 * Math.sin(t * Math.PI * 2 * WAG.rate * 2) * motion;
 
@@ -109,7 +104,8 @@ export function dogPose(t: number, motion: number, seed: number, pose: DogPose) 
   for (let side = 0; side < 2; side++) {
     const sign = side === 0 ? 1 : -1;
     const bounce = Math.sin(t * 3.1 + side * 1.7 + seed) * 0.03 * motion;
-    pose.ears[side].out = 0.04 * blissful + bounce - sign * roll * EAR_GRAVITY;
+    // The flaps lie a hair off the cheeks, so they only ever swing out, never into the head.
+    pose.ears[side].out = Math.max(0, 0.04 * blissful + bounce - sign * roll * EAR_GRAVITY);
     pose.ears[side].forward = -lift * EAR_GRAVITY + 0.02 * noise(t * 0.8, seed + 20 + side) * motion;
   }
 
@@ -127,7 +123,6 @@ export function applyDogPose(rig: DogRig, pose: DogPose) {
 
   euler.set(-pose.head.pitch, pose.head.yaw, pose.head.tilt);
   rig.head.quaternion.setFromEuler(euler);
-  rig.jaw.rotation.x = pose.jaw;
 
   for (let i = 0; i < rig.tail.length; i++) rig.tail[i].rotation.set(i === 0 ? pose.tailLift : 0, pose.tail[i], 0);
 

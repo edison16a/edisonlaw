@@ -2,16 +2,13 @@ import { Color, MeshBasicMaterial, MeshPhysicalMaterial } from 'three';
 
 /** Every colour on the dog. Colour is allowed here because it lives inside the 3D scene. */
 export const DOG_PALETTE = {
-  /** Coat tones from the deep gold of the back to the cream of the feathering, see TONE. */
-  coat: ['#c98232', '#e3a44c', '#f2c677', '#fbe7bb'],
+  /** Coat tones from the deep red gold of the back to the cream of the feathering, see TONE. */
+  coat: ['#b8662a', '#d68c3e', '#ecb76e', '#f8dfae'],
   /** Stops of the coat gradient, matching `coat`. */
   coatStops: [0, 0.3, 0.62, 0.95],
   coatSheen: '#ffe2ad',
   /** Dark pigment on the lips and round the eyes. */
   pigment: '#2b1a12',
-  mouth: '#4a1c1c',
-  tongue: '#e8837f',
-  tongueSheen: '#ffc2bd',
   nose: '#141112',
   /** Dark, kind brown eyes with near black pupils. */
   eye: '#3b1f10',
@@ -24,17 +21,16 @@ export interface DogMaterials {
   /** Ears: the same coat, not skinned. */
   ear: MeshPhysicalMaterial;
   nose: MeshPhysicalMaterial;
-  tongue: MeshPhysicalMaterial;
+  /** The dark line of the closed mouth. */
+  lips: MeshPhysicalMaterial;
   eye: MeshPhysicalMaterial;
   pupil: MeshPhysicalMaterial;
   eyeShine: MeshBasicMaterial;
-  /** The dark inside of the open mouth. */
-  mouth: MeshPhysicalMaterial;
 }
 
 /**
- * Scales the fur's sheen by how light the painted coat is under it, so dark paint such as the lips and
- * the lids round the eyes stays dark at grazing angles instead of washing out to cream.
+ * Scales the fur's sheen by how light the painted coat is under it, so dark paint such as the lids
+ * round the eyes stays dark at grazing angles instead of washing out to cream.
  */
 const SHEEN_BY_COAT = /* glsl */ `material.sheenColor = sheenColor * smoothstep( 0.03, 0.2, dot( vColor.rgb, vec3( 0.2126, 0.7152, 0.0722 ) ) );`;
 
@@ -74,17 +70,9 @@ function buildMaterials(): DogMaterials {
     coat: furMaterial(),
     ear: furMaterial(),
     nose: new MeshPhysicalMaterial({ color: DOG_PALETTE.nose, roughness: 0.3, clearcoat: 0.8, clearcoatRoughness: 0.25 }),
-    tongue: new MeshPhysicalMaterial({
-      color: DOG_PALETTE.tongue,
-      roughness: 0.35,
-      clearcoat: 0.6,
-      clearcoatRoughness: 0.2,
-      sheen: 0.4,
-      sheenColor: new Color(DOG_PALETTE.tongueSheen),
-    }),
+    lips: new MeshPhysicalMaterial({ color: DOG_PALETTE.pigment, roughness: 0.5, clearcoat: 0.3, clearcoatRoughness: 0.35 }),
     eye: new MeshPhysicalMaterial({ color: DOG_PALETTE.eye, roughness: 0.16, clearcoat: 1, clearcoatRoughness: 0.08 }),
     pupil: new MeshPhysicalMaterial({ color: DOG_PALETTE.pupil, roughness: 0.16, clearcoat: 1, clearcoatRoughness: 0.08 }),
-    mouth: new MeshPhysicalMaterial({ color: DOG_PALETTE.mouth, roughness: 0.45, clearcoat: 0.4, clearcoatRoughness: 0.3 }),
     eyeShine: new MeshBasicMaterial({ color: '#ffffff', toneMapped: false }),
   };
 }

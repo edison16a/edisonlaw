@@ -14,7 +14,6 @@ function values(pose: DogPose): [number, number][] {
     [pose.head.yaw, 0.06],
     [pose.head.pitch, 0.06],
     [pose.head.tilt, 0.06],
-    [pose.jaw, 0.03],
     // A happy wag is quick.
     ...pose.tail.map((swing): [number, number] => [swing, 0.12]),
     [pose.tailLift, 0.03],
@@ -52,8 +51,7 @@ describe('dogPose', () => {
       dogPose(t, 1, SEED, pose);
       expect(pose.blink).toBeGreaterThanOrEqual(0);
       expect(pose.blink).toBeLessThanOrEqual(1);
-      expect(pose.jaw).toBeGreaterThan(0);
-      expect(pose.jaw).toBeLessThan(0.2);
+      for (const ear of pose.ears) expect(ear.out).toBeGreaterThanOrEqual(0);
       expect(Math.abs(pose.lean)).toBeLessThan(0.06);
       for (const swing of pose.tail) expect(Math.abs(swing)).toBeLessThan(0.6);
     }
