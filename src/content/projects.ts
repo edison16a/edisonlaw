@@ -1,5 +1,8 @@
 import type { Project } from './types';
 
+/** The project the spiral opens on. Change it to lead with a different one. */
+export const featuredProjectId = 'backbond';
+
 /**
  * Every project card in the spiral, in display order.
  * Drop a photo into /public/projects and set `image` to replace a generated cover.

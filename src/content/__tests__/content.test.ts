@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { activities, education, honors, skills, socials } from '../about';
 import { experience } from '../experience';
-import { projects } from '../projects';
+import { featuredProjectId, projects } from '../projects';
 import { getSkillIcon } from '@/components/skills/skillIcons';
 
 const isUrl = (href: string) => /^(https:\/\/|mailto:)/.test(href);
@@ -11,6 +11,10 @@ describe('projects', () => {
   it('have unique ids', () => {
     const ids = projects.map((project) => project.id);
     expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it('feature a project that exists', () => {
+    expect(projects.some((project) => project.id === featuredProjectId)).toBe(true);
   });
 
   it('have a name, a stack and a two to four sentence description at most', () => {
