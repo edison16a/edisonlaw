@@ -7,8 +7,12 @@ import type { WebGLProgramParametersWithUniforms } from 'three';
  */
 export const DISPLAY_ALPHA = 0;
 
-/** How much of the detail lost to minification the unsharp mask puts back. */
-const SHARPEN = 0.3;
+/**
+ * How much of the detail lost to minification the unsharp mask puts back. The canvases are painted
+ * at up to twice the old resolution, so the fine samples already carry more contrast; a lighter mask
+ * keeps the edges as crisp as before with half the dark halo round bright text.
+ */
+const SHARPEN = 0.2;
 
 /**
  * The monitors show their canvases four to ten times smaller than painted, the side ones at an
