@@ -4,9 +4,9 @@ import { fillRect, fillRound, strokeRound } from '../../../draw/shapes';
 import { text } from '../../../draw/text';
 import { SCREEN_HEIGHT, SCREEN_WIDTH, type PainterFactory } from '../../../types';
 import { COMPUTE_HOURS, DAYS } from './data';
-import { drawKpis, drawRevenue, drawUsage } from './panels';
+import { drawKpis, drawRuns, drawUsage } from './panels';
 import { drawSidebar, SIDEBAR_WIDTH } from './sidebar';
-import { drawOrganizations } from './table';
+import { drawProjects } from './table';
 import { OPTAGON_THEME as T } from './theme';
 
 /** Seconds the hover tooltip rests on each bar. */
@@ -20,8 +20,8 @@ function frame(time: number) {
 }
 
 function header(ctx: CanvasRenderingContext2D, x: number) {
-  text(ctx, 'Usage and billing', x, 38, { size: 21, weight: 700, family: 'sans', color: T.text });
-  text(ctx, 'Metering, invoices and plans across every organization', x, 60, { size: 12.5, family: 'sans', color: T.muted });
+  text(ctx, 'Usage', x, 38, { size: 21, weight: 700, family: 'sans', color: T.text });
+  text(ctx, 'Compute, storage and runs across this workspace', x, 60, { size: 12.5, family: 'sans', color: T.muted });
   const right = SCREEN_WIDTH - 28;
   fillRound(ctx, right - 96, 24, 96, 34, 8, T.teal);
   text(ctx, 'Export', right - 48, 42, { size: 13, weight: 600, family: 'sans', color: '#042f2e', align: 'center' });
@@ -31,7 +31,7 @@ function header(ctx: CanvasRenderingContext2D, x: number) {
   text(ctx, 'Last 30 days', right - 206, 42, { size: 13, family: 'sans', color: T.text });
 }
 
-/** The Backbond admin page: KPIs, metered usage, revenue and organizations. */
+/** The Backbond usage page for a demo workspace: KPIs, metered usage, runs and projects. */
 export const optagon: PainterFactory = () => ({
   stillTime: 0,
   frameKey: (time) => {
@@ -47,9 +47,9 @@ export const optagon: PainterFactory = () => ({
     header(ctx, x);
     drawKpis(ctx, { x, y: 82, w, h: 102 }, hours.toLocaleString('en-US'));
     const chartsY = 198;
-    const revenueW = 352;
-    drawUsage(ctx, { x, y: chartsY, w: w - revenueW - 16, h: 258 }, hover);
-    drawRevenue(ctx, { x: x + w - revenueW, y: chartsY, w: revenueW, h: 258 });
-    drawOrganizations(ctx, { x, y: 470, w, h: SCREEN_HEIGHT - 470 - 18 });
+    const runsW = 352;
+    drawUsage(ctx, { x, y: chartsY, w: w - runsW - 16, h: 258 }, hover);
+    drawRuns(ctx, { x: x + w - runsW, y: chartsY, w: runsW, h: 258 });
+    drawProjects(ctx, { x, y: 470, w, h: SCREEN_HEIGHT - 470 - 18 });
   },
 });

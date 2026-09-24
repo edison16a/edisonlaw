@@ -3,7 +3,7 @@ import { circle, fillRect, fillRound, strokeRound, type Rect } from '../../../dr
 import { text } from '../../../draw/text';
 import { pill } from '../../../draw/widgets';
 import { card } from './card';
-import { DAYS, KPIS, KPI_TRENDS, REVENUE, USAGE, USAGE_MAX } from './data';
+import { DAYS, KPIS, KPI_TRENDS, LIVE_KPI, RUNS_PER_DAY, USAGE, USAGE_MAX } from './data';
 import { OPTAGON_THEME as T } from './theme';
 
 const USAGE_COLORS = [T.violet, T.teal, T.slate];
@@ -21,14 +21,15 @@ export function drawKpis(ctx: CanvasRenderingContext2D, area: Rect, liveHours: s
     const rect = { x: area.x + index * (width + gap), y: area.y, w: width, h: area.h };
     card(ctx, rect);
     text(ctx, kpi.label, rect.x + 18, rect.y + 24, { size: 12.5, family: 'sans', color: T.muted });
-    const value = index === 2 ? liveHours : kpi.value;
+    const live = index === LIVE_KPI;
+    const value = live ? liveHours : kpi.value;
     text(ctx, value, rect.x + 18, rect.y + 55, { size: 27, weight: 700, family: 'sans', color: T.text });
     pill(ctx, kpi.delta, rect.x + 18, rect.y + 82, { bg: 'rgba(45,212,191,0.12)', color: T.teal, size: 11 });
     const trend = KPI_TRENDS[index];
     lineChart(ctx, { x: rect.x + rect.w - 96, y: rect.y + 58, w: 78, h: 30 }, trend, scaleOf(trend), {
-      color: index === 2 ? T.violet : T.teal,
+      color: live ? T.violet : T.teal,
       width: 1.8,
-      fill: index === 2 ? 'rgba(139,124,246,0.25)' : 'rgba(45,212,191,0.2)',
+      fill: live ? 'rgba(139,124,246,0.25)' : 'rgba(45,212,191,0.2)',
     });
   });
 }
@@ -74,18 +75,19 @@ export function drawUsage(ctx: CanvasRenderingContext2D, rect: Rect, hover: numb
   });
 }
 
-export function drawRevenue(ctx: CanvasRenderingContext2D, rect: Rect) {
-  card(ctx, rect, 'Revenue');
-  text(ctx, '$48,210', rect.x + 18, rect.y + 62, { size: 26, weight: 700, family: 'sans', color: T.text });
-  text(ctx, 'this month, Stripe', rect.x + 130, rect.y + 64, { size: 12, family: 'sans', color: T.muted });
+/** Runs finished per day, with a few run health figures below. */
+export function drawRuns(ctx: CanvasRenderingContext2D, rect: Rect) {
+  card(ctx, rect, 'Runs');
+  text(ctx, KPIS[1].value, rect.x + 18, rect.y + 62, { size: 26, weight: 700, family: 'sans', color: T.text });
+  text(ctx, 'finished this month', rect.x + 78, rect.y + 64, { size: 12, family: 'sans', color: T.muted });
   const plot = { x: rect.x + 18, y: rect.y + 86, w: rect.w - 36, h: 86 };
   gridLines(ctx, plot, 3, T.grid, [3, 4]);
-  lineChart(ctx, plot, REVENUE, scaleOf(REVENUE), { color: T.teal, width: 2.2, fill: 'rgba(45,212,191,0.28)' });
+  lineChart(ctx, plot, RUNS_PER_DAY, scaleOf(RUNS_PER_DAY), { color: T.teal, width: 2.2, fill: 'rgba(45,212,191,0.28)' });
 
   const rows = [
-    ['Invoices paid', '98.6%'],
-    ['Failed payments', '3'],
-    ['Metered events', '1.2M'],
+    ['Succeeded', '97.6%'],
+    ['Running now', '3'],
+    ['Median duration', '14 min'],
   ];
   rows.forEach(([label, value], index) => {
     const y = rect.y + 192 + index * 22;

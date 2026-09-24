@@ -1,16 +1,21 @@
 import { randomValues, randomWalk, smooth } from '../../../draw/series';
 
-/** Seeded numbers behind the Backbond usage and billing page. */
+/**
+ * Seeded demo numbers behind the Backbond usage page. The workspace is a made up demo org,
+ * so nothing here is a real customer, price or business figure.
+ */
 
 /** Compute hours so far this month. The screen counts up from here while it animates. */
 export const COMPUTE_HOURS = 18420;
 
 export const KPIS = [
-  { label: 'Monthly recurring revenue', value: '$48.2k', delta: '+12.4%' },
-  { label: 'Active organizations', value: '126', delta: '+9' },
   { label: 'Compute hours', value: COMPUTE_HOURS.toLocaleString('en-US'), delta: '+22%' },
-  { label: 'Runs this month', value: '3,912', delta: '+8.1%' },
+  { label: 'Runs this month', value: '412', delta: '+8.1%' },
+  { label: 'Active projects', value: '14', delta: '+2' },
+  { label: 'Storage used', value: '2.4 TB', delta: '+0.3 TB' },
 ];
+/** The KPI that counts up live. */
+export const LIVE_KPI = 0;
 
 export const DAYS = 30;
 
@@ -24,21 +29,22 @@ export const USAGE = (() => {
 
 export const USAGE_MAX = 1000;
 
-export const REVENUE = smooth(randomWalk(21, 40, { start: 31, drift: 0.45, volatility: 1.6 }), 3);
+/** Runs finished per day, for the runs card. */
+export const RUNS_PER_DAY = smooth(randomWalk(21, 40, { start: 9, drift: 0.12, volatility: 1.6, min: 2 }), 3);
 
 export const KPI_TRENDS = [
-  smooth(randomWalk(31, 16, { start: 10, drift: 0.5, volatility: 1 }), 2),
-  smooth(randomWalk(32, 16, { start: 10, drift: 0.35, volatility: 1.2 }), 2),
   smooth(randomWalk(33, 16, { start: 10, drift: 0.7, volatility: 1.4 }), 2),
   smooth(randomWalk(34, 16, { start: 10, drift: 0.3, volatility: 1 }), 2),
+  smooth(randomWalk(31, 16, { start: 10, drift: 0.5, volatility: 1 }), 2),
+  smooth(randomWalk(32, 16, { start: 10, drift: 0.35, volatility: 1.2 }), 2),
 ];
 
-export type OrgStatus = 'Active' | 'Trialing' | 'Past due';
+export type ProjectStatus = 'Running' | 'Queued' | 'Idle';
 
-export const ORGS: { name: string; plan: string; seats: number; usage: number; mrr: string; status: OrgStatus }[] = [
-  { name: 'Helix Therapeutics', plan: 'Enterprise', seats: 48, usage: 0.82, mrr: '$9,600', status: 'Active' },
-  { name: 'Arbor Bio', plan: 'Team', seats: 14, usage: 0.64, mrr: '$2,380', status: 'Active' },
-  { name: 'Cellwise Labs', plan: 'Team', seats: 9, usage: 0.41, mrr: '$1,530', status: 'Trialing' },
-  { name: 'Quanta Rx', plan: 'Enterprise', seats: 31, usage: 0.93, mrr: '$7,450', status: 'Active' },
-  { name: 'Meridian Peptides', plan: 'Starter', seats: 4, usage: 0.27, mrr: '$390', status: 'Past due' },
+export const PROJECTS: { name: string; kind: string; runs: number; usage: number; lastRun: string; status: ProjectStatus }[] = [
+  { name: 'Binder design', kind: 'Structure', runs: 148, usage: 0.82, lastRun: '4 min ago', status: 'Running' },
+  { name: 'Docking screen', kind: 'Docking', runs: 96, usage: 0.64, lastRun: '22 min ago', status: 'Running' },
+  { name: 'Stability scan', kind: 'Simulation', runs: 41, usage: 0.41, lastRun: '1 hr ago', status: 'Queued' },
+  { name: 'Library triage', kind: 'Scoring', runs: 112, usage: 0.93, lastRun: '3 hr ago', status: 'Idle' },
+  { name: 'Sandbox', kind: 'Notebook', runs: 15, usage: 0.12, lastRun: 'Yesterday', status: 'Idle' },
 ];

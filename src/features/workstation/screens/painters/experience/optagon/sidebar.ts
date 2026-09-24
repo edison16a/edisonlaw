@@ -12,8 +12,8 @@ const NAV: { icon: IconName; label: string }[] = [
   { icon: 'home', label: 'Overview' },
   { icon: 'folder', label: 'Projects' },
   { icon: 'play', label: 'Runs' },
-  { icon: 'chart', label: 'Usage and billing' },
-  { icon: 'users', label: 'Organizations' },
+  { icon: 'chart', label: 'Usage' },
+  { icon: 'users', label: 'Members' },
   { icon: 'layers', label: 'Admin' },
   { icon: 'gear', label: 'Settings' },
 ];
@@ -37,9 +37,9 @@ export function drawSidebar(ctx: CanvasRenderingContext2D) {
   fillRound(ctx, 16, 70, SIDEBAR_WIDTH - 32, 44, 9, T.panel);
   strokeRound(ctx, 16, 70, SIDEBAR_WIDTH - 32, 44, 9, T.panelBorder);
   fillRound(ctx, 26, 80, 24, 24, 6, '#134e4a');
-  text(ctx, 'OL', 38, 93, { size: 10, weight: 700, family: 'sans', color: T.teal, align: 'center' });
-  text(ctx, 'Optagon Labs', 60, 86, { size: 13, weight: 600, family: 'sans', color: T.text });
-  text(ctx, 'Enterprise', 60, 102, { size: 11, family: 'sans', color: T.muted });
+  text(ctx, 'DO', 38, 93, { size: 10, weight: 700, family: 'sans', color: T.teal, align: 'center' });
+  text(ctx, 'Demo org', 60, 86, { size: 13, weight: 600, family: 'sans', color: T.text });
+  text(ctx, 'Sandbox workspace', 60, 102, { size: 11, family: 'sans', color: T.muted });
   drawGlyph(ctx, 'chevronDown', SIDEBAR_WIDTH - 36, 92, 14, T.muted);
 
   text(ctx, 'WORKSPACE', 26, 146, { size: 10.5, weight: 600, family: 'sans', color: T.faint });
@@ -58,5 +58,5 @@ export function drawSidebar(ctx: CanvasRenderingContext2D) {
   fillRect(ctx, 16, bottom - 14, SIDEBAR_WIDTH - 32, 1, T.panelBorder);
   avatar(ctx, 'EL', 38, bottom + 16, 16, '#4c3f99');
   text(ctx, 'Edison Law', 62, bottom + 9, { size: 13, weight: 600, family: 'sans', color: T.text });
-  text(ctx, 'Owner', 62, bottom + 25, { size: 11, family: 'sans', color: T.muted });
+  text(ctx, 'Engineer', 62, bottom + 25, { size: 11, family: 'sans', color: T.muted });
 }

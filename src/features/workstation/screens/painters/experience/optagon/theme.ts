@@ -13,6 +13,5 @@ export const OPTAGON_THEME = {
   violet: '#8b7cf6',
   slate: '#3f4b5e',
   amber: '#f5b544',
-  red: '#f87171',
   green: '#34d399',
 } as const;
