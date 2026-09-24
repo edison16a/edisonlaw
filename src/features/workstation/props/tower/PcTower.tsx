@@ -21,7 +21,7 @@ interface PcTowerProps {
 /** Glass-sided PC on the floor right of the desk: visible internals, three front fans and an RGB strip. */
 export function PcTower({ animate }: PcTowerProps) {
   const ringMaterial = useRgbMaterial({ intensity: 3.2 });
-  const bladeMaterial = useRgbMaterial({ intensity: 0.5, saturation: 0.55 });
+  const bladeMaterial = useRgbMaterial({ intensity: 0.32, saturation: 0.8 });
   const strip = useRgbMaterial({ hueOffset: 0.03, intensity: 2.6 });
 
   const shell = useMemo(
