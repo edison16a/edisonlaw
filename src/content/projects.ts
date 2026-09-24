@@ -115,6 +115,7 @@ export const projects: Project[] = [
     description:
       'AI learning assistant that helps students get unstuck on assignments with hints, clarifying questions and step-by-step guidance, without giving away the answer.',
     links: [{ label: 'GitHub', href: 'https://github.com/edison16a/clue-ai' }],
+    image: '/projects/clue-ai.webp',
   },
   {
     id: 'trashgo',
