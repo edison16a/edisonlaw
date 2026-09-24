@@ -1,6 +1,7 @@
 import type { PainterFactory, ScreenId } from '../types';
 import { claudeCode } from './claudeCode';
 import { codex } from './codex';
+import { nanoscience } from './experience/nanoscience';
 import { optagon } from './experience/optagon';
 import { placeholder } from './placeholder';
 import { ultrasound } from './experience/ultrasound';
@@ -15,7 +16,7 @@ export const painters: Record<ScreenId, PainterFactory> = {
   optagon,
   ultrasound,
   westpa,
-  nanoscience: placeholder('nanoscience'),
+  nanoscience,
   tanius: placeholder('tanius'),
   cisco: placeholder('cisco'),
   stanford: placeholder('stanford'),
