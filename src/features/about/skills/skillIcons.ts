@@ -9,14 +9,12 @@ import {
   siFlutter,
   siGit,
   siGooglecloud,
-  siHtml5,
   siJavascript,
   siLinux,
   siMeta,
   siNextdotjs,
   siNodedotjs,
   siNumpy,
-  siOpenjdk,
   siPandas,
   siPostgresql,
   siPython,
@@ -32,37 +30,31 @@ import {
 } from 'simple-icons';
 import type { IconProps } from '@/components/icons/IconBase';
 import { visibleOnBlack } from '@/lib/color';
-import {
-  BracesGlyph,
-  BranchesGlyph,
-  CloudGlyph,
-  CloudRunGlyph,
-  CSharpGlyph,
-  DatabaseGlyph,
-  EditorGlyph,
-  KeyGlyph,
-  MoleculeGlyph,
-  SparkGlyph,
-  TerminalGlyph,
-  VertexGlyph,
-} from './glyphs';
+import { BracesGlyph, DatabaseGlyph } from './glyphs';
 
 /**
- * A filled brand mark in its brand colour, or a line glyph with a fitting colour for skills without one.
- * Colours are adjusted so every mark stays visible on the black cards.
+ * How a skill's mark is drawn.
+ * brand: a Simple Icons path in its brand colour.
+ * logo: official full colour logo files in /public/skills, for brands Simple Icons no longer ships.
+ *   Sources: Devicon (MIT) for C#, Java, VS Code, OAuth, HTML5 and CSS3. LobeHub Icons (MIT) for
+ *   OpenAI, Codex and AWS. The Google Cloud icon library for Cloud Run, Cloud SQL and Vertex AI.
+ *   MDAnalysis is traced from the project's own logo, with its black half drawn light for the dark UI.
+ * letter: a single display letter, for WESTPA.
+ * glyph: a line icon for concepts that have no logo at all, like SQL and REST.
  */
 export type SkillIcon =
   | { kind: 'brand'; icon: SimpleIcon; color: string }
+  | { kind: 'logo'; srcs: string[] }
+  | { kind: 'letter'; letter: string; color: string }
   | { kind: 'glyph'; Glyph: ComponentType<IconProps>; color: string };
 
 const brand = (icon: SimpleIcon): SkillIcon => ({ kind: 'brand', icon, color: visibleOnBlack(icon.hex) });
+const logo = (...names: string[]): SkillIcon => ({ kind: 'logo', srcs: names.map((name) => `/skills/${name}.svg`) });
 const glyph = (Glyph: ComponentType<IconProps>, hex: string): SkillIcon => ({
   kind: 'glyph',
   Glyph,
   color: visibleOnBlack(hex),
 });
-
-const GOOGLE_BLUE = '4285F4';
 
 /** Keyed by the exact skill names in src/content/about.ts. */
 const ICONS: Record<string, SkillIcon> = {
@@ -71,11 +63,11 @@ const ICONS: Record<string, SkillIcon> = {
   Python: brand(siPython),
   'C++': brand(siCplusplus),
   C: brand(siC),
-  'C#': glyph(CSharpGlyph, 'A179DC'),
-  Java: brand(siOpenjdk),
+  'C#': logo('csharp'),
+  Java: logo('java'),
   SQL: glyph(DatabaseGlyph, '60A5FA'),
   Swift: brand(siSwift),
-  'HTML/CSS': brand(siHtml5),
+  'HTML/CSS': logo('html5', 'css3'),
   React: brand(siReact),
   'Next.js': brand(siNextdotjs),
   'React Native': brand(siReact),
@@ -86,27 +78,27 @@ const ICONS: Record<string, SkillIcon> = {
   'REST APIs': glyph(BracesGlyph, 'F4B942'),
   PostgreSQL: brand(siPostgresql),
   Supabase: brand(siSupabase),
-  'Cloud SQL': glyph(DatabaseGlyph, GOOGLE_BLUE),
+  'Cloud SQL': logo('cloudsql'),
   PyTorch: brand(siPytorch),
   NumPy: brand(siNumpy),
   Pandas: brand(siPandas),
-  'OpenAI API': glyph(SparkGlyph, '10A37F'),
-  'Google Vertex AI': glyph(VertexGlyph, '669DF6'),
+  'OpenAI API': logo('openai'),
+  'Google Vertex AI': logo('vertexai'),
   'Meta SAM 3': brand(siMeta),
   'Google Cloud Platform': brand(siGooglecloud),
-  'Cloud Run': glyph(CloudRunGlyph, GOOGLE_BLUE),
-  AWS: glyph(CloudGlyph, 'FF9900'),
+  'Cloud Run': logo('cloudrun'),
+  AWS: logo('aws'),
   Docker: brand(siDocker),
   Vercel: brand(siVercel),
   Stripe: brand(siStripe),
-  OAuth: glyph(KeyGlyph, 'E8A33D'),
+  OAuth: logo('oauth'),
   Linux: brand(siLinux),
   Git: brand(siGit),
-  'VS Code': glyph(EditorGlyph, '3FA9F5'),
+  'VS Code': logo('vscode'),
   'Claude Code': brand(siClaude),
-  Codex: glyph(TerminalGlyph, 'FFFFFF'),
-  MDAnalysis: glyph(MoleculeGlyph, 'FF9200'),
-  WESTPA: glyph(BranchesGlyph, '5DADE2'),
+  Codex: logo('codex'),
+  MDAnalysis: logo('mdanalysis'),
+  WESTPA: { kind: 'letter', letter: 'W', color: visibleOnBlack('5DADE2') },
   'Raspberry Pi': brand(siRaspberrypi),
 };
 
