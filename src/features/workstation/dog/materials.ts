@@ -3,7 +3,7 @@ import { Color, MeshBasicMaterial, MeshPhysicalMaterial } from 'three';
 /** Every colour on the dog. Colour is allowed here because it lives inside the 3D scene. */
 export const DOG_PALETTE = {
   /** Coat tones from the deep gold of the back to the cream of the feathering, see TONE. */
-  coat: ['#b06a26', '#cf8a3e', '#e6b064', '#f5d9a4'],
+  coat: ['#bf792c', '#dd9d46', '#efc06e', '#f9e4b5'],
   /** Stops of the coat gradient, matching `coat`. */
   coatStops: [0, 0.3, 0.62, 0.95],
   coatSheen: '#ffd9a0',
