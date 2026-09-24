@@ -21,7 +21,7 @@ export const projects: Project[] = [
     name: 'AutoLab',
     org: 'Neurotech@Berkeley',
     badges: ['In progress'],
-    stack: ['Python', 'C++', 'Raspberry Pi', 'Computer vision'],
+    stack: ['Python', 'C++', 'Raspberry Pi', 'Computer Vision'],
     description:
       'Low-cost robotic platform for growing neuron cultures. It handles X, Y and Z motion, motorized pipetting, imaging and environmental control, so cultures can be kept alive and fed automatically for weeks.',
     links: [],
@@ -31,7 +31,7 @@ export const projects: Project[] = [
     id: 'westpa-dashboard',
     name: 'WESTPA CLI Dashboard',
     org: 'NumFOCUS',
-    badges: ['Open source', 'NumFOCUS'],
+    badges: ['Open source'],
     stack: ['Python', 'WESTPA', 'MDAnalysis'],
     description:
       'Command line dashboard for Weighted Ensemble simulations. It tracks iteration summaries and reports molecular dynamics data, and I built it with the MDAnalysis and WESTPA maintainers.',
@@ -44,7 +44,7 @@ export const projects: Project[] = [
     badges: ['Winner, Luma A2A Agents Hackathon 2025', 'Best Use of Vapi'],
     stack: ['React', 'Next.js', 'Bright Data', 'Vapi'],
     description:
-      'Autonomous AI agent that finds reputable medical clinics and books appointments end to end through programmatic voice calls. It beat 130+ engineers.',
+      'Autonomous AI agent that finds reputable local providers, from medical clinics to barbershops, and books appointments end to end over real phone calls. It beat 130+ engineers.',
     links: [],
     image: '/projects/senseplan.webp',
   },
