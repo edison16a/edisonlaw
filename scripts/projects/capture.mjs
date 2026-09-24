@@ -1,11 +1,15 @@
 #!/usr/bin/env node
 /**
- * Recreates the project card photos in public/projects: one 1280 x 800 WebP per project.
+ * Recreates the project photos in public/projects: one 1280 x 800 WebP per project, plus a
+ * few more for a project with a gallery.
  *
- *   node scripts/projects/capture.mjs                  every project
- *   node scripts/projects/capture.mjs betterbart trashgo   only the ones named
+ *   node scripts/projects/capture.mjs                     every photo
+ *   node scripts/projects/capture.mjs betterbart trashgo  every photo of the projects named
+ *   node scripts/projects/capture.mjs photo-craft-3       one gallery photo
  *
- * Each project has a recipe in scripts/projects/shots/<id>.mjs that returns a full resolution PNG.
+ * Each project has a recipe in scripts/projects/shots/<id>.mjs that returns a full resolution PNG
+ * for <id>.webp, its cover. A project with a gallery (see GALLERIES) also has recipes
+ * <id>-2.mjs, <id>-3.mjs and so on, for <id>-2.webp, <id>-3.webp and so on.
  * Recipes either drive the live product in headless Chromium (Backbond, BetterBART, Photo Craft,
  * Clue.ai, FlameSense) or compose a layout from Edison's own published images (App Store,
  * Chrome Web Store, Devpost, GitHub READMEs, the Neurotech@Berkeley site). Every recipe lists
@@ -37,21 +41,31 @@ const PROJECTS = [
   'chrome-extensions',
 ];
 
+/** Projects with more than one photo, and how many. The first is always <id>.webp. */
+const GALLERIES = { 'photo-craft': 5 };
+
+/** A project's photos, named like their recipes and files. */
+const photosOf = (id) => [id, ...Array.from({ length: (GALLERIES[id] ?? 1) - 1 }, (_, i) => `${id}-${i + 2}`)];
+const PHOTOS = PROJECTS.flatMap(photosOf);
+
 const OUT_DIR = new URL('../../public/projects/', import.meta.url);
 
 const requested = process.argv.slice(2);
-const unknown = requested.filter((id) => !PROJECTS.includes(id));
+const unknown = requested.filter((name) => !PHOTOS.includes(name));
 if (unknown.length > 0) {
-  console.error(`Unknown project: ${unknown.join(', ')}. Known: ${PROJECTS.join(', ')}`);
+  console.error(`Unknown project or photo: ${unknown.join(', ')}. Known: ${PHOTOS.join(', ')}`);
   process.exit(1);
 }
+// A project's id stands for all of its photos.
+const queue =
+  requested.length > 0 ? requested.flatMap((name) => (PROJECTS.includes(name) ? photosOf(name) : [name])) : PHOTOS;
 
 await mkdir(OUT_DIR, { recursive: true });
 const browser = await launchBrowser();
 const downloader = await createDownloader();
 let failures = 0;
 
-for (const id of requested.length > 0 ? requested : PROJECTS) {
+for (const name of new Set(queue)) {
   const started = Date.now();
   const contexts = [];
   const tools = {
@@ -65,15 +79,15 @@ for (const id of requested.length > 0 ? requested : PROJECTS) {
   };
 
   try {
-    const { capture } = await import(`./shots/${id}.mjs`);
+    const { capture } = await import(`./shots/${name}.mjs`);
     const { png, crop } = await capture(tools);
     const { bytes, quality } = await encodeWebp(browser, png, crop);
-    await writeFile(new URL(`${id}.webp`, OUT_DIR), bytes);
+    await writeFile(new URL(`${name}.webp`, OUT_DIR), bytes);
     const seconds = Math.round((Date.now() - started) / 1000);
-    console.log(`${id}: ${Math.round(bytes.length / 1024)} KB at quality ${quality} in ${seconds}s`);
+    console.log(`${name}: ${Math.round(bytes.length / 1024)} KB at quality ${quality} in ${seconds}s`);
   } catch (error) {
     failures += 1;
-    console.error(`${id}: failed. ${error.message}`);
+    console.error(`${name}: failed. ${error.message}`);
   } finally {
     await Promise.all(contexts.map((context) => context.close()));
   }
