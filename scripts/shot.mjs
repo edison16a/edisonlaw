@@ -20,8 +20,12 @@ const flags = {};
 for (let i = 0; i < rest.length; i++) {
   const key = rest[i].replace(/^--/, '');
   const next = rest[i + 1];
-  if (next === undefined || next.startsWith('--')) flags[key] = true;
-  else flags[key] = next, i++;
+  if (next === undefined || next.startsWith('--')) {
+    flags[key] = true;
+  } else {
+    flags[key] = next;
+    i++;
+  }
 }
 
 const mobile = Boolean(flags.mobile);
