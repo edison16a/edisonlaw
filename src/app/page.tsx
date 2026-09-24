@@ -1,5 +1,6 @@
 import { Navbar } from '@/components/layout/Navbar';
 import { Providers } from '@/components/layout/Providers';
+import { SkipLink } from '@/components/layout/SkipLink';
 import { AboutSection } from '@/features/about/AboutSection';
 import { ExperienceSection } from '@/features/experience/ExperienceSection';
 import { ProjectsSection } from '@/features/projects/ProjectsSection';
@@ -9,6 +10,7 @@ export default function Home() {
   return (
     <Providers>
       <div id="top" />
+      <SkipLink />
       <Navbar />
       <main>
         <ProjectsSection />
