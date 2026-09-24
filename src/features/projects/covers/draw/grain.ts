@@ -4,38 +4,26 @@ import { createCanvas } from './canvas';
 const TILE_SIZE = 256;
 const TILE_SEED = 0x6a41;
 
-let tile: HTMLCanvasElement | null = null;
-
-/** Mid grey noise tile, built once and shared by every cover. */
-function noiseTile() {
-  if (tile) return tile;
+/**
+ * Tileable film grain as light and dark specks on transparency, so it can be laid
+ * over anything with plain source-over blending (much cheaper than overlay).
+ * `amount` is the strongest speck's opacity.
+ */
+export function createGrainTile(amount: number) {
   const canvas = createCanvas(TILE_SIZE, TILE_SIZE);
   const context = canvas.getContext('2d');
-  if (!context) return null;
+  if (!context) return canvas;
   const image = context.createImageData(TILE_SIZE, TILE_SIZE);
   const random = seededRandom(TILE_SEED);
   for (let i = 0; i < image.data.length; i += 4) {
-    // Triangular distribution keeps most pixels near grey with the odd bright or dark fleck.
-    const value = 128 + (random() + random() - 1) * 127;
-    image.data[i] = value;
-    image.data[i + 1] = value;
-    image.data[i + 2] = value;
-    image.data[i + 3] = 255;
+    // Triangular distribution: most pixels barely change, a few become visible flecks.
+    const value = random() + random() - 1;
+    const tone = value > 0 ? 255 : 0;
+    image.data[i] = tone;
+    image.data[i + 1] = tone;
+    image.data[i + 2] = tone;
+    image.data[i + 3] = Math.abs(value) * amount * 255;
   }
   context.putImageData(image, 0, 0);
-  tile = canvas;
-  return tile;
-}
-
-/** Overlays fine film grain. `amount` around 0.1 reads as print texture without looking dirty. */
-export function applyGrain(ctx: CanvasRenderingContext2D, w: number, h: number, amount: number) {
-  const source = noiseTile();
-  const pattern = source && ctx.createPattern(source, 'repeat');
-  if (!pattern) return;
-  ctx.save();
-  ctx.globalCompositeOperation = 'overlay';
-  ctx.globalAlpha = amount;
-  ctx.fillStyle = pattern;
-  ctx.fillRect(0, 0, w, h);
-  ctx.restore();
+  return canvas;
 }
