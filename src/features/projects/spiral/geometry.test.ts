@@ -41,13 +41,19 @@ describe('cardPose', () => {
     }
   });
 
-  it('waits upcoming cards above on the left and sinks passed cards to the right', () => {
+  it('waits upcoming cards below on the right and lifts passed cards away to the left', () => {
     const next = cardPose(1, 0, 0, createPose());
     const previous = cardPose(-1, 0, 0, createPose());
-    expect(next.x).toBeLessThan(0);
-    expect(next.y).toBeGreaterThan(SPIRAL.focusHeight);
-    expect(previous.x).toBeGreaterThan(0);
-    expect(previous.y).toBeLessThan(SPIRAL.focusHeight);
+    expect(next.x).toBeGreaterThan(0);
+    expect(next.y).toBeLessThan(SPIRAL.focusHeight);
+    expect(previous.x).toBeLessThan(0);
+    expect(previous.y).toBeGreaterThan(SPIRAL.focusHeight);
+  });
+
+  it('moves the card in the slot to the left as the index grows', () => {
+    const before = cardPose(0, 0, 0, createPose());
+    const after = cardPose(-0.1, 0, 0, createPose());
+    expect(after.x).toBeLessThan(before.x);
   });
 
   it('turns cards away from the camera on the far side', () => {

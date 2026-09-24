@@ -26,8 +26,12 @@ export function cardBend(velocity: number, focus: number) {
   return (1 + 0.45 * speed) * (1 - 0.8 * focus);
 }
 
-/** How far the middle of a card bows along the strand with speed, in world units. */
+/**
+ * How far the middle of a card bows along the strand with speed, in world
+ * units, the way the card is travelling. Cards move toward their own left as
+ * the index grows, so the bow runs against the velocity's sign.
+ */
 export function cardBow(velocity: number) {
   const clamped = Math.max(-10, Math.min(10, velocity));
-  return clamped * 0.016;
+  return clamped * -0.016;
 }

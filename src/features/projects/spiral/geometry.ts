@@ -4,9 +4,10 @@
  * unit tests.
  *
  * The camera sits on +Z and looks at the axis. The focus slot is the step
- * nearest the camera. Upcoming cards wait above it on the left, and cards that
- * have passed sink away to the right, wrap behind the axis and come back along
- * the far side.
+ * nearest the camera. Upcoming cards wait below it on the right, and cards
+ * that have passed rise away to the left, wrap behind the axis and come back
+ * along the far side. So the strand moves left as it turns to the next card,
+ * the way a swipe to the left and the arrow on the right both read.
  */
 
 export interface Point3 {
@@ -82,12 +83,12 @@ export function focusWeight(offset: number) {
  * tucked away. Writes into `out` so the render loop allocates nothing.
  */
 export function cardPose(offset: number, settle: number, hidden: number, out: CardPose) {
-  const angle = Math.PI / 2 + offset * SPIRAL.step;
+  const angle = Math.PI / 2 - offset * SPIRAL.step;
   const radius = SPIRAL.radius * (1 - hidden * 0.5);
   out.x = Math.cos(angle) * radius;
   out.z = Math.sin(angle) * radius;
-  out.y = SPIRAL.focusHeight + offset * SPIRAL.rise - hidden * HIDDEN_DROP;
-  out.rotationY = -offset * SPIRAL.step;
+  out.y = SPIRAL.focusHeight - offset * SPIRAL.rise - hidden * HIDDEN_DROP;
+  out.rotationY = offset * SPIRAL.step;
   out.facing = Math.cos(offset * SPIRAL.step);
 
   const focus = focusWeight(offset) * settle;

@@ -17,9 +17,11 @@ describe('cardBrightness', () => {
 });
 
 describe('motion curves', () => {
-  it('bows in the direction of travel, and not at rest', () => {
-    expect(cardBow(0)).toBe(0);
-    expect(Math.sign(cardBow(-3))).toBe(-1);
+  it('bows the way the cards travel, and not at rest', () => {
+    // A growing index carries the cards toward their own left, which is negative x.
+    expect(cardBow(0)).toBeCloseTo(0, 9);
+    expect(Math.sign(cardBow(3))).toBe(-1);
+    expect(Math.sign(cardBow(-3))).toBe(1);
     expect(cardBow(40)).toBeCloseTo(cardBow(10), 6);
   });
 
