@@ -4,7 +4,7 @@
  * Each one is drawn centred on (x, y) inside a box of `size` pixels.
  */
 
-export type Glyph = 'dot' | 'ring' | 'elbow' | 'check' | 'square' | 'chevron' | 'chevronDown' | 'cross' | 'star';
+export type Glyph = 'dot' | 'bullet' | 'ring' | 'elbow' | 'check' | 'square' | 'chevron' | 'chevronDown' | 'cross' | 'star';
 
 interface GlyphOptions {
   /** Star arm count, used by the thinking spinner. */
@@ -36,6 +36,11 @@ export function drawGlyph(
   switch (glyph) {
     case 'dot':
       ctx.arc(x, y, s * 0.26, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.fill();
+      return;
+    case 'bullet':
+      ctx.arc(x, y, s * 0.17, 0, Math.PI * 2);
       ctx.fillStyle = color;
       ctx.fill();
       return;
