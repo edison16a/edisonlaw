@@ -4,8 +4,9 @@ import { Color, MeshBasicMaterial, MeshPhysicalMaterial, MeshStandardMaterial, t
 export const PALETTE = {
   skin: '#f6cfb2',
   skinShade: '#e7ad92',
+  skinGlow: '#ff8a64',
   blush: '#f39a8e',
-  lips: '#9c4b44',
+  lips: '#86413a',
   hair: '#16161b',
   hairShort: '#2a2a31',
   hairSheen: '#6d7ea8',
@@ -47,15 +48,23 @@ export interface CharacterMaterials {
   coffee: MeshPhysicalMaterial;
 }
 
-/** Soft clay skin: broad, low highlights and a faint warm sheen at grazing angles. */
+/**
+ * Soft clay skin: broad, low highlights with a warm tint and a warm sheen at grazing angles.
+ * A faint warm glow stands in for light scattering under the skin, so shadows on it stay warm
+ * instead of going grey under the cool screen light.
+ */
 function skinMaterial(vertexColors: boolean) {
   return new MeshPhysicalMaterial({
     color: vertexColors ? '#ffffff' : PALETTE.skin,
     vertexColors,
-    roughness: 0.58,
-    sheen: 0.35,
-    sheenColor: new Color('#ffd7c4'),
-    sheenRoughness: 0.6,
+    roughness: 0.55,
+    specularIntensity: 0.7,
+    specularColor: new Color('#ffe9dc'),
+    sheen: 0.45,
+    sheenColor: new Color('#ffc2a6'),
+    sheenRoughness: 0.5,
+    emissive: new Color(PALETTE.skinGlow),
+    emissiveIntensity: 0.05,
   });
 }
 
@@ -70,13 +79,15 @@ export function createCharacterMaterials(shirtMap: Texture): CharacterMaterials 
   return {
     skin: skinMaterial(true),
     body: skinMaterial(false),
+    // The highlight stretches around the head along the hair's tangents, a soft ring rather than a spot.
     hair: new MeshPhysicalMaterial({
       color: PALETTE.hair,
       vertexColors: true,
-      roughness: 0.5,
-      clearcoat: 0.12,
-      clearcoatRoughness: 0.4,
-      sheen: 0.55,
+      roughness: 0.4,
+      anisotropy: 0.65,
+      clearcoat: 0.06,
+      clearcoatRoughness: 0.45,
+      sheen: 0.5,
       sheenColor: new Color(PALETTE.hairSheen),
       sheenRoughness: 0.42,
     }),
