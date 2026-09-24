@@ -1,3 +1,4 @@
+import { Footer } from '@/components/layout/Footer';
 import { Navbar } from '@/components/layout/Navbar';
 import { Providers } from '@/components/layout/Providers';
 import { SkipLink } from '@/components/layout/SkipLink';
@@ -17,6 +18,7 @@ export default function Home() {
         <ExperienceSection />
         <AboutSection />
       </main>
+      <Footer />
       <SoundToggle />
     </Providers>
   );
