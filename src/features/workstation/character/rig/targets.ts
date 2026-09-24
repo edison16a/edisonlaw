@@ -19,7 +19,7 @@ function lookAngles(from: Vector3, to: Vector3): Look {
   return { yaw: Math.atan2(dx, dz), pitch: Math.atan2(dy, Math.hypot(dx, dz)) };
 }
 
-
+/** Look angles from `eyes` to the middle of each monitor, for a character at `placement`. */
 function monitorLooks(placement: Placement, eyes: Vector3): LookSet {
   const looks = {} as LookSet;
   for (const monitor of MONITORS) looks[monitor.slot] = lookAngles(eyes, toCharacterSpace(monitor.position, placement));
