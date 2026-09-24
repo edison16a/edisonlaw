@@ -82,6 +82,8 @@ export function SpiralTrack({ projects, onModeChange }: SpiralTrackProps) {
             </CanvasBoundary>
           )}
         </StageSurface>
+        {/* The stage melts into the black page below, so the handoff to the next section has no hard edge. */}
+        <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-[12%] bg-linear-to-b from-transparent to-black" />
         <div className="pointer-events-none absolute inset-x-0 top-3 flex justify-center">
           {/* A dark pill keeps the words readable when a bright card turns behind them. */}
           <ModeToggle
