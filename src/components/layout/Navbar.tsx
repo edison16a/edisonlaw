@@ -1,11 +1,12 @@
 'use client';
 
 import { site } from '@/content/site';
+import { Logo } from '@/components/icons/Logo';
 import { useSectionTracker } from '@/features/navigation';
 import { useLenis } from 'lenis/react';
 import { NavTabs } from './NavTabs';
 
-/** Fixed black bar with the wordmark on the left and the section tabs on the right. */
+/** Fixed black bar with the mark and name on the left and the section tabs on the right. */
 export function Navbar() {
   useSectionTracker();
   const lenis = useLenis();
@@ -20,9 +21,11 @@ export function Navbar() {
             if (lenis) lenis.scrollTo(0, { duration: 1.2 });
             else window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
-          className="font-display text-base font-bold tracking-tight sm:text-lg"
+          className="flex items-center gap-2.5 font-display text-base font-bold tracking-tight sm:text-lg"
         >
-          {site.name}
+          <Logo size={18} className="shrink-0" />
+          {/* Very narrow phones keep only the mark, so the tabs and the sound switch fit. */}
+          <span className="max-[400px]:sr-only">{site.name}</span>
         </a>
         <NavTabs />
       </nav>
