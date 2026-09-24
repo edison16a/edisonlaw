@@ -1,0 +1,128 @@
+import type { Project } from './types';
+
+/**
+ * Every project card in the spiral, in display order.
+ * Drop a photo into /public/projects and set `image` to replace a generated cover.
+ */
+export const projects: Project[] = [
+  {
+    id: 'backbond',
+    name: 'Backbond',
+    org: 'Optagon Labs',
+    badges: [],
+    stack: ['Next.js', 'Vercel', 'Google Cloud Run', 'Cloud SQL', 'OAuth', 'Stripe', 'Amazon SES', 'Amazon SNS'],
+    description:
+      "Production platform for Optagon Labs' AI-native R&D for drug developers. I built the core infrastructure, including billing, usage metering, organizations and project ingestion.",
+    links: [{ label: 'backbond.net', href: 'https://backbond.net' }],
+  },
+  {
+    id: 'autolab',
+    name: 'AutoLab',
+    org: 'Neurotech@Berkeley',
+    badges: ['In progress'],
+    stack: ['Python', 'C++', 'Raspberry Pi', 'Computer vision'],
+    description:
+      'Low-cost robotic platform for growing neuron cultures. It handles X, Y and Z motion, motorized pipetting, imaging and environmental control, so cultures can be kept alive and fed automatically for weeks.',
+    links: [],
+  },
+  {
+    id: 'westpa-dashboard',
+    name: 'WESTPA CLI Dashboard',
+    org: 'NumFOCUS',
+    badges: ['Open source', 'NumFOCUS'],
+    stack: ['Python', 'WESTPA', 'MDAnalysis'],
+    description:
+      'Command line dashboard for Weighted Ensemble simulations. It tracks iteration summaries and reports molecular dynamics data, and I built it with the MDAnalysis and WESTPA maintainers.',
+    links: [{ label: 'WESTPA on GitHub', href: 'https://github.com/westpa/westpa' }],
+  },
+  {
+    id: 'senseplan',
+    name: 'SensePlan',
+    badges: ['Winner, Luma A2A Agents Hackathon 2025', 'Best Use of Vapi'],
+    stack: ['React', 'Next.js', 'Bright Data', 'Vapi'],
+    description:
+      'Autonomous AI agent that finds reputable medical clinics and books appointments end to end through programmatic voice calls. It beat 130+ engineers.',
+    links: [],
+  },
+  {
+    id: 'callsense',
+    name: 'CallSense',
+    badges: ['Winner, Milpitas Hacks 2025'],
+    stack: ['React', 'Next.js', 'Google Gemini API'],
+    description:
+      'Real-time transcription and summaries of 911 dispatcher calls. It highlights the key details, suggests follow-up questions and ranks incidents by priority.',
+    links: [{ label: 'GitHub', href: 'https://github.com/edison16a/CallSense' }],
+  },
+  {
+    id: 'flamesense',
+    name: 'FlameSense',
+    badges: ['Winner, Los Altos Hacks 2025'],
+    stack: ['HTML/CSS', 'Keras'],
+    description:
+      'Wildfire spread simulator built on a sequential neural network trained on historical burn data and live weather. Pick a location and the predicted spread shows up as a heat map. It beat 350+ competitors.',
+    links: [{ label: 'GitHub', href: 'https://github.com/edison16a/FlameSense' }],
+  },
+  {
+    id: 'safeeats',
+    name: 'SafeEats',
+    badges: ['App Store'],
+    stack: ['Swift', 'SwiftUI', 'Vision'],
+    description:
+      'iOS food label scanner that flags allergens on ingredient lists in real time. It checks about 1,500 allergen keywords in six languages against the allergens you choose.',
+    links: [
+      { label: 'App Store', href: 'https://apps.apple.com/us/app/safeeats-food-scanner/id6739729515' },
+      { label: 'GitHub', href: 'https://github.com/edison16a/SafeEats' },
+    ],
+  },
+  {
+    id: 'betterbart',
+    name: 'BetterBART',
+    badges: [],
+    stack: ['Next.js', 'React', 'JavaScript', 'SVG'],
+    description:
+      'A focused BART map, departures viewer and trip planner. Pick an origin and a destination, drag between stations, and follow one clear instruction at a time.',
+    links: [
+      { label: 'betterbart.vercel.app', href: 'https://betterbart.vercel.app' },
+      { label: 'GitHub', href: 'https://github.com/edison16a/BetterBart' },
+    ],
+  },
+  {
+    id: 'photo-craft',
+    name: 'Photo Craft',
+    badges: ['Open source'],
+    stack: ['Next.js', 'TypeScript', 'Konva', 'ONNX Runtime Web'],
+    description:
+      'Free photo editor with one-click background removal that runs entirely in the browser, so nothing gets uploaded. It exports transparent PNGs at any size, which Canva charges for.',
+    links: [
+      { label: 'photo-craft.vercel.app', href: 'https://photo-craft.vercel.app' },
+      { label: 'GitHub', href: 'https://github.com/edison16a/photo-craft' },
+    ],
+  },
+  {
+    id: 'clue-ai',
+    name: 'Clue.ai',
+    badges: [],
+    stack: ['Next.js', 'TypeScript', 'OpenAI API'],
+    description:
+      'AI learning assistant that helps students get unstuck on assignments with hints, clarifying questions and step-by-step guidance, without giving away the answer.',
+    links: [{ label: 'GitHub', href: 'https://github.com/edison16a/clue-ai' }],
+  },
+  {
+    id: 'trashgo',
+    name: 'TrashGo',
+    badges: ['Winner, CruzHacks 2023', 'Best Lightship AR VPS Game'],
+    stack: ['Unity', 'C#', 'Niantic Lightship', 'VPS'],
+    description:
+      'Mobile AR game that discourages littering and rewards people for throwing trash away properly. It won out over 650+ participants.',
+    links: [{ label: 'GitHub', href: 'https://github.com/Aldicodi/Cruzhacks-2023-TrashGo' }],
+  },
+  {
+    id: 'chrome-extensions',
+    name: 'Chrome Extensions',
+    badges: ['Featured by Google'],
+    stack: ['JavaScript', 'HTML/CSS', 'Chrome Extensions API'],
+    description:
+      'A collection of browser extensions, part of the 10+ apps and extensions used by 5,000+ people. It includes SafeEats for Chrome, which rewrites online recipes around your allergies.',
+    links: [],
+  },
+];
