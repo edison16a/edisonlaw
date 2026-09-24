@@ -59,7 +59,7 @@ const TIMING = {
 const LOOK_UP = { yaw: 0.9, pitch: 0.62, tilt: 0.02 } as const;
 
 /** How much of the head's swing the ears undo, hanging back toward the floor. */
-const EAR_GRAVITY = 0.75;
+const EAR_GRAVITY = 0.55;
 
 const lookUp = createOccurrence();
 const bliss = createOccurrence();
