@@ -10,15 +10,23 @@ import { DOG_PAT_POINT, type Vec3 } from '../layout';
  * It turns about that point, so the hand stays in contact however the head moves.
  */
 export const HEAD = {
-  /** The crown contact point in dog space: as high as DOG_PAT_POINT, since the dog stands on the floor. */
-  top: [0, DOG_PAT_POINT[1], 0.19] as Vec3,
+  /**
+   * The crown contact point in dog space: as high as DOG_PAT_POINT, since the dog stands on the floor,
+   * and a little to the dog's right of its body, so the body stands a step further from Edison's legs.
+   */
+  top: [-0.025, DOG_PAT_POINT[1], 0.19] as Vec3,
   /** Head space is sculpted at a real retriever's size; the chibi head is this much bigger. */
   scale: 1.18,
   /**
    * Resting pose of the head, in radians: turned toward its left (the about camera), nose lifted,
    * and the crown tilted a little toward its right, into Edison's hand.
    */
-  rest: { yaw: 0.95, pitch: 0.2, tilt: 0.1 },
+  rest: { yaw: 1.45, pitch: 0.2, tilt: 0.1 },
+  /**
+   * The palm meets the head on the upper slope of its right side, toward Edison, rather than dead on
+   * top, so the round skull sits a little toward the camera and clear of his leg. Radians from vertical.
+   */
+  contactLean: 0.3,
 } as const;
 
 /** Where each bone pivots, in dog space. */

@@ -15,14 +15,16 @@ function restRotation() {
 let crown: Vector3 | null = null;
 
 /**
- * The point of the sculpted head that is highest once the head is turned into its resting pose, in
- * head space. Edison's palm rests there, so the head pivots there too. Found by tracing the skull in
- * a fan of directions around the resting up direction and keeping the highest hit.
+ * Where Edison's palm meets the sculpted head in its resting pose, in head space: the point that sticks
+ * out furthest toward the palm, which faces down and leans in from his side (HEAD.contactLean). The
+ * head pivots there too. Found by tracing the skull in a fan of directions and keeping the best hit.
  */
 export function headCrown(): Vector3 {
   if (crown) return crown.clone();
   const field = new Field(headForms(), PART_COUNT);
-  const up = new Vector3(0, 1, 0).applyQuaternion(restRotation().invert());
+  // Toward the palm, in dog space: up, leaning toward the dog's right (-X) where Edison stands.
+  const toPalm = new Vector3(-Math.sin(HEAD.contactLean), Math.cos(HEAD.contactLean), 0);
+  const up = toPalm.applyQuaternion(restRotation().invert());
   const across = new Vector3(1, 0, 0).addScaledVector(up, -up.x).normalize();
   const along = new Vector3().crossVectors(up, across);
   const direction = new Vector3();

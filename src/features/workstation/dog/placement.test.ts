@@ -34,14 +34,15 @@ describe('dog placement', () => {
   it('has the top of its head right under the hand', () => {
     const [x, y, z] = HEAD.top;
     expect(Math.abs(surfaceBelow(x, z) - y)).toBeLessThan(0.004);
-    // Nothing around the contact rises above the palm.
+    // Nothing around the contact rises above the palm, which leans in from Edison's side.
+    const slope = Math.tan(HEAD.contactLean);
     for (const [dx, dz] of [
       [0.02, 0],
       [-0.02, 0],
       [0, 0.02],
       [0, -0.02],
     ]) {
-      expect(surfaceBelow(x + dx, z + dz)).toBeLessThan(y + 0.003);
+      expect(surfaceBelow(x + dx, z + dz)).toBeLessThan(y + dx * slope + 0.003);
     }
   });
 
@@ -53,14 +54,18 @@ describe('dog placement', () => {
   });
 
   it('keeps clear of Edison and of the desk legs', () => {
+    // Edison's feet and shins fill roughly a 0.1 radius column around his placement; higher up only
+    // the line of his left thigh must stay clear, since the petted head leans against his leg.
     const [ex, , ez] = STANDING_PLACEMENT.position;
-    // Edison's legs and feet fill roughly a 0.1 radius column around his placement.
-    for (let angle = 0; angle < Math.PI * 2; angle += Math.PI / 12) {
-      for (const y of [0.03, 0.15, 0.3, 0.45]) {
+    const [sin, cos] = [Math.sin(STANDING_PLACEMENT.rotationY), Math.cos(STANDING_PLACEMENT.rotationY)];
+    for (let angle = 0; angle < Math.PI * 2; angle += Math.PI / 24) {
+      for (const y of [0.03, 0.15, 0.3]) {
         const p = toDog(ex + Math.cos(angle) * 0.1, y, ez + Math.sin(angle) * 0.1);
         expect(field.distance(p.x, p.y, p.z)).toBeGreaterThan(0.005);
       }
     }
+    const thigh = toDog(ex + 0.085 * cos, 0.45, ez - 0.085 * sin);
+    expect(field.distance(thigh.x, thigh.y, thigh.z)).toBeGreaterThan(0.04);
     const legX = DESK.width / 2 - 0.13;
     const legZ = DESK.center[2] + DESK.depth / 2 - 0.1;
     for (let y = 0; y < DESK.height; y += 0.05) {
