@@ -101,8 +101,3 @@ export function cardPose(offset: number, settle: number, hidden: number, out: Ca
 export function createPose(): CardPose {
   return { x: 0, y: 0, z: 0, rotationY: 0, facing: 1, scale: 1, focus: 0 };
 }
-
-/** Sideways drift the vortex adds at height `y`, matching the vertex shader. */
-export function sweepAt(y: number) {
-  return SPIRAL.sweep * y * y;
-}

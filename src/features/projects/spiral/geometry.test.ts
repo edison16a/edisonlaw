@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { cardPose, createPose, FOCUS, focusWeight, slotOffset, SPIRAL, sweepAt } from './geometry';
+import { cardPose, createPose, FOCUS, focusWeight, slotOffset, SPIRAL } from './geometry';
 
 describe('slotOffset', () => {
   it('measures the distance from the index in cards', () => {
@@ -82,13 +82,5 @@ describe('focusWeight', () => {
       expect(focusWeight(offset)).toBeLessThanOrEqual(previous);
       previous = focusWeight(offset);
     }
-  });
-});
-
-describe('sweepAt', () => {
-  it('bends the strand the same way above and below the camera', () => {
-    expect(sweepAt(0)).toBe(0);
-    expect(sweepAt(2)).toBeCloseTo(sweepAt(-2), 6);
-    expect(sweepAt(2)).toBeGreaterThan(0);
   });
 });
