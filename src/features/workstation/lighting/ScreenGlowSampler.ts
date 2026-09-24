@@ -1,7 +1,10 @@
 import { Color, type Texture } from 'three';
 
-/** How often the screen is sampled, in seconds. */
-const SAMPLE_EVERY = 0.6;
+/**
+ * How often the screen is sampled, in seconds. Reading pixels back can stall the GPU briefly,
+ * so this stays slow; the light eases toward each new sample anyway.
+ */
+const SAMPLE_EVERY = 1.5;
 const SAMPLE_SIZE = 6;
 /** Dark editor themes still throw a cool glow, so the tint leans toward this. */
 const SCREEN_WHITE = new Color('#c8d4ff');
@@ -29,9 +32,11 @@ export class ScreenGlowSampler {
 
   private readonly context: CanvasRenderingContext2D | null;
   private readonly average = new Color();
-  private since = SAMPLE_EVERY;
+  private since: number;
 
-  constructor() {
+  /** @param phase 0 to 1, offsets this sampler so several screens never read back in the same frame. */
+  constructor(phase = 0) {
+    this.since = SAMPLE_EVERY * (1 - phase);
     const canvas = document.createElement('canvas');
     canvas.width = SAMPLE_SIZE;
     canvas.height = SAMPLE_SIZE;

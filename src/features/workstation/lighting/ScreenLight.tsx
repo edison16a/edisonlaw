@@ -17,15 +17,17 @@ interface ScreenLightProps {
   texture: Texture;
   width: number;
   height: number;
+  /** 0 to 1, staggers screen sampling between monitors. */
+  phase?: number;
 }
 
 /**
  * An area light the size of the panel, sitting just in front of it, so each monitor
  * lights the desk, keyboard and character with the colour of what it shows.
  */
-export function ScreenLight({ texture, width, height }: ScreenLightProps) {
+export function ScreenLight({ texture, width, height, phase = 0 }: ScreenLightProps) {
   const light = useRef<RectAreaLight>(null);
-  const [glow] = useState(() => new ScreenGlowSampler());
+  const [glow] = useState(() => new ScreenGlowSampler(phase));
 
   useFrame((_, delta) => {
     glow.tick(texture, delta);

@@ -22,7 +22,8 @@ interface MonitorProps {
 export function Monitor({ slot, screen, live }: MonitorProps) {
   const materials = getMaterials();
   const texture = useScreenTexture(screen, { animate: live });
-  const spec = MONITORS.find((monitor) => monitor.slot === slot) ?? MONITORS[1];
+  const index = Math.max(0, MONITORS.findIndex((monitor) => monitor.slot === slot));
+  const spec = MONITORS[index];
   const { screenWidth: w, screenHeight: h, bezel } = MONITOR;
   const drop = spec.position[1] - DESK.height;
 
@@ -63,7 +64,7 @@ export function Monitor({ slot, screen, live }: MonitorProps) {
         material={materials.aluminium}
         position={[0, -drop + 0.006, -0.05]}
       />
-      <ScreenLight texture={texture} width={w} height={h} />
+      <ScreenLight texture={texture} width={w} height={h} phase={index / MONITORS.length} />
     </group>
   );
 }
