@@ -52,30 +52,7 @@ export function useStageDrag() {
     };
   }, []);
 
-  const onPointerMove = useCallback(
-    (event: PointerEvent<HTMLElement>) => {
-      const current = drag.current;
-      if (!current || current.id !== event.pointerId || !lenis) return;
-      const dx = event.clientX - current.x;
-      const dy = event.clientY - current.y;
-      if (!current.active) {
-        if (Math.hypot(dx, dy) < DRAG_SLOP) return;
-        current.active = true;
-        spiralMotion.dragging = true;
-        event.currentTarget.setPointerCapture(event.pointerId);
-        setDragging(true);
-      }
-      const scroll = current.scroll + ((dx + dy) / PIXELS_PER_CARD) * stageMetrics.perCard;
-      lenis.scrollTo(scroll, { immediate: true, force: true });
-      const elapsed = Math.max(1, event.timeStamp - current.lastTime);
-      current.velocity = current.velocity * 0.6 + ((scroll - current.lastScroll) / elapsed) * 0.4;
-      current.lastTime = event.timeStamp;
-      current.lastScroll = scroll;
-    },
-    [lenis],
-  );
-
-  const onPointerUp = useCallback(
+  const release = useCallback(
     (event: PointerEvent<HTMLElement>) => {
       const current = drag.current;
       if (!current || current.id !== event.pointerId) return;
@@ -94,5 +71,40 @@ export function useStageDrag() {
     [lenis],
   );
 
-  return { dragging, onPointerDown, onPointerMove, onPointerUp, onPointerCancel: onPointerUp };
+  const onPointerMove = useCallback(
+    (event: PointerEvent<HTMLElement>) => {
+      const current = drag.current;
+      if (!current || current.id !== event.pointerId || !lenis) return;
+      // The button came up where this surface could not hear it, over the toggle or outside the window.
+      if ((event.buttons & 1) === 0) {
+        release(event);
+        return;
+      }
+      const dx = event.clientX - current.x;
+      const dy = event.clientY - current.y;
+      if (!current.active) {
+        if (Math.hypot(dx, dy) < DRAG_SLOP) return;
+        current.active = true;
+        spiralMotion.dragging = true;
+        event.currentTarget.setPointerCapture(event.pointerId);
+        setDragging(true);
+      }
+      const scroll = current.scroll + ((dx + dy) / PIXELS_PER_CARD) * stageMetrics.perCard;
+      lenis.scrollTo(scroll, { immediate: true, force: true });
+      const elapsed = Math.max(1, event.timeStamp - current.lastTime);
+      current.velocity = current.velocity * 0.6 + ((scroll - current.lastScroll) / elapsed) * 0.4;
+      current.lastTime = event.timeStamp;
+      current.lastScroll = scroll;
+    },
+    [lenis, release],
+  );
+
+  return {
+    dragging,
+    onPointerDown,
+    onPointerMove,
+    onPointerUp: release,
+    onPointerCancel: release,
+    onLostPointerCapture: release,
+  };
 }
