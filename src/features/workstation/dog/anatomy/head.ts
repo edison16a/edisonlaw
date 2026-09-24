@@ -69,9 +69,9 @@ function cheekFluff(): Shape[] {
     [0, 1].flatMap((row) =>
       flatLock({
         path: [
-          sided([0.078 - row * 0.008, -0.118 - row * 0.022, 0.0 - row * 0.022], side),
-          sided([0.09 - row * 0.008, -0.158 - row * 0.022, -0.02 - row * 0.022], side),
-          sided([0.086 - row * 0.008, -0.192 - row * 0.022, -0.03 - row * 0.022], side),
+          sided([0.078 - row * 0.008, -0.118 - row * 0.016, 0.0 - row * 0.024], side),
+          sided([0.09 - row * 0.008, -0.152 - row * 0.012, -0.02 - row * 0.024], side),
+          sided([0.086 - row * 0.008, -0.178 - row * 0.008, -0.032 - row * 0.024], side),
         ],
         width: 0.024,
         flatness: 0.5,
