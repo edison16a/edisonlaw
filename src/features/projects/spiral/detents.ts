@@ -3,7 +3,7 @@
  * A detent is a notch on the wheel: several per card, and the card boundary is one of them.
  */
 
-/** Notches per card. Each one passes a base pair on the helix and plays a tick. */
+/** Notches per card. Each one plays a soft tick as the spiral turns past it. */
 export const DETENTS_PER_CARD = 4;
 
 /**
