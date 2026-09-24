@@ -4,6 +4,7 @@ import { codex } from './codex';
 import { cisco } from './experience/cisco';
 import { nanoscience } from './experience/nanoscience';
 import { optagon } from './experience/optagon';
+import { stanford } from './experience/stanford';
 import { placeholder } from './placeholder';
 import { tanius } from './experience/tanius';
 import { ultrasound } from './experience/ultrasound';
@@ -21,6 +22,6 @@ export const painters: Record<ScreenId, PainterFactory> = {
   nanoscience,
   tanius,
   cisco,
-  stanford: placeholder('stanford'),
+  stanford,
   apps: placeholder('apps'),
 };
