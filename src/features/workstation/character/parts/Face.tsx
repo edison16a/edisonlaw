@@ -16,9 +16,9 @@ const SHINES = [
   { x: -0.0085, y: -0.0125, radius: 0.0042 },
 ] as const;
 const BROW: [number, number][] = [
-  [81.5, 12],
-  [79.6, 19],
-  [80.6, 27],
+  [81.2, 14],
+  [79.8, 19.5],
+  [80.6, 25.5],
 ];
 const MOUTH: [number, number][] = [
   [120.4, -7.5],
@@ -53,8 +53,8 @@ function shineDepth(x: number, y: number) {
 export function Face({ rig }: { rig: Rig }) {
   const materials = useCharacterMaterials();
   const sphere = useGeometry(() => new SphereGeometry(1, 32, 20));
-  const leftBrow = useGeometry(() => strokeGeometry(BROW, 1, 0.0028, 0.0058, 0.0032));
-  const rightBrow = useGeometry(() => strokeGeometry(BROW, -1, 0.0028, 0.0058, 0.0032));
+  const leftBrow = useGeometry(() => strokeGeometry(BROW, 1, 0.0024, 0.0046, 0.0026));
+  const rightBrow = useGeometry(() => strokeGeometry(BROW, -1, 0.0024, 0.0046, 0.0026));
   const mouth = useGeometry(() => strokeGeometry(MOUTH, 1, 0.0006, 0.0034, 0.0022));
   const eyeFrames = useMemo(() => [1, -1].map((side) => surfaceFrame(EYE.theta, side * EYE.phi, EYE.lift)), []);
   const nose = useMemo(() => surfaceFrame(NOSE.theta, 0, NOSE.lift), []);
