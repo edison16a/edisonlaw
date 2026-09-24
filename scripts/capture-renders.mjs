@@ -7,8 +7,12 @@
  *
  * It needs a running server with the page that renders both WorkstationStage variants, e.g.
  *
- *   npx next dev -p 3000          (in another terminal, or next build && next start)
+ *   npx next dev -p 3000          (in another terminal)
  *   node scripts/capture-renders.mjs http://localhost:3000
+ *
+ * Capture mode only works in development or in a build made for it, so to capture from a
+ * production build run `NEXT_PUBLIC_CAPTURE=1 npx next build && npx next start` instead. A normal
+ * production build ignores the query, and the script times out waiting for the stage.
  *
  * For each variant it opens <baseUrl>/?capture=<variant>. That query makes the matching stage
  * render full screen on top of the page with its live canvas (see stage/useCaptureVariant.ts).
