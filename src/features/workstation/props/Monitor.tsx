@@ -8,7 +8,14 @@ import { patchDisplayShader } from '../screens/displayShader';
 import { useScreenTexture } from '../screens/useScreenTexture';
 import type { ScreenId } from '../screens/types';
 
-const PANEL_DEPTH = 0.014;
+/** Rounded housing on the back of the panel, which the neck mounts to. */
+const HOUSING = { widthRatio: 0.62, heightRatio: 0.6, depth: 0.03, drop: 0.01 };
+/** Upright of the stand, centred behind the panel. `top` is its top above the screen centre, hidden by the housing. */
+const NECK = { width: 0.05, depth: 0.018, top: 0 };
+/** How far touching parts sink into each other, so no seam of light shows between them. */
+const OVERLAP = 0.002;
+/** Flat foot on the desk, a little ahead of the neck so the panel looks balanced. */
+const FOOT = { width: 0.22, depth: 0.15, thickness: 0.012, offsetZ: -0.04 };
 
 interface MonitorProps {
   slot: MonitorSlot;
@@ -17,47 +24,54 @@ interface MonitorProps {
   live: boolean;
 }
 
-/** Thin bezel panel on a slim stand, with the screen texture as its face. */
+/**
+ * Thin bezel panel on a slim stand, with the screen texture as its face. All three monitors are
+ * this one model, placed by MONITORS, so they match exactly.
+ */
 export function Monitor({ slot, screen, live }: MonitorProps) {
   const materials = getMaterials();
   const { texture, glow } = useScreenTexture(screen, { animate: live });
   const index = Math.max(0, MONITORS.findIndex((monitor) => monitor.slot === slot));
   const spec = MONITORS[index];
-  const { screenWidth: w, screenHeight: h, bezel } = MONITOR;
+  const { screenWidth: w, screenHeight: h, bezel, depth } = MONITOR;
+  // Screen centre to desk top. The same for every monitor, since they share one height.
   const drop = spec.position[1] - DESK.height;
+  const housingBack = -depth / 2 - HOUSING.depth + 0.003;
+  const neckBottom = -drop + FOOT.thickness - OVERLAP;
+  const neckZ = housingBack - NECK.depth / 2 + OVERLAP;
 
   return (
     <group position={spec.position} rotation-y={spec.rotationY}>
-      <RoundedBox args={[w + bezel * 2, h + bezel * 2, PANEL_DEPTH]} radius={0.006} smoothness={3} material={materials.darkPlastic} />
+      <RoundedBox args={[w + bezel * 2, h + bezel * 2, depth]} radius={0.006} smoothness={3} material={materials.darkPlastic} />
       {/*
         The face is unlit, so the picture shows exactly as painted with no grey glare over it.
         The post chain leaves its pixels out of tone mapping, and at white it stays under the bloom threshold.
       */}
-      <mesh position-z={PANEL_DEPTH / 2 + 0.0005}>
+      <mesh position-z={depth / 2 + 0.0005}>
         <planeGeometry args={[w, h]} />
         <meshBasicMaterial map={texture} toneMapped={false} onBeforeCompile={patchDisplayShader} />
       </mesh>
-      {/* Rounded housing on the back, then the neck and the foot. */}
       <RoundedBox
-        args={[w * 0.62, h * 0.6, 0.03]}
+        args={[w * HOUSING.widthRatio, h * HOUSING.heightRatio, HOUSING.depth]}
         radius={0.012}
         smoothness={3}
         material={materials.darkPlastic}
-        position={[0, -0.01, -PANEL_DEPTH / 2 - 0.012]}
+        position={[0, -HOUSING.drop, housingBack + HOUSING.depth / 2]}
       />
+      {/* The neck stands on the foot and rises against the back of the housing. */}
       <RoundedBox
-        args={[0.05, drop - 0.03, 0.018]}
+        args={[NECK.width, NECK.top - neckBottom, NECK.depth]}
         radius={0.007}
         smoothness={3}
         material={materials.aluminium}
-        position={[0, -drop / 2 + 0.01, -0.052]}
+        position={[0, (NECK.top + neckBottom) / 2, neckZ]}
       />
       <RoundedBox
-        args={[0.24, 0.012, 0.17]}
+        args={[FOOT.width, FOOT.thickness, FOOT.depth]}
         radius={0.005}
         smoothness={3}
         material={materials.aluminium}
-        position={[0, -drop + 0.006, -0.05]}
+        position={[0, -drop + FOOT.thickness / 2, FOOT.offsetZ]}
       />
       <ScreenLight texture={glow} width={w} height={h} phase={index / MONITORS.length} />
     </group>

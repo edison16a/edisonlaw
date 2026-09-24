@@ -24,21 +24,60 @@ export const DESK = {
   frontZ: 0.04,
 } as const;
 
+/**
+ * The three monitors are one uniform set: the same panel and stand, every screen centre at the same
+ * height, and the side panels turned in by the same angle in mirror image. Each side panel hinges on
+ * the centre panel's front corner, so the three faces meet with equal, even gaps.
+ */
 export const MONITOR = {
-  /** Visible screen area. */
+  /** Visible screen area, 16:9 like the pictures painted on it. */
   screenWidth: 0.64,
-  screenHeight: 0.37,
+  screenHeight: 0.36,
   bezel: 0.014,
-  /** Height of the screen centre above the floor. */
+  /** Thickness of the panel, bezel included. */
+  depth: 0.014,
+  /** Height of every screen centre above the floor. */
   centerY: 1.1,
+  /** Z of the middle of the centre panel. */
+  centerZ: -0.62,
+  /** How far each side panel turns in toward the chair, in radians. */
+  sideAngle: 0.42,
+  /** Gap between the front edges of neighbouring panels. */
+  gap: 0.006,
 } as const;
 
 export type MonitorSlot = 'left' | 'center' | 'right';
 
-export const MONITORS: { slot: MonitorSlot; position: Vec3; rotationY: number }[] = [
-  { slot: 'left', position: [-0.69, MONITOR.centerY, -0.5], rotationY: 0.42 },
-  { slot: 'center', position: [0, MONITOR.centerY, -0.6], rotationY: 0 },
-  { slot: 'right', position: [0.69, MONITOR.centerY, -0.5], rotationY: -0.42 },
+export interface MonitorPlacement {
+  slot: MonitorSlot;
+  /** Middle of the panel. */
+  position: Vec3;
+  rotationY: number;
+}
+
+/**
+ * A side panel turned in by `sideAngle` with its inner front corner `gap` beyond the centre panel's
+ * outer front corner. `side` is -1 for the left panel and 1 for the right.
+ */
+function sidePanel(side: -1 | 1): MonitorPlacement {
+  const { screenWidth, bezel, depth, centerY, centerZ, sideAngle, gap } = MONITOR;
+  const halfWidth = screenWidth / 2 + bezel;
+  const cos = Math.cos(sideAngle);
+  const sin = Math.sin(sideAngle);
+  // The shared corner, on the front plane of the centre panel.
+  const hingeX = side * (halfWidth + gap);
+  const hingeZ = centerZ + depth / 2;
+  return {
+    slot: side < 0 ? 'left' : 'right',
+    position: [hingeX + side * (halfWidth * cos + (depth / 2) * sin), centerY, hingeZ + halfWidth * sin - (depth / 2) * cos],
+    rotationY: -side * sideAngle,
+  };
+}
+
+export const MONITORS: readonly MonitorPlacement[] = [
+  sidePanel(-1),
+  { slot: 'center', position: [0, MONITOR.centerY, MONITOR.centerZ], rotationY: 0 },
+  sidePanel(1),
 ];
 
 /** Felt mat under the keyboard and mouse. `center` is the middle of its top face. */
