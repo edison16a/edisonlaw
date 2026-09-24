@@ -2,7 +2,7 @@
 
 import { useState, type RefObject } from 'react';
 import { useInView } from '@/lib/hooks/useInView';
-import { useIsMobile } from '@/lib/hooks/useIsMobile';
+import { useMediaQuery } from '@/lib/hooks/useMediaQuery';
 import { useReducedMotion } from '@/lib/hooks/useReducedMotion';
 import { useWebGLSupport } from '@/lib/hooks/useWebGLSupport';
 import type { Frameloop, StageVariant } from '../types';
@@ -10,6 +10,11 @@ import { useCaptureVariant } from './useCaptureVariant';
 
 /** Start loading the scene a full screen before it scrolls in. */
 const NEAR_MARGIN = '100% 0px 100% 0px';
+/**
+ * Below Tailwind's lg breakpoint the sections stack and the stage scrolls away with the page instead of
+ * staying pinned beside the text, so nobody sees the monitor follow the timeline. A still is enough there.
+ */
+const STILL_ONLY_QUERY = '(max-width: 1023px)';
 
 export interface StageFailures {
   /** The still render could not load. */
@@ -48,7 +53,7 @@ export function useStageMode(
 ): StageMode {
   const near = useInView(ref, { rootMargin: NEAR_MARGIN });
   const onScreen = useInView(ref);
-  const isMobile = useIsMobile();
+  const stillOnly = useMediaQuery(STILL_ONLY_QUERY);
   const webgl = useWebGLSupport();
   const reducedMotion = useReducedMotion();
   const capture = useCaptureVariant();
@@ -60,8 +65,8 @@ export function useStageMode(
   const capturing = capture === variant;
   // Without a working WebGL context the still is all a stage can show, on any screen size.
   const canvasWorks = webgl && !canvasFailed;
-  const showImage = (isMobile || !canvasWorks) && !imageFailed && !capture;
-  const still = reducedMotion || isMobile;
+  const showImage = (stillOnly || !canvasWorks) && !imageFailed && !capture;
+  const still = reducedMotion || stillOnly;
   const animate = capturing || !still;
 
   let frameloop: Frameloop = 'always';

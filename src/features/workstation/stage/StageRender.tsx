@@ -14,7 +14,7 @@ interface StageRenderProps {
   onError: () => void;
 }
 
-/** Pre-rendered still of the scene, used on phones instead of a live canvas. */
+/** Pre-rendered still of the scene, used on phones and tablets instead of a live canvas. */
 export function StageRender({ variant, onError }: StageRenderProps) {
   return (
     <Image

@@ -39,7 +39,7 @@ export interface WorkstationStageProps {
 /**
  * The desk scene as a drop-in block. It fills its parent.
  * The canvas mounts once the stage comes near the viewport and pauses while off-screen.
- * Phones, browsers without WebGL and scenes that fail to render get a pre-rendered still instead.
+ * Phones, tablets, browsers without WebGL and scenes that fail to render get a pre-rendered still instead.
  */
 export function WorkstationStage({ variant, centerScreen, pulseKey, className }: WorkstationStageProps) {
   const ref = useRef<HTMLDivElement>(null);
