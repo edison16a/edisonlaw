@@ -1,9 +1,10 @@
 import type { PainterFactory, ScreenId } from '../types';
+import { claudeCode } from './claudeCode';
 import { placeholder } from './placeholder';
 
 /** Every screen id and the painter that draws it. */
 export const painters: Record<ScreenId, PainterFactory> = {
-  'claude-code': placeholder('claude-code'),
+  'claude-code': claudeCode,
   codex: placeholder('codex'),
   vscode: placeholder('vscode'),
   optagon: placeholder('optagon'),
