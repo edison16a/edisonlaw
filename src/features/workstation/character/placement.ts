@@ -24,7 +24,7 @@ export const SEATED_PLACEMENT: Placement = {
  */
 export const STANDING_PLACEMENT: Placement = {
   position: [0.98, 0, 0.44],
-  rotationY: Math.PI + 0.72,
+  rotationY: Math.PI + 0.4,
 };
 
 /**
