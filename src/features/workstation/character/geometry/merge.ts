@@ -6,6 +6,8 @@ export function mergeParts(parts: BufferGeometry[]) {
   const merged = mergeGeometries(parts);
   for (const part of parts) part.dispose();
   if (!merged) throw new Error('Character parts must have matching attributes to be merged.');
+  // The merge keeps blend shapes but not how they are stored, which every part shares.
+  merged.morphTargetsRelative = parts[0].morphTargetsRelative;
   return merged;
 }
 
