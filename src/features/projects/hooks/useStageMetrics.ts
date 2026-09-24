@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, type RefObject } from 'react';
-import { focusCardRect } from '../spiral/anchor';
+import { focusCardRect, shiftForPanel } from '../spiral/anchor';
 import { setStageMetrics } from '../state/stageMetrics';
 import { wakeSpiral } from '../state/spiralWake';
 
@@ -29,9 +29,13 @@ export function useStageMetrics(stage: RefObject<HTMLElement | null>, column: Re
       const height = stageNode.clientHeight;
       if (width === 0 || height === 0) return;
       // The composition is centred, so half the panel's width puts the focused card
-      // at the centre of the space left of the panel.
-      const panelWidth = column.current?.offsetWidth ?? 0;
-      const focusShift = sidePanel.matches ? (panelWidth / 2) * SHIFT_SHARE : 0;
+      // at the centre of the space left of the panel. On short or narrow stages it
+      // slides a little further, so the next arrow never runs into the panel.
+      const panel = column.current;
+      const focusShift =
+        sidePanel.matches && panel
+          ? shiftForPanel(width, height, panel.offsetLeft, (panel.offsetWidth / 2) * SHIFT_SHARE)
+          : 0;
       const focusLift = sidePanel.matches ? 0 : height * LIFT_SHARE;
       setStageMetrics({ focusShift, focusLift });
 

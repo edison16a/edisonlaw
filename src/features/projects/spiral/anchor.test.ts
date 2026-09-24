@@ -1,6 +1,6 @@
 import { PerspectiveCamera, Vector3 } from 'three';
 import { describe, expect, it } from 'vitest';
-import { focusCardRect } from './anchor';
+import { ARROW, focusCardRect, shiftForPanel } from './anchor';
 import { cardBend } from './appearance';
 import { CARD_HEIGHT, CARD_WIDTH, cardPose, createPose, SPIRAL } from './geometry';
 import { CAMERA, frameCamera } from './lens';
@@ -58,5 +58,36 @@ describe('focusCardRect', () => {
     expect(moved.left).toBeCloseTo(still.left - 160, 6);
     expect(moved.right).toBeCloseTo(still.right - 160, 6);
     expect(moved.top).toBeCloseTo(still.top - 90, 6);
+  });
+});
+
+describe('shiftForPanel', () => {
+  /** Where the arrows land, from their inner sides out, for a given shift. */
+  const arrowsAt = (width: number, height: number, shift: number) => {
+    const card = focusCardRect(width, height, shift, 0);
+    return { left: card.left - ARROW.gap - ARROW.size, right: card.right + ARROW.gap + ARROW.size };
+  };
+
+  it('keeps the preferred shift when the arrows already clear the panel', () => {
+    expect(shiftForPanel(1440, 836, 1022, 167)).toBe(167);
+    expect(shiftForPanel(1920, 1016, 1392, 173)).toBe(173);
+  });
+
+  it('slides further on a short screen so the next arrow clears the panel', () => {
+    const shift = shiftForPanel(1440, 536, 783, 167);
+    expect(shift).toBeGreaterThan(167);
+    expect(arrowsAt(1440, 536, shift).right).toBeCloseTo(783 - ARROW.margin, 6);
+  });
+
+  it('fits both arrows on a tall and narrow tablet with the panel beside the card', () => {
+    const shift = shiftForPanel(1024, 1302, 688, 134);
+    const arrows = arrowsAt(1024, 1302, shift);
+    expect(arrows.right).toBeLessThanOrEqual(688 - ARROW.margin + 1e-6);
+    expect(arrows.left).toBeGreaterThanOrEqual(ARROW.margin);
+  });
+
+  it('never pushes the previous arrow off the stage', () => {
+    const shift = shiftForPanel(1024, 1302, 300, 134);
+    expect(arrowsAt(1024, 1302, shift).left).toBeCloseTo(ARROW.margin, 6);
   });
 });

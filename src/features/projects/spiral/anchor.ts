@@ -10,6 +10,15 @@ export interface StageRect {
   bottom: number;
 }
 
+/** The round arrow buttons beside the focused card, in CSS pixels. */
+export const ARROW = {
+  size: 48,
+  /** Space between a button and the card's side. */
+  gap: 20,
+  /** Space kept between a button and the panel or the edge of the stage. */
+  margin: 16,
+} as const;
+
 const pose = createPose();
 
 /**
@@ -42,4 +51,18 @@ export function focusCardRect(width: number, height: number, shift: number, lift
     top: toY(pose.y + halfHeight),
     bottom: toY(pose.y - halfHeight),
   };
+}
+
+/**
+ * How far the scene slides left for a panel beside it that starts `panelLeft`
+ * pixels from the left of the stage. It starts from `preferred`, and slides on
+ * if the next arrow would run into the panel, as far as the previous arrow can
+ * go and stay on the stage.
+ */
+export function shiftForPanel(width: number, height: number, panelLeft: number, preferred: number) {
+  const card = focusCardRect(width, height, 0, 0);
+  const reach = ARROW.gap + ARROW.size + ARROW.margin;
+  const needed = card.right + reach - panelLeft;
+  const furthest = card.left - reach;
+  return Math.max(preferred, Math.min(needed, furthest));
 }
