@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "sounds": "tsx scripts/sounds/generate.ts"
   },
   "engines": {
     "node": ">=20.9.0"
