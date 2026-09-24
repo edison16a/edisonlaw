@@ -14,14 +14,17 @@ interface StageRenderProps {
   onError: () => void;
 }
 
-/** Pre-rendered still of the scene, used on phones and tablets instead of a live canvas. */
+/**
+ * Pre-rendered still of the scene. Phones and tablets see only this. On desktop it is the poster
+ * the live canvas fades in over.
+ */
 export function StageRender({ variant, onError }: StageRenderProps) {
   return (
     <Image
       src={`/renders/${variant}.webp`}
       alt={STAGE_ALT[variant]}
       fill
-      sizes="100vw"
+      sizes="(min-width: 1024px) 50vw, 100vw"
       className="object-cover"
       onError={onError}
     />

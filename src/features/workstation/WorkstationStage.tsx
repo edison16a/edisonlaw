@@ -48,7 +48,7 @@ export function WorkstationStage({ variant, centerScreen, pulseKey, className }:
   const [ready, setReady] = useState(false);
   const onReady = useCallback(() => setReady(true), []);
   const onCanvasFail = useCallback(() => setCanvasFailed(true), []);
-  const { capturing, showImage, live, ...canvasMode } = useStageMode(ref, variant, { imageFailed, canvasFailed });
+  const { capturing, image, live, ...canvasMode } = useStageMode(ref, variant, { imageFailed, canvasFailed });
 
   const canvas = live && (
     <div className={cn('absolute inset-0 transition-opacity duration-1000 ease-out', ready ? 'opacity-100' : 'opacity-0')}>
@@ -70,10 +70,11 @@ export function WorkstationStage({ variant, centerScreen, pulseKey, className }:
       className={cn('relative h-full w-full overflow-hidden bg-black', className)}
       style={capturing ? undefined : EDGE_MASK_STYLE}
       data-variant={variant}
-      role={showImage ? undefined : 'img'}
-      aria-label={showImage ? undefined : STAGE_ALT[variant]}
+      role={image ? undefined : 'img'}
+      aria-label={image ? undefined : STAGE_ALT[variant]}
     >
-      {showImage && <StageRender variant={variant} onError={() => setImageFailed(true)} />}
+      {/* The still sits under the canvas as a poster, so the stage is never an empty black box while shaders compile. */}
+      {image && <StageRender variant={variant} onError={() => setImageFailed(true)} />}
       {capturing
         ? createPortal(
             <div className="fixed inset-0 z-[100] bg-black" data-stage-capture={variant} data-stage-ready={ready}>

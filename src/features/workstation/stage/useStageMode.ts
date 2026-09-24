@@ -26,8 +26,8 @@ export interface StageFailures {
 export interface StageMode {
   /** This stage is being captured by scripts/capture-renders.mjs. */
   capturing: boolean;
-  /** Show the pre-rendered still instead of a canvas. */
-  showImage: boolean;
+  /** Show the pre-rendered still: on its own, or under the canvas as a poster while the scene loads. */
+  image: boolean;
   /** Mount the live canvas. */
   live: boolean;
   frameloop: Frameloop;
@@ -65,7 +65,9 @@ export function useStageMode(
   const capturing = capture === variant;
   // Without a working WebGL context the still is all a stage can show, on any screen size.
   const canvasWorks = webgl && !canvasFailed;
-  const showImage = (stillOnly || !canvasWorks) && !imageFailed && !capture;
+  const image = !imageFailed && !capture;
+  // A canvas also stands in for a still that failed to load.
+  const wantsCanvas = !stillOnly || imageFailed;
   const still = reducedMotion || stillOnly;
   const animate = capturing || !still;
 
@@ -75,8 +77,8 @@ export function useStageMode(
 
   return {
     capturing,
-    showImage,
-    live: canvasWorks && (capturing || (!capture && !showImage && wasNear)),
+    image,
+    live: canvasWorks && (capturing || (!capture && wantsCanvas && wasNear)),
     frameloop,
     animate,
     rgbCycle: animate && !capturing,
