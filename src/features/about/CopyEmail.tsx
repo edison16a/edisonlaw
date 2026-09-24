@@ -33,11 +33,15 @@ export function CopyEmail({ email }: { email: string }) {
         type="button"
         onClick={copy}
         onPointerEnter={() => sound.play('hover')}
-        className="inline-flex items-center gap-1.5 rounded-full border border-grey-700 px-2.5 py-1 text-xs text-grey-300 transition-colors hover:border-white hover:text-white"
+        aria-label="Copy email address"
+        className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-grey-700 px-3.5 text-xs text-grey-300 transition-colors hover:border-white hover:text-white sm:min-h-0 sm:px-2.5 sm:py-1"
       >
         {copied ? <CheckIcon size={14} /> : <CopyIcon size={14} />}
-        <span aria-live="polite">{copied ? 'Copied' : 'Copy'}</span>
+        <span aria-hidden="true">{copied ? 'Copied' : 'Copy'}</span>
       </button>
+      <span role="status" className="sr-only">
+        {copied ? 'Email address copied' : ''}
+      </span>
     </div>
   );
 }
