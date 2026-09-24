@@ -8,10 +8,10 @@ import { useCharacterMaterials } from '../MaterialsContext';
 const TROUSERS: LoftRing[] = [
   { y: -0.118, x: 0.02, front: 0.018, back: 0.02, z: -0.004 },
   { y: -0.108, x: 0.07, front: 0.052, back: 0.06, z: -0.004 },
-  { y: -0.085, x: 0.118, front: 0.084, back: 0.095, z: -0.004 },
-  { y: -0.045, x: 0.138, front: 0.1, back: 0.11 },
-  { y: 0.0, x: 0.142, front: 0.104, back: 0.106 },
-  { y: 0.07, x: 0.134, front: 0.1, back: 0.097 },
+  { y: -0.085, x: 0.116, front: 0.084, back: 0.092, z: -0.004 },
+  { y: -0.045, x: 0.13, front: 0.098, back: 0.1 },
+  { y: 0.0, x: 0.134, front: 0.1, back: 0.098 },
+  { y: 0.07, x: 0.13, front: 0.096, back: 0.09 },
 ];
 
 export function Hips() {

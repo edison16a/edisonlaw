@@ -7,9 +7,9 @@ import { useCharacterMaterials } from '../MaterialsContext';
 
 /** T-shirt body from the hem up to the neck hole, in the chest's space. Listed bottom to top. */
 const SHIRT: LoftRing[] = [
-  { y: -0.222, x: 0.153, front: 0.117, back: 0.106 },
-  { y: -0.211, x: 0.155, front: 0.119, back: 0.107 },
-  { y: -0.16, x: 0.151, front: 0.115, back: 0.102 },
+  { y: -0.222, x: 0.159, front: 0.12, back: 0.116 },
+  { y: -0.211, x: 0.161, front: 0.121, back: 0.117 },
+  { y: -0.16, x: 0.153, front: 0.116, back: 0.106 },
   { y: -0.08, x: 0.146, front: 0.112, back: 0.097 },
   { y: 0, x: 0.148, front: 0.113, back: 0.096 },
   { y: 0.065, x: 0.151, front: 0.113, back: 0.095 },

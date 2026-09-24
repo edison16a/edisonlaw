@@ -7,7 +7,7 @@ import { useCharacterMaterials } from '../MaterialsContext';
 import type { LimbRig } from '../rig/types';
 import { Shoe } from './Shoe';
 
-const LEG = { hip: 0.076, knee: 0.064, hemFlare: 1.05, trouserLength: 0.2, sock: 0.036 } as const;
+const LEG = { hip: 0.071, knee: 0.062, hemFlare: 1.05, trouserLength: 0.2, sock: 0.036 } as const;
 
 /** Black trouser leg, a glimpse of sock and a sneaker along the leg's bones. */
 export function Leg({ leg }: { leg: LimbRig }) {

@@ -9,7 +9,7 @@ export const BODY = {
   seatedPelvisHeight: 0.085,
 
   /** Hip joints relative to the pelvis joint. */
-  hip: { x: 0.075, y: -0.03 },
+  hip: { x: 0.072, y: -0.03 },
   thigh: 0.26,
   shin: 0.24,
   /** Height of the ankle joint above the sole. */
