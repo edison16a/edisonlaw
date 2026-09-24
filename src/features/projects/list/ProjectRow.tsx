@@ -30,7 +30,7 @@ export function ProjectRow({ project, index, onOpen }: ProjectRowProps) {
   return (
     <motion.li
       variants={rise}
-      className="group relative grid grid-cols-[2.5rem_minmax(0,1fr)] gap-x-4 gap-y-3 border-t border-grey-900 py-6 transition-colors duration-300 hover:bg-white/[0.025] md:grid-cols-[3.5rem_minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1.3fr)_14rem] md:items-center md:gap-x-6 md:px-3"
+      className="group relative grid grid-cols-[2.5rem_minmax(0,1fr)] gap-x-4 gap-y-3 border-t border-grey-900 py-6 transition-colors duration-300 hover:bg-white/[0.025] md:grid-cols-[3rem_minmax(0,1fr)_minmax(0,1.4fr)] md:gap-x-6 xl:grid-cols-[3.5rem_minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1.3fr)_16rem] xl:items-center xl:px-3"
     >
       <span className="font-mono text-xs text-grey-400 transition-colors group-hover:text-white">{padIndex(index + 1)}</span>
       <div className="flex flex-col gap-1">
@@ -47,15 +47,19 @@ export function ProjectRow({ project, index, onOpen }: ProjectRowProps) {
         </h3>
         {project.org && <p className="text-sm text-grey-400">{project.org}</p>}
       </div>
-      {/* Every cell renders, even empty, so the columns line up from row to row. */}
-      <div className="col-start-2 empty:hidden md:col-start-auto md:empty:block">
-        <BadgeList items={project.badges} />
-      </div>
-      <div className="col-start-2 md:col-start-auto">
+      {/*
+        Five columns only fit from xl. Narrower screens stack badges, stack and links,
+        beside the name on tablets and under it on phones. From xl the wrapper steps
+        aside and every cell renders, even empty, so the columns line up from row to row.
+      */}
+      <div className="col-start-2 flex flex-col gap-3 md:col-start-3 xl:contents">
+        <div className="empty:hidden xl:empty:block">
+          <BadgeList items={project.badges} />
+        </div>
         <TagList items={project.stack} />
-      </div>
-      <div className="col-start-2 empty:hidden md:col-start-auto md:empty:block">
-        <ProjectLinks links={project.links} className="relative z-10 md:justify-end" />
+        <div className="empty:hidden xl:empty:block">
+          <ProjectLinks links={project.links} compact className="relative z-10 xl:flex-nowrap xl:justify-end" />
+        </div>
       </div>
     </motion.li>
   );

@@ -25,7 +25,8 @@ export function ProjectList({ projects, onModeChange, onOpen, spiralLabel, headi
       <div className="flex justify-center pt-5 pb-14">
         <ModeToggle mode="list" onChange={onModeChange} spiralLabel={spiralLabel} />
       </div>
-      <div className="mb-10 flex flex-wrap items-end justify-between gap-6">
+      {/* On wide screens the rows stop short of the fixed sound toggle in the bottom right corner. */}
+      <div className="mb-10 flex flex-wrap items-end justify-between gap-6 xl:mr-8">
         <IntroTitle heading={heading} />
         <p className="font-mono text-xs tracking-widest text-grey-400">{projects.length} projects</p>
       </div>
@@ -33,7 +34,7 @@ export function ProjectList({ projects, onModeChange, onOpen, spiralLabel, headi
         initial="hidden"
         animate="shown"
         variants={{ shown: { transition: { staggerChildren: 0.035 } } }}
-        className="border-b border-grey-900"
+        className="border-b border-grey-900 xl:mr-8"
       >
         {projects.map((project, index) => (
           <ProjectRow key={project.id} project={project} index={index} onOpen={onOpen} />
