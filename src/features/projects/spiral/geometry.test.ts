@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { cardPose, createPose, FOCUS, focusWeight, slotOffset, SPIRAL } from './geometry';
+import { cardPose, createPose, FOCUS, focusWeight, isPastDeck, slotOffset, SPIRAL } from './geometry';
 
 describe('slotOffset', () => {
   it('measures the distance from the index in cards', () => {
@@ -17,6 +17,22 @@ describe('slotOffset', () => {
         expect(offset).toBeLessThan(12);
       }
     }
+  });
+});
+
+describe('isPastDeck', () => {
+  it('marks the wrapped card beside the first project in the opening frame', () => {
+    expect(isPastDeck(23, -0.5, 12)).toBe(true);
+    expect(isPastDeck(0, -0.5, 12)).toBe(false);
+  });
+
+  it('marks the cards waiting after the last project', () => {
+    expect(isPastDeck(12, 11, 12)).toBe(true);
+    expect(isPastDeck(11, 11, 12)).toBe(false);
+  });
+
+  it('leaves the whole deck alone in the middle', () => {
+    for (let slot = 0; slot < 12; slot++) expect(isPastDeck(slot, 5, 12)).toBe(false);
   });
 });
 

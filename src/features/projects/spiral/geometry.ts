@@ -65,6 +65,15 @@ export function slotOffset(slot: number, index: number, slots: number = SPIRAL.s
   return ((((slot - index + half) % slots) + slots) % slots) - half;
 }
 
+/**
+ * True when `slot` sits past either end of a deck of `count` projects, where
+ * the strand wraps round to the other end of the list.
+ */
+export function isPastDeck(slot: number, index: number, count: number, slots: number = SPIRAL.slots) {
+  const place = index + slotOffset(slot, index, slots);
+  return place < -0.5 || place > count - 0.5;
+}
+
 /** Smoothest step, zero first and second derivatives at both ends. */
 function smootherstep(t: number) {
   const x = Math.min(1, Math.max(0, t));

@@ -72,12 +72,18 @@ export function SpiralScene({ projects, startAt, onSelect, onHover }: SpiralScen
     frameCamera(camera, state.size.width, state.size.height, focusShift * engaged, focusLift * engaged);
     gl.getDrawingBufferSize(cardViewport);
     uploadNext();
-    for (const card of cards) updateCard(card, spiralMotion, cards.length, delta, reducedMotion);
+    for (const card of cards) updateCard(card, spiralMotion, cards.length, count, delta, reducedMotion);
+    const hovered = spiralMotion.hoverSlot === null ? null : cards[spiralMotion.hoverSlot];
+    if (hovered?.scenery) {
+      spiralMotion.hoverSlot = null;
+      onHover(null);
+    }
   });
 
   const hover = (card: CardRuntime) => (event: ThreeEvent<PointerEvent>) => {
     if (card.facing < MIN_FACING) return;
     event.stopPropagation();
+    if (card.scenery) return;
     spiralMotion.hoverSlot = card.slot;
     onHover(card.project);
   };
@@ -91,7 +97,7 @@ export function SpiralScene({ projects, startAt, onSelect, onHover }: SpiralScen
   const select = (card: CardRuntime) => (event: ThreeEvent<MouseEvent>) => {
     if (card.facing < MIN_FACING) return;
     event.stopPropagation();
-    if (event.delta <= CLICK_SLOP) onSelect(card.project);
+    if (!card.scenery && event.delta <= CLICK_SLOP) onSelect(card.project);
   };
 
   return cards.map((card) => (
