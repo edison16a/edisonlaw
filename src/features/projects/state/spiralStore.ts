@@ -22,6 +22,8 @@ interface SpiralState extends FocusSnapshot {
   introDone: boolean;
   /** Card the spiral should open on, set when a list row is chosen. */
   pendingFocus: number | null;
+  /** Project under the pointer in the spiral, or null. */
+  hovered: number | null;
 
   chooseMode: (mode: SpiralMode) => void;
   openInSpiral: (index: number) => void;
@@ -29,6 +31,7 @@ interface SpiralState extends FocusSnapshot {
   takePendingFocus: () => number | null;
   syncFocus: (snapshot: FocusSnapshot) => void;
   markScrolled: () => void;
+  setHovered: (index: number | null) => void;
 }
 
 export const useSpiralStore = create<SpiralState>((set, get) => ({
@@ -40,6 +43,7 @@ export const useSpiralStore = create<SpiralState>((set, get) => ({
   hasScrolled: false,
   introDone: false,
   pendingFocus: null,
+  hovered: null,
 
   chooseMode: (mode) => set({ chosenMode: mode }),
 
@@ -65,5 +69,9 @@ export const useSpiralStore = create<SpiralState>((set, get) => ({
 
   markScrolled: () => {
     if (!get().hasScrolled) set({ hasScrolled: true });
+  },
+
+  setHovered: (index) => {
+    if (get().hovered !== index) set({ hovered: index });
   },
 }));
