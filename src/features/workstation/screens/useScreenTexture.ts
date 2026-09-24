@@ -11,11 +11,18 @@ interface Options {
   animate?: boolean;
 }
 
+export interface ScreenTextures {
+  /** The picture, for the monitor face. */
+  texture: Texture;
+  /** A small copy of the picture for sampling its colour on the CPU. Never bind it to a material. */
+  glow: Texture;
+}
+
 /**
- * Returns a texture showing `id`. Screens are painted once per id and shared, so this hook only
- * owns a light texture over the shared canvas. Call inside an R3F Canvas.
+ * Returns textures showing `id`. Screens are painted once per id and shared, so this hook only
+ * owns light textures over the shared canvas. Call inside an R3F Canvas.
  */
-export function useScreenTexture(id: ScreenId, { animate = true }: Options = {}): Texture {
+export function useScreenTexture(id: ScreenId, { animate = true }: Options = {}): ScreenTextures {
   const anisotropy = useThree((state) => state.gl.capabilities.getMaxAnisotropy());
   const invalidate = useThree((state) => state.invalidate);
 
@@ -38,5 +45,5 @@ export function useScreenTexture(id: ScreenId, { animate = true }: Options = {})
     if (binding.update()) invalidate();
   });
 
-  return binding.texture;
+  return binding;
 }

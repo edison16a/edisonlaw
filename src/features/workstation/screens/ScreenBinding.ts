@@ -1,6 +1,6 @@
 import { addEffect } from '@react-three/fiber';
 import { LinearFilter, LinearMipmapLinearFilter, SRGBColorSpace, Texture } from 'three';
-import { getScreenCanvas, subscribeScreen, type ScreenSubscription } from './registry';
+import { getScreenCanvas, getScreenGlow, subscribeScreen, type ScreenSubscription } from './registry';
 import type { ScreenId } from './types';
 import { createUploadTicket, UploadQueue } from './uploadQueue';
 
@@ -22,7 +22,10 @@ function sharedUploads() {
  * GPU only after a repaint and only when the shared upload queue gives it the frame's slot.
  */
 export class ScreenBinding {
+  /** The picture, for the monitor face. */
   readonly texture: Texture;
+  /** A small copy of the picture for the monitor light to sample. It never goes to the GPU. */
+  readonly glow: Texture;
   private readonly ticket = createUploadTicket();
   private subscription: ScreenSubscription | null = null;
 
@@ -40,6 +43,7 @@ export class ScreenBinding {
     texture.magFilter = LinearFilter;
     texture.anisotropy = anisotropy;
     this.texture = texture;
+    this.glow = new Texture(getScreenGlow(id));
   }
 
   /** Starts listening. `onRepaint` runs after each repaint, to request a frame. */
@@ -52,6 +56,7 @@ export class ScreenBinding {
     this.subscription = subscribeScreen(this.id, animate, onChange);
     // The shared canvas is rebuilt if it sat unused for a while. Follow it.
     this.texture.image = this.subscription.canvas;
+    this.glow.image = this.subscription.glow;
     // A new texture, or one whose GPU copy was freed by disconnecting, needs the picture sent up.
     onChange();
   }

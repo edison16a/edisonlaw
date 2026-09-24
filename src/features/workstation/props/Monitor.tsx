@@ -20,7 +20,7 @@ interface MonitorProps {
 /** Thin bezel panel on a slim stand, with the screen texture as its face. */
 export function Monitor({ slot, screen, live }: MonitorProps) {
   const materials = getMaterials();
-  const texture = useScreenTexture(screen, { animate: live });
+  const { texture, glow } = useScreenTexture(screen, { animate: live });
   const index = Math.max(0, MONITORS.findIndex((monitor) => monitor.slot === slot));
   const spec = MONITORS[index];
   const { screenWidth: w, screenHeight: h, bezel } = MONITOR;
@@ -59,7 +59,7 @@ export function Monitor({ slot, screen, live }: MonitorProps) {
         material={materials.aluminium}
         position={[0, -drop + 0.006, -0.05]}
       />
-      <ScreenLight texture={texture} width={w} height={h} phase={index / MONITORS.length} />
+      <ScreenLight texture={glow} width={w} height={h} phase={index / MONITORS.length} />
     </group>
   );
 }
