@@ -10,6 +10,7 @@ import { useSpiralStore, type FocusSnapshot } from '../state/spiralStore';
 import { onSpiralWake } from '../state/spiralWake';
 import { stageMetrics } from '../state/stageMetrics';
 import { createCards, updateCard, type CardRuntime } from './cardFrame';
+import { bentCardRaycast } from './cardHit';
 import { cardViewport } from './cardMaterial';
 import { readFocus } from './focus';
 import { CARD_HEIGHT, CARD_WIDTH } from './geometry';
@@ -107,6 +108,8 @@ export function SpiralScene({ projects, startAt, onSelect, onHover }: SpiralScen
       key={card.slot}
       ref={(mesh) => {
         card.mesh = mesh;
+        // The pointer tests the card as drawn, bent and swept, not the flat plane underneath.
+        if (mesh) mesh.raycast = bentCardRaycast(mesh, card.material.uniforms);
       }}
       geometry={geometry}
       material={card.material}
