@@ -2,8 +2,8 @@ import { drawGlyph } from '../../draw/glyphs';
 import { drawIcon, type IconName } from '../../draw/icons';
 import { circle, fillRect, fillRound, strokeRound } from '../../draw/shapes';
 import { measure, text } from '../../draw/text';
+import { VIEW_HEIGHT, VIEW_WIDTH } from '../../draw/view';
 import { trafficLights } from '../../draw/window';
-import { VIEW_HEIGHT, VIEW_WIDTH } from './layout';
 import { VSCODE_THEME as T } from './theme';
 
 /** Title bar, activity bar and status bar around the workbench. */
