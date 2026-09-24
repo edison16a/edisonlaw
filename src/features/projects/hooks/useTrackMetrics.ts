@@ -6,6 +6,8 @@ import { setStageMetrics } from '../state/stageMetrics';
 
 /** Screens this wide show the panel beside the spiral, so the scene slides left to make room. */
 const SIDE_PANEL_QUERY = '(min-width: 1024px)';
+/** Share of the way to the centre of the free space. A little less keeps the spiral from hugging the left. */
+const SHIFT_SHARE = 0.8;
 
 interface TrackRefs {
   track: RefObject<HTMLElement | null>;
@@ -31,8 +33,9 @@ export function useTrackMetrics({ track, stage, column }: TrackRefs, count: numb
       const top = trackNode.getBoundingClientRect().top + window.scrollY - stickyTop;
       const perCard = (trackNode.offsetHeight - stageNode.offsetHeight) / trackSpan(count);
       const columnNode = column.current;
-      // Centre the focused card in the space left of the panel.
-      const focusShift = sidePanel.matches && columnNode ? (stageNode.clientWidth - columnNode.offsetLeft) / 2 : 0;
+      // Move the focused card toward the centre of the space left of the panel.
+      const free = columnNode ? stageNode.clientWidth - columnNode.offsetLeft : 0;
+      const focusShift = sidePanel.matches ? (free / 2) * SHIFT_SHARE : 0;
       setStageMetrics({ top, perCard, count, focusShift });
     };
 

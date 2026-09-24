@@ -47,7 +47,7 @@ export const cardFragmentShader = /* glsl */ `
     if (blur < 0.004 && abs(streak) < 0.002) return texture2D(uMap, textureUv(uv)).rgb;
 
     vec2 spacing = vec2(0.03 * blur + abs(streak) * 0.5, 0.018 * blur);
-    float bias = blur * 0.9 + abs(streak) * 8.0;
+    float bias = blur * 0.9 + abs(streak) * 28.0;
     vec3 sum = vec3(0.0);
     for (int x = 0; x < 5; x++) {
       for (int y = 0; y < 3; y++) {
