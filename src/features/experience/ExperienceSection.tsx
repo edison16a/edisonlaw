@@ -9,7 +9,7 @@ export function ExperienceSection() {
       id="experience"
       labelledBy="experience-title"
       loop="desk"
-      className="relative flex flex-col border-t border-grey-900 lg:grid lg:grid-cols-2"
+      className="relative flex flex-col lg:grid lg:grid-cols-2"
     >
       <ExperienceTimeline
         header={

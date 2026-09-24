@@ -15,7 +15,7 @@ export function AboutSection() {
       id="about"
       labelledBy="about-title"
       loop="room"
-      className="relative flex flex-col border-t border-grey-900 lg:grid lg:grid-cols-2"
+      className="relative flex flex-col lg:grid lg:grid-cols-2"
     >
       <div className="mt-nav aspect-[4/3] w-full lg:sticky lg:top-nav lg:mt-0 lg:aspect-auto lg:h-[calc(100dvh-var(--spacing-nav))]">
         <WorkstationStage variant="about" />
