@@ -58,7 +58,6 @@ const MOUTH_SMILE: Stroke = [
   [122.9, 3.1],
   [118.9, 9.4],
 ];
-const NOSE = { theta: 109, lift: -0.0045, radius: [0.013, 0.01, 0.009] as const };
 
 const outward = (point: Vector3, out: Vector3) => out.copy(point).normalize();
 
@@ -117,7 +116,7 @@ function mouthGeometry() {
   return addBlendShapes(mouth(MOUTH), [mouth(MOUTH_HMM), mouth(MOUTH_SMILE)]);
 }
 
-/** Glossy black eyes with catch lights, small soft brows, a hint of a nose and a small smile. */
+/** Glossy black eyes with catch lights, small soft brows and a small smile. The nose is part of the head. */
 export function Face({ rig }: { rig: Rig }) {
   const materials = useCharacterMaterials();
   const sphere = useDisposable(() => new SphereGeometry(1, 28, 18));
@@ -125,7 +124,6 @@ export function Face({ rig }: { rig: Rig }) {
   const brows = useDisposable(browsGeometry);
   const mouth = useDisposable(mouthGeometry);
   const eyeFrames = useMemo(() => [1, -1].map((side) => surfaceFrame(EYE.theta, side * EYE.phi, EYE.lift)), []);
-  const nose = useMemo(() => surfaceFrame(NOSE.theta, 0, NOSE.lift), []);
 
   return (
     <group>
@@ -140,7 +138,6 @@ export function Face({ rig }: { rig: Rig }) {
         </primitive>
       ))}
       <mesh geometry={brows} material={materials.brow} morphTargetInfluences={rig.brows} />
-      <mesh geometry={sphere} material={materials.body} position={nose.position} quaternion={nose.quaternion} scale={NOSE.radius} />
       <mesh geometry={mouth} material={materials.lips} morphTargetInfluences={rig.mouth} />
     </group>
   );

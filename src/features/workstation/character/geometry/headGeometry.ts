@@ -15,7 +15,7 @@ const direction = new Vector3();
 const color = new Color();
 
 /** Blush on the cheeks, a soft contact shadow under the hairline and a little shade under the jaw. */
-function paintSkin(point: Vector3, out: Color) {
+export function paintSkin(point: Vector3, out: Color) {
   direction.copy(point).normalize();
   out.copy(skin);
 
