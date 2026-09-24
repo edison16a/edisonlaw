@@ -85,9 +85,29 @@ export function headForms(): Shape[] {
   return [...skull(), ...muzzle()];
 }
 
+/** Soft locks falling from the back of the skull over the nape, so the head flows into the neck. */
+function napeFur(): Shape[] {
+  return [-0.048, 0, 0.048].flatMap((x) =>
+    flatLock({
+      path: [
+        [x, -0.07, -0.088],
+        [x * 1.1, -0.12, -0.104],
+        [x * 1.15, -0.165, -0.098],
+      ],
+      width: 0.03,
+      flatness: 0.42,
+      facing: [x * 8, 0.2, -1],
+      tones: [TONE.coat, TONE.coat + 0.15],
+      blend: 0.02,
+      part: PART.head,
+      segments: 5,
+    }),
+  );
+}
+
 /** Fur tufts on the head, in head space. */
 export function headFur(): Shape[] {
-  return cheekFluff();
+  return [...cheekFluff(), ...napeFur()];
 }
 
 /** The open mouth: a slot between the lips and the jaw that turns up into a smile at the corners. */

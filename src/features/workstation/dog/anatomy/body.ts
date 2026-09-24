@@ -67,27 +67,35 @@ function rearLeg(side: 1 | -1): Shape[] {
 }
 
 /**
- * The fluffy cream bib on the front of the chest: a soft puff whose lower edge rolls into three
- * broad, overlapping lobes, like a sculpted ruff rather than separate strands.
+ * The fluffy cream bib on the front of the chest: a soft puff with one lock pointing down the middle
+ * and two sweeping back along the sides, so it reads as fur flowing off the chest, not as lumps.
  */
 function ruff(): Shape[] {
-  const lobes = [-0.042, 0, 0.042].flatMap((x) =>
-    flatLock({
-      path: [
-        [x * 0.9, 0.27, 0.205],
-        [x, 0.235, 0.218],
-        [x * 1.04, 0.203, 0.212],
+  const lock = (path: Vec3[], width: number, facing: Vec3) =>
+    flatLock({ path, width, flatness: 0.45, facing, tones: [TONE.light, TONE.cream], blend: 0.02, part: PART.body, segments: 5 });
+  return [
+    ellipsoid([0, 0.285, 0.17], [0.08, 0.09, 0.055], body(TONE.light + 0.12, 0.045)),
+    ...lock(
+      [
+        [0, 0.262, 0.208],
+        [0, 0.228, 0.216],
+        [0, 0.202, 0.204],
       ],
-      width: 0.034,
-      flatness: 0.5,
-      facing: [x * 3, 0.1, 1],
-      tones: [TONE.light, TONE.cream],
-      blend: 0.02,
-      part: PART.body,
-      segments: 4,
-    }),
-  );
-  return [ellipsoid([0, 0.29, 0.17], [0.082, 0.094, 0.055], body(TONE.light + 0.12, 0.045)), ...lobes];
+      0.03,
+      [0, -0.2, 1],
+    ),
+    ...bothSides((side) =>
+      lock(
+        [
+          [0.05 * side, 0.282, 0.19],
+          [0.07 * side, 0.248, 0.168],
+          [0.078 * side, 0.218, 0.14],
+        ],
+        0.026,
+        [side, -0.2, 0.6],
+      ),
+    ),
+  ];
 }
 
 /** Feathering: longer cream fur down the backs of the forelegs and on the britches. */
@@ -99,30 +107,30 @@ function feathering(side: 1 | -1): Shape[] {
     // A soft fringe down the back of each foreleg, lying along it and ending in a rounded tip.
     ...lock(
       [
-        [x, 0.18, 0.056],
-        [x, 0.14, 0.045],
-        [x, 0.1, 0.05],
+        [x, 0.175, 0.02],
+        [x, 0.13, 0.034],
+        [x * 0.98, 0.092, 0.05],
       ],
-      0.02,
+      0.019,
       [side * 0.3, 0, -1],
     ),
-    // Britches: full cream fur on the backs of the thighs, sweeping down.
+    // Britches: full cream fur on the backs of the thighs, following the curve of the thigh down.
     ...lock(
       [
-        [x * 1.02, 0.29, -0.205],
-        [x * 1.05, 0.245, -0.228],
-        [x * 1.03, 0.195, -0.222],
+        [x * 1.02, 0.3, -0.2],
+        [x * 1.04, 0.25, -0.222],
+        [x * 1.02, 0.2, -0.205],
       ],
       0.03,
       [side * 0.8, 0, -1],
     ),
     ...lock(
       [
-        [x * 0.92, 0.24, -0.21],
-        [x * 0.95, 0.195, -0.22],
-        [x * 0.92, 0.158, -0.205],
+        [x * 0.9, 0.245, -0.205],
+        [x * 0.92, 0.2, -0.214],
+        [x * 0.9, 0.165, -0.196],
       ],
-      0.024,
+      0.022,
       [side * 0.6, 0, -1],
     ),
   ];

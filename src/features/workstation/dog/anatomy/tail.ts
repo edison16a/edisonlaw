@@ -42,10 +42,10 @@ export function tailFur(): Shape[] {
     return flatLock({
       path: [root, [root[0], root[1] - drop * 0.6, root[2] - run * 0.4], [root[0], root[1] - drop, root[2] - run]],
       width,
-      flatness: 0.42,
+      flatness: 0.55,
       facing: [1, 0, 0],
       tones: [TONE.light, TONE.cream],
-      blend: 0.016,
+      blend: 0.018,
       part: PART.tail,
       segments: 6,
     });
