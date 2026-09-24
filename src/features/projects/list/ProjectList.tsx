@@ -30,8 +30,12 @@ export function ProjectList({ projects, onModeChange, onOpen, spiralLabel, headi
         <IntroTitle heading={heading} />
         <p className="font-mono text-xs tracking-widest text-grey-400">{projects.length} projects</p>
       </div>
+      {/*
+        The rows only rise in once the page is interactive. In the server render
+        (heading is false there) they start visible, so the list reads without JavaScript.
+      */}
       <motion.ol
-        initial="hidden"
+        initial={heading ? 'hidden' : false}
         animate="shown"
         variants={{ shown: { transition: { staggerChildren: 0.035 } } }}
         className="border-b border-grey-900 xl:mr-8"
