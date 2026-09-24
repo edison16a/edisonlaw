@@ -4,6 +4,7 @@ import { codex } from './codex';
 import { nanoscience } from './experience/nanoscience';
 import { optagon } from './experience/optagon';
 import { placeholder } from './placeholder';
+import { tanius } from './experience/tanius';
 import { ultrasound } from './experience/ultrasound';
 import { westpa } from './experience/westpa';
 import { vscode } from './vscode';
@@ -17,7 +18,7 @@ export const painters: Record<ScreenId, PainterFactory> = {
   ultrasound,
   westpa,
   nanoscience,
-  tanius: placeholder('tanius'),
+  tanius,
   cisco: placeholder('cisco'),
   stanford: placeholder('stanford'),
   apps: placeholder('apps'),
