@@ -35,7 +35,7 @@ export function drawGlyph(
   ctx.beginPath();
   switch (glyph) {
     case 'dot':
-      ctx.arc(x, y, s * 0.2, 0, Math.PI * 2);
+      ctx.arc(x, y, s * 0.26, 0, Math.PI * 2);
       ctx.fillStyle = color;
       ctx.fill();
       return;
