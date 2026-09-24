@@ -1,5 +1,6 @@
 import { Euler, Matrix4, Vector3 } from 'three';
 import { BODY, LIMBS } from '../dimensions';
+import { applyExpression, createExpression, type Expression } from './expression';
 import { createLimbGoal, poseLimb, type LimbGoal } from './limbs';
 import type { LimbName, Rig } from './types';
 
@@ -27,6 +28,7 @@ export interface BodyPose {
   thumbs: Record<LimbName, number>;
   /** 0 open, 1 shut. */
   blink: number;
+  expression: Expression;
   /** Where the eyes look within the face, -1 to 1: +x toward his left, +y up. */
   gaze: { x: number; y: number };
 }
@@ -47,6 +49,7 @@ export function createBodyPose(): BodyPose {
     fingerBend: { left: 0.7, right: 0.7 },
     thumbs: { left: 0, right: 0 },
     blink: 0,
+    expression: createExpression(),
     gaze: { x: 0, y: 0 },
   };
 }
@@ -54,6 +57,8 @@ export function createBodyPose(): BodyPose {
 const LIMB_NAMES: readonly LimbName[] = ['left', 'right'];
 /** How far the eyes slide across the face at full gaze, in metres. */
 const GAZE_SHIFT = { x: 0.0045, y: 0.003 } as const;
+/** Share of the eye a full squint covers. */
+const SQUINT_DEPTH = 0.32;
 const chestMatrix = new Matrix4();
 const baseMatrix = new Matrix4();
 
@@ -90,12 +95,15 @@ export function applyBodyPose(rig: Rig, pose: BodyPose) {
     poseLimb(leg, baseMatrix, pose.legs[name], LIMBS.leg.upper, LIMBS.leg.lower);
   }
 
-  const open = 1 - 0.93 * pose.blink;
-  const shine = Math.max(0, 1 - pose.blink * 2.5);
+  // A squint lowers the lids part way, a blink closes them the rest of the way.
+  const shut = pose.blink + (1 - pose.blink) * SQUINT_DEPTH * pose.expression.squint;
+  const open = 1 - 0.93 * shut;
+  const shine = Math.max(0, 1 - shut * 2.5);
   for (let i = 0; i < 2; i++) {
     rig.eyes[i].scale.y = open;
     rig.gazes[i].position.set(pose.gaze.x * GAZE_SHIFT.x, pose.gaze.y * GAZE_SHIFT.y, 0);
     rig.shines[i].scale.setScalar(shine);
     rig.shines[i].visible = shine > 0;
   }
+  applyExpression(rig, pose.expression);
 }

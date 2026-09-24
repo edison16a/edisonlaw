@@ -39,6 +39,10 @@ export interface Rig {
   gazes: [Group, Group];
   /** Catch lights of each eye, hidden while the eye is shut. */
   shines: [Group, Group];
+  /** Blend shape weights of the brows, shared with their mesh. See BROW_SHAPES in expression.ts. */
+  brows: number[];
+  /** Blend shape weights of the mouth, shared with its mesh. See MOUTH_SHAPES in expression.ts. */
+  mouth: number[];
   arms: Record<LimbName, ArmRig>;
   legs: Record<LimbName, LimbRig>;
 }

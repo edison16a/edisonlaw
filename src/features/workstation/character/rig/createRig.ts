@@ -1,5 +1,6 @@
 import { Group } from 'three';
 import { BODY, HAND } from '../dimensions';
+import { BROW_SHAPES, MOUTH_SHAPES } from './expression';
 import type { ArmRig, LimbRig, Rig, Side } from './types';
 
 function bone(name: string, x = 0, y = 0, z = 0) {
@@ -53,6 +54,8 @@ export function createRig(): Rig {
     eyes: [bone('leftEye'), bone('rightEye')],
     gazes: [bone('leftGaze'), bone('rightGaze')],
     shines: [bone('leftEyeShine'), bone('rightEyeShine')],
+    brows: BROW_SHAPES.map(() => 0),
+    mouth: MOUTH_SHAPES.map(() => 0),
     arms: { left: createArm(1, 'left'), right: createArm(-1, 'right') },
     legs: { left: createLeg(1, 'left'), right: createLeg(-1, 'right') },
   };
