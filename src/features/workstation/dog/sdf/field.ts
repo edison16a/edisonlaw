@@ -1,9 +1,10 @@
 import type { Matrix4 } from 'three';
-import { packedDistance, STRIDE as PACKED_STRIDE, type Bounds, type Primitive } from './primitives';
+import { packedBound, packedDistance, STRIDE as PACKED_STRIDE, type Bounds, type Primitive } from './primitives';
 
 // Local copies for the hot loops: some bundlers read imported bindings through getters.
 const STRIDE = PACKED_STRIDE;
 const evaluate = packedDistance;
+const evaluateBound = packedBound;
 
 /**
  * A sculpture as an ordered list of shapes. Each shape is smoothly added to everything listed
@@ -96,6 +97,21 @@ export class Field {
     return d;
   }
 
+  /**
+   * The field at a point from the shapes in `list` (all by default), never deeper inside than it really
+   * is, so it is safe for deciding that a region holds no surface. Outside it equals `distance`.
+   */
+  bound(x: number, y: number, z: number, list: ArrayLike<number> = this.all) {
+    const { kinds, program, blends, carves } = this;
+    let d = Infinity;
+    for (let i = 0; i < list.length; i++) {
+      const s = list[i];
+      const di = evaluateBound(kinds[s], program, s * STRIDE, x, y, z);
+      d = carves[s] ? cut(d, di, blends[s]) : unite(d, di, blends[s]);
+    }
+    return d;
+  }
+
   /** Distance plus blended tone and part shares at a point, from the shapes in `list` (all by default). */
   sample(x: number, y: number, z: number, out: FieldSample, list: ArrayLike<number> = this.all) {
     let d = Infinity;
@@ -134,7 +150,8 @@ export class Field {
     let deepest = Infinity;
     for (let i = 0; i < candidates.length; i++) {
       const s = candidates[i];
-      const di = this.shapeDistance(s, x, y, z);
+      // Depths inside a shape are only trusted as far as they surely go.
+      const di = evaluateBound(this.kinds[s], this.program, s * STRIDE, x, y, z);
       if (this.carves[s]) {
         // Deep inside, the union can sink to the nearest shape's depth plus the reach and the widest blend,
         // so a carve must come within that of the point to matter.

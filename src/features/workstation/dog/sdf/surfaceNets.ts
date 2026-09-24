@@ -88,8 +88,9 @@ export function meshField(field: Field, { cell, bounds }: MeshOptions): SurfaceM
         // Vertices may drift up to a cell out of their block while they settle onto the surface.
         const shapes = field.cull(list, cx, cy, cz, halfDiagonal + cell);
         if (shapes.length === 0 || field.shapes[shapes[0]].carve) continue;
-        // Distances grow about as fast as the point moves; the slack covers the ellipsoid bound.
-        if (Math.abs(field.distance(cx, cy, cz, shapes)) > halfDiagonal * LIPSCHITZ_SLACK + cell * 0.25) continue;
+        // Distances grow about as fast as the point moves, and the bound never overstates depth inside, so
+        // a block this far from the surface holds none of it.
+        if (Math.abs(field.bound(cx, cy, cz, shapes)) > halfDiagonal * LIPSCHITZ_SLACK + cell * 0.25) continue;
         const west = i > 0 ? evaluated[index - 1] : undefined;
         const south = j > 0 ? evaluated[index - bx] : undefined;
         const below = k > 0 ? evaluated[index - bx * by] : undefined;

@@ -35,6 +35,24 @@ function transformPoint(point: Vec3Like, matrix: Matrix4): [number, number, numb
   return [scratch.x, scratch.y, scratch.z];
 }
 
+/**
+ * Like packedDistance, but never overstates how deep a point is: the ellipsoid bound is exact outside
+ * yet can read several times too deep inside a flat ellipsoid, so inside it falls back to the depth of
+ * the largest ball that surely fits, (1 - k0) times the smallest radius. For deciding what to skip.
+ */
+export function packedBound(kind: number, p: Float64Array, o: number, x: number, y: number, z: number) {
+  if (kind !== KIND.ellipsoid) return packedDistance(kind, p, o, x, y, z);
+  const dx = x - p[o];
+  const dy = y - p[o + 1];
+  const dz = z - p[o + 2];
+  const ax = (dx * p[o + 3] + dy * p[o + 4] + dz * p[o + 5]) * p[o + 12];
+  const ay = (dx * p[o + 6] + dy * p[o + 7] + dz * p[o + 8]) * p[o + 13];
+  const az = (dx * p[o + 9] + dy * p[o + 10] + dz * p[o + 11]) * p[o + 14];
+  const k0 = Math.sqrt(ax * ax + ay * ay + az * az);
+  if (k0 >= 1) return packedDistance(kind, p, o, x, y, z);
+  return (k0 - 1) / Math.max(p[o + 12], p[o + 13], p[o + 14]);
+}
+
 /** Distance to a packed primitive of `kind` whose constants start at `o` in `p`. */
 export function packedDistance(kind: number, p: Float64Array, o: number, x: number, y: number, z: number) {
   if (kind === KIND.sphere) {
