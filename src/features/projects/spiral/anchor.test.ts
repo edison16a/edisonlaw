@@ -5,7 +5,10 @@ import { cardBend } from './appearance';
 import { CARD_HEIGHT, CARD_WIDTH, cardPose, createPose, SPIRAL } from './geometry';
 import { CAMERA, frameCamera } from './lens';
 
-/** The same corners pushed through a real three.js camera, framed the way the canvas frames it. */
+/**
+ * Pushes points on the card, in its own units from its centre, through a real
+ * three.js camera framed the way the canvas frames it, with the vertex shader's bend and sweep.
+ */
 function projectWithThree(width: number, height: number, shift: number, lift: number) {
   const camera = new PerspectiveCamera(CAMERA.fov, width / height, 0.1, 40);
   camera.position.set(0, 0, CAMERA.z);
@@ -16,20 +19,14 @@ function projectWithThree(width: number, height: number, shift: number, lift: nu
   const pose = cardPose(0, 1, 0, createPose());
   const curvature = cardBend(0, pose.focus) / SPIRAL.radius;
   const angle = (CARD_WIDTH / 2) * curvature;
-  const xs: number[] = [];
-  const ys: number[] = [];
-  for (const side of [-1, 1]) {
-    for (const end of [-1, 1]) {
-      const local = new Vector3(side * (Math.sin(angle) / curvature), end * (CARD_HEIGHT / 2), (Math.cos(angle) - 1) / curvature);
-      const world = local.multiplyScalar(pose.scale).add(new Vector3(pose.x, pose.y, pose.z));
-      const view = world.clone().applyMatrix4(camera.matrixWorldInverse);
-      view.x += SPIRAL.sweep * world.y * world.y;
-      const clip = view.applyMatrix4(camera.projectionMatrix);
-      xs.push(((clip.x + 1) / 2) * width);
-      ys.push(((1 - clip.y) / 2) * height);
-    }
-  }
-  return { left: Math.min(...xs), right: Math.max(...xs), top: Math.min(...ys), bottom: Math.max(...ys) };
+  return (side: number, end: number) => {
+    const local = new Vector3(side * (Math.sin(angle) / curvature), end * (CARD_HEIGHT / 2), (Math.cos(angle) - 1) / curvature);
+    const world = local.multiplyScalar(pose.scale).add(new Vector3(pose.x, pose.y, pose.z));
+    const view = world.clone().applyMatrix4(camera.matrixWorldInverse);
+    view.x += SPIRAL.sweep * world.y * world.y;
+    const clip = view.applyMatrix4(camera.projectionMatrix);
+    return { x: ((clip.x + 1) / 2) * width, y: ((1 - clip.y) / 2) * height };
+  };
 }
 
 describe('focusCardRect', () => {
@@ -40,19 +37,17 @@ describe('focusCardRect', () => {
       [1920, 1016, 173, 0],
     ]) {
       const ours = focusCardRect(width, height, shift, lift);
-      const three = projectWithThree(width, height, shift, lift);
-      expect(ours.left).toBeCloseTo(three.left, 1);
-      expect(ours.right).toBeCloseTo(three.right, 1);
-      expect(ours.top).toBeCloseTo(three.top, 1);
-      expect(ours.bottom).toBeCloseTo(three.bottom, 1);
+      const project = projectWithThree(width, height, shift, lift);
+      expect(ours.left).toBeCloseTo(project(-1, 0).x, 1);
+      expect(ours.right).toBeCloseTo(project(1, 0).x, 1);
+      expect(ours.top).toBeCloseTo(project(1, 1).y, 1);
+      expect(ours.bottom).toBeCloseTo(project(1, -1).y, 1);
     }
   });
 
-  it('sits near the middle of the stage with no shift, nudged a little right by the sweep', () => {
+  it('sits in the middle of the stage with no shift', () => {
     const rect = focusCardRect(1440, 836, 0, 0);
-    const middle = (rect.left + rect.right) / 2;
-    expect(middle).toBeGreaterThan(720);
-    expect(middle).toBeLessThan(736);
+    expect((rect.left + rect.right) / 2).toBeCloseTo(720, 0);
     expect(Math.abs((rect.top + rect.bottom) / 2 - 418)).toBeLessThan(16);
     expect(rect.right - rect.left).toBeGreaterThan(400);
   });

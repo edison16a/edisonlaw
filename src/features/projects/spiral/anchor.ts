@@ -18,31 +18,28 @@ const pose = createPose();
  * the panel. It follows the camera, the card's bend and the strand's sweep the
  * way the canvas draws them, in plain math so the page can place the arrows
  * beside the card without loading three.js.
+ *
+ * The sweep leans the card's sides a little, so `left` and `right` are its
+ * sides halfway up, where the arrows sit, and `top` and `bottom` its highest
+ * and lowest corners.
  */
 export function focusCardRect(width: number, height: number, shift: number, lift: number): StageRect {
   cardPose(0, 1, 0, pose);
   // Pixels per world unit at one unit from the camera.
   const focal = height / 2 / Math.tan((fitFov(width / height) * Math.PI) / 360);
-  // The settled card relaxes almost flat, so its edges fall back only a little.
+  // The settled card relaxes almost flat, so its sides fall back only a little.
   const curvature = cardBend(0, pose.focus) / SPIRAL.radius;
   const angle = (CARD_WIDTH / 2) * curvature;
   const halfWidth = (Math.sin(angle) / curvature) * pose.scale;
-  const edgeZ = pose.z + ((Math.cos(angle) - 1) / curvature) * pose.scale;
   const halfHeight = (CARD_HEIGHT / 2) * pose.scale;
+  const depth = CAMERA.z - pose.z - ((Math.cos(angle) - 1) / curvature) * pose.scale;
 
-  const rect: StageRect = { left: Infinity, right: -Infinity, top: Infinity, bottom: -Infinity };
-  for (const side of [-1, 1]) {
-    for (const end of [-1, 1]) {
-      const y = pose.y + end * halfHeight;
-      const x = pose.x + side * halfWidth + SPIRAL.sweep * y * y;
-      const depth = CAMERA.z - edgeZ;
-      const screenX = width / 2 + (x / depth) * focal - shift;
-      const screenY = height / 2 - (y / depth) * focal - lift;
-      rect.left = Math.min(rect.left, screenX);
-      rect.right = Math.max(rect.right, screenX);
-      rect.top = Math.min(rect.top, screenY);
-      rect.bottom = Math.max(rect.bottom, screenY);
-    }
-  }
-  return rect;
+  const toX = (x: number, y: number) => width / 2 + ((x + SPIRAL.sweep * y * y) / depth) * focal - shift;
+  const toY = (y: number) => height / 2 - (y / depth) * focal - lift;
+  return {
+    left: toX(pose.x - halfWidth, pose.y),
+    right: toX(pose.x + halfWidth, pose.y),
+    top: toY(pose.y + halfHeight),
+    bottom: toY(pose.y - halfHeight),
+  };
 }
