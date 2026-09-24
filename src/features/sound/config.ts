@@ -21,9 +21,10 @@ export const SOUNDS: Record<SoundName, OneShotSettings> = {
   swish: { volume: 0.8, throttle: 200, voices: 1 },
 };
 
+/** Loops sit well under the one-shots: typing peaks land about 10 dB below a tick. */
 export const LOOPS: Record<LoopName, { volume: number }> = {
-  desk: { volume: 0.7 },
-  room: { volume: 0.8 },
+  desk: { volume: 0.4 },
+  room: { volume: 0.6 },
 };
 
 export const LOOP_NAMES = Object.keys(LOOPS) as LoopName[];
