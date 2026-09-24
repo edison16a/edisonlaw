@@ -6,7 +6,7 @@ export interface Link {
 }
 
 export interface Project {
-  /** Stable slug, also used to seed the generated cover art. */
+  /** Stable slug. It also names the photo file in /public/projects. */
   id: string;
   name: string;
   /** Organisation or team the project belongs to, if any. */

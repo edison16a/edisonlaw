@@ -21,8 +21,8 @@ const EVERYWHERE: { name: string; pattern: RegExp }[] = [
 /** A hyphen with spaces around it is punctuation in prose, but subtraction in code. */
 const PROSE_ONLY = [{ name: 'spaced hyphen', pattern: /[A-Za-z,.)] - [A-Za-z(]/ }];
 
-/** Painted screen and cover art may imitate real app chrome, so it is exempt. */
-const EXEMPT = ['features/workstation/screens/', 'features/projects/covers/'];
+/** Painted monitor screens imitate real app chrome, so they are exempt. */
+const EXEMPT = ['features/workstation/screens/'];
 
 const SRC = join(__dirname, '..', '..');
 
