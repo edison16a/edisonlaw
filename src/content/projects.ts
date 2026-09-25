@@ -185,9 +185,9 @@ export const projects: Project[] = [
     name: 'SensePlan',
     badges: [],
     win: { hackathon: 'Luma A2A Agents Hackathon 2025', prizes: ['Best Use of Vapi'] },
-    stack: ['Next.js', 'React', 'TypeScript', 'Google Gemini API', 'Vapi', 'Bright Data', 'Model Context Protocol', 'Tailwind CSS'],
+    stack: ['Next.js', 'React', 'TypeScript', 'Google Gemini API', 'Vapi', 'Bright Data', 'Google Calendar', 'Model Context Protocol', 'Tailwind CSS'],
     description:
-      'An AI agent that finds local providers, from clinics to barbershops, and books appointments over real phone calls. It searches with Bright Data and makes the calls with Vapi. Won the Luma A2A Agents Hackathon 2025 against 130+ engineers, plus Best Use of Vapi.',
+      'An AI agent that finds local providers, from clinics to barbershops, and books appointments over real phone calls. It searches with Bright Data, makes the calls with Vapi, and adds the booking to Google Calendar. Won the Luma A2A Agents Hackathon 2025 against 130+ engineers, plus Best Use of Vapi.',
     links: [],
     image: '/projects/senseplan.webp',
   },
