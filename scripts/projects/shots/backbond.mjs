@@ -8,7 +8,9 @@
 import { dataUrl } from '../lib/layouts/base.mjs';
 import { appWindow } from '../lib/layouts/window.mjs';
 import { readSource } from '../lib/private.mjs';
-import { BACKDROP } from './backbond.mjs';
+
+/** Backbond's own off white, warming toward the maroon of its buttons at the edges. */
+export const BACKDROP = 'radial-gradient(120% 90% at 50% 0%, #f7f5f1 0%, #ece7e2 60%, #e4dcd8 100%)';
 
 export async function capture({ compose }) {
   const src = dataUrl(await readSource('backbond-design.webp'));
