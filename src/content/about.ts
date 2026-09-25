@@ -21,7 +21,7 @@ export const socials: Social[] = [
 export const education: Education[] = [
   {
     school: 'University of California, Berkeley',
-    detail: 'BS EECS; Bioengineering',
+    detail: 'B.S. Electrical Engineering and Computer Sciences; Bioengineering',
     coursework: [
       'Structure and Interpretation of Computer Programs',
       'Linear Algebra & Differential Equations',
