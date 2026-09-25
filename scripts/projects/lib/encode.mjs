@@ -18,16 +18,16 @@ const QUALITIES = [0.82, 0.78, 0.74, 0.7];
 
 /**
  * Encodes `png` to WebP. `crop` is a source rectangle in pixels ({ x, y, width, height });
- * without it the image is cropped around its centre to 16:10.
+ * without it the image is cropped around its centre to 16:10. `quality` starts higher than
+ * usual, for fine line work or small text that the default would smudge.
  */
-export async function encodeWebp(browser, png, crop) {
+export async function encodeWebp(browser, png, crop, quality = QUALITIES[0]) {
   const { context, page } = await openPage(browser, { width: 320, height: 200, scale: 1 });
   try {
     await page.setContent('<canvas></canvas>');
     const source = `data:image/png;base64,${png.toString('base64')}`;
     let bytes;
-    let quality;
-    for (quality of QUALITIES) {
+    for (quality of [quality, ...QUALITIES.filter((step) => step < quality)]) {
       const dataUrl = await page.evaluate(drawAndEncode, {
         source,
         crop: crop ?? null,

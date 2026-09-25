@@ -17,23 +17,31 @@ const USER_AGENT =
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0 Safari/537.36';
 
 export async function launchBrowser() {
+  // An app on this machine (see `local` below) is reached directly, never through the proxy.
+  // Playwright sends loopback through the proxy unless told not to.
+  process.env.PLAYWRIGHT_DISABLE_FORCED_CHROMIUM_PROXIED_LOOPBACK = '1';
   return chromium.launch({ args: LAUNCH_ARGS, ...(PROXY ? { proxy: { server: PROXY } } : {}) });
 }
 
 /**
  * Opens a page in a fresh context.
  * `hosts` maps a made up host name to a handler, so a static site can be served from anywhere.
+ * `local` is for an app running on this machine: its requests, sockets and event streams go
+ * straight to it instead of through the proxy handler. `mobile` makes a touch phone with the
+ * phone's own user agent, and `init` is a script that runs before every page script.
  */
 export async function openPage(browser, options = {}) {
-  const { width = 1440, height = 900, scale = 2, colorScheme = 'light', hosts = {} } = options;
+  const { width = 1440, height = 900, scale = 2, colorScheme = 'light', hosts = {}, local = false, mobile = false, init } =
+    options;
   const context = await browser.newContext({
     viewport: { width, height },
     deviceScaleFactor: scale,
     colorScheme,
-    userAgent: USER_AGENT,
+    ...(mobile ? { isMobile: true, hasTouch: true } : { userAgent: USER_AGENT }),
   });
+  if (init) await context.addInitScript(init);
 
-  if (PROXY || Object.keys(hosts).length > 0) {
+  if (!local && (PROXY || Object.keys(hosts).length > 0)) {
     await context.route('**/*', async (route) => {
       const url = new URL(route.request().url());
       if (hosts[url.host]) return hosts[url.host](route, url);

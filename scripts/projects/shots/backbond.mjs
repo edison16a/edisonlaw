@@ -1,27 +1,17 @@
 /**
- * Backbond: the live landing page hero with its animated field of lines.
- * Source: https://backbond.net
+ * Backbond: Investigate, on an example gummy recipe. The ingredient graph shows what each
+ * ingredient raises or lowers, beside the composition and legend, and the assistant on the
+ * right reasons through cutting sucrose by 15% down to the mass balance, before and after.
+ * Source: Edison's own screenshot of the app (private, see lib/private.mjs), 2000 x 1139.
  */
-const HEADLINE = 'Physics-Driven Simulation';
-const ERROR = 'Something went wrong';
+import { dataUrl } from '../lib/layouts/base.mjs';
+import { appWindow } from '../lib/layouts/window.mjs';
+import { readSource } from '../lib/private.mjs';
 
-export async function capture({ openPage }) {
-  // Rendered straight at the card size. At 2x, software WebGL is too slow for the intro to finish.
-  const page = await openPage({ width: 1600, height: 1000, scale: 1 });
+/** Backbond's own off white, warming toward the maroon of its buttons at the edges. */
+export const BACKDROP = 'radial-gradient(120% 90% at 50% 0%, #f7f5f1 0%, #ece7e2 60%, #e4dcd8 100%)';
 
-  // A dropped script chunk sends the site to its error page, so try a fresh load a few times.
-  for (let attempt = 1; ; attempt++) {
-    await page.goto('https://backbond.net', { waitUntil: 'networkidle', timeout: 90_000 });
-    await page.waitForFunction(
-      (texts) => texts.some((text) => document.body.innerText.includes(text)),
-      [HEADLINE, ERROR],
-      { timeout: 60_000 },
-    );
-    if (!(await page.getByText(ERROR).count())) break;
-    if (attempt === 3) throw new Error('Backbond kept showing its error page');
-  }
-
-  // The lines ease in over several seconds, then the copy on the right fades up.
-  await page.waitForTimeout(12_000);
-  return { png: await page.screenshot() };
+export async function capture({ compose }) {
+  const src = dataUrl(await readSource('backbond-investigate.webp'));
+  return { png: await compose(appWindow({ src, aspect: 2000 / 1139, background: BACKDROP })), quality: 0.92 };
 }

@@ -1,28 +1,27 @@
 /**
- * AutoLab: the Neurotech@Berkeley research poster for the automated neuron culture system,
- * with its CAD models, pipette housing, imaging unit and printer based motion stage.
- * It is the only published image of the project so far, and it is 900 px wide.
- * The title and author band is trimmed off: the poster credits an earlier team, so the card
- * shows only the build itself until Edison has a photo of his own.
- * Source: https://neurotech.studentorg.berkeley.edu/divisions/wetware.html
+ * AutoLab: Edison's line drawing of the robot, a printer based motion stage with the pipette
+ * housing, the imaging unit and the Neurotech@Berkeley panel, centred on white.
+ * Source: Edison's own render (see lib/private.mjs), 1074 x 684 on white.
  */
-import { GLOW, dataUrl, shell } from '../lib/layouts/base.mjs';
-import { cascade } from '../lib/layouts/cards.mjs';
+import { CARD_HEIGHT } from '../lib/encode.mjs';
+import { dataUrl, shell } from '../lib/layouts/base.mjs';
+import { readSource } from '../lib/private.mjs';
 
-const POSTER = 'https://neurotech.studentorg.berkeley.edu/images/autolab.png';
-/** Share of the poster height taken by the title and author band. */
-const HEADER = 0.135;
+/** The drawing inside the render, faint shadow included, in its pixels. */
+const DRAWING = { x: 232, y: 17, width: 517, height: 650 };
+const SOURCE = { width: 1074, height: 684 };
+/** The drawing's height on the card: 85%, so the margins above and below are 7.5% each. */
+const HEIGHT = CARD_HEIGHT * 0.85;
 
-export async function capture({ download, compose }) {
-  const poster = dataUrl(await download(POSTER));
-  const body = cascade({
-    images: [poster],
-    width: 1150,
-    aspect: 900 / (673 * (1 - HEADER)),
-    radius: 14,
-    trim: `inset(${HEADER * 100}% 0 0 0)`,
-  });
-  // Deep teal into the blue of the poster header.
-  const background = `${GLOW}, linear-gradient(135deg, #0b2a33 0%, #174b63 50%, #4571c4 100%)`;
-  return { png: await compose(shell({ background, body })) };
+export async function capture({ compose }) {
+  const src = dataUrl(await readSource('autolab-robot.png'));
+  const k = HEIGHT / DRAWING.height;
+  // The render's backdrop is a hair off white in places, so it is lifted to pure white.
+  const css = `
+body { display: grid; place-items: center; }
+.frame { position: relative; overflow: hidden; width: ${DRAWING.width * k}px; height: ${HEIGHT}px; }
+.frame img { position: absolute; left: ${-DRAWING.x * k}px; top: ${-DRAWING.y * k}px;
+  width: ${SOURCE.width * k}px; height: ${SOURCE.height * k}px; filter: brightness(1.033); }`;
+  const html = shell({ background: '#ffffff', css, body: `<div class="frame"><img src="${src}"></div>` });
+  return { png: await compose(html), quality: 0.92 };
 }
