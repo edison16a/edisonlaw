@@ -119,7 +119,7 @@ export const projects: Project[] = [
     users: '1k+',
     stack: ['JavaScript', 'HTML', 'CSS', 'Extensions API'],
     description:
-      'A Chrome extension that replaces the text and images on any page with whatever you want. Over 10,000 lifetime users, and it is featured on the Chrome Web Store. A Manifest V3 service worker keeps every open tab updated.',
+      'A Chrome extension that swaps the text and images on any website for your own. Over 10,000 lifetime users. Built on Manifest V3, and it updates every open tab while it runs.',
     links: [
       {
         label: 'Chrome Web Store',
@@ -148,7 +148,7 @@ export const projects: Project[] = [
     users: '250+',
     stack: ['JavaScript', 'HTML', 'CSS', 'Extensions API'],
     description:
-      'An ad and tracker blocker for Chrome with over 1,000 lifetime users. It blocks requests with declarativeNetRequest, so ads never load. It counts what it blocks, pauses on sites you choose, and has a Zapper that removes any element you click.',
+      'An ad blocker for Chrome with over 1,000 lifetime users. Ads get blocked before they load, using Chrome\'s declarativeNetRequest rules. You can pause it on a site, or click any element on a page to remove it.',
     links: [{ label: 'Chrome Web Store', href: 'https://chromewebstore.google.com/detail/sunblock/dokdhfglhjcdfjblneeaglmhbchkkafk' }],
     image: '/projects/sunblock.webp',
   },
