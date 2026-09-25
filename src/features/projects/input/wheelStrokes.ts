@@ -62,6 +62,8 @@ interface Stroke {
   kind: 'notch' | 'glide';
   /** Travel of one notch in pixels, from the event that started a notch stroke. */
   notch: number;
+  /** True once a second event of whole notches has shown `notch` is a wheel's. */
+  sure: boolean;
   /** The way the stroke turned the spiral, or 0 while a glide has not committed yet. */
   direction: -1 | 0 | 1;
   /** The axis the stroke committed along. */
@@ -93,9 +95,10 @@ export function createWheelStrokes() {
   let lastTime = -Infinity;
   let stroke: Stroke | null = null;
 
-  const start = (kind: Stroke['kind'], notch = 0): Stroke => ({
+  const start = (kind: Stroke['kind'], notch = 0, sure = false): Stroke => ({
     kind,
     notch,
+    sure,
     direction: NONE,
     axis: 'y',
     travelX: 0,
@@ -155,12 +158,12 @@ export function createWheelStrokes() {
       }
       if (stroke?.kind === 'notch') {
         // A stroke that began with a few notches merged into one event learns the size of one here.
-        if (size >= NOTCH && notchesIn(stroke.notch, size) > 1) stroke.notch = size;
-        // After that, an event of whole notches is the wheel again. However quick the
-        // spin, every notch counts, and so does each of a few merged into one event.
-        const notches = notchesIn(size, stroke.notch);
+        if (!stroke.sure && size >= NOTCH && notchesIn(stroke.notch, size) > 1) stroke.notch = size;
+        // After that, an event of whole notches is the wheel again, one step per notch. Until a second
+        // such event makes the size sure, it is one step, as a stalled trackpad swipe can match by chance.
+        const notches = Math.min(notchesIn(size, stroke.notch), stroke.sure ? Infinity : 1);
         if (notches > 0) {
-          stroke = start('notch', stroke.notch);
+          stroke = start('notch', stroke.notch, true);
           return { idle, begins: true, step: commit(stroke, x, y, rate) * notches };
         }
       }

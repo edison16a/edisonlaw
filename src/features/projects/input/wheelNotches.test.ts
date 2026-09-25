@@ -15,4 +15,10 @@ describe('notchesIn', () => {
     expect(notchesIn(40, 100)).toBe(0);
     expect(notchesIn(101, 100)).toBe(0);
   });
+
+  it('allows the same small slack however many notches an event holds', () => {
+    expect(notchesIn(900.05, 100)).toBe(9);
+    expect(notchesIn(363.97, 40.09)).toBe(0);
+    expect(notchesIn(117.1, 117.3)).toBe(0);
+  });
 });

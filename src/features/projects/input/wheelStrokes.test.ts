@@ -22,12 +22,14 @@ describe('createWheelStrokes', () => {
     }
   });
 
-  it('counts each of a few notches merged into one event', () => {
+  it('counts each of a few notches merged into one event once a second event has shown the notch size', () => {
     const steps = (samples: WheelSample[]) => {
       const strokes = createWheelStrokes();
       return samples.map((sample) => strokes.read(sample).step);
     };
-    expect(steps([notch(0, 100), notch(40, 300), notch(56, -200)])).toEqual([1, 3, -2]);
+    expect(steps([notch(0, 100), notch(24, 100), notch(40, 300), notch(56, -200)])).toEqual([1, 1, 3, -2]);
+    // Until then, a trackpad could have begun the stroke, so a merged event counts once.
+    expect(steps([notch(0, 100), notch(40, 300), notch(56, -200)])).toEqual([1, 1, -2]);
   });
 
   it('turns back at once when the wheel turns back', () => {
@@ -101,6 +103,26 @@ describe('createWheelStrokes', () => {
       const back = coalesce(swipe({ at: first[cut].time + 32, peak: -peak }), 2);
       expect(stepsFor([...first.slice(0, cut + 1), ...again])).toEqual([1, 1]);
       expect(stepsFor([...first.slice(0, cut + 1), ...back])).toEqual([1, -1]);
+    }
+  });
+
+  it('turns once for a fast swipe that a stalled page begins with an event the size of a notch', () => {
+    // Two frames arrive as one event of 40 pixels or more, and a longer stall then merges more.
+    // A trackpad's later event can come close to a whole number of the first, but not exactly.
+    expect(stepsFor([notch(5016, 40.09), notch(5080, 363.97)])).toEqual([1]);
+    expect(stepsFor([notch(48, -117.3), notch(80, -117.1)])).toEqual([-1]);
+    for (const stall of [
+      [2, 4, 2],
+      [3, 4, 2],
+      [2, 3, 2],
+      [3, 2, 2],
+    ]) {
+      for (let peak = 40; peak <= 130; peak += 0.5) {
+        for (const decay of [0.9, 0.92, 0.94]) {
+          expect(stepsFor(coalesce(swipe({ peak, decay }), 2, ...stall))).toEqual([1]);
+          expect(stepsFor(coalesce(swipe({ peak: -peak, decay }), 2, ...stall))).toEqual([-1]);
+        }
+      }
     }
   });
 
