@@ -7,7 +7,8 @@
  *
  * Headless Chromium renders WebGL on the CPU through SwiftShader, so each 3D shot waits a while
  * for the scene to settle. SETTLE sets the base wait in milliseconds, and some shots wait longer:
- * the About scene, until the dog has faded in. On a machine with a real GPU the waits can be much shorter.
+ * the About and Work scenes, until the dog has faded in, asleep in Work. On a machine with a real GPU the
+ * waits can be much shorter.
  *
  *   node scripts/screenshots.mjs http://localhost:3200 projects-focus about-me   only these shots
  */
@@ -26,7 +27,7 @@ const SHOTS = [
   { name: 'projects-spiral', width: 1440, height: 900, scroll: 0 },
   { name: 'projects-focus', width: 1440, height: 900, scroll: 0, project: 'SensePlan' },
   { name: 'projects-gallery', width: 1440, height: 900, scroll: 0, project: 'Photo Craft' },
-  { name: 'work-experience', width: 1440, height: 900, selector: '#experience', offset: 1350 },
+  { name: 'work-experience', width: 1440, height: 900, selector: '#experience', offset: 1350, settle: 90000 },
   { name: 'about-me', width: 1440, height: 900, selector: '#about', offset: 0, settle: 90000 },
   { name: 'skills', width: 1440, height: 900, selector: '#about', offset: 1500, settle: 90000 },
   { name: 'phone-projects', width: 390, height: 844, mobile: true, scroll: 0 },
