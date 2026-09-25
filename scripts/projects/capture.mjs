@@ -11,10 +11,12 @@
  * for <id>.webp, its cover. A project with a gallery (see GALLERIES) also has recipes
  * <id>-2.mjs, <id>-3.mjs and so on, for <id>-2.webp, <id>-3.webp and so on.
  * Recipes either drive the live product in headless Chromium (Backbond, BetterBART, Photo Craft,
- * Clue.ai, FlameSense) or compose a layout from Edison's own published images (App Store,
- * Chrome Web Store, Devpost, GitHub READMEs, the Neurotech@Berkeley site). Every recipe lists
- * its sources at the top. lib/encode.mjs then crops to 16:10 and encodes WebP at quality 0.82,
- * stepping down a little only when a file would pass 250 KB.
+ * Clue.ai), compose a layout from Edison's own published images (App Store, Chrome Web Store,
+ * Devpost, GitHub READMEs, the Neurotech@Berkeley site), or draw the product's screen as HTML
+ * from its repository and store listing (SensePlan, CallSense, FlameSense, TrashGo, SunBlock,
+ * Text & Image Replacer, with lib/layouts/product.mjs). Every recipe lists its sources at the
+ * top. lib/encode.mjs then crops to 16:10 and encodes WebP at quality 0.82, stepping down a
+ * little only when a file would pass 250 KB.
  *
  * Live pages change, so a new run will not match the committed photos pixel for pixel.
  * Needs network access and Playwright's Chromium (npx playwright install chromium).
@@ -39,6 +41,8 @@ const PROJECTS = [
   'clue-ai',
   'trashgo',
   'chrome-extensions',
+  'text-image-replacer',
+  'sunblock',
 ];
 
 /** Projects with more than one photo, and how many. The first is always <id>.webp. */
