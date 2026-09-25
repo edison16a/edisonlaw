@@ -36,7 +36,7 @@ Next.js 16 with the App Router, React 19 and TypeScript. Tailwind CSS 4 for styl
 
 ### The project spiral
 
-- The section is a tall scroll track with a sticky stage. The scroll position maps to one continuous card index, a damped spring follows it, and everything reads from that one value: where each card sits on the spiral, its blur, its dimming, the curl in the vertex shader and the scroll ticks.
+- The section is a tall scroll track with a sticky stage. The scroll position maps to one continuous card index, a damped spring follows it, and everything reads from that one value: where each card sits on the spiral, its blur, its dimming and the curl in the vertex shader.
 - 24 cards (each project twice, like the site that inspired it) wind around a vertical axis. The fragment shader fits each photo to the card, rounds the corners, blurs cards the further they are from focus, and streaks them sideways when you scroll fast.
 - When scrolling stops, the page snaps to the nearest card. That card comes forward, the scene slides left and the detail panel animates in. Drag, click and the arrow keys work too.
 - Phones get a swipe carousel instead, and reduced motion starts in the list view. The canvas renders on demand, so it stops drawing when nothing moves.
@@ -51,7 +51,7 @@ Next.js 16 with the App Router, React 19 and TypeScript. Tailwind CSS 4 for styl
 
 ### Sound
 
-Every sound is synthesised in Node by `scripts/sounds` from oscillators, seeded noise, filters, envelopes and a small reverb, then packed into one MP3 sprite. Howler only loads after you turn sound on. The engine throttles each sound and varies its pitch a little, so fast scrolling becomes a smooth ratchet instead of noise. A muffled keyboard and fan loop plays near Work Experience and a quieter room tone near About Me. Sound starts off and the site remembers your choice.
+Every sound is synthesised in Node by `scripts/sounds` from oscillators, seeded noise, filters, envelopes and a small reverb, then packed into one MP3 sprite. Howler only loads after you turn sound on. The engine throttles each sound and varies its pitch a little. The project spiral plays a single soft tap each time it moves to another project, and a quick spin or a long glide counts as one move. A muffled keyboard and fan loop plays near Work Experience and a quieter room tone near About Me. Sound starts off and the site remembers your choice.
 
 ### Accessibility and quality
 
