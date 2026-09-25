@@ -9,7 +9,6 @@ import {
   siFlask,
   siFlutter,
   siGit,
-  siGooglecloud,
   siJavascript,
   siKeras,
   siKonva,
@@ -41,9 +40,11 @@ import { BracesGlyph, DatabaseGlyph, EyeGlyph, MapPinGlyph } from './glyphs';
 /**
  * How a skill's mark is drawn.
  * brand: a Simple Icons path in its brand colour.
- * logo: official full colour logo files in /public/skills, for brands Simple Icons no longer ships.
+ * logo: official full colour logo files in /public/skills, for brands Simple Icons no longer ships
+ *   or only ships in one colour.
  *   Sources: Devicon (MIT) for C#, Java, VS Code, OAuth, HTML5 and CSS3. LobeHub Icons (MIT) for
- *   OpenAI, Codex, AWS and Gemini. The Google Cloud icon library for Cloud Run, Cloud SQL and Vertex AI.
+ *   OpenAI, Codex, AWS and Gemini. Google's own four colour Google Cloud logo, from gstatic.com, for
+ *   Google Cloud Platform. The Google Cloud icon library for Cloud Run, Cloud SQL and Vertex AI.
  *   The aws-icons package (MIT, from AWS's official set) for SES and SNS. Devicon for Chrome. Vapi,
  *   Bright Data, Niantic Spatial and SwiftUI come from each product's own site.
  *   MDAnalysis is traced from the project's own logo, with its black half drawn light for the dark UI.
@@ -98,7 +99,7 @@ const ICONS: Record<string, SkillIcon> = {
   'OpenAI API': logo('openai'),
   'Google Vertex AI': logo('vertexai'),
   'Meta SAM 3': brand(siMeta),
-  'Google Cloud Platform': brand(siGooglecloud),
+  'Google Cloud Platform': logo('googlecloud'),
   'Cloud Run': logo('cloudrun'),
   AWS: logo('aws'),
   Docker: brand(siDocker),
