@@ -3,7 +3,7 @@
 This is Edison Law's personal website. Edison studies Bioengineering at UC Berkeley, is working toward a second major in EECS, and works as a software engineer. The site is one dark page with three parts:
 
 - **Projects.** A 3D spiral of project cards that you scroll or drag through. When a card locks into focus it comes forward and a panel with its details slides in. A plain list is one click away.
-- **Work Experience.** A timeline next to a 3D model of Edison at his desk at night, typing. The centre monitor changes to match the job you are reading, and the PC's RGB lights pulse on every new entry.
+- **Work Experience.** A timeline next to a 3D model of Edison at his desk at night, typing. The centre monitor changes to match the job you are reading, while the room's lighting stays the same.
 - **About Me.** The same room with Edison standing and sipping a coffee, next to his intro, contact links, education, skills, honors and activities.
 
 The page is black and white. Colour only shows up inside the 3D scenes, in the project photos and in the skill logos. Once you turn sound on, soft sounds made from scratch follow the scroll.
@@ -46,7 +46,7 @@ Next.js 16 with the App Router, React 19 and TypeScript. Tailwind CSS 4 for styl
 - The room, the props and Edison are all built from primitives in code, with no model files. `src/features/workstation/layout.ts` holds the shared measurements, so the desk, keyboard, chair and character line up.
 - Edison has a small rig with two-bone IK. Seated, his hands type on the real keyboard position, he glances at the side monitors and now and then reaches for the mouse. Standing, he shifts his weight, sips from his mug and looks between the screens.
 - The monitors show Claude Code, Codex and VS Code, painted with Canvas 2D and animated by one shared scheduler. Each job in the timeline has its own picture for the centre monitor.
-- The room is lit mostly by the setup: an area light in front of each monitor tinted from its screen, one RGB clock shared by the tower fans, light strips, keyboard and coloured point lights, and a faint moonlight. Bloom, AgX tone mapping, a vignette and a little grain finish it.
+- The room is lit mostly by the setup: a fixed cool white area light in front of each monitor, steady violet washes on the wall and floor, one RGB clock shared by the tower fans, light strips and the tower's spill, and a faint moonlight. Only the glowing parts and the tower's spill follow the hue, each at one brightness, so the room never dims or shifts while you scroll. Bloom, AgX tone mapping, a vignette and a little grain finish it.
 - Canvases mount only when they come near the viewport and pause when they leave it. Screens narrower than 1024px and browsers without WebGL get pre-rendered stills from `public/renders` instead.
 
 ### Sound
