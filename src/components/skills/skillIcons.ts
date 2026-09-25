@@ -52,7 +52,7 @@ import { BracesGlyph, BrushGlyph, DatabaseGlyph, EyeGlyph, MapPinGlyph, MicGlyph
  *   Sources: Devicon (MIT) for C#, Java, VS Code, OAuth, HTML5 and CSS3. LobeHub Icons (MIT) for
  *   OpenAI, Codex, AWS and Gemini. Google's own four colour Google Cloud logo, from gstatic.com, for
  *   Google Cloud Platform. The Google Cloud icon library for Cloud Run, Cloud SQL and Vertex AI.
- *   The aws-icons package (MIT, from AWS's official set) for SES and SNS. Devicon for Chrome. Vapi,
+ *   The aws-icons package (MIT, from AWS's official set) for Amazon Bedrock. Devicon for Chrome. Vapi,
  *   Bright Data, Niantic Spatial and SwiftUI come from each product's own site.
  *   MDAnalysis is traced from the project's own logo, with its black half drawn light for the dark UI.
  *   The gilbarbara logos set (CC0) for the WebSocket logo, drawn white like other black marks.
@@ -133,8 +133,7 @@ const ICONS: Record<string, SkillIcon> = {
 
   // Names that only appear in project stacks.
   'Google Cloud Run': logo('cloudrun'),
-  'Amazon SES': logo('ses'),
-  'Amazon SNS': logo('sns'),
+  'Amazon Bedrock': logo('bedrock'),
   'Computer Vision': glyph(EyeGlyph, 'A78BFA'),
   'Bright Data': logo('brightdata.png'),
   'Google Calendar': brand(siGooglecalendar),

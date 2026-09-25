@@ -14,7 +14,7 @@ export const projects: Project[] = [
     name: 'Backbond',
     org: 'Optagon Labs',
     badges: [],
-    stack: ['Next.js', 'Vercel', 'Google Cloud Run', 'Cloud SQL', 'OAuth', 'Stripe', 'Amazon SES', 'Amazon SNS'],
+    stack: ['Next.js', 'Vercel', 'Google Cloud Run', 'Cloud SQL', 'OAuth', 'Stripe', 'AWS', 'Amazon Bedrock'],
     description:
       'Computational design platform for R&D. Built the core infrastructure, security and databases, plus billing, usage metering, organizations and project ingestion.',
     links: [{ label: 'backbond.net', href: 'https://backbond.net' }],
