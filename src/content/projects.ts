@@ -109,9 +109,10 @@ export const projects: Project[] = [
     id: 'text-image-replacer',
     name: 'Text & Image Replacer',
     badges: ['Featured on the Chrome Web Store'],
+    users: '1k+',
     stack: ['JavaScript', 'HTML', 'CSS', 'Chrome Extensions API'],
     description:
-      'A Chrome extension that replaces the text and images on any page with whatever you want. About 1,000 people use it now and over 10,000 have used it, and it is featured on the Chrome Web Store. A Manifest V3 service worker keeps every open tab updated.',
+      'A Chrome extension that replaces the text and images on any page with whatever you want. Over 10,000 lifetime users, and it is featured on the Chrome Web Store. A Manifest V3 service worker keeps every open tab updated.',
     links: [
       {
         label: 'Chrome Web Store',
@@ -123,10 +124,11 @@ export const projects: Project[] = [
   {
     id: 'sunblock',
     name: 'SunBlock',
-    badges: ['Featured on the Chrome Web Store', '5.0 stars'],
+    badges: ['Featured on the Chrome Web Store'],
+    users: '250+',
     stack: ['JavaScript', 'HTML', 'CSS', 'Chrome Extensions API'],
     description:
-      'An ad and tracker blocker for Chrome. It blocks requests with declarativeNetRequest, so ads never load. It counts what it blocks, pauses on sites you choose, and has a Zapper that removes any element you click.',
+      'An ad and tracker blocker for Chrome with over 1,000 lifetime users. It blocks requests with declarativeNetRequest, so ads never load. It counts what it blocks, pauses on sites you choose, and has a Zapper that removes any element you click.',
     links: [{ label: 'Chrome Web Store', href: 'https://chromewebstore.google.com/detail/sunblock/dokdhfglhjcdfjblneeaglmhbchkkafk' }],
     image: '/projects/sunblock.webp',
   },

@@ -26,6 +26,16 @@ export function CheckIcon(props: IconProps) {
 }
 
 
+/** A person, for user counts. */
+export function UserIcon(props: IconProps) {
+  return (
+    <IconBase {...props}>
+      <circle cx="12" cy="8" r="3.5" />
+      <path d="M5 20c.6-3.6 3.4-6 7-6s6.4 2.4 7 6" />
+    </IconBase>
+  );
+}
+
 /** A five point star, for store features. */
 export function StarIcon(props: IconProps) {
   return (

@@ -1,7 +1,7 @@
 import type { Project } from '@/content/types';
 
-/** The mark drawn before a badge: a trophy for hackathon wins, a star for store features. */
-export type BadgeMark = 'trophy' | 'star';
+/** The mark drawn before a badge: a trophy for hackathon wins, a star for store features, a person for users. */
+export type BadgeMark = 'trophy' | 'star' | 'users';
 
 export interface ProjectBadge {
   label: string;
@@ -12,10 +12,11 @@ export interface ProjectBadge {
 const FEATURED = /^Featured\b/;
 
 /** A project's badges in the order they show: its hackathon win and prizes first, then status. */
-export function projectBadges({ win, badges }: Pick<Project, 'win' | 'badges'>): ProjectBadge[] {
+export function projectBadges({ win, badges, users }: Pick<Project, 'win' | 'badges' | 'users'>): ProjectBadge[] {
   const wins = win ? [`Winner, ${win.hackathon}`, ...(win.prizes ?? [])] : [];
   return [
     ...wins.map((label): ProjectBadge => ({ label, mark: 'trophy' })),
     ...badges.map((label): ProjectBadge => (FEATURED.test(label) ? { label, mark: 'star' } : { label })),
+    ...(users ? [{ label: users, mark: 'users' } as const] : []),
   ];
 }

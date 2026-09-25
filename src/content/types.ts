@@ -23,6 +23,8 @@ export interface Project {
   badges: string[];
   /** Set when the project won a hackathon. Its badges come first and carry a trophy. */
   win?: HackathonWin;
+  /** Current users, like "1k+", shown as a badge with a person icon. */
+  users?: string;
   stack: string[];
   description: string;
   links: Link[];

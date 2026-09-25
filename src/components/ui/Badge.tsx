@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { StarIcon, TrophyIcon } from '@/components/icons';
+import { StarIcon, TrophyIcon, UserIcon } from '@/components/icons';
 import { cn } from '@/lib/cn';
 
 /** Solid white pill for awards and status. It is the loudest element a card gets. */
@@ -20,13 +20,14 @@ export function Badge({ children, icon, className }: { children: ReactNode; icon
 
 export interface BadgeItem {
   label: string;
-  /** A trophy before the label for a hackathon win or prize, a star for a store feature. */
-  mark?: 'trophy' | 'star';
+  /** A trophy for a hackathon win or prize, a star for a store feature, a person for users. */
+  mark?: 'trophy' | 'star' | 'users';
 }
 
 const MARKS = {
   trophy: <TrophyIcon size={13} strokeWidth={2} />,
   star: <StarIcon size={13} strokeWidth={2} />,
+  users: <UserIcon size={13} strokeWidth={2} />,
 };
 
 export function BadgeList({ items, className }: { items: BadgeItem[]; className?: string }) {

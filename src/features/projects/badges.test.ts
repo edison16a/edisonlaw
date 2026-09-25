@@ -20,9 +20,16 @@ describe('projectBadges', () => {
   });
 
   it('marks a store feature with a star', () => {
-    expect(projectBadges({ badges: ['Featured on the Chrome Web Store', '5.0 stars'] })).toEqual([
+    expect(projectBadges({ badges: ['Featured on the Chrome Web Store', 'App Store'] })).toEqual([
       { label: 'Featured on the Chrome Web Store', mark: 'star' },
-      { label: '5.0 stars' },
+      { label: 'App Store' },
+    ]);
+  });
+
+  it('ends with the current users, marked with a person', () => {
+    expect(projectBadges({ badges: ['Featured on the Chrome Web Store'], users: '250+' })).toEqual([
+      { label: 'Featured on the Chrome Web Store', mark: 'star' },
+      { label: '250+', mark: 'users' },
     ]);
   });
 });
