@@ -10,7 +10,7 @@ const GESTURES = ['pointerdown', 'keydown', 'touchend'] as const;
 
 /**
  * Page wide audio upkeep, mounted once through SoundToggle. It restores the saved choice,
- * lets audio start on the first gesture, and keeps sound quiet while the tab is hidden.
+ * lets audio start on the first gesture, and pauses the music while the tab is hidden.
  */
 export function useSoundLifecycle() {
   useEffect(() => {

@@ -2,6 +2,7 @@ import { clamp } from '@/lib/math';
 import type { AudioBackend } from './backend/types';
 import { MAX_VOICES, SOUNDS, TOGGLE_FEEDBACK_MS } from './config';
 import { jitterRate } from './jitter';
+import { createMusic } from './music';
 import { saveSoundPreference } from './persistence';
 import { SPRITE_REGIONS } from './sprite';
 import { createThrottle } from './throttle';
@@ -20,11 +21,17 @@ let loading = false;
 let toggleFeedbackUntil = 0;
 
 const listeners = new Set<Listener>();
+/** The background music. Its player is a chunk of its own, fetched only once sound is on. */
+const music = createMusic(() => import('./backend/musicBackend').then(({ createMusicBackend }) => createMusicBackend()));
 const throttle = createThrottle((name: SoundName) => SOUNDS[name].throttle);
 const voices = createVoiceLimiter(MAX_VOICES, (name: SoundName) => SOUNDS[name].voices);
 
 function emit() {
   listeners.forEach((listener) => listener());
+}
+
+function syncMusic() {
+  music.sync({ enabled, visible, unlocked });
 }
 
 /** Loads Howler and the sprite on first need. Its own chunk, so the page never pays for it up front. */
@@ -69,7 +76,10 @@ export const sound = {
     return enabled;
   },
 
-  /** Switches sound on or off from a click, remembers the choice, and confirms it with a soft click. */
+  /**
+   * Switches sound on or off from a click, remembers the choice, and confirms it with a soft click.
+   * The background music swells in or fades away with it.
+   */
   setEnabled(next: boolean) {
     if (next === enabled) return;
     // Switching off gets a lower, quieter click on the way out.
@@ -82,6 +92,7 @@ export const sound = {
       if (backend) sound.play('toggle');
       else ensureBackend();
     }
+    syncMusic();
     emit();
   },
 
@@ -100,6 +111,7 @@ export const soundLifecycle = {
     if (value === enabled) return;
     enabled = value;
     ensureBackend();
+    syncMusic();
     emit();
   },
 
@@ -107,10 +119,12 @@ export const soundLifecycle = {
   unlock() {
     unlocked = true;
     ensureBackend();
+    syncMusic();
   },
 
   setVisible(value: boolean) {
     if (value === visible) return;
     visible = value;
+    syncMusic();
   },
 };

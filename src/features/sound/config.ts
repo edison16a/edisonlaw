@@ -21,6 +21,20 @@ export const SOUNDS: Record<SoundName, OneShotSettings> = {
   move: { volume: 0.8, throttle: 40, voices: 4, jitter: 0.012 },
 };
 
+/**
+ * Background music level. The track is mastered to -20 dBFS RMS, so this puts it
+ * near -41 dBFS, a soft bed. Even its loudest moments land 8 to 13 dB under the
+ * clicks, as scripts/sounds/check.ts measures them.
+ */
+export const MUSIC_VOLUME = 0.09;
+
+/** The music swells in this slowly when sound turns on or the tab comes back. */
+export const MUSIC_FADE_IN_MS = 2000;
+/** And fades out this slowly when sound turns off. */
+export const MUSIC_FADE_OUT_MS = 1200;
+/** Leaving the tab only takes a quick fade before the music pauses. */
+export const MUSIC_HIDE_FADE_MS = 250;
+
 /** Everything goes through this master level. */
 export const MASTER_VOLUME = 0.8;
 

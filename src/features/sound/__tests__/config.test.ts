@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { PITCH_JITTER, SOUNDS } from '../config';
+import { MUSIC_VOLUME, PITCH_JITTER, SOUNDS } from '../config';
 import { jitterRate } from '../jitter';
 
 describe('the move sound', () => {
@@ -12,5 +12,11 @@ describe('the move sound', () => {
 
   it('plays no louder than the site sounds it sits among', () => {
     expect(SOUNDS.move.volume).toBeLessThanOrEqual(SOUNDS.tab.volume);
+  });
+});
+
+describe('the background music', () => {
+  it('sits at least 12 dB under the level of every effect', () => {
+    for (const [name, { volume }] of Object.entries(SOUNDS)) expect(20 * Math.log10(MUSIC_VOLUME / volume), name).toBeLessThanOrEqual(-12);
   });
 });
