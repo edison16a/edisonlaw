@@ -1,8 +1,9 @@
-import { Euler, Matrix4, Quaternion, Vector3 } from 'three';
+import { Matrix4, Vector3 } from 'three';
 import { FACE, headForms } from '../anatomy/head';
+import { headTurn } from '../anatomy/headPose';
 import { HEAD, PART_COUNT } from '../dimensions';
 import { Field } from '../sdf/field';
-import { surfaceFrame } from '../sdf/trace';
+import { furthestAlong } from '../sdf/trace';
 import { HEAD_REST } from './dimensions';
 
 /**
@@ -12,10 +13,7 @@ import { HEAD_REST } from './dimensions';
  */
 
 /** The resting turn of the head, from HEAD_REST. */
-function restRotation(out = new Quaternion()) {
-  const { yaw, pitch, tilt } = HEAD_REST.rest;
-  return out.setFromEuler(new Euler(-pitch, yaw, tilt, 'YXZ'));
-}
+const restRotation = () => headTurn(HEAD_REST.rest);
 
 let drop: number | null = null;
 
@@ -25,27 +23,9 @@ let drop: number | null = null;
  */
 function headDrop() {
   if (drop !== null) return drop;
-  const field = new Field(headForms(), PART_COUNT);
   const down = new Vector3(0, -1, 0).applyQuaternion(restRotation().invert());
-  const across = new Vector3(1, 0, 0).addScaledVector(down, -down.x).normalize();
-  const along = new Vector3().crossVectors(down, across);
-  const atlas = new Vector3(...HEAD_REST.atlas);
-  const direction = new Vector3();
-  let lowest = -Infinity;
-  for (let ring = 0; ring <= 60; ring += 2) {
-    const tilt = (ring * Math.PI) / 180;
-    for (let step = 0; step < (ring === 0 ? 1 : 36); step++) {
-      const turn = (step * Math.PI) / 18;
-      direction
-        .copy(down)
-        .multiplyScalar(Math.cos(tilt))
-        .addScaledVector(across, Math.sin(tilt) * Math.cos(turn))
-        .addScaledVector(along, Math.sin(tilt) * Math.sin(turn));
-      const { position } = surfaceFrame(field, FACE.core, direction.toArray());
-      lowest = Math.max(lowest, position.sub(atlas).dot(down));
-    }
-  }
-  drop = lowest * HEAD.scale;
+  const lowest = furthestAlong(new Field(headForms(), PART_COUNT), FACE.core, down, 60, 2);
+  drop = lowest.sub(new Vector3(...HEAD_REST.atlas)).dot(down) * HEAD.scale;
   return drop;
 }
 
