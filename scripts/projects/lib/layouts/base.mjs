@@ -9,6 +9,22 @@ const SHADOW = '0 50px 90px -30px rgba(0, 0, 0, 0.55), 0 18px 36px -12px rgba(0,
 /** Soft light from the top left, laid over gradients so they do not look flat. */
 export const GLOW = 'radial-gradient(120% 90% at 12% 0%, rgba(255, 255, 255, 0.16), transparent 60%)';
 
+/**
+ * The least clear space between composed content and every edge of the card: 8% of its
+ * height, so a window, row of phones or panel never touches or runs past the frame.
+ */
+export const MARGIN = Math.round(CARD_HEIGHT * 0.08);
+
+/**
+ * The largest box of `aspect` (width over height) that keeps `margin` clear on every side,
+ * centred on the card. Returns { left, top, width, height } in card pixels.
+ */
+export function fit(aspect, margin = MARGIN) {
+  const width = Math.min(CARD_WIDTH - 2 * margin, (CARD_HEIGHT - 2 * margin) * aspect);
+  const height = width / aspect;
+  return { left: (CARD_WIDTH - width) / 2, top: (CARD_HEIGHT - height) / 2, width, height };
+}
+
 /** Inlines image bytes as a data URL, sniffing the type from the file header. */
 export function dataUrl(bytes) {
   const buffer = Buffer.from(bytes);
