@@ -41,7 +41,7 @@ Next.js 16 with the App Router, React 19 and TypeScript. Tailwind CSS 4 for styl
 - The stage is one viewport tall and the page scrolls past it like any other section. It opens on the featured project, set in `src/content/projects.ts`, and there is no title over it.
 - The cards wind around a vertical axis like a spiral staircase, and every project appears twice so the loop never runs out of cards. It turns round and round forever. Going forward moves the strand to the left.
 - The wheel over the spiral turns it one project per notch or trackpad swipe, and the page stays put. Over the detail panel, the wheel scrolls the page as usual. A click on any card in sight spins straight to it. The left and right arrow keys still work, and their step buttons only show when they take keyboard focus.
-- The card in focus comes forward flat and bigger than the rest, and its detail panel slides in beside it, or below it on narrower screens. A project with screenshots, like Photo Craft with its five, gets a row of them under the card, and a click on one shows it on the card.
+- The card in focus comes forward flat and bigger than the rest, and its detail panel slides in beside it, or below it on narrower screens. A project with screenshots, like Standoff and Photo Craft with five each or Backbond with two, gets a row of them under the card, and a click on one shows it on the card. A hackathon win shows as a badge with a small trophy, set by a project's `win` in `src/content/projects.ts`.
 - The vertex shader bends each card around the cylinder and bows it with speed. The fragment shader fits each photo to the card and rounds the corners, and every card stays sharp. The canvas renders on demand, so it stops drawing when nothing moves.
 - Phones get a swipe strip of the same projects instead, and browsers without WebGL get it on every screen. Reduced motion keeps the spiral but makes each move short and calm.
 
@@ -109,7 +109,7 @@ src/
   styles/              Global CSS, the colour and font tokens and their guards
 scripts/
   sounds/              Sound and music synthesis and checks
-  projects/            Recreates the project photos and the Photo Craft gallery shots
+  projects/            Recreates the project photos and the gallery shots
   capture-renders.mjs  Captures the desk scene stills for phones and posters for desktops
   screenshots.mjs      Captures the README screenshots
   shot.mjs             Screenshots any page for checking a scene
@@ -145,7 +145,7 @@ npm run screenshots  # recapture the README screenshots (needs a running build o
 
 - **Text.** Edit the files in `src/content`.
 - **Project photos.** Drop a 1280 x 800 WebP into `public/projects/<project-id>.webp`. `node scripts/projects/capture.mjs <project-id>` recreates the current ones.
-- **Screenshot rows.** List up to four more pictures in a project's `screenshots` in `src/content/projects.ts`. Photo Craft's come from the recipes `scripts/projects/shots/photo-craft-2.mjs` to `photo-craft-5.mjs`, and `GALLERIES` in `scripts/projects/capture.mjs` counts them, so `node scripts/projects/capture.mjs photo-craft` recreates the cover and all four.
+- **Screenshot rows.** List up to four more pictures in a project's `screenshots` in `src/content/projects.ts`. Backbond, Standoff and Photo Craft have them. Photo Craft's come from the recipes `scripts/projects/shots/photo-craft-2.mjs` to `photo-craft-5.mjs`, and `GALLERIES` in `scripts/projects/capture.mjs` counts them, so `node scripts/projects/capture.mjs photo-craft` recreates the cover and all four. Standoff's work the same way.
 - **Desk scene stills.** Run `npm run dev`, then `node scripts/capture-renders.mjs http://localhost:3000`. It writes a phone still and a desktop poster for Work Experience and About Me into `public/renders`. On a slow machine add `--settle 90000` for About Me, so the dog has faded in: `node scripts/capture-renders.mjs http://localhost:3000 --only about --settle 90000`.
 - **Sounds.** Edit a recipe in `scripts/sounds/recipes`, or the music in `scripts/sounds/music`, run `npm run sounds`, then `npx tsx scripts/sounds/check.ts out.png` to plot and check the result. The check also measures the music's loop seam, its balance and how far each effect rises above it.
 
