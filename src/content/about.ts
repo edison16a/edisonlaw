@@ -1,7 +1,7 @@
 import type { Activity, Education, Honor, SkillGroup, Social } from './types';
 
 export const intro = [
-  "I'm a Bioengineering student at UC Berkeley, working toward a second major in EECS, and a software engineer.",
+  "I'm a Bioengineering and Electrical Engineering and Computer Sciences student at UC Berkeley.",
   'I like building where software, AI and biology meet, from production platforms for drug developers to robots that keep neuron cultures alive.',
 ];
 
