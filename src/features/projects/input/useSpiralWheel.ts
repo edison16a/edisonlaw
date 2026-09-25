@@ -6,6 +6,7 @@ import { WHEEL_LEAD } from '../spiral/loop';
 import { useSpiralStore } from '../state/spiralStore';
 import { stepSpiral } from './steering';
 import { createWheelGesture } from './wheelGesture';
+import { sampleOf } from './wheelSample';
 import { overSpiral, stageInFullView, type Box } from './wheelZone';
 
 /** The navbar's bottom edge. The page keeps that much clear at the top as scroll padding. */
@@ -53,8 +54,7 @@ export function useSpiralWheel(stage: RefObject<HTMLElement | null>, column: Ref
 
     const onWheel = (event: WheelEvent) => {
       if (event.ctrlKey) return;
-      const sample = { dx: event.deltaX, dy: event.deltaY, mode: event.deltaMode, time: event.timeStamp };
-      const read = gesture.read(sample, () => capturable(event));
+      const read = gesture.read(sampleOf(event), () => capturable(event));
       if (!read.capture) return;
       event.preventDefault();
       event.stopPropagation();

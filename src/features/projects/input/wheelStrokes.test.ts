@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { coalesce, endOf, notch, swipe } from './__tests__/wheelStreams';
-import { createWheelStrokes, IDLE_GAP, type WheelSample } from './wheelStrokes';
+import type { WheelSample } from './wheelSample';
+import { createWheelStrokes, IDLE_GAP } from './wheelStrokes';
 
 /** Feeds the samples in order and returns every step they asked for, in order. */
 function stepsFor(samples: WheelSample[]) {

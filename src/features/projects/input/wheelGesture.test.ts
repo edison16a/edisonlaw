@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { endOf, notch, swipe } from './__tests__/wheelStreams';
 import { createWheelGesture } from './wheelGesture';
-import { IDLE_GAP, type WheelSample } from './wheelStrokes';
+import type { WheelSample } from './wheelSample';
+import { IDLE_GAP } from './wheelStrokes';
 
 /** Feeds the samples, asking `capturable` at each one, and sums up what the spiral did. */
 function play(samples: WheelSample[], capturable: (sample: WheelSample, index: number) => boolean) {

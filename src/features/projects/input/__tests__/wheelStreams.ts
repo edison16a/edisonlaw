@@ -1,11 +1,11 @@
-import type { WheelSample } from '../wheelStrokes';
+import type { WheelSample } from '../wheelSample';
 
 /**
  * Made up wheel event streams for the wheel tests: mouse wheel notches and
  * trackpad swipes with their momentum tails.
  */
 
-/** One mouse wheel notch. `mode` 1 reports lines, like Firefox does. */
+/** One mouse wheel notch. `mode` 1 reports lines, as Firefox does for a page that reads deltaMode first. */
 export const notch = (time: number, dy: number, mode = 0): WheelSample => ({ dx: 0, dy, mode, time });
 
 export interface SwipeOptions {

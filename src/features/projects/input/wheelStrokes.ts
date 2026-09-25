@@ -9,15 +9,7 @@
  * swipe speeds up again while the last one is still gliding to a stop.
  */
 
-export interface WheelSample {
-  /** Travel as the event reports it. Positive is to the right and down. */
-  dx: number;
-  dy: number;
-  /** The event's deltaMode: 0 for pixels, 1 for lines, 2 for pages. */
-  mode: number;
-  /** When the event happened, in milliseconds. */
-  time: number;
-}
+import type { WheelSample } from './wheelSample';
 
 export interface StrokeRead {
   /** True when the wheel had gone idle before this event. */

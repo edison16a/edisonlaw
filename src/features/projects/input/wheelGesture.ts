@@ -1,4 +1,5 @@
-import { createWheelStrokes, type WheelSample } from './wheelStrokes';
+import type { WheelSample } from './wheelSample';
+import { createWheelStrokes } from './wheelStrokes';
 
 export interface GestureRead {
   /** True when the spiral takes the event, so the page must not scroll. */
