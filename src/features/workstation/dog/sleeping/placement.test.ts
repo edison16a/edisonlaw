@@ -11,9 +11,10 @@ import { sleepingCoatField } from './coat';
 import { HEAD_REST } from './dimensions';
 import { headRestMatrix } from './headPose';
 import { SLEEPING_PLACEMENT } from './placement';
-import { applySleepPose, createSleepPose } from './pose';
+import { applySleepPose, createSleepPose, sleepPose } from './pose';
 import { createSleepingRig } from './rig';
 import { TAIL_PATH } from './tail';
+import { SLEEP_SEED } from './useSleepingMotion';
 
 const field = sleepingCoatField();
 const UP = new Vector3(0, 1, 0);
@@ -91,23 +92,36 @@ describe('the sleeping dog in the work scene', () => {
     for (const leg of deskLegs) for (let y = 0; y < DESK.height; y += 0.02) expect(clearance(leg.clone().setY(y))).toBeGreaterThan(0.06);
   });
 
-  it('lifts its head clear of them too when it looks up', () => {
+  it('lifts its head clear of them too whenever it looks up', () => {
     const rig = createSleepingRig();
     const pose = createSleepPose();
     const head = new Field([...headForms(), ...headFur()], PART_COUNT);
-    for (const yaw of [-0.16, 0.04]) {
-      pose.lift = 1;
-      pose.look = { yaw, pitch: 0.2 };
+    const obstacles = [...chairFrame(), ...through(OBSTACLES.seat, 0.02), ...through(OBSTACLES.legs, 0.02)].map(toDog);
+    const dogToHead = new Matrix4();
+    const p = new Vector3();
+    let looking = 0;
+    let furthestTurn = 0;
+    let nearest = Infinity;
+    // Ten minutes of the idle as it plays, every half second: every look up it takes, both ways.
+    for (let t = 0; t < 600; t += 0.5) {
+      sleepPose(t, 1, SLEEP_SEED, pose);
+      if (pose.lift < 0.05) continue;
+      looking++;
+      furthestTurn = Math.min(furthestTurn, pose.look.yaw);
       applySleepPose(rig, pose);
       rig.root.updateMatrixWorld(true);
-      const roomToHead = new Matrix4().makeTranslation(-rig.headOrigin.x, -rig.headOrigin.y, -rig.headOrigin.z).multiply(rig.head.matrixWorld.clone().invert());
+      dogToHead.makeTranslation(-rig.headOrigin.x, -rig.headOrigin.y, -rig.headOrigin.z).multiply(rig.head.matrixWorld.clone().invert());
       const scale = rig.head.matrixWorld.getMaxScaleOnAxis();
-      for (const point of [...chairFrame(), ...through(OBSTACLES.seat, 0.02), ...through(OBSTACLES.legs, 0.02)]) {
-        const p = toDog(point).applyMatrix4(roomToHead);
-        expect(head.distance(p.x, p.y, p.z) * scale).toBeGreaterThan(0.04);
+      for (const point of obstacles) {
+        p.copy(point).applyMatrix4(dogToHead);
+        nearest = Math.min(nearest, head.distance(p.x, p.y, p.z) * scale);
       }
     }
-  });
+    expect(nearest).toBeGreaterThan(0.04);
+    // Enough look ups to cover both ways it looks, turned all the way.
+    expect(looking).toBeGreaterThan(100);
+    expect(furthestTurn).toBeLessThan(-0.42);
+  }, 60000);
 
   /** The face and the curl, in room space: both eyes, the nose, the top of the flank and the tip of the tail. */
   function landmarks() {
