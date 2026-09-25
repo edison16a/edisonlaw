@@ -46,16 +46,6 @@ export const projects: Project[] = [
     image: '/projects/photo-craft.webp',
   },
   {
-    id: 'personal-website',
-    name: 'Personal Website',
-    badges: [],
-    stack: ['Next.js', 'React', 'TypeScript', 'Three.js', 'React Three Fiber', 'Tailwind CSS', 'Web Audio API', 'Vercel'],
-    description:
-      'This site. A WebGL spiral of projects, 3D desk scenes in React Three Fiber, and synthesized sound and music.',
-    links: [{ label: 'GitHub', href: 'https://github.com/edison16a/edisonlaw' }],
-    image: '/projects/personal-website.webp',
-  },
-  {
     id: 'autolab',
     name: 'AutoLab',
     badges: [],
@@ -123,19 +113,6 @@ export const projects: Project[] = [
     image: '/projects/trashgo.webp',
   },
   {
-    id: 'safeeats',
-    name: 'SafeEats',
-    badges: [],
-    stack: ['Swift', 'SwiftUI', 'Vision', 'AVFoundation'],
-    description:
-      "An iOS app that scans food labels for allergens. It reads ingredient lists with Apple's Vision framework and checks about 1,500 allergen keywords in six languages against the allergens you pick.",
-    links: [
-      { label: 'App Store', href: 'https://apps.apple.com/us/app/safeeats-food-scanner/id6739729515' },
-      { label: 'GitHub', href: 'https://github.com/edison16a/SafeEats' },
-    ],
-    image: '/projects/safeeats.webp',
-  },
-  {
     id: 'text-image-replacer',
     name: 'Text & Image Replacer',
     badges: ['Featured on the Chrome Web Store'],
@@ -150,6 +127,19 @@ export const projects: Project[] = [
       },
     ],
     image: '/projects/text-image-replacer.webp',
+  },
+  {
+    id: 'safeeats',
+    name: 'SafeEats',
+    badges: [],
+    stack: ['Swift', 'SwiftUI', 'Vision', 'AVFoundation'],
+    description:
+      "An iOS app that scans food labels for allergens. It reads ingredient lists with Apple's Vision framework and checks about 1,500 allergen keywords in six languages against the allergens you pick.",
+    links: [
+      { label: 'App Store', href: 'https://apps.apple.com/us/app/safeeats-food-scanner/id6739729515' },
+      { label: 'GitHub', href: 'https://github.com/edison16a/SafeEats' },
+    ],
+    image: '/projects/safeeats.webp',
   },
   {
     id: 'sunblock',
@@ -184,6 +174,16 @@ export const projects: Project[] = [
       'An AI tutor that helps students get unstuck on assignments without giving away the answer. It gives hints and asks clarifying questions instead, using the OpenAI API.',
     links: [],
     image: '/projects/clue-ai.webp',
+  },
+  {
+    id: 'personal-website',
+    name: 'Personal Website',
+    badges: [],
+    stack: ['Next.js', 'React', 'TypeScript', 'Three.js', 'React Three Fiber', 'Tailwind CSS', 'Web Audio API', 'Vercel'],
+    description:
+      'This site. A WebGL spiral of projects, 3D desk scenes in React Three Fiber, and synthesized sound and music.',
+    links: [{ label: 'GitHub', href: 'https://github.com/edison16a/edisonlaw' }],
+    image: '/projects/personal-website.webp',
   },
   {
     id: 'betterbart',
