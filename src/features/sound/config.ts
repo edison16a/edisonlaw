@@ -13,18 +13,15 @@ export interface OneShotSettings {
 
 /** The final mix. The sprite is already balanced by ear, so these are gentle trims. */
 export const SOUNDS: Record<SoundName, OneShotSettings> = {
-  tick: { volume: 0.8, throttle: 28, voices: 3 },
   hover: { volume: 0.8, throttle: 90, voices: 2 },
   tab: { volume: 0.8, throttle: 80, voices: 2 },
   toggle: { volume: 0.9, throttle: 80, voices: 2 },
   dot: { volume: 0.8, throttle: 50, voices: 3 },
   blip: { volume: 0.8, throttle: 120, voices: 2 },
-  focus: { volume: 1, throttle: 160, voices: 2 },
-  swish: { volume: 0.8, throttle: 200, voices: 1 },
   move: { volume: 0.8, throttle: 120, voices: 2, jitter: 0.012 },
 };
 
-/** Loops sit well under the one-shots: typing peaks land about 10 dB below a tick. */
+/** Loops sit well under the one-shots: typing peaks land about 10 dB below the nav tab click. */
 export const LOOPS: Record<LoopName, { volume: number }> = {
   desk: { volume: 0.4 },
   room: { volume: 0.6 },

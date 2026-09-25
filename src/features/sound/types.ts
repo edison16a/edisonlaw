@@ -1,11 +1,5 @@
 /** One-shot sounds. Every one is under half a second. */
 export type SoundName =
-  /** Spiral detent tick while scrolling past cards. */
-  | 'tick'
-  /** Low round thump when a spiral card locks into focus. */
-  | 'focus'
-  /** Faint airy swish as the project detail panel opens. */
-  | 'swish'
   /** Soft felt tap as the focus moves to another project, the one sound of the Projects section. */
   | 'move'
   /** Soft click when the nav underline slides to a new tab. */
