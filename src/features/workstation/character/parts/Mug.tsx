@@ -1,9 +1,8 @@
 'use client';
 
-import { CircleGeometry, LatheGeometry, TorusGeometry, Vector2 } from 'three';
+import { CircleGeometry, LatheGeometry, Vector2 } from 'three';
 import { useDisposable } from '../../useDisposable';
 import { MUG } from '../dimensions';
-import { mergeParts } from '../geometry/merge';
 import { useCharacterMaterials } from '../MaterialsContext';
 
 const WALL = 0.0045;
@@ -27,18 +26,10 @@ function mugBody() {
   return new LatheGeometry(points, 32);
 }
 
-/** Mug body and its handle as one piece. The handle is a half ring standing out along +X. */
-function mugShell() {
-  const handle = new TorusGeometry(0.02, 0.0062, 10, 24, Math.PI)
-    .rotateZ(-Math.PI / 2)
-    .translate(MUG.radius - 0.003, MUG.height * 0.5, 0);
-  return mergeParts([mugBody(), handle]);
-}
-
-/** A chunky ceramic mug of coffee. Its base is the origin and it stands along +Y, handle toward +X. */
+/** A chunky ceramic mug of coffee with no handle, since his fingers wrap the body. Its base is the origin and it stands along +Y. */
 export function Mug() {
   const materials = useCharacterMaterials();
-  const shell = useDisposable(mugShell);
+  const shell = useDisposable(mugBody);
   const coffee = useDisposable(() => new CircleGeometry(MUG.radius - WALL, 32).rotateX(-Math.PI / 2));
 
   return (
@@ -49,7 +40,7 @@ export function Mug() {
   );
 }
 
-/** The mug as held in the right hand: centred in the grip, axis along the thumb, handle turned toward him. */
+/** The mug as held in the right hand: centred in the grip, axis along the thumb. */
 export function HeldMug() {
   return (
     <group position={[...MUG.centerInHand]} rotation={[0, 0, -Math.PI / 2]}>
