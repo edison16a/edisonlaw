@@ -6,8 +6,7 @@ export const featuredProjectId = 'backbond';
 /**
  * Every project card in the spiral, in display order.
  * Drop a photo into /public/projects and set `image` to replace a generated cover.
- * List up to four more in `screenshots` to give a project a row of screenshots, as Backbond,
- * Standoff and Photo Craft do.
+ * List up to four more in `screenshots` to give a project a row of screenshots.
  */
 export const projects: Project[] = [
   {
@@ -20,7 +19,6 @@ export const projects: Project[] = [
       'Computational design platform for R&D. Built the core infrastructure, security and databases, plus billing, usage metering, organizations and project ingestion.',
     links: [{ label: 'backbond.net', href: 'https://backbond.net' }],
     image: '/projects/backbond.webp',
-    screenshots: ['/projects/backbond-2.webp'],
   },
   {
     id: 'standoff',
@@ -34,12 +32,6 @@ export const projects: Project[] = [
       { label: 'GitHub', href: 'https://github.com/edison16a/standoff' },
     ],
     image: '/projects/standoff.webp',
-    screenshots: [
-      '/projects/standoff-2.webp',
-      '/projects/standoff-3.webp',
-      '/projects/standoff-4.webp',
-      '/projects/standoff-5.webp',
-    ],
   },
   {
     id: 'photo-craft',
@@ -53,12 +45,6 @@ export const projects: Project[] = [
       { label: 'GitHub', href: 'https://github.com/edison16a/photo-craft' },
     ],
     image: '/projects/photo-craft.webp',
-    screenshots: [
-      '/projects/photo-craft-2.webp',
-      '/projects/photo-craft-3.webp',
-      '/projects/photo-craft-4.webp',
-      '/projects/photo-craft-5.webp',
-    ],
   },
   {
     id: 'personal-website',
@@ -91,6 +77,53 @@ export const projects: Project[] = [
       'A command line dashboard for Weighted Ensemble simulations. It tracks iteration summaries and reports molecular dynamics data. Built with the MDAnalysis and WESTPA maintainers.',
     links: [{ label: 'WESTPA on GitHub', href: 'https://github.com/westpa/westpa' }],
     image: '/projects/westpa-dashboard.webp',
+  },
+  {
+    id: 'senseplan',
+    name: 'SensePlan',
+    badges: [],
+    win: { hackathon: 'Luma A2A Agents Hackathon 2025', prizes: ['Best Use of Vapi'] },
+    stack: ['Next.js', 'React', 'TypeScript', 'Google Gemini API', 'Vapi', 'Bright Data', 'Google Calendar', 'Model Context Protocol', 'Tailwind CSS'],
+    description:
+      'An AI agent that finds local providers, from clinics to barbershops, and books appointments over real phone calls. It searches with Bright Data, makes the calls with Vapi, and adds the booking to Google Calendar. Won the Luma A2A Agents Hackathon 2025 against 130+ engineers, plus Best Use of Vapi.',
+    links: [],
+    image: '/projects/senseplan.webp',
+  },
+  {
+    id: 'flamesense',
+    name: 'FlameSense',
+    badges: [],
+    win: { hackathon: 'Los Altos Hacks 2025' },
+    stack: ['JavaScript', 'HTML', 'CSS', 'Leaflet', 'Palantir AIP'],
+    description:
+      'A wildfire spread simulator. Pick a spot on the map and a model trained in Palantir AIP on past burns predicts how the fire spreads with the live weather there, shown as a heat map. Won Los Altos Hacks 2025 against 350+ competitors.',
+    links: [{ label: 'GitHub', href: 'https://github.com/edison16a/FlameSense' }],
+    image: '/projects/flamesense.webp',
+  },
+  {
+    id: 'callsense',
+    name: 'CallSense',
+    badges: [],
+    win: { hackathon: 'Milpitas Hacks 2025' },
+    stack: ['Next.js', 'React', 'TypeScript', 'Google Gemini API', 'Web Speech API'],
+    description:
+      'A live call assistant for 911 dispatchers. It transcribes the call as it happens, and Google Gemini pulls out the key details, suggests follow-up questions and ranks incidents by priority. Won Milpitas Hacks 2025.',
+    links: [{ label: 'GitHub', href: 'https://github.com/edison16a/CallSense' }],
+    image: '/projects/callsense.webp',
+  },
+  {
+    id: 'trashgo',
+    name: 'TrashGo',
+    badges: [],
+    win: { hackathon: 'CruzHacks 2023', prizes: ['Best Lightship AR VPS Game'] },
+    stack: ['Unity', 'C#', 'Niantic Lightship', 'VPS'],
+    description:
+      'A sustainability AR game on the App Store. You pick up trash in a virtual park, then sort it into AR bins around you. Built in Unity with Niantic Lightship. Won CruzHacks 2023 and Best Lightship AR VPS Game against 650+ hackers.',
+    links: [
+      { label: 'App Store', href: 'https://apps.apple.com/us/app/trash-go/id6452390061' },
+      { label: 'GitHub', href: 'https://github.com/Aldicodi/Cruzhacks-2023-TrashGo' },
+    ],
+    image: '/projects/trashgo.webp',
   },
   {
     id: 'safeeats',
@@ -158,7 +191,7 @@ export const projects: Project[] = [
   {
     id: 'betterbart',
     name: 'BetterBART',
-    badges: ['UI mockup'],
+    badges: [],
     stack: ['Next.js', 'React', 'JavaScript', 'SVG', 'Vercel'],
     description:
       'A UI mockup of a simpler BART map and trip planner. Pick two stations and follow one clear step at a time. Train times are placeholders until it gets BART API access.',
@@ -167,52 +200,5 @@ export const projects: Project[] = [
       { label: 'GitHub', href: 'https://github.com/edison16a/BetterBart' },
     ],
     image: '/projects/betterbart.webp',
-  },
-  {
-    id: 'trashgo',
-    name: 'TrashGo',
-    badges: ['App Store'],
-    win: { hackathon: 'CruzHacks 2023', prizes: ['Best Lightship AR VPS Game'] },
-    stack: ['Unity', 'C#', 'Niantic Lightship', 'VPS'],
-    description:
-      'A sustainability AR game on the App Store. You pick up trash in a virtual park, then sort it into AR bins around you. Built in Unity with Niantic Lightship. Won CruzHacks 2023 and Best Lightship AR VPS Game against 650+ hackers.',
-    links: [
-      { label: 'App Store', href: 'https://apps.apple.com/us/app/trash-go/id6452390061' },
-      { label: 'GitHub', href: 'https://github.com/Aldicodi/Cruzhacks-2023-TrashGo' },
-    ],
-    image: '/projects/trashgo.webp',
-  },
-  {
-    id: 'senseplan',
-    name: 'SensePlan',
-    badges: [],
-    win: { hackathon: 'Luma A2A Agents Hackathon 2025', prizes: ['Best Use of Vapi'] },
-    stack: ['Next.js', 'React', 'TypeScript', 'Google Gemini API', 'Vapi', 'Bright Data', 'Google Calendar', 'Model Context Protocol', 'Tailwind CSS'],
-    description:
-      'An AI agent that finds local providers, from clinics to barbershops, and books appointments over real phone calls. It searches with Bright Data, makes the calls with Vapi, and adds the booking to Google Calendar. Won the Luma A2A Agents Hackathon 2025 against 130+ engineers, plus Best Use of Vapi.',
-    links: [],
-    image: '/projects/senseplan.webp',
-  },
-  {
-    id: 'callsense',
-    name: 'CallSense',
-    badges: [],
-    win: { hackathon: 'Milpitas Hacks 2025' },
-    stack: ['Next.js', 'React', 'TypeScript', 'Google Gemini API', 'Web Speech API'],
-    description:
-      'A live call assistant for 911 dispatchers. It transcribes the call as it happens, and Google Gemini pulls out the key details, suggests follow-up questions and ranks incidents by priority. Won Milpitas Hacks 2025.',
-    links: [{ label: 'GitHub', href: 'https://github.com/edison16a/CallSense' }],
-    image: '/projects/callsense.webp',
-  },
-  {
-    id: 'flamesense',
-    name: 'FlameSense',
-    badges: [],
-    win: { hackathon: 'Los Altos Hacks 2025' },
-    stack: ['JavaScript', 'HTML', 'CSS', 'Leaflet', 'Palantir AIP'],
-    description:
-      'A wildfire spread simulator. Pick a spot on the map and a model trained in Palantir AIP on past burns predicts how the fire spreads with the live weather there, shown as a heat map. Won Los Altos Hacks 2025 against 350+ competitors.',
-    links: [{ label: 'GitHub', href: 'https://github.com/edison16a/FlameSense' }],
-    image: '/projects/flamesense.webp',
   },
 ];

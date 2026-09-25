@@ -5,7 +5,6 @@
  *
  *   node scripts/projects/capture.mjs                     every photo
  *   node scripts/projects/capture.mjs betterbart trashgo  every photo of the projects named
- *   node scripts/projects/capture.mjs photo-craft-3       one gallery photo
  *
  * Each project has a recipe in scripts/projects/shots/<id>.mjs that returns a full resolution PNG
  * for <id>.webp, its cover. A project with a gallery (see GALLERIES) also has recipes
@@ -37,26 +36,26 @@ const PROJECTS = [
   'personal-website',
   'autolab',
   'westpa-dashboard',
+  'senseplan',
+  'flamesense',
+  'callsense',
+  'trashgo',
   'safeeats',
   'text-image-replacer',
   'sunblock',
   'poker-strategy-trainer',
   'clue-ai',
   'betterbart',
-  'trashgo',
-  'senseplan',
-  'callsense',
-  'flamesense',
 ];
 
 /** Projects with more than one photo, and how many. The first is always <id>.webp. */
-const GALLERIES = { backbond: 2, 'photo-craft': 5, standoff: 5 };
+const GALLERIES = {};
 
 /**
  * Photos made from Edison's own unpublished images (see lib/private.mjs). They are skipped,
  * keeping the committed photos, unless PROJECT_SOURCES names the folder that holds them.
  */
-const PRIVATE = ['backbond', 'backbond-2', 'autolab'];
+const PRIVATE = ['backbond', 'autolab'];
 
 /** A project's photos, named like their recipes and files. */
 const photosOf = (id) => [id, ...Array.from({ length: (GALLERIES[id] ?? 1) - 1 }, (_, i) => `${id}-${i + 2}`)];

@@ -25,7 +25,6 @@ const SETTLE = Number(process.env.SETTLE ?? 20000);
 const SHOTS = [
   { name: 'projects-spiral', width: 1440, height: 900, scroll: 0 },
   { name: 'projects-focus', width: 1440, height: 900, scroll: 0, project: 'SensePlan' },
-  { name: 'projects-gallery', width: 1440, height: 900, scroll: 0, project: 'Photo Craft' },
   { name: 'work-experience', width: 1440, height: 900, selector: '#experience', offset: 1350 },
   { name: 'about-me', width: 1440, height: 900, selector: '#about', offset: 0, settle: 90000 },
   { name: 'skills', width: 1440, height: 900, selector: '#about', offset: 1500, settle: 90000 },

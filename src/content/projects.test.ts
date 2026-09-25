@@ -30,10 +30,9 @@ describe('project pictures', () => {
     }
   });
 
-  it('give Backbond two pictures, Standoff and Photo Craft five, and every other project just its cover', () => {
-    const galleries: Record<string, number> = { backbond: 1, standoff: 4, 'photo-craft': 4 };
+  it('give every project just its cover', () => {
     for (const project of projects) {
-      expect(project.screenshots?.length ?? 0, project.id).toBe(galleries[project.id] ?? 0);
+      expect(project.screenshots, project.id).toBeUndefined();
       expect(project.image, project.id).toBe(`/projects/${project.id}.webp`);
     }
   });
