@@ -3,8 +3,9 @@ import { faceLayout, type FaceLayout } from '../anatomy/face';
 import { noseShapes } from '../anatomy/nose';
 import { PART_COUNT } from '../dimensions';
 import { Field } from '../sdf/field';
-import { buildCoatData, type CoatData } from './coatGeometry';
+import type { CoatData } from './coatGeometry';
 import { meshPart, type PartData } from './partGeometry';
+import { buildCoatData } from './sittingCoat';
 
 /** Every mesh of the dog as plain arrays, with where the face parts sit. Safe to post from a worker. */
 export interface DogData {

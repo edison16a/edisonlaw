@@ -1,11 +1,11 @@
 import { Matrix4, Vector3 } from 'three';
 import { describe, expect, it } from 'vitest';
-import { BONE, createDogRig, TAIL_BONES } from '../rig/createDogRig';
+import { BONE, COAT_BOUNDS, createDogRig, TAIL_BONES } from '../rig/createDogRig';
 import { hindLegs } from '../anatomy/legs';
 import { PART_COUNT } from '../dimensions';
 import { applyDogPose, createDogPose, dogPose } from '../rig/dogPose';
 import { Field } from '../sdf/field';
-import { buildCoatData, COAT_BOUNDS } from './coatGeometry';
+import { buildCoatData } from './sittingCoat';
 import { buildDogData } from './dogData';
 
 /** Edges not shared by exactly one triangle each way: holes, and pinches where two sheets touch. */

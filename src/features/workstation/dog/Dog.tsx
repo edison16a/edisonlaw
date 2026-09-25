@@ -1,16 +1,12 @@
 'use client';
 
-import { Suspense, use, useRef, useState } from 'react';
-import type { Group } from 'three';
-import { DogBody } from './DogBody';
+import { Suspense, use, useState } from 'react';
+import { DogModel } from './DogModel';
 import type { DogData } from './geometry/dogData';
 import { loadDogData } from './geometry/loadDogData';
-import { DogMaterialsProvider } from './MaterialsContext';
-import { DOG_PLACEMENT } from './placement';
+import { DOG_PLACEMENT, DOG_SHADOW } from './placement';
 import { createDogRig } from './rig/createDogRig';
 import { useDogMotion } from './rig/useDogMotion';
-import { Shadow } from './parts/Shadow';
-import { useFadeIn } from './useFadeIn';
 
 export interface DogProps {
   /** False freezes the idle animation, for reduced motion. */
@@ -35,16 +31,6 @@ export function Dog({ animate = true }: DogProps) {
 function LoadedDog({ animate, data: pending }: { animate: boolean; data: Promise<DogData> }) {
   const data = use(pending);
   const [rig] = useState(createDogRig);
-  const root = useRef<Group>(null);
   useDogMotion(rig, animate);
-  useFadeIn(root);
-
-  return (
-    <DogMaterialsProvider>
-      <group ref={root} name="dog" position={DOG_PLACEMENT.position} rotation-y={DOG_PLACEMENT.rotationY}>
-        <Shadow />
-        <DogBody rig={rig} data={data} />
-      </group>
-    </DogMaterialsProvider>
-  );
+  return <DogModel rig={rig} data={data} placement={DOG_PLACEMENT} shadow={DOG_SHADOW} />;
 }

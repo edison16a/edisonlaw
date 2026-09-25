@@ -2,11 +2,23 @@
 
 import { CanvasTexture, MeshBasicMaterial, PlaneGeometry } from 'three';
 import { useDisposable } from '../../useDisposable';
-import { TAIL_PATH } from '../anatomy/tail';
-import { PAWS } from '../dimensions';
 
-/** Floor area the shadow covers in dog space: X from RIGHT to LEFT, Z from BACK to FRONT. */
-const AREA = { right: -0.2, left: 0.34, back: -0.42, front: 0.26 } as const;
+/** A soft dark spot on the floor, in dog space: its centre, its half sizes along X and Z, and its darkest alpha. */
+export interface ShadowSpot {
+  x: number;
+  z: number;
+  rx: number;
+  rz: number;
+  alpha: number;
+}
+
+/** Where a pose meets the floor: the area its shadow covers in dog space, and the spots it is drawn from. */
+export interface ShadowLayout {
+  /** X from `right` to `left`, Z from `back` to `front`. */
+  area: { right: number; left: number; back: number; front: number };
+  spots: readonly ShadowSpot[];
+}
+
 /** Just above the rug and the room's baked contact shadow. */
 const HEIGHT = 0.021;
 const PIXELS_PER_METRE = 640;
@@ -25,45 +37,38 @@ function spot(ctx: CanvasRenderingContext2D, x: number, y: number, rx: number, r
   ctx.restore();
 }
 
-/**
- * The dog's own soft contact shadow: a wide pool under the seat and haunches, a darker touch under each
- * paw and hock, and a faint trail under the tail, broad enough to cover its sweep. The room bakes its
- * contact shadows in its first frames, before the dog has finished building, so the dog brings its own
- * to sit on the rug.
- */
-function createShadow() {
-  const width = Math.round((AREA.left - AREA.right) * PIXELS_PER_METRE);
-  const depth = Math.round((AREA.front - AREA.back) * PIXELS_PER_METRE);
+function createShadow({ area, spots }: ShadowLayout) {
+  const width = Math.round((area.left - area.right) * PIXELS_PER_METRE);
+  const depth = Math.round((area.front - area.back) * PIXELS_PER_METRE);
   const canvas = document.createElement('canvas');
   canvas.width = width;
   canvas.height = depth;
   const ctx = canvas.getContext('2d');
   // Canvas X runs along dog X, canvas Y from the back of the dog to the front: the plane is laid flat
   // with its top edge toward -Z.
-  const toCanvas = (x: number, z: number): [number, number] => [(x - AREA.right) * PIXELS_PER_METRE, (z - AREA.back) * PIXELS_PER_METRE];
   const metres = (value: number) => value * PIXELS_PER_METRE;
   if (ctx) {
-    spot(ctx, ...toCanvas(0, -0.06), metres(0.17), metres(0.22), 0.46);
-    for (const [x, z] of TAIL_PATH.slice(2)) spot(ctx, ...toCanvas(x, z), metres(0.05), metres(0.05), 0.2);
-    for (const side of [1, -1]) {
-      for (const [x, z] of [PAWS.front, PAWS.rear]) spot(ctx, ...toCanvas(x * side, z), metres(0.05), metres(0.058), 0.5);
-      spot(ctx, ...toCanvas(PAWS.hock[0] * side, PAWS.hock[1]), metres(0.045), metres(0.06), 0.4);
-    }
+    for (const { x, z, rx, rz, alpha } of spots) spot(ctx, metres(x - area.right), metres(z - area.back), metres(rx), metres(rz), alpha);
   }
   const texture = new CanvasTexture(canvas);
   const material = new MeshBasicMaterial({ map: texture, transparent: true, depthWrite: false, toneMapped: false });
-  const geometry = new PlaneGeometry(AREA.left - AREA.right, AREA.front - AREA.back);
+  const geometry = new PlaneGeometry(area.left - area.right, area.front - area.back);
   return { texture, material, geometry };
 }
 
-export function Shadow() {
-  const { material, geometry } = useDisposable(createShadow);
+/**
+ * The dog's own soft contact shadow, drawn from its pose's spots. The room bakes its contact shadows in
+ * its first frames, before the dog has finished building, so the dog brings its own to lie on the rug.
+ */
+export function Shadow({ layout }: { layout: ShadowLayout }) {
+  const { material, geometry } = useDisposable(() => createShadow(layout));
+  const { area } = layout;
   return (
     <mesh
       geometry={geometry}
       material={material}
       rotation-x={-Math.PI / 2}
-      position={[(AREA.left + AREA.right) / 2, HEIGHT, (AREA.front + AREA.back) / 2]}
+      position={[(area.left + area.right) / 2, HEIGHT, (area.front + area.back) / 2]}
       renderOrder={-1}
     />
   );
