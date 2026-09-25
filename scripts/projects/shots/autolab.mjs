@@ -7,8 +7,8 @@ import { CARD_HEIGHT } from '../lib/encode.mjs';
 import { dataUrl, shell } from '../lib/layouts/base.mjs';
 import { readSource } from '../lib/private.mjs';
 
-/** The drawing inside the render, faint shadow included, in its pixels. */
-const DRAWING = { x: 232, y: 17, width: 517, height: 650 };
+/** The drawing inside the render, with 2 px to spare on every side, in its pixels. */
+const DRAWING = { x: 232, y: 16, width: 507, height: 640 };
 const SOURCE = { width: 1074, height: 684 };
 /** The drawing's height on the card: 85%, so the margins above and below are 7.5% each. */
 const HEIGHT = CARD_HEIGHT * 0.85;
