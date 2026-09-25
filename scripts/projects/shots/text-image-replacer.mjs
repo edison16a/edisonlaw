@@ -166,16 +166,13 @@ export async function capture({ download, compose }) {
   const favicon = `<span style="flex: none; width: 16px; height: 16px; border-radius: 4px; background: #16181c; color: #fff; font-size: 10px; font-weight: 700; display: grid; place-items: center;">f</span>`;
   const extensions = `<span class="bw-ext-btn on">${LOGO(18)}</span>`;
   const body = browserWindow({
-    x: 90,
-    y: 64,
-    width: 1420,
-    height: 1000,
+    width: 1235,
+    height: 814,
     tab: 'fieldnotes. Weekend Reads',
     favicon,
     url: 'fieldnotes.example/weekend',
     extensions,
     page: site,
-    zoom: 1.15,
   });
 
   return { png: await compose(productShell({ background: backdrop('#cfdde9', 0.35), body, css: CSS })) };

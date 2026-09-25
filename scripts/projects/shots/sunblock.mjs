@@ -153,16 +153,13 @@ export async function capture({ download, compose }) {
   const favicon = `<span style="flex: none; width: 16px; height: 16px; border-radius: 4px; background: #c2410c; color: #fff; font-size: 10px; font-weight: 700; display: grid; place-items: center;">S</span>`;
   const extensions = `<span class="bw-ext-btn on">${SHIELD(18)}<span class="badge num">23</span></span>`;
   const body = browserWindow({
-    x: 90,
-    y: 64,
-    width: 1420,
-    height: 1000,
+    width: 1235,
+    height: 814,
     tab: 'Lemon butter cookies',
     favicon,
     url: `${DOMAIN}/lemon-butter-cookies`,
     extensions,
     page: site,
-    zoom: 1.15,
   });
 
   return { png: await compose(productShell({ background: backdrop('#ecdcc2', 0.35), body, css: CSS })) };

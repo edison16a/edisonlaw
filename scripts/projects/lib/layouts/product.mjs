@@ -9,7 +9,7 @@
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
-import { shell } from './base.mjs';
+import { MARGIN, fit, shell } from './base.mjs';
 
 const require = createRequire(import.meta.url);
 const GEIST = join(dirname(require.resolve('geist/font')), 'fonts');
@@ -104,15 +104,18 @@ export function icon(name, { size = 16, stroke = 'currentColor', width = 1.75, f
 /**
  * A desktop Chrome window in its light theme: one tab, the address bar and pinned extensions.
  * `extensions` is HTML for the pinned extension buttons at the right of the toolbar.
- * `page` fills the viewport below the toolbar. `zoom` enlarges the whole window, as a browser's
- * own zoom would, while `x`, `y`, `width` and `height` stay in card pixels.
+ * `page` fills the viewport below the toolbar. `width` and `height` are the whole window in CSS
+ * pixels, the size the page is laid out at. The window is then scaled, as a browser's own zoom
+ * would, to the largest size that keeps `margin` clear on every side, and centred on the card.
  */
-export function browserWindow({ x, y, width, height, tab, favicon, url, extensions = '', page, zoom = 1 }) {
+export function browserWindow({ width, height, tab, favicon, url, extensions = '', page, margin = MARGIN }) {
+  const box = fit(width / height, margin);
+  const zoom = box.width / width;
   const z = (value) => (value / zoom).toFixed(2);
   const [host, ...rest] = url.split('/');
   const path = rest.length ? `/${rest.join('/')}` : '';
   return `
-<div class="bw" style="zoom: ${zoom}; left: ${z(x)}px; top: ${z(y)}px; width: ${z(width)}px; height: ${z(height)}px;">
+<div class="bw" style="zoom: ${zoom}; left: ${z(box.left)}px; top: ${z(box.top)}px; width: ${width}px; height: ${height}px;">
   <div class="bw-tabs">
     <div class="bw-lights"><i></i><i></i><i></i></div>
     <div class="bw-tab">${favicon}<span>${tab}</span>${icon('x', { size: 13, width: 2 })}</div>
