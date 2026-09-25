@@ -72,18 +72,9 @@ function perceptualGain(color: Color) {
 /**
  * Writes a saturated RGB colour for `hue` into `target`, scaled by `intensity` and balanced
  * for perceived brightness. `intensity` above 1 pushes the colour into bloom range.
- * For the glowing parts themselves. Lights use writeSteadyRgb.
+ * The glowing parts call it with the clock's hue. The room lights call it once, at the resting violet.
  */
 export function writeRgb(target: Color, hue: number, intensity = 1, saturation = 1, lightness = 0.5) {
   target.setHSL(wrap(hue, 0, 1), saturation, clamp(lightness), SRGBColorSpace);
   return target.multiplyScalar(intensity * perceptualGain(target));
-}
-
-/**
- * Writes the colour of `hue` at `saturation` into `target`, scaled to exactly `level` relative
- * luminance. Lights use it so the room keeps one brightness while their tint follows the clock.
- */
-export function writeSteadyRgb(target: Color, hue: number, saturation: number, level: number) {
-  target.setHSL(wrap(hue, 0, 1), saturation, 0.5, SRGBColorSpace);
-  return target.multiplyScalar(level / Math.max(luminance(target), 1e-6));
 }

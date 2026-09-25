@@ -1,11 +1,11 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { Color } from 'three';
 import { describe, expect, expectTypeOf, it } from 'vitest';
 import type { WorkstationStageProps } from '../WorkstationStage';
 import type { DeskSceneProps } from '../scene/DeskScene';
-import { createRgbClock, FROZEN_HUE, luminance, writeRgb, writeSteadyRgb } from './rgbClock';
-import { RGB_ROOM_LIGHTS, SCREEN_LIGHT, writeRoomLightColor } from './roomLights';
-
-const HUES = Array.from({ length: 240 }, (_, step) => step / 240);
+import { createRgbClock, FROZEN_HUE, luminance, writeRgb } from './rgbClock';
+import { RGB_ROOM_LIGHTS, SCREEN_LIGHT } from './roomLights';
 
 describe('room lights', () => {
   it('take nothing from the timeline: the only thing an entry changes on the stage is the centre picture', () => {
@@ -19,44 +19,28 @@ describe('room lights', () => {
     expect(luminance(SCREEN_LIGHT.color) * SCREEN_LIGHT.intensity).toBeGreaterThan(3);
   });
 
-  it('keep each RGB light at one brightness through the whole hue cycle', () => {
-    const color = new Color();
+  it('hold every RGB light on its resting violet, at the peak the old entry pulse reached', () => {
     for (const light of RGB_ROOM_LIGHTS) {
-      for (const hue of HUES) {
-        expect(luminance(writeRoomLightColor(color, light, hue))).toBeCloseTo(light.level, 6);
-      }
+      const plain = writeRgb(new Color(), FROZEN_HUE + light.hueOffset, 1, light.saturation);
+      expect(luminance(light.color)).toBeCloseTo(luminance(plain) * 1.8, 6);
+      // The same tint as the plain violet, only stronger.
+      expect(light.color.r / light.color.b).toBeCloseTo(plain.r / plain.b, 6);
+      expect(light.color.g / light.color.b).toBeCloseTo(plain.g / plain.b, 6);
     }
   });
 
-  it('hold that brightness at the bright end: no hue of the plain cycle is brighter', () => {
-    const color = new Color();
-    for (const light of RGB_ROOM_LIGHTS) {
-      for (const hue of HUES) {
-        expect(light.level).toBeGreaterThanOrEqual(luminance(writeRgb(color, hue, 1, light.saturation)) - 1e-3);
-      }
-      // The resting violet, the dimmest part of the wheel, is lifted well above its plain strength.
-      const violet = luminance(writeRgb(color, FROZEN_HUE + light.hueOffset, 1, light.saturation));
-      expect(light.level).toBeGreaterThanOrEqual(violet * 1.8 - 1e-6);
-    }
+  it('tint the floor by the tower violet, the colour its fans rest at', () => {
+    const [tower] = RGB_ROOM_LIGHTS;
+    expect(tower.hueOffset).toBe(0);
+    expect(tower.color.b).toBeGreaterThan(tower.color.g);
+    expect(tower.color.r).toBeGreaterThan(tower.color.g);
   });
 
-  it('keep the wall and floor washes on one colour while the PC cycles', () => {
-    const washes = RGB_ROOM_LIGHTS.filter((light) => !light.cycles);
-    expect(washes).toHaveLength(2);
-    for (const light of washes) {
-      const rest = writeRoomLightColor(new Color(), light, FROZEN_HUE);
-      for (const hue of HUES) expect(writeRoomLightColor(new Color(), light, hue).equals(rest)).toBe(true);
+  it('never read the RGB clock, so the fans and strips cycling leaves the room alone', () => {
+    for (const file of ['RgbLights.tsx', 'roomLights.ts']) {
+      const source = readFileSync(join(__dirname, file), 'utf8');
+      expect(source).not.toMatch(/useRgbClock|useFrame|\.hue\b/);
     }
-  });
-
-  it('let only the tower spill follow the hue, so it matches the fans', () => {
-    const cycling = RGB_ROOM_LIGHTS.filter((light) => light.cycles);
-    expect(cycling).toHaveLength(1);
-    const [tower] = cycling;
-    const red = writeRoomLightColor(new Color(), tower, 0 - tower.hueOffset);
-    const blue = writeRoomLightColor(new Color(), tower, 2 / 3 - tower.hueOffset);
-    expect(red.r).toBeGreaterThan(red.b);
-    expect(blue.b).toBeGreaterThan(blue.r);
   });
 });
 
@@ -82,12 +66,5 @@ describe('rgb clock', () => {
       seen.add(Math.floor(clock.hue * 12));
     }
     expect(seen.size).toBe(12);
-  });
-
-  it('writes a steady colour at exactly the asked luminance', () => {
-    const color = new Color();
-    for (const saturation of [0.2, 0.55, 1]) {
-      for (const hue of HUES) expect(luminance(writeSteadyRgb(color, hue, saturation, 0.3))).toBeCloseTo(0.3, 6);
-    }
   });
 });
