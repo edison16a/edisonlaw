@@ -61,13 +61,14 @@ describe('hitBentCard', () => {
 
   it('follows the bend of a neighbour where the flat plane would not', () => {
     const { matrix, shape } = placedCard(1, 1);
-    // Just inside the far edge of the bent card, which the flat plane places elsewhere on screen.
-    const inside = onScreen(camera, matrix, shape, 0.985, 0.5);
-    const flat = onScreen(camera, matrix, { ...shape, curvature: 0 }, 0.985, 0.5);
+    // Just inside the near edge of the bent card, which the flat plane places elsewhere on screen.
+    // The far edge wraps round past where the cylinder turns away, out of sight behind the card.
+    const inside = onScreen(camera, matrix, shape, 0.015, 0.5);
+    const flat = onScreen(camera, matrix, { ...shape, curvature: 0 }, 0.015, 0.5);
     expect(Math.abs(inside.x - flat.x)).toBeGreaterThan(0.005);
     expect(hitBentCard(inside.x, inside.y, matrix, camera, shape, out)).toBe(true);
     // Just past the bent edge is a miss, although the flat plane would still reach there.
-    const past = onScreen(camera, matrix, shape, 1.015, 0.5);
+    const past = onScreen(camera, matrix, shape, -0.015, 0.5);
     expect(hitBentCard(past.x, past.y, matrix, camera, shape, out)).toBe(false);
   });
 

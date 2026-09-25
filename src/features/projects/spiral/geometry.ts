@@ -24,17 +24,25 @@ export interface CardPose extends Point3 {
   focus: number;
 }
 
-/** World size of a card at scale 1. Neighbours on one turn sit edge to edge. */
+/** World size of a card at scale 1. */
 export const CARD_WIDTH = 1.7;
 export const CARD_HEIGHT = 1;
 
 export const SPIRAL = {
   /** Distance from the axis to the cards. */
   radius: 2,
-  /** Turn between neighbouring cards, in radians. A little over seven cards per turn. */
-  step: 0.85,
-  /** Height climbed between neighbouring cards. */
-  rise: 0.5,
+  /**
+   * Turn between neighbouring cards, in radians. A little under seven cards
+   * per turn, with a clear gap of 0.18 round the cylinder between one card
+   * and the next, so each card reads on its own.
+   */
+  step: 0.94,
+  /**
+   * Height climbed between neighbouring cards. The strand keeps close to its
+   * slope as the cards spread along it, and the turns above and below stand
+   * a little further apart, with clear space between them too.
+   */
+  rise: 0.6,
   /** Height of the focus slot. */
   focusHeight: 0.12,
   /** Cards on the strand. Every project appears twice, so the loop always has cards to show. */

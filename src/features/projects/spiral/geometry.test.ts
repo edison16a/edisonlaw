@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { cardPose, createPose, FOCUS, focusWeight, slotOffset, SPIRAL } from './geometry';
+import { CARD_HEIGHT, CARD_WIDTH, cardPose, createPose, FOCUS, focusWeight, slotOffset, SPIRAL } from './geometry';
 
 describe('slotOffset', () => {
   it('measures the distance from the index in cards', () => {
@@ -77,6 +77,40 @@ describe('cardPose', () => {
     const hidden = cardPose(0, 0, 1, createPose());
     expect(hidden.z).toBeCloseTo(SPIRAL.radius / 2, 6);
     expect(hidden.y).toBeLessThan(SPIRAL.focusHeight - 1);
+  });
+});
+
+describe('spacing', () => {
+  /** How far round the axis the card `offset` cards along sits from the one after it, in radians. */
+  const turnToNext = (offset: number) => {
+    const here = cardPose(offset, 0, 0, createPose());
+    const next = cardPose(offset + 1, 0, 0, createPose());
+    const turn = Math.atan2(here.z, here.x) - Math.atan2(next.z, next.x);
+    return turn - Math.round(turn / (2 * Math.PI)) * 2 * Math.PI;
+  };
+
+  it('leaves the same clear gap between every card and the next along the strand', () => {
+    // Cards on the strand bend round the cylinder, so their edges sit half a card either side of the centre on it.
+    for (const offset of [-5, -2, -1, 0, 1, 3]) {
+      const gap = turnToNext(offset) * SPIRAL.radius - CARD_WIDTH;
+      expect(gap).toBeGreaterThan(0.15);
+      expect(gap).toBeLessThan(0.22);
+    }
+  });
+
+  it('keeps the turns above and below clear of each other wherever they overlap round the axis', () => {
+    const span = CARD_WIDTH / SPIRAL.radius;
+    let overlapping = 0;
+    for (let cards = 1; cards <= 12; cards++) {
+      const apart = Math.abs(cards * SPIRAL.step - 2 * Math.PI);
+      if (apart >= span) continue;
+      overlapping++;
+      const next = cardPose(cards, 0, 0, createPose());
+      const here = cardPose(0, 0, 0, createPose());
+      // At least two and a half card heights of empty space between them.
+      expect(here.y - next.y - CARD_HEIGHT).toBeGreaterThan(2.5 * CARD_HEIGHT);
+    }
+    expect(overlapping).toBeGreaterThan(0);
   });
 });
 
