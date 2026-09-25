@@ -1,6 +1,7 @@
 import { Vector3 } from 'three';
 import type { Vec3 } from '../../layout';
-import { ball, cone, ellipsoid, flatLock } from '../anatomy/sculpt';
+import { paw } from '../anatomy/legs';
+import { cone, ellipsoid, flatLock } from '../anatomy/sculpt';
 import { PART, PART_COUNT, TONE } from '../dimensions';
 import { Field, type Shape } from '../sdf/field';
 import { torsoForms } from './body';
@@ -51,23 +52,8 @@ const FORE = {
   lower: { elbow: [-0.14, 0.04, -0.03] as Vec3, wrist: [-0.08, 0.03, -0.03] as Vec3, paw: [-0.04, 0.024, -0.05] as Vec3 },
 } as const;
 
-/** Soft knuckles across the front of a paw that points along `toward`. */
-function toes(paw: Vec3, toward: Vector3): Shape[] {
-  const along = toward.clone().setY(0).normalize();
-  const across = new Vector3(-along.z, 0, along.x);
-  return [-1.5, -0.5, 0.5, 1.5].map((slot) => {
-    const at = new Vector3(...paw)
-      .addScaledVector(along, 0.029 - Math.abs(slot) * 0.0055)
-      .addScaledVector(across, slot * 0.0165)
-      .setY(paw[1] - 0.008 - Math.abs(slot) * 0.001);
-    return ball(at.toArray(), 0.0125, body(TONE.light, 0.008));
-  });
-}
-
-function paw(center: Vec3, from: Vec3): Shape[] {
-  const toward = new Vector3(...center).sub(new Vector3(...from));
-  return [ellipsoid(center, [0.034, 0.024, 0.041], body(TONE.light, 0.018), [0, 1, 0], toward.clone().setY(0).toArray()), ...toes(center, toward)];
-}
+/** A paw pointing on from the joint above it. */
+const pawFrom = (center: Vec3, from: Vec3) => paw(center, { toward: new Vector3(...center).sub(new Vector3(...from)).toArray() });
 
 function hindLeg({ hip, stifle, hock, paw: pawAt, haunch, face }: HindLeg): Shape[] {
   const thigh = new Vector3(...stifle).sub(new Vector3(...hip));
@@ -79,12 +65,12 @@ function hindLeg({ hip, stifle, hock, paw: pawAt, haunch, face }: HindLeg): Shap
     cone(stifle, hock, 0.038, 0.027, body(TONE.coat, 0.03)),
     // Rear pastern, from the hock forward to the paw.
     cone(hock, pawAt, 0.026, 0.024, body(TONE.light, 0.015)),
-    ...paw(pawAt, hock),
+    ...pawFrom(pawAt, hock),
   ];
 }
 
 function foreleg({ elbow, wrist, paw: pawAt }: { elbow: Vec3; wrist: Vec3; paw: Vec3 }): Shape[] {
-  return [cone(elbow, wrist, 0.036, 0.028, body(TONE.light, 0.03)), cone(wrist, pawAt, 0.028, 0.026, body(TONE.light, 0.015)), ...paw(pawAt, wrist)];
+  return [cone(elbow, wrist, 0.036, 0.028, body(TONE.light, 0.03)), cone(wrist, pawAt, 0.028, 0.026, body(TONE.light, 0.015)), ...pawFrom(pawAt, wrist)];
 }
 
 export function legForms(): Shape[] {
