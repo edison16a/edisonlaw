@@ -76,13 +76,19 @@ src/
       stage/           Spiral stage, detail panel, screenshot row and step buttons
       spiral/          Canvas, card layout, shaders, focus and motion
       input/           Wheel, swipe and arrow key steering
-      gallery/         Screenshot rows for projects that have them
+      components/      Detail panel parts, the screenshot row and the screen reader list
+      gallery/         The screenshot row's picture list, sizing and selection
+      hooks/           Layout fit, stage sizing and the opening card
+      media/           Picture loading for the cards
       mobile/          The phone swipe strip
+      sound/           The move sound
       state/           Shared spiral state
     experience/        Timeline and the reading state it shares with the desk scene
     about/             About blocks and the skills grid
     workstation/
       scene/           Room, rug and the scene itself
+      geometry/        Shared shapes such as slabs, rings and rounded paths
+      materials/       Materials and canvas textures
       props/           Desk, chair, monitors, keyboard, Apple devices, tower and decor
       character/       Edison, his rig and poses
       dog/             The golden retriever, its sculpt and rig
