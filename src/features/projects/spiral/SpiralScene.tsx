@@ -18,7 +18,6 @@ import { frameCamera } from './lens';
 import { createLensView, easeLensView } from './lensView';
 import { createPointerCursor } from './pointerCursor';
 import { isAtRest, stepMotion } from './motionStep';
-import { tickDetents } from './ticks';
 import { useCardPictures } from './useCardPictures';
 
 export interface SpiralSceneProps {
@@ -77,9 +76,7 @@ export function SpiralScene({ projects, startAt, onSelect }: SpiralSceneProps) {
   useFrame((state, rawDelta) => {
     // A long pause (a hidden tab, or the canvas resting) should not fling the spiral.
     const delta = resting.current ? 1 / 60 : Math.min(rawDelta, 0.1);
-    const previous = spiralMotion.value;
     stepMotion(spiralMotion, delta, reducedMotion);
-    tickDetents(previous, spiralMotion.value, spiralMotion.velocity, performance.now());
     const { value, velocity, settle } = spiralMotion;
     syncFocus(readFocus(value, velocity, settle, count, focus));
 

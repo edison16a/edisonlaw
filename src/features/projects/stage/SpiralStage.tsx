@@ -6,7 +6,6 @@ import type { Project } from '@/content/types';
 import { CanvasBoundary } from '@/components/three/CanvasBoundary';
 import { useInView } from '@/lib/hooks/useInView';
 import { useOpeningCard } from '../hooks/useOpeningCard';
-import { useSpiralSounds } from '../hooks/useSpiralSounds';
 import { useStageMetrics } from '../hooks/useStageMetrics';
 import { moveSpiralTo } from '../input/steering';
 import { useSpiralWheel } from '../input/useSpiralWheel';
@@ -37,7 +36,6 @@ export function SpiralStage({ projects }: { projects: Project[] }) {
   const startAt = useOpeningCard(projects);
   useStepKeys(stage);
   useSpiralWheel(stage, column);
-  useSpiralSounds();
 
   const near = useInView(stage, { rootMargin: '25% 0px' });
   const [mounted, setMounted] = useState(false);

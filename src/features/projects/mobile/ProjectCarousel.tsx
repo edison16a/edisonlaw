@@ -5,7 +5,6 @@ import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 're
 import { preload } from 'react-dom';
 import { AnimatePresence } from 'motion/react';
 import type { Project } from '@/content/types';
-import { sound } from '@/features/sound';
 import { cn } from '@/lib/cn';
 import { useReducedMotion } from '@/lib/hooks/useReducedMotion';
 import { ProjectDetails } from '../components/ProjectDetails';
@@ -15,6 +14,7 @@ import { featuredIndex } from '../featured';
 import { hasGallery, projectPictures } from '../gallery/pictures';
 import { NO_SELECTION, selectPicture, shownPicture } from '../gallery/selection';
 import { CAROUSEL_QUERY } from '../hooks/useSpiralFits';
+import { soundMove } from '../sound/moveSound';
 import { CarouselControls } from './CarouselControls';
 import { CarouselGallery } from './CarouselGallery';
 import { slideStride, useActiveSlide } from './useActiveSlide';
@@ -61,7 +61,7 @@ export function ProjectCarousel({ projects, className }: ProjectCarouselProps) {
   if (gallery.project !== null && gallery.project !== active) setGallery(NO_SELECTION);
 
   useEffect(() => {
-    if (previous.current !== active) sound.play('tick', { rate: 1.1, volume: 0.6 });
+    if (previous.current !== active) soundMove();
     previous.current = active;
   }, [active]);
 
