@@ -42,10 +42,10 @@ export function StageGallery({ projects }: { projects: Project[] }) {
           }}
           className="absolute isolate z-10 -translate-x-1/2 [--thumb:clamp(3.25rem,calc((var(--card-right)_-_var(--card-left))_*_0.125),5.5rem)]"
         >
-          {/* A soft dark pool under the row lifts it off the busy cards further down the strand. */}
+          {/* A soft dark pool under the row lifts it off the busy cards further down the strand. It fades out without a blur. */}
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute -inset-x-8 -inset-y-6 -z-10 rounded-[2rem] bg-black/75 blur-2xl"
+            className="pointer-events-none absolute -inset-x-16 -inset-y-6 -z-10 bg-[radial-gradient(closest-side,rgb(0_0_0/0.8)_60%,transparent)]"
           />
           <ScreenshotRow
             project={project}
