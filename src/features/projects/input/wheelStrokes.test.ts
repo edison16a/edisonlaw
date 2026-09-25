@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { endOf, notch, swipe } from './__tests__/wheelStreams';
+import { coalesce, endOf, notch, swipe } from './__tests__/wheelStreams';
 import { createWheelStrokes, IDLE_GAP, type WheelSample } from './wheelStrokes';
 
 /** Feeds the samples in order and returns every step they asked for, in order. */
@@ -40,6 +40,21 @@ describe('createWheelStrokes', () => {
   it('turns once for a slow swipe and a fast one alike', () => {
     expect(stepsFor(swipe({ peak: 8 }))).toEqual([1]);
     expect(stepsFor(swipe({ peak: 120, decay: 0.95 }))).toEqual([1]);
+  });
+
+  it('turns once for a fast swipe that a busy page hands over as a few big events', () => {
+    // Two, three or four frames to an event: a page held back to 30, 20 or 15 frames a second.
+    for (const frames of [2, 3, 4]) {
+      expect(stepsFor(coalesce(swipe({ peak: 45 }), frames))).toEqual([1]);
+      expect(stepsFor(coalesce(swipe({ peak: -120, decay: 0.95 }), frames))).toEqual([-1]);
+    }
+    // A flick that starts big, with an event every 33 milliseconds.
+    const flick = [50, 110, 88, 60, 38, 21, 10, 5, 2, 1].map((dy, index) => notch(index * 33, dy));
+    expect(stepsFor(flick)).toEqual([1]);
+  });
+
+  it('still counts the notches after a first event that merged a few', () => {
+    expect(stepsFor([notch(0, 200), notch(60, 100), notch(120, 100)])).toEqual([1, 1, 1]);
   });
 
   it('turns again for a second swipe after the first has stopped', () => {
