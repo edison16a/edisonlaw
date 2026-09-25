@@ -32,21 +32,21 @@ import { encodeWebp } from './lib/encode.mjs';
 /** Same order as src/content/projects.ts. */
 const PROJECTS = [
   'backbond',
+  'standoff',
+  'photo-craft',
+  'personal-website',
   'autolab',
   'westpa-dashboard',
+  'safeeats',
+  'text-image-replacer',
+  'sunblock',
+  'poker-strategy-trainer',
+  'clue-ai',
+  'betterbart',
+  'trashgo',
   'senseplan',
   'callsense',
   'flamesense',
-  'safeeats',
-  'betterbart',
-  'photo-craft',
-  'clue-ai',
-  'trashgo',
-  'text-image-replacer',
-  'sunblock',
-  'standoff',
-  'personal-website',
-  'poker-strategy-trainer',
 ];
 
 /** Projects with more than one photo, and how many. The first is always <id>.webp. */
