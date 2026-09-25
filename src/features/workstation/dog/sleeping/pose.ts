@@ -1,5 +1,5 @@
 import { Euler, Quaternion, Vector3 } from 'three';
-import { lerp } from '@/lib/math';
+import { lerp, smoothstep } from '@/lib/math';
 import { createOccurrence, noise, occurrence, smootherstep, type Recurring } from '../../character/rig/timeline';
 import { HEAD_REST } from './dimensions';
 import { SLEEP_TAIL_BONES, type SleepingRig } from './rig';
@@ -143,6 +143,13 @@ const LID_DROOP = 0.2;
  * out, so their bright white never glints through a sleeping lid.
  */
 const SHINE_OUT = 0.8;
+/**
+ * How a closing eye goes to sleep. Past `from` shut, the eye and its lid settle back into the socket, down
+ * to `depth` of their open depth front to back. At `at` they are nearly flush with the face, and give way
+ * to the line of the shut eye traced on the fur (see parts/Lids), so a sleeping eye reads as a dark
+ * crescent set into the face rather than a round button. When the lids stir it lifts a hair by `stir`.
+ */
+const SHUT_EYE = { from: 0.6, at: 0.88, depth: 0.55, stir: 2.5 } as const;
 
 /** Writes a pose onto the rig. */
 export function applySleepPose(rig: SleepingRig, pose: SleepPose) {
@@ -168,6 +175,11 @@ export function applySleepPose(rig: SleepingRig, pose: SleepPose) {
     // Each eye's own X runs toward the head's left, so the outer corner is +X on the left eye, -X on the right.
     rig.lids[side].rotation.set(lerp(LID_TURN.open, LID_TURN.shut, pose.lids), 0, -sign * LID_DROOP);
     rig.shines[side].visible = pose.lids < SHINE_OUT;
+    const shut = pose.lids >= SHUT_EYE.at;
+    rig.eyes[side].visible = !shut;
+    rig.eyes[side].scale.z = lerp(1, SHUT_EYE.depth, smoothstep(SHUT_EYE.from, SHUT_EYE.at, pose.lids));
+    rig.creases[side].visible = shut;
+    rig.creases[side].scale.y = 1 - SHUT_EYE.stir * (1 - pose.lids);
   }
 
   for (let i = 0; i < rig.tail.length; i++) {

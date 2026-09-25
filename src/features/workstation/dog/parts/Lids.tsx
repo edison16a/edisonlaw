@@ -3,8 +3,10 @@
 import { CatmullRomCurve3, CircleGeometry, Color, Float32BufferAttribute, SphereGeometry, TubeGeometry, Vector3, type Group } from 'three';
 import { useDisposable } from '../../useDisposable';
 import { mergeParts, paintSolid } from '../../character/geometry/merge';
+import type { Vec3 } from '../../layout';
 import { EYE_RADII } from '../anatomy/face';
 import { TONE } from '../dimensions';
+import { lipGeometry } from '../geometry/lipGeometry';
 import { toneColor } from '../geometry/paint';
 import { DOG_PALETTE } from '../materials';
 import { useDogMaterials } from '../MaterialsContext';
@@ -14,8 +16,8 @@ import { useDogMaterials } from '../MaterialsContext';
  * about the eye's X axis and a little larger than the eye, closed across its cut, which the pose turns
  * about X to bring it down over the eye. It turns inside a parent that flattens it front to back to the
  * eye's own depth, so at every turn it hugs the eye the way a lid does; a rigid shell as flat as the eye
- * would leave the top of the eye bare as it came down. Shut, its lower edge is a soft curve just below
- * the middle of the eye, drawn by a dark lash line, so a sleeping eye reads as a gentle closed crescent.
+ * would leave the top of the eye bare as it came down. As it closes, its lower edge is a soft curve drawn
+ * by a dark lash line; once it is shut, the eye gives way to the line of the shut eye on the fur (ShutEye).
  */
 
 /** Half sizes of the lid: a little wider than the eye across, and round about X tall enough to close over its catch lights. */
@@ -60,6 +62,23 @@ function lashGeometry() {
   });
   // Matte like the fur round it: a glossy line would catch the monitors and glint like an open eye.
   return paintSolid(new TubeGeometry(new CatmullRomCurve3(points), 48, LASH, 8, false), new Color(DOG_PALETTE.pigment));
+}
+
+/**
+ * Shut all the way, the eye and its lid sink away and only this line is left on the face: a dark crescent
+ * lying on the fur, thickest in the middle and fading out at each corner. Eye space.
+ */
+const CREASE = { radius: 0.0026, taper: 0.36 } as const;
+
+/** The line of one shut eye on its crease group, which the pose shows once the eye is shut (see sleeping/pose.ts). */
+export function ShutEye({ group, line }: { group: Group; line: Vec3[] }) {
+  const materials = useDogMaterials();
+  const geometry = useDisposable(() => paintSolid(lipGeometry(line, CREASE), new Color(DOG_PALETTE.pigment)));
+  return (
+    <primitive object={group}>
+      <mesh geometry={geometry} material={materials.ear} />
+    </primitive>
+  );
 }
 
 /** One lid on its lid group, which the pose turns about X between open and shut (see sleeping/pose.ts). */

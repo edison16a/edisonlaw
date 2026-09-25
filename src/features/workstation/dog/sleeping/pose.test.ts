@@ -115,6 +115,27 @@ describe('sleepPose', () => {
     expect(lit).toBe(true);
   });
 
+  it('shows only the line of each shut eye while it sleeps, and the eye itself once it opens', () => {
+    const rig = createSleepingRig();
+    applySleepPose(rig, sleepPose(0, 0, SLEEP_SEED, createSleepPose()));
+    expect(rig.eyes.map((eye) => eye.visible)).toEqual([false, false]);
+    expect(rig.creases.map((crease) => crease.visible)).toEqual([true, true]);
+    let opened = false;
+    sample((pose) => {
+      applySleepPose(rig, pose);
+      for (let side = 0; side < 2; side++) {
+        const eye = rig.eyes[side];
+        // Always the eye or its line, never both and never neither.
+        expect(rig.creases[side].visible).toBe(!eye.visible);
+        // It only gives way to its line once it has settled nearly flush into the face, and has all its depth back open.
+        if (!eye.visible) expect(eye.scale.z).toBeLessThan(0.6);
+        if (pose.lids < 0.6) expect(eye.scale.z).toBe(1);
+      }
+      opened ||= rig.eyes[0].visible && pose.lids < 0.5;
+    });
+    expect(opened).toBe(true);
+  });
+
   it('keeps the head in the curl, lifting only a little', () => {
     const rig = createSleepingRig();
     const rest = rig.head.position.clone();

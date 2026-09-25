@@ -19,6 +19,7 @@ export interface SleepingRig extends DogSkeleton {
   tailLifts: Vector3[];
   lids: NonNullable<DogSkeleton['lids']>;
   shines: NonNullable<DogSkeleton['shines']>;
+  creases: NonNullable<DogSkeleton['creases']>;
   /** Where the neck leaves the body, in dog space: lifting the head turns it about here. */
   neckBase: Vector3;
   /** Resting pose of the head bone and the ears, which the pose moves from. */
@@ -72,6 +73,7 @@ export function createSleepingRig(): SleepingRig {
     eyes: groupPair('dogEyeLeft', 'dogEyeRight'),
     lids: groupPair('dogLidLeft', 'dogLidRight'),
     shines: groupPair('dogShineLeft', 'dogShineRight'),
+    creases: groupPair('dogCreaseLeft', 'dogCreaseRight'),
     bones,
     restInverses,
     coatBounds: SLEEPING_COAT_BOUNDS,

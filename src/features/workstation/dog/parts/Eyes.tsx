@@ -6,7 +6,7 @@ import { mergeParts } from '../../character/geometry/merge';
 import { EYE_RADII, PUPIL, type FaceLayout } from '../anatomy/face';
 import { useDogMaterials } from '../MaterialsContext';
 import type { DogSkeleton } from '../rig/skeleton';
-import { Lid } from './Lids';
+import { Lid, ShutEye } from './Lids';
 
 /** Catch lights, placed the same on both eyes as if lit from one window. */
 const SHINES = [
@@ -31,7 +31,7 @@ function shineGeometry() {
 
 /**
  * Big, dark brown, glossy eyes with near black pupils and white catch lights, seated on the skull, with
- * lids over them when the pose has any. Head space.
+ * lids over them and the line each leaves on the face once shut when the pose has any. Head space.
  */
 export function Eyes({ rig, face }: { rig: DogSkeleton; face: FaceLayout }) {
   const materials = useDogMaterials();
@@ -52,6 +52,11 @@ export function Eyes({ rig, face }: { rig: DogSkeleton; face: FaceLayout }) {
           )}
           {rig.lids && <Lid group={rig.lids[index]} />}
         </primitive>
+      ))}
+      {rig.creases?.map((group, index) => (
+        <group key={group.name} position={face.eyes[index].position} quaternion={face.eyes[index].quaternion}>
+          <ShutEye group={group} line={face.creases[index]} />
+        </group>
       ))}
     </>
   );

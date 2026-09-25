@@ -18,6 +18,8 @@ export interface DogSkeleton {
   lids?: [Group, Group];
   /** The catch lights of each eye, left then right, which a pose with lids hides as they close. */
   shines?: [Group, Group];
+  /** The line each shut eye leaves on the face, left then right, which a pose with lids shows in place of the eye. */
+  creases?: [Group, Group];
   /** Every skinned bone, in skin index order. */
   bones: Bone[];
   /** Inverse of each bone's resting matrix in dog space, in skin index order. */
