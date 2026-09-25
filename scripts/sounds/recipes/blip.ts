@@ -3,7 +3,7 @@ import { lowpass } from '../dsp/filters';
 import { sine } from '../dsp/oscillators';
 import { reverb } from '../dsp/reverb';
 import { mix, shape } from '../dsp/signal';
-import type { OneShotRecipe } from './types';
+import type { Recipe } from './types';
 
 const SECONDS = 0.3;
 
@@ -15,8 +15,7 @@ function tone(frequency: number, seconds: number, tau: number) {
 }
 
 /** Short confirm for copying the email: two soft rising tones. */
-export const blip: OneShotRecipe = {
-  kind: 'oneShot',
+export const blip: Recipe = {
   name: 'blip',
   peakDb: -16,
   render: () => {

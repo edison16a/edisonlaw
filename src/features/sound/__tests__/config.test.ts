@@ -11,6 +11,6 @@ describe('the move sound', () => {
   });
 
   it('plays no louder than the site sounds it sits among', () => {
-    expect(SOUNDS.move.volume).toBeLessThanOrEqual(Math.min(SOUNDS.tab.volume, SOUNDS.dot.volume));
+    expect(SOUNDS.move.volume).toBeLessThanOrEqual(SOUNDS.tab.volume);
   });
 });

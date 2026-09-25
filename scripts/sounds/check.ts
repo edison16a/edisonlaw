@@ -26,7 +26,8 @@ async function main() {
 
   const rows = layout.placed.map((placed) => {
     const region = SPRITE_REGIONS[placed.recipe.name];
-    return { check: checkSound(placed, region, decoded), region, decoded };
+    const target = { name: placed.recipe.name, audio: placed.audio, start: placed.start };
+    return { check: checkSound(target, region, decoded), region, decoded };
   });
 
   for (const { check } of rows) {

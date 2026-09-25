@@ -1,5 +1,4 @@
 import { intro, skills } from '@/content/about';
-import { AmbientSection } from '@/components/layout/AmbientSection';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { WorkstationStage } from '@/features/workstation';
 import { AboutBlock } from './AboutBlock';
@@ -11,12 +10,7 @@ import { SkillGrid } from './SkillGrid';
 /** Standing scene pinned on the left, the story and details scrolling on the right. */
 export function AboutSection() {
   return (
-    <AmbientSection
-      id="about"
-      labelledBy="about-title"
-      loop="room"
-      className="relative flex flex-col lg:grid lg:grid-cols-2"
-    >
+    <section id="about" aria-labelledby="about-title" className="relative flex flex-col lg:grid lg:grid-cols-2">
       <div className="mt-nav aspect-[4/3] w-full lg:sticky lg:top-nav lg:mt-0 lg:aspect-auto lg:h-[calc(100dvh-var(--spacing-nav))]">
         <WorkstationStage variant="about" />
       </div>
@@ -43,6 +37,6 @@ export function AboutSection() {
           <ActivitiesList />
         </AboutBlock>
       </div>
-    </AmbientSection>
+    </section>
   );
 }

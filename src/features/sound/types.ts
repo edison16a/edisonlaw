@@ -13,13 +13,6 @@ export type SoundName =
   /** Toggle between spiral and list, or sound on. */
   | 'toggle';
 
-/** Ambient loops tied to a section being in view. */
-export type LoopName =
-  /** Mechanical keyboard typing plus a low PC fan hum, for Work Experience. */
-  | 'desk'
-  /** Quiet room tone with the fan hum, for About Me. */
-  | 'room';
-
 export interface PlayOptions {
   /** Playback rate, which also shifts pitch. 1 is natural. */
   rate?: number;

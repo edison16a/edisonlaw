@@ -1,22 +1,18 @@
 import { describe, expect, it } from 'vitest';
-import { LOOP_NAMES, SOUNDS } from '../config';
+import { SOUNDS } from '../config';
 import { SPRITE_REGIONS, SPRITE_URL } from '../sprite';
 
 describe('generated sprite map', () => {
   const regions = Object.entries(SPRITE_REGIONS).sort(([, a], [, b]) => a.start - b.start);
 
-  it('keeps every one-shot short and every loop 6 to 10 seconds', () => {
-    for (const [name, { duration, loop }] of regions) {
-      if (loop) expect(duration, name).toBeGreaterThanOrEqual(6000);
-      if (loop) expect(duration, name).toBeLessThanOrEqual(10000);
-      else expect(duration, name).toBeLessThan(560);
-    }
+  it('keeps every sound short', () => {
+    for (const [name, { duration }] of regions) expect(duration, name).toBeLessThan(560);
   });
 
-  it('marks exactly the loops as looping', () => {
-    const looping = regions.filter(([, region]) => region.loop).map(([name]) => name);
-    expect(looping.sort()).toEqual([...LOOP_NAMES].sort());
-    for (const name of Object.keys(SOUNDS)) expect(SPRITE_REGIONS[name as keyof typeof SOUNDS].loop).toBe(false);
+  it('holds exactly the one-shots the engine knows, and no ambient loops', () => {
+    expect(regions.map(([name]) => name).sort()).toEqual(Object.keys(SOUNDS).sort());
+    expect(Object.keys(SPRITE_REGIONS)).not.toContain('desk');
+    expect(Object.keys(SPRITE_REGIONS)).not.toContain('room');
   });
 
   it('never lets two regions overlap', () => {

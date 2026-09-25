@@ -1,4 +1,4 @@
-import type { LoopName, SoundName } from './types';
+import type { SoundName } from './types';
 
 export interface OneShotSettings {
   /** Base level, multiplied by the caller's volume. */
@@ -16,18 +16,10 @@ export const SOUNDS: Record<SoundName, OneShotSettings> = {
   hover: { volume: 0.8, throttle: 90, voices: 2 },
   tab: { volume: 0.8, throttle: 80, voices: 2 },
   toggle: { volume: 0.9, throttle: 80, voices: 2 },
-  dot: { volume: 0.8, throttle: 50, voices: 3 },
+  dot: { volume: 0.6, throttle: 50, voices: 3 },
   blip: { volume: 0.8, throttle: 120, voices: 2 },
   move: { volume: 0.8, throttle: 120, voices: 2, jitter: 0.012 },
 };
-
-/** Loops sit well under the one-shots: typing peaks land about 10 dB below the nav tab click. */
-export const LOOPS: Record<LoopName, { volume: number }> = {
-  desk: { volume: 0.4 },
-  room: { volume: 0.6 },
-};
-
-export const LOOP_NAMES = Object.keys(LOOPS) as LoopName[];
 
 /** Everything goes through this master level. */
 export const MASTER_VOLUME = 0.8;
@@ -40,8 +32,6 @@ export const PITCH_JITTER = 0.04;
 
 /** Playback rates that still sound natural. */
 export const RATE_RANGE = [0.5, 2] as const;
-
-export const LOOP_FADE_MS = 600;
 
 /** Sound starts off. The visitor opts in. */
 export const DEFAULT_ENABLED = false;

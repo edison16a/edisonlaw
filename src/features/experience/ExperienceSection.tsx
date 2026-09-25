@@ -1,16 +1,10 @@
-import { AmbientSection } from '@/components/layout/AmbientSection';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { ExperienceTimeline } from './ExperienceTimeline';
 
-/** Timeline on the left, desk scene pinned on the right, with the desk ambience while in view. */
+/** Timeline on the left, desk scene pinned on the right. */
 export function ExperienceSection() {
   return (
-    <AmbientSection
-      id="experience"
-      labelledBy="experience-title"
-      loop="desk"
-      className="relative flex flex-col lg:grid lg:grid-cols-2"
-    >
+    <section id="experience" aria-labelledby="experience-title" className="relative flex flex-col lg:grid lg:grid-cols-2">
       <ExperienceTimeline
         header={
           <SectionHeader
@@ -21,6 +15,6 @@ export function ExperienceSection() {
           />
         }
       />
-    </AmbientSection>
+    </section>
   );
 }

@@ -8,6 +8,8 @@ export interface PlotRow {
   check: SoundCheck;
   region: Region;
   decoded: Signal;
+  /** A loop shows its whole lap and a zoom across the seam. */
+  loop?: boolean;
 }
 
 const ROW = 130;
@@ -57,15 +59,15 @@ function samplesPath(samples: Signal, width: number, height: number) {
   return path(Array.from(samples, (value, i) => [(i / (samples.length - 1)) * width, height / 2 - (value * scale * height) / 2.2]));
 }
 
-function row({ check, region, decoded }: PlotRow, index: number) {
+function row({ check, region, decoded, loop = false }: PlotRow, index: number) {
   const h = ROW - 30;
   const start = region.start / 1000;
   const end = start + region.duration / 1000;
-  const margin = region.loop ? 0 : 0.01;
+  const margin = loop ? 0 : 0.01;
   const window = decoded.subarray(at(start - margin), at(end + margin));
   const clip = decoded.subarray(at(start), at(end));
   // Attack for one-shots; for loops, the last and first 8 ms of the lap, joined at the seam.
-  const zoom = region.loop
+  const zoom = loop
     ? Float32Array.from([...decoded.subarray(at(end - 0.008), at(end)), ...decoded.subarray(at(start), at(start + 0.008))])
     : decoded.subarray(at(start), at(start + 0.024));
   const lead = (margin / (end - start + 2 * margin)) * PANELS.wave;
@@ -96,7 +98,7 @@ function row({ check, region, decoded }: PlotRow, index: number) {
     <g transform="translate(${zoomX} 0)">
       <rect width="${PANELS.zoom}" height="${h}" class="panel"/>
       <line y1="${h / 2}" x2="${PANELS.zoom}" y2="${h / 2}" class="grid"/>
-      ${region.loop ? `<line x1="${PANELS.zoom / 2}" x2="${PANELS.zoom / 2}" y2="${h}" class="edge"/>` : ''}
+      ${loop ? `<line x1="${PANELS.zoom / 2}" x2="${PANELS.zoom / 2}" y2="${h}" class="edge"/>` : ''}
       <path d="${samplesPath(zoom, PANELS.zoom, h)}" class="zoom"/>
     </g>
   </g>`;

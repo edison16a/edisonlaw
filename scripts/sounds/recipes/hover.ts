@@ -1,11 +1,10 @@
 import { lowpass } from '../dsp/filters';
 import { createRandom } from '../dsp/random';
 import { softClick } from './parts/softClick';
-import type { OneShotRecipe } from './types';
+import type { Recipe } from './types';
 
 /** A barely there tick for hovering a navbar tab. */
-export const hover: OneShotRecipe = {
-  kind: 'oneShot',
+export const hover: Recipe = {
   name: 'hover',
   peakDb: -21,
   render: () =>

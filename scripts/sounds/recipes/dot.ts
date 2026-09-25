@@ -3,7 +3,7 @@ import { createRandom } from '../dsp/random';
 import { reverb } from '../dsp/reverb';
 import { mix, shape } from '../dsp/signal';
 import { softClick } from './parts/softClick';
-import type { OneShotRecipe } from './types';
+import type { Recipe } from './types';
 
 const SECONDS = 0.16;
 
@@ -11,8 +11,7 @@ const SECONDS = 0.16;
 const PITCH = 780;
 
 /** Soft knock as a timeline dot fills: a felt mallet on a small wood block, with a hint of pitch. */
-export const dot: OneShotRecipe = {
-  kind: 'oneShot',
+export const dot: Recipe = {
   name: 'dot',
   peakDb: -14,
   render: () => {

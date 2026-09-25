@@ -1,13 +1,12 @@
 import { createRandom } from '../dsp/random';
 import { mix } from '../dsp/signal';
 import { softClick } from './parts/softClick';
-import type { OneShotRecipe } from './types';
+import type { Recipe } from './types';
 
 const SECONDS = 0.12;
 
 /** Soft switch click: a rounded press, then the lighter snap of the switch settling. */
-export const toggle: OneShotRecipe = {
-  kind: 'oneShot',
+export const toggle: Recipe = {
   name: 'toggle',
   peakDb: -12,
   render: () => {

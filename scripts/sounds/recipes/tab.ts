@@ -1,10 +1,9 @@
 import { createRandom } from '../dsp/random';
 import { softClick } from './parts/softClick';
-import type { OneShotRecipe } from './types';
+import type { Recipe } from './types';
 
 /** Quick soft click as the nav underline slides: a touch brighter and fuller than the tick. */
-export const tab: OneShotRecipe = {
-  kind: 'oneShot',
+export const tab: Recipe = {
   name: 'tab',
   peakDb: -13,
   render: () =>

@@ -1,4 +1,4 @@
-import { mean, peak, rms, seamRatio, tailLevel, toDb } from './dsp/analysis';
+import { mean, peak, rms, tailLevel, toDb } from './dsp/analysis';
 import { loudestDbA } from './dsp/loudness';
 import { toSeconds } from './dsp/signal';
 import type { SpriteLayout } from './sprite';
@@ -14,11 +14,8 @@ const db = (value: number) => `${value.toFixed(1)} dB`;
 export function printReport({ buffer, placed }: SpriteLayout, bytes: number) {
   console.log(`${COLUMNS.map(cell).join('')}  edges`);
   for (const { recipe, audio } of placed) {
-    // One-shots should start and end in silence; loops should be as smooth across the seam as anywhere else.
-    const edges =
-      recipe.kind === 'loop'
-        ? `seam ${seamRatio(audio).toFixed(2)}x a step`
-        : `first ${audio[0].toFixed(3)}, tail ${toDb(tailLevel(audio)).toFixed(0)} dB`;
+    // Every sound should start and end in silence.
+    const edges = `first ${audio[0].toFixed(3)}, tail ${toDb(tailLevel(audio)).toFixed(0)} dB`;
     const values = [
       recipe.name,
       `${(toSeconds(audio.length) * 1000).toFixed(0)} ms`,

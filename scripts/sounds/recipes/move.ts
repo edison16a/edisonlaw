@@ -4,7 +4,7 @@ import { createRandom } from '../dsp/random';
 import { reverb } from '../dsp/reverb';
 import { mix, shape } from '../dsp/signal';
 import { softClick } from './parts/softClick';
-import type { OneShotRecipe } from './types';
+import type { Recipe } from './types';
 
 const SECONDS = 0.17;
 
@@ -17,8 +17,7 @@ const PITCH = 440;
  * milliseconds and has nothing above the low treble, so it stays in the
  * background however often it plays.
  */
-export const move: OneShotRecipe = {
-  kind: 'oneShot',
+export const move: Recipe = {
   name: 'move',
   peakDb: -19,
   render: () => {

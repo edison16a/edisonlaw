@@ -1,6 +1,6 @@
 import { peak, seamRatio, toDb } from '../dsp/analysis';
 import { toSamples, type Signal } from '../dsp/signal';
-import type { Placed, Region } from '../sprite';
+import type { Region } from '../sprite';
 
 /** Longest decoder delay searched for, in samples. */
 const MAX_LAG = 3000;
@@ -43,8 +43,18 @@ function energy(signal: Signal, from: number, to: number) {
 const regionSlice = (decoded: Signal, region: Region) =>
   decoded.slice(toSamples(region.start / 1000), toSamples((region.start + region.duration) / 1000));
 
-export function checkSound({ recipe, audio, start }: Placed, region: Region, decoded: Signal): SoundCheck {
-  const probe = recipe.kind === 'loop' ? audio.slice(0, toSamples(LOOP_PROBE)) : audio;
+export interface CheckTarget {
+  name: string;
+  /** The sound as rendered, before encoding. */
+  audio: Signal;
+  /** Its first sample in the encoded file. */
+  start: number;
+  /** True for a loop, which is checked at its seam instead of its edges. */
+  loop?: boolean;
+}
+
+export function checkSound({ name, audio, start, loop = false }: CheckTarget, region: Region, decoded: Signal): SoundCheck {
+  const probe = loop ? audio.slice(0, toSamples(LOOP_PROBE)) : audio;
   const delay = bestLag(probe, decoded, start);
 
   // Match levels first, so the SNR measures coding noise and not the encoder's small gain change.
@@ -57,9 +67,9 @@ export function checkSound({ recipe, audio, start }: Placed, region: Region, dec
   for (let i = 0; i < audio.length; i++) error += (audio[i] - aligned[i] * scale) ** 2;
   const snrDb = 10 * Math.log10(energy(audio, 0, audio.length) / Math.max(error, 1e-20));
   const clip = regionSlice(decoded, region);
-  const check: SoundCheck = { name: recipe.name, delay, snrDb, gainDb: toDb(1 / scale), peakDb: toDb(peak(clip)) };
+  const check: SoundCheck = { name, delay, snrDb, gainDb: toDb(1 / scale), peakDb: toDb(peak(clip)) };
 
-  if (recipe.kind === 'loop') return { ...check, seam: seamRatio(clip) };
+  if (loop) return { ...check, seam: seamRatio(clip) };
   const from = start + delay;
   const margin = toSamples(0.1);
   const regionStart = toSamples(region.start / 1000);

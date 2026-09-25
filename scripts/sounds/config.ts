@@ -13,9 +13,6 @@ export const BITRATE = 112;
 export const LEAD_IN = 0.1;
 export const GAP = 0.2;
 
-/** Wraparound copy on each side of a loop, so a decoder that lands a little off still loops cleanly. */
-export const LOOP_PAD = 0.05;
-
 /**
  * MP3 decoders put this many samples of delay before the first real one: LAME's 576 sample
  * encoder delay plus the 529 sample delay of the decoder filter bank.
@@ -30,6 +27,5 @@ export const DECODER_DELAY = 1105;
 export const REGION_LEAD = 0.013;
 export const REGION_TAIL = 0.02;
 
-/** Hard limits the recipes are checked against. */
+/** Longest a sprite sound may be, in seconds. */
 export const MAX_ONE_SHOT = 0.5;
-export const LOOP_RANGE = [6, 10] as const;

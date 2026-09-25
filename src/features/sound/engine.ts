@@ -1,11 +1,11 @@
 import { clamp } from '@/lib/math';
 import type { AudioBackend } from './backend/types';
-import { LOOP_FADE_MS, LOOP_NAMES, LOOPS, MAX_VOICES, SOUNDS, TOGGLE_FEEDBACK_MS } from './config';
+import { MAX_VOICES, SOUNDS, TOGGLE_FEEDBACK_MS } from './config';
 import { jitterRate } from './jitter';
 import { saveSoundPreference } from './persistence';
 import { SPRITE_REGIONS } from './sprite';
 import { createThrottle } from './throttle';
-import type { LoopName, PlayOptions, SoundName } from './types';
+import type { PlayOptions, SoundName } from './types';
 import { createVoiceLimiter } from './voices';
 
 type Listener = () => void;
@@ -19,22 +19,12 @@ let loading = false;
 /** A "sound on" click still plays if the sprite arrives before this time. */
 let toggleFeedbackUntil = 0;
 
-const requestedLoops = new Set<LoopName>();
 const listeners = new Set<Listener>();
 const throttle = createThrottle((name: SoundName) => SOUNDS[name].throttle);
 const voices = createVoiceLimiter(MAX_VOICES, (name: SoundName) => SOUNDS[name].voices);
 
 function emit() {
   listeners.forEach((listener) => listener());
-}
-
-/** Fades every loop toward where it should be right now. The backend ignores repeats. */
-function syncLoops() {
-  if (!backend) return;
-  for (const name of LOOP_NAMES) {
-    const audible = enabled && visible && requestedLoops.has(name);
-    backend.fadeLoop(name, audible ? LOOPS[name].volume : 0, LOOP_FADE_MS);
-  }
 }
 
 /** Loads Howler and the sprite on first need. Its own chunk, so the page never pays for it up front. */
@@ -46,7 +36,6 @@ function ensureBackend() {
     .then((ready) => {
       backend = ready;
       if (performance.now() < toggleFeedbackUntil) sound.play('toggle');
-      syncLoops();
     })
     .catch((error: unknown) => {
       // Sound is a nicety: stay silent, and try again on the next switch on.
@@ -76,14 +65,6 @@ export const sound = {
     }
   },
 
-  /** Asks for an ambient loop to be on or off. Safe to call every render. */
-  setLoop(name: LoopName, active: boolean) {
-    if (requestedLoops.has(name) === active) return;
-    if (active) requestedLoops.add(name);
-    else requestedLoops.delete(name);
-    syncLoops();
-  },
-
   isEnabled() {
     return enabled;
   },
@@ -101,7 +82,6 @@ export const sound = {
       if (backend) sound.play('toggle');
       else ensureBackend();
     }
-    syncLoops();
     emit();
   },
 
@@ -120,7 +100,6 @@ export const soundLifecycle = {
     if (value === enabled) return;
     enabled = value;
     ensureBackend();
-    syncLoops();
     emit();
   },
 
@@ -133,6 +112,5 @@ export const soundLifecycle = {
   setVisible(value: boolean) {
     if (value === visible) return;
     visible = value;
-    syncLoops();
   },
 };
