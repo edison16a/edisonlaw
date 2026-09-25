@@ -5,6 +5,7 @@ import { hindLegs } from '../anatomy/legs';
 import { PART_COUNT } from '../dimensions';
 import { applyDogPose, createDogPose, dogPose } from '../rig/dogPose';
 import { Field } from '../sdf/field';
+import { chainInfluences } from './coatGeometry';
 import { buildCoatData } from './sittingCoat';
 import { buildDogData } from './dogData';
 import { openEdges, skinCoat } from './meshChecks';
@@ -84,4 +85,29 @@ describe('the built dog', () => {
     });
     expect(checked / idle.length).toBeGreaterThan(500);
   }, 60000);
+});
+
+describe('chainInfluences', () => {
+  /** The bones a point `param` joints along a chain of six takes its share from, with their weights. */
+  const at = (param: number) =>
+    Object.fromEntries(
+      chainInfluences(1, param, 4, 6)
+        .filter(({ weight }) => weight > 1e-9)
+        .map(({ bone, weight }) => [bone, +weight.toFixed(6)]),
+    );
+
+  it('gives each stretch of the chain to the bone at its start, and splits it round each joint', () => {
+    expect(at(0.3)).toEqual({ 4: 1 });
+    expect(at(1.5)).toEqual({ 5: 1 });
+    expect(at(2)).toEqual({ 5: 0.5, 6: 0.5 });
+    expect(at(5.6)).toEqual({ 9: 1 });
+  });
+
+  it('hands over the whole share and never a negative one', () => {
+    for (let param = 0; param <= 6; param += 0.05) {
+      const list = chainInfluences(0.7, param, 0, 6);
+      for (const { weight } of list) expect(weight).toBeGreaterThanOrEqual(0);
+      expect(list.reduce((sum, { weight }) => sum + weight, 0)).toBeCloseTo(0.7, 9);
+    }
+  });
 });

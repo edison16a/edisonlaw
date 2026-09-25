@@ -78,16 +78,17 @@ export function pathParam(point: Vector3, path: readonly Vec3[]) {
 }
 
 /**
- * Hands `share` of a point `param` joints along a chain of `count` bones, the first of them `first`,
- * smoothly from joint to joint.
+ * Hands `share` of a point `param` joints along a chain of `count` bones, the first of them `first`:
+ * each bone carries the stretch from its own joint to the next, and hands over smoothly round each joint.
  */
 export function chainInfluences(share: number, param: number, first: number, count: number): Influence[] {
   const list: Influence[] = [];
-  let previous = 1;
-  for (let joint = 1; joint <= count; joint++) {
-    const next = joint < count ? 1 - smoothstep(joint - 0.35, joint + 0.35, param) : 0;
-    list.push({ bone: first + joint - 1, weight: share * (previous - next) });
-    previous = next;
+  // How much of the point is left for the bones past the one before.
+  let left = 1;
+  for (let bone = 0; bone < count; bone++) {
+    const past = bone < count - 1 ? smoothstep(bone + 0.65, bone + 1.35, param) : 0;
+    list.push({ bone: first + bone, weight: share * (left - past) });
+    left = past;
   }
   return list;
 }
