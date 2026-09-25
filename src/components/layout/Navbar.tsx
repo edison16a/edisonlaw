@@ -13,7 +13,7 @@ export function Navbar() {
   const lenis = useLenis();
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 h-nav border-b border-grey-900 bg-black/85 backdrop-blur-md">
+    <header className="fixed inset-x-0 top-0 z-50 h-nav bg-black/85 backdrop-blur-md">
       <nav aria-label="Sections" className="gutter flex h-full items-center justify-between">
         <a
           href="#top"
