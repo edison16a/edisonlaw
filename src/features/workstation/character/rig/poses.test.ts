@@ -1,5 +1,11 @@
-import { Group, Vector3 } from 'three';
+import { Group, Matrix4, Vector3 } from 'three';
 import { describe, expect, it } from 'vitest';
+import { headForms, headFur } from '../../dog/anatomy/head';
+import { HEAD as DOG_HEAD, PART_COUNT } from '../../dog/dimensions';
+import { DOG_PLACEMENT } from '../../dog/placement';
+import { createDogRig } from '../../dog/rig/createDogRig';
+import { applyDogPose, createDogPose, dogPose } from '../../dog/rig/dogPose';
+import { Field } from '../../dog/sdf/field';
 import { CHAIR, DOG_PAT_POINT, ROOM } from '../../layout';
 import { BODY, HAND } from '../dimensions';
 import { SEATED_PLACEMENT, STANDING_PLACEMENT, type Placement } from '../placement';
@@ -31,14 +37,39 @@ function mount(placement: Placement) {
 }
 
 /** Poses the rig at time `t` and brings every world matrix up to date. */
-function poseAt(layer: PoseLayer, seed: number, t: number, rig: Rig, root: Group, pose: BodyPose) {
-  layer(t, 1, seed, pose);
+function poseAt(layer: PoseLayer, seed: number, t: number, rig: Rig, root: Group, pose: BodyPose, motion = 1) {
+  layer(t, motion, seed, pose);
   applyBodyPose(rig, pose);
   root.updateMatrixWorld(true);
 }
 
 /** Middle of the left palm's skin, the point that rests on the dog's head (as in petting.ts). */
 const PALM = new Vector3(0, -HAND.palmLength * 0.56, -0.0156);
+/** The dog's own rhythm, as in dog/rig/useDogMotion.ts. */
+const DOG_SEED = 53;
+
+/**
+ * Room space into the dog's head space at each moment of its own clock, as Dog.tsx seats it and
+ * useDogMotion poses it. Only the start of the clock when it holds still.
+ */
+function dogHeadFrames(motion: number) {
+  const dog = createDogRig();
+  const root = new Group();
+  root.position.set(...DOG_PLACEMENT.position);
+  root.rotation.y = DOG_PLACEMENT.rotationY;
+  root.add(dog.root);
+  const pose = createDogPose();
+  // Head space sits at headOrigin in the head bone's space, as in DogBody.tsx.
+  const fromOrigin = new Matrix4().makeTranslation(dog.headOrigin.clone().negate());
+  const frames: Matrix4[] = [];
+  for (let t = 0; t < (motion ? 60 : 0.1); t += 0.4) {
+    applyDogPose(dog, dogPose(t, motion, DOG_SEED, pose));
+    root.updateMatrixWorld(true);
+    frames.push(dog.head.matrixWorld.clone().invert().premultiply(fromOrigin));
+  }
+  return frames;
+}
+
 /** Back of the heel and tip of the toe under the sneaker, in the foot bone's space with the shoe's scale in Leg.tsx. */
 const SOLE = [new Vector3(0, -BODY.ankle, -0.03 * 1.14), new Vector3(0, -BODY.ankle, 0.124 * 1.14)];
 
@@ -54,6 +85,29 @@ describe('standing pose', () => {
       poseAt(standingPose, 29, t, rig, root, pose);
       // The palm strokes a couple of centimetres each way from the pat point.
       expect(point.copy(PALM).applyMatrix4(rig.arms.left.end.matrixWorld).distanceTo(pat)).toBeLessThan(0.03);
+    }
+  });
+
+  it('rests the palm in the dog fur however either of them moves', () => {
+    const fur = new Field([...headForms(), ...headFur()], PART_COUNT);
+    for (const motion of [0, 1]) {
+      // His strokes and the dog's looks run on clocks of their own, so every pairing of the two counts.
+      const heads = dogHeadFrames(motion);
+      let deepest = Infinity;
+      let highest = -Infinity;
+      for (let t = 0; t < (motion ? 90 : 0.1); t += 0.15) {
+        poseAt(standingPose, 29, t, rig, root, pose, motion);
+        const palm = PALM.clone().applyMatrix4(rig.arms.left.end.matrixWorld);
+        for (const toHead of heads) {
+          point.copy(palm).applyMatrix4(toHead);
+          const gap = fur.distance(point.x, point.y, point.z) * DOG_HEAD.scale;
+          deepest = Math.min(deepest, gap);
+          highest = Math.max(highest, gap);
+        }
+      }
+      // Pressed a few millimetres into the fur at most, and never lifting off it.
+      expect(deepest).toBeGreaterThan(-0.006);
+      expect(highest).toBeLessThan(0.0015);
     }
   });
 
