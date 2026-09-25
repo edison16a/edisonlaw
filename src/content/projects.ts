@@ -128,7 +128,7 @@ export const projects: Project[] = [
   {
     id: 'safeeats',
     name: 'SafeEats',
-    badges: ['App Store'],
+    badges: [],
     stack: ['Swift', 'SwiftUI', 'Vision', 'AVFoundation'],
     description:
       "An iOS app that scans food labels for allergens. It reads ingredient lists with Apple's Vision framework and checks about 1,500 allergen keywords in six languages against the allergens you pick.",
