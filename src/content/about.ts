@@ -42,7 +42,7 @@ export const skills: SkillGroup[] = [
   },
   {
     category: 'Web & Backend',
-    items: ['React', 'Next.js', 'React Native', 'Node.js', 'FastAPI', 'Flask', 'Flutter', 'REST APIs'],
+    items: ['React', 'Next.js', 'React Native', 'Node.js', 'FastAPI', 'Flask', 'Flutter', 'REST APIs', 'WebSockets'],
   },
   { category: 'Databases', items: ['PostgreSQL', 'Supabase', 'Cloud SQL'] },
   {

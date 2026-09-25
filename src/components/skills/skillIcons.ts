@@ -48,6 +48,7 @@ import { BracesGlyph, DatabaseGlyph, EyeGlyph, MapPinGlyph } from './glyphs';
  *   The aws-icons package (MIT, from AWS's official set) for SES and SNS. Devicon for Chrome. Vapi,
  *   Bright Data, Niantic Spatial and SwiftUI come from each product's own site.
  *   MDAnalysis is traced from the project's own logo, with its black half drawn light for the dark UI.
+ *   The gilbarbara logos set (CC0) for the WebSocket logo, drawn white like other black marks.
  * letter: a single display letter, for WESTPA.
  * glyph: a line icon for concepts that have no logo at all, like SQL and REST.
  */
@@ -90,6 +91,7 @@ const ICONS: Record<string, SkillIcon> = {
   Flask: brand(siFlask),
   Flutter: brand(siFlutter),
   'REST APIs': glyph(BracesGlyph, 'F4B942'),
+  WebSockets: logo('websocket'),
   PostgreSQL: brand(siPostgresql),
   Supabase: brand(siSupabase),
   'Cloud SQL': logo('cloudsql'),
