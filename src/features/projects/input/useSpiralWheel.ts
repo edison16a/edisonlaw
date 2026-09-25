@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, type RefObject } from 'react';
+import { isZoomWheel } from '@/lib/zoomWheel';
 import { SIDE_PANEL_QUERY } from '../hooks/useStageMetrics';
 import { WHEEL_LEAD } from '../spiral/loop';
 import { useSpiralStore } from '../state/spiralStore';
@@ -20,7 +21,7 @@ function navBottom() {
  * Every notch of a quick spin counts, up to WHEEL_LEAD projects ahead.
  * Down, or a swipe to the left, brings the next project. Over the detail
  * panel, and whenever the stage is not in full view, the wheel scrolls the
- * page as usual. Pinches and ctrl with the wheel still zoom.
+ * page as usual. Pinches, and the wheel with ctrl or Cmd held, still zoom.
  *
  * It listens on the window before anything else, so it also sees page scrolls
  * that begin elsewhere and glide up to the spiral, and it stops the events it
@@ -53,7 +54,7 @@ export function useSpiralWheel(stage: RefObject<HTMLElement | null>, column: Ref
     };
 
     const onWheel = (event: WheelEvent) => {
-      if (event.ctrlKey) return;
+      if (isZoomWheel(event)) return;
       const read = gesture.read(sampleOf(event), () => capturable(event));
       if (!read.capture) return;
       event.preventDefault();
