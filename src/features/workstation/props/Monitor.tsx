@@ -30,7 +30,7 @@ interface MonitorProps {
  */
 export function Monitor({ slot, screen, live }: MonitorProps) {
   const materials = getMaterials();
-  const { texture } = useScreenTexture(screen, { animate: live });
+  const texture = useScreenTexture(screen, { animate: live });
   const index = Math.max(0, MONITORS.findIndex((monitor) => monitor.slot === slot));
   const spec = MONITORS[index];
   const { screenWidth: w, screenHeight: h, bezel, depth } = MONITOR;
