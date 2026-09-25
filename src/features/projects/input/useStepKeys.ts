@@ -29,6 +29,13 @@ function isOnScreen(node: HTMLElement) {
  */
 export function useStepKeys(stage: RefObject<HTMLElement | null>) {
   useEffect(() => {
+    // Whether the element with focus got it from the keyboard. It is read as focus arrives,
+    // because once a key goes down Chrome counts every focus as keyboard focus and shows it.
+    let byKeyboard = false;
+    const onFocusIn = (event: FocusEvent) => {
+      byKeyboard = event.target instanceof Element && event.target.matches(':focus-visible');
+    };
+
     const onKeyDown = (event: KeyboardEvent) => {
       const direction = STEPS[event.key];
       if (!direction || event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
@@ -36,15 +43,21 @@ export function useStepKeys(stage: RefObject<HTMLElement | null>) {
       if (!node || isEditable(event.target) || !isOnScreen(node)) return;
       event.preventDefault();
       stepSpiral(direction);
-      // A focused link in the panel or screenshot in the row leaves with its project,
-      // so focus moves to the step button for this direction.
+      // A focused link in the panel or screenshot in the row leaves with its project. Keyboard
+      // focus moves to the step button for this direction. Focus the mouse gave just lets go,
+      // so no button shows for someone who never tabbed to one.
       const focused = event.target;
       if (focused instanceof HTMLElement && node.contains(focused) && !focused.dataset.step) {
-        node.querySelector<HTMLElement>(`[data-step="${direction}"]`)?.focus();
+        if (byKeyboard) node.querySelector<HTMLElement>(`[data-step="${direction}"]`)?.focus();
+        else focused.blur();
       }
     };
 
+    window.addEventListener('focusin', onFocusIn);
     window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
+    return () => {
+      window.removeEventListener('focusin', onFocusIn);
+      window.removeEventListener('keydown', onKeyDown);
+    };
   }, [stage]);
 }
