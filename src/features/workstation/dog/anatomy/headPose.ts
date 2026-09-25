@@ -28,7 +28,7 @@ let crown: Vector3 | null = null;
  * out furthest toward the palm, which faces down and leans in from his side (HEAD.contactLean). Found by
  * tracing the skull in a fan of directions and keeping the best hit.
  */
-export function headCrown(): Vector3 {
+function headCrown(): Vector3 {
   if (crown) return crown.clone();
   const field = new Field(headForms(), PART_COUNT);
   const up = towardPalm().applyQuaternion(restRotation().invert());

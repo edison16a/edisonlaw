@@ -14,7 +14,7 @@ import { cone, ellipsoid } from './sculpt';
 const body = (tone: number, blend: number) => ({ tone, blend, part: PART.body });
 
 /** Up and forward for a form risen `angle` radians from level, front end up. */
-export function risen(angle: number): [up: Vec3, forward: Vec3] {
+function risen(angle: number): [up: Vec3, forward: Vec3] {
   return [
     [0, Math.cos(angle), -Math.sin(angle)],
     [0, Math.sin(angle), Math.cos(angle)],
