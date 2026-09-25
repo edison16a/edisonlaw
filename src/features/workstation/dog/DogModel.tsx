@@ -26,7 +26,7 @@ export function DogModel({ rig, data, placement, shadow }: DogModelProps) {
   useFadeIn(root);
 
   return (
-    <DogMaterialsProvider>
+    <DogMaterialsProvider coatLight={placement.coatLight}>
       <group ref={root} name="dog" position={placement.position} rotation-y={placement.rotationY}>
         <Shadow layout={shadow} />
         <DogBody rig={rig} data={data} />

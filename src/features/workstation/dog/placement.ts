@@ -2,6 +2,7 @@ import { Vector3 } from 'three';
 import { DOG_PAT_POINT, type Vec3 } from '../layout';
 import { TAIL_PATH } from './anatomy/tail';
 import { HEAD, PAWS } from './dimensions';
+import type { CoatLight } from './materials';
 import type { ShadowLayout } from './parts/Shadow';
 
 /**
@@ -11,6 +12,8 @@ import type { ShadowLayout } from './parts/Shadow';
 export interface DogPlacement {
   position: Vec3;
   rotationY: number;
+  /** Keeps the coat golden under coloured light where the dog lies. Without it the coat is lit as painted. */
+  coatLight?: CoatLight;
 }
 
 /**
