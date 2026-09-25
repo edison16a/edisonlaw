@@ -84,8 +84,9 @@ export function pettingHand(t: number, motion: number, seed: number, out: LimbGo
   along.copy(FINGERS).addScaledVector(normal, -FINGERS.dot(normal)).normalize();
   aimRotation(along, normal, out.rotation);
   jointFor(contact, out.rotation, PALM, out.target);
-  // The elbow bends straight back, so the forearm angles forward into the hand.
-  out.pole.set(0.05, -0.05, -1);
+  // The sitting dog's head is at his waist, so the upper arm hangs down by his side and the elbow bends
+  // down and a little back, with the forearm reaching out across to the head.
+  out.pole.set(0.2, -1, -0.5);
 }
 
 /** Finger curls while petting: curled over the crown, pressing a touch on the push, scratching at rest. */
