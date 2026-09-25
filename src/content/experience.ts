@@ -101,7 +101,7 @@ export const experience: Experience[] = [
     start: { year: 2022, month: 9 },
     end: 'present',
     points: [
-      'Built, launched and iterated on 10+ mobile apps and browser extensions used by 5,000+ people across many releases, including education, productivity and food allergy tools.',
+      'Built, launched and iterated on 10+ mobile apps and browser extensions used by 10,000+ people across many releases, including education, productivity and food allergy tools.',
       'Several extensions were featured by Google.',
     ],
     screen: 'apps',
