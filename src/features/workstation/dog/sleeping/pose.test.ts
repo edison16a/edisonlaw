@@ -67,6 +67,15 @@ describe('sleepPose', () => {
     expect(widest).toBeGreaterThan(0.35);
   });
 
+  it('stays sound asleep through its first spell, when the room first comes into view', () => {
+    const pose = createSleepPose();
+    for (let t = 0; t < 20; t += 0.1) {
+      sleepPose(t, 1, SLEEP_SEED, pose);
+      expect(pose.lift).toBe(0);
+      expect(pose.lids).toBeGreaterThan(0.9);
+    }
+  });
+
   it('only ever opens its eyes while its head is up', () => {
     sample((pose) => {
       if (pose.lids < 0.85) expect(pose.lift).toBeGreaterThan(0.8);
