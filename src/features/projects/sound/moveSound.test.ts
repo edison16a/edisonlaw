@@ -3,19 +3,25 @@ import { createMoveSound, GESTURE_GAP, SOFTER, SOFTER_WITHIN } from './moveSound
 
 /**
  * Plays out moves at the given times, with something still moving every
- * frame through each of the `busy` spans, and returns the volume of every
- * sound they played.
+ * frame through each of the `busy` spans and a new touch at each of the
+ * `touches`, and returns the volume of every sound they played.
  */
-function volumesFor(moves: number[], busy: [number, number][] = []) {
+function volumesFor(moves: number[], busy: [number, number][] = [], touches: number[] = []) {
   const played: number[] = [];
   const sound = createMoveSound((volume) => played.push(volume));
   const frames = busy.flatMap(([from, to]) => Array.from({ length: Math.floor((to - from) / 16) + 1 }, (_, frame) => from + frame * 16));
-  const events = [...moves.map((time) => ({ time, move: true })), ...frames.map((time) => ({ time, move: false }))];
-  // A move and a frame at the same moment: the frame comes first, as a scroll event does.
-  events.sort((a, b) => a.time - b.time || Number(a.move) - Number(b.move));
-  for (const { time, move } of events) {
-    if (move) sound.move(time);
-    else sound.hold(time);
+  // At the same moment a touch comes first, then a frame, as a scroll event does, then a move.
+  const order = { touch: 0, frame: 1, move: 2 };
+  const events = [
+    ...touches.map((time) => ({ time, kind: 'touch' as const })),
+    ...frames.map((time) => ({ time, kind: 'frame' as const })),
+    ...moves.map((time) => ({ time, kind: 'move' as const })),
+  ];
+  events.sort((a, b) => a.time - b.time || order[a.kind] - order[b.kind]);
+  for (const { time, kind } of events) {
+    if (kind === 'touch') sound.endGlide();
+    else if (kind === 'frame') sound.hold(time);
+    else sound.move(time);
   }
   return played;
 }
@@ -58,6 +64,24 @@ describe('createMoveSound', () => {
       [2000, 2300],
     ];
     expect(volumesFor([150, 2150], spans)).toEqual([1, 1]);
+  });
+
+  it('sounds for each flick of the strip, however soon after the last glide it begins', () => {
+    // Three flicks, each gliding for half a second and resting 150 ms before the next.
+    const spans: [number, number][] = [
+      [0, 500],
+      [650, 1150],
+      [1300, 1800],
+    ];
+    // Scrolling alone would hold the first gesture open across each short rest. The touch ends it.
+    expect(volumesFor([150, 800, 1450], spans)).toEqual([1]);
+    expect(volumesFor([150, 800, 1450], spans, [0, 650, 1300])).toEqual([1, 1, 1]);
+    // A flick that catches the strip while it still glides.
+    expect(volumesFor([150, 700], [[0, 1200]], [0, 600])).toEqual([1, SOFTER]);
+  });
+
+  it('still joins taps closer together than a gesture', () => {
+    expect(volumesFor([150, 300], [[0, 600]], [0, 200])).toEqual([1]);
   });
 
   it('pays no heed to scrolling before the strip reaches another project', () => {

@@ -14,6 +14,7 @@ import { featuredIndex } from '../featured';
 import { hasGallery, projectPictures } from '../gallery/pictures';
 import { NO_SELECTION, selectPicture, shownPicture } from '../gallery/selection';
 import { CAROUSEL_QUERY } from '../hooks/useSpiralFits';
+import { endMoveGlide } from '../sound/moveSound';
 import { CarouselControls } from './CarouselControls';
 import { CarouselGallery } from './CarouselGallery';
 import { slideStride, useActiveSlide } from './useActiveSlide';
@@ -66,6 +67,8 @@ export function ProjectCarousel({ projects, className }: ProjectCarouselProps) {
       const node = strip.current;
       if (!node) return;
       const target = Math.min(projects.length - 1, Math.max(0, index));
+      // A button or a key starts a move of its own, even while the strip still glides.
+      endMoveGlide();
       node.scrollTo({ left: target * slideStride(node), behavior: reducedMotion ? 'auto' : 'smooth' });
     },
     [projects.length, reducedMotion],

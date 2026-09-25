@@ -16,25 +16,36 @@ export const SOFTER = 0.6;
  * `play`, so it is unit tested.
  */
 export function createMoveSound(play: (volume: number) => void) {
-  /** The gesture that sounded last goes on until this time. */
-  let liveUntil = -Infinity;
+  /** A move before this time, in milliseconds, belongs to the last move's gesture. */
+  let movedUntil = -Infinity;
+  /** So does a move before this time, while the strip still glides on from that gesture. */
+  let glideUntil = -Infinity;
   let lastSound = -Infinity;
 
   return {
     /** The focused project changed at `now`, however it moved. */
     move(now: number) {
-      const live = now < liveUntil;
-      liveUntil = now + GESTURE_GAP;
+      const live = now < Math.max(movedUntil, glideUntil);
+      movedUntil = now + GESTURE_GAP;
+      glideUntil = movedUntil;
       if (live) return;
       play(now - lastSound < SOFTER_WITHIN ? SOFTER : 1);
       lastSound = now;
     },
     /**
-     * Something still moves at `now`. A gesture that has sounded stays one
-     * gesture while it moves, however slowly it passes the last projects.
+     * Something still moves at `now`. A gesture stays one gesture while it
+     * glides on, however slowly it passes the last projects.
      */
     hold(now: number) {
-      if (now < liveUntil) liveUntil = now + GESTURE_GAP;
+      if (now < glideUntil) glideUntil = now + GESTURE_GAP;
+    },
+    /**
+     * A new touch, tap or swipe begins. What moves from here on is its own
+     * doing, not the last gesture gliding on, so only the gap between moves
+     * still joins them.
+     */
+    endGlide() {
+      glideUntil = -Infinity;
     },
   };
 }
@@ -46,7 +57,12 @@ export function soundMove() {
   moveSound.move(performance.now());
 }
 
-/** Keeps the gesture that sounded last going, for the phone strip while it scrolls. */
+/** Keeps the last move's gesture going, for the phone strip while it scrolls. */
 export function holdMove() {
   moveSound.hold(performance.now());
+}
+
+/** Stops the phone strip's scrolling from holding the last gesture open, as a new one begins. */
+export function endMoveGlide() {
+  moveSound.endGlide();
 }
