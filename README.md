@@ -6,7 +6,7 @@ This is Edison Law's personal website. Edison studies Bioengineering at UC Berke
 - **Work Experience.** A timeline next to a 3D model of Edison seated at his desk at night, typing. The centre monitor changes to match the job you are reading, while the room's lighting stays the same.
 - **About Me.** The same room with Edison standing by the desk with a coffee, petting his golden retriever as it sits beside him, next to his intro, contact links, education, skills, honors and activities.
 
-The page is black and white in one typeface, Satoshi. Colour only shows up inside the 3D scenes, in the project photos and in the skill logos. Once you turn sound on, soft sounds made from scratch play as the projects turn, as the timeline moves on and as you hover and click the controls and navbar, with quiet loops near the desk.
+The page is black and white in one typeface, Satoshi. Colour only shows up inside the 3D scenes, in the project photos and in the skill logos. Once you turn sound on, a calm lo fi track plays softly under the whole page, and a few soft sounds made from scratch answer the projects turning, the timeline, the navbar and copying the email.
 
 ## Screenshots
 
@@ -56,7 +56,13 @@ Next.js 16 with the App Router, React 19 and TypeScript. Tailwind CSS 4 for styl
 
 ### Sound
 
-Every sound is synthesised in Node by `scripts/sounds` from oscillators, seeded noise, filters, envelopes and a small reverb, then packed into one MP3 sprite. Howler only loads after you turn sound on. The engine throttles each sound and varies its pitch a little. The project spiral and the phone strip play one soft sound each time they move to another project, and a quick spin or a long glide counts as one move. Soft ticks answer hovers, clicks and the navbar tabs, and a dot sound plays each time the timeline reaches another job. A muffled keyboard and fan loop plays near Work Experience and a quieter room tone near About Me. Sound starts off and the site remembers your choice.
+Every sound is synthesised in Node by `scripts/sounds` from oscillators, seeded noise, filters, envelopes and a small reverb. The effects are packed into one small MP3 sprite. Howler only loads after you turn sound on, and sound starts off. The site remembers your choice.
+
+- **Music.** A calm lo fi track plays softly under the whole page: electric piano chords, a soft string pad, a round bass, brushes and a shaker at 76 bpm, centred on F, with a melody in the third of its four sections. It is 101 seconds long and loops without a seam. It lives in its own 1.2 MB file that only loads once sound is on. It swells in over 2 seconds, fades out when you turn sound off, and pauses while the tab is hidden. It sits well under the effects.
+- **Projects.** The spiral and the phone strip play one soft tap for every project they move to, whether you scroll, hold an arrow key or click a card further along. Quick runs play a little softer and never drop a tap.
+- **Work Experience.** A soft dot plays each time the timeline reaches another job.
+- **About Me.** A short confirm plays when you copy the email. Nothing else there makes a sound.
+- **Navbar.** A soft click as the underline moves to another tab, a faint tick on hovering a tab, and a click on the sound switch itself.
 
 ### Accessibility and quality
 
@@ -97,12 +103,12 @@ src/
       camera/          Camera framing for each section
       effects/         Bloom, tone mapping, vignette and grain
       stage/           Stills and capture mode
-    sound/             Howler engine, sprite map and the sound toggle
+    sound/             Howler engine, sprite map, background music and the sound toggle
     navigation/        Smooth scrolling and the active section
   lib/                 Hooks and small helpers shared across features
   styles/              Global CSS, the colour and font tokens and their guards
 scripts/
-  sounds/              Sound synthesis and checks
+  sounds/              Sound and music synthesis and checks
   projects/            Recreates the project photos and the Photo Craft gallery shots
   capture-renders.mjs  Captures the desk scene stills for phones and posters for desktops
   screenshots.mjs      Captures the README screenshots
@@ -111,7 +117,7 @@ public/
   projects/            Project photos and gallery shots
   renders/             Desk scene stills and posters
   skills/              Logos Simple Icons does not ship
-  audio/               The sound sprite
+  audio/               The sound sprite and the background music
 ```
 
 ## Running it
@@ -131,7 +137,7 @@ npm start            # serve the production build
 npm run lint         # ESLint
 npm run typecheck    # TypeScript
 npm test             # Vitest
-npm run sounds       # regenerate the sound sprite
+npm run sounds       # regenerate the sound sprite and the music
 npm run screenshots  # recapture the README screenshots (needs a running build on port 3200)
 ```
 
@@ -141,7 +147,7 @@ npm run screenshots  # recapture the README screenshots (needs a running build o
 - **Project photos.** Drop a 1280 x 800 WebP into `public/projects/<project-id>.webp`. `node scripts/projects/capture.mjs <project-id>` recreates the current ones.
 - **Screenshot rows.** List up to four more pictures in a project's `screenshots` in `src/content/projects.ts`. Photo Craft's come from the recipes `scripts/projects/shots/photo-craft-2.mjs` to `photo-craft-5.mjs`, and `GALLERIES` in `scripts/projects/capture.mjs` counts them, so `node scripts/projects/capture.mjs photo-craft` recreates the cover and all four.
 - **Desk scene stills.** Run `npm run dev`, then `node scripts/capture-renders.mjs http://localhost:3000`. It writes a phone still and a desktop poster for Work Experience and About Me into `public/renders`. On a slow machine add `--settle 90000` for About Me, so the dog has faded in: `node scripts/capture-renders.mjs http://localhost:3000 --only about --settle 90000`.
-- **Sounds.** Edit a recipe in `scripts/sounds/recipes`, run `npm run sounds`, then `npx tsx scripts/sounds/check.ts out.png` to plot and check the result.
+- **Sounds.** Edit a recipe in `scripts/sounds/recipes`, or the music in `scripts/sounds/music`, run `npm run sounds`, then `npx tsx scripts/sounds/check.ts out.png` to plot and check the result. The check also measures the music's loop seam, its balance and how far each effect rises above it.
 
 ## Copyright and usage
 
