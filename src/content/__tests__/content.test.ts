@@ -53,8 +53,12 @@ describe('experience', () => {
     }
   });
 
-  it('keeps summaries short', () => {
-    for (const entry of experience) expect(sentenceCount(entry.summary), entry.id).toBeLessThanOrEqual(3);
+  it('keeps each entry to a few short bullet points', () => {
+    for (const entry of experience) {
+      expect(entry.points.length, entry.id).toBeGreaterThan(0);
+      expect(entry.points.length, entry.id).toBeLessThanOrEqual(3);
+      for (const point of entry.points) expect(sentenceCount(point), entry.id).toBe(1);
+    }
   });
 });
 

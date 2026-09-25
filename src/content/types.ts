@@ -55,9 +55,10 @@ export interface Experience {
   end: YearMonth | 'present';
   /** Overrides the formatted date range, for entries like "Summer 2024". */
   dateLabel?: string;
-  summary: string;
+  /** Bullet points, one short sentence each. */
+  points: string[];
   /** An earlier role at the same company. */
-  earlier?: { role: string; summary: string };
+  earlier?: { role: string; points: string[] };
   screen: ExperienceScreen;
 }
 

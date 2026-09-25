@@ -14,7 +14,18 @@ interface TimelineEntryProps {
   reached: boolean;
 }
 
-/** One job on the timeline: dates, role, company and a short summary. */
+/** One job on the timeline: dates, role, company and a few bullet points. */
+/** Short points with small round markers, indented so wrapped lines line up with the text. */
+function BulletList({ points, className }: { points: string[]; className?: string }) {
+  return (
+    <ul className={cn('flex max-w-xl list-disc flex-col gap-1.5 pl-5 leading-relaxed marker:text-grey-400', className)}>
+      {points.map((point) => (
+        <li key={point}>{point}</li>
+      ))}
+    </ul>
+  );
+}
+
 export function TimelineEntry({ entry, current, reached }: TimelineEntryProps) {
   return (
     <motion.li
@@ -47,13 +58,12 @@ export function TimelineEntry({ entry, current, reached }: TimelineEntryProps) {
             {entry.context && <span className="text-grey-400">, {entry.context}</span>}
           </p>
         </div>
-        <p className="max-w-xl leading-relaxed text-grey-200">{entry.summary}</p>
+        <BulletList points={entry.points} className="text-grey-200" />
         {entry.earlier && (
           <div className="max-w-xl border-l border-grey-800 pl-4 text-sm leading-relaxed text-grey-400">
             <p className="mb-1 text-xs font-medium tracking-[0.14em] text-grey-400 uppercase">Earlier</p>
-            <p>
-              <span className="text-grey-200">{entry.earlier.role}.</span> {entry.earlier.summary}
-            </p>
+            <p className="mb-1.5 text-grey-200">{entry.earlier.role}</p>
+            <BulletList points={entry.earlier.points} />
           </div>
         )}
       </div>
