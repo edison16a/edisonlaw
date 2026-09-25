@@ -13,8 +13,7 @@
  * Recipes either drive the live product in headless Chromium (BetterBART, Photo Craft, Clue.ai,
  * Poker Strategy Trainer), play a copy of it running on this machine (Standoff, whose phones
  * are extra browser pages, and this site itself), compose a layout from Edison's own published
- * images (App Store, Chrome Web Store, Devpost, GitHub READMEs, the Neurotech@Berkeley site),
- * frame his own unpublished images (Backbond, AutoLab, see PRIVATE), or draw the product's
+ * images (the SafeEats App Store listing), frame his own unpublished images (Backbond, AutoLab, see PRIVATE), or draw the product's
  * screen as HTML from its repository and store listing (SensePlan, CallSense, FlameSense,
  * TrashGo, SunBlock, Text & Image Replacer, with lib/layouts/product.mjs). Every recipe lists
  * its sources at the top. lib/encode.mjs then crops to 16:10 and encodes WebP at quality 0.82,
@@ -43,7 +42,6 @@ const PROJECTS = [
   'photo-craft',
   'clue-ai',
   'trashgo',
-  'chrome-extensions',
   'text-image-replacer',
   'sunblock',
   'standoff',

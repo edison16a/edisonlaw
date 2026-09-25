@@ -137,14 +137,4 @@ export const projects: Project[] = [
     links: [{ label: 'GitHub', href: 'https://github.com/Aldicodi/Cruzhacks-2023-TrashGo' }],
     image: '/projects/trashgo.webp',
   },
-  {
-    id: 'chrome-extensions',
-    name: 'Chrome Extensions',
-    badges: ['Featured by Google'],
-    stack: ['JavaScript', 'HTML', 'CSS', 'Chrome Extensions API'],
-    description:
-      'A collection of browser extensions, part of the 10+ apps and extensions used by 5,000+ people. It includes SafeEats for Chrome, which rewrites online recipes around your allergies.',
-    links: [],
-    image: '/projects/chrome-extensions.webp',
-  },
 ];
