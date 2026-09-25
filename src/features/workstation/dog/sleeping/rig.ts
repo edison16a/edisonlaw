@@ -8,13 +8,15 @@ import { TAIL_PATH } from './tail';
 /**
  * The sleeping dog's bones. The body lies still on the root but for the rib cage, which breathes; the
  * head hangs from the root on its atlas and lifts by turning about the base of the neck, which gives
- * along its length; and the tail lies on the floor, each joint turning about the upright.
+ * along its length; and the tail lies on the floor, each joint turning about the upright and lifting.
  */
 export interface SleepingRig extends DogSkeleton {
   /** Rib cage, turned to its own axes so it can swell along them. */
   chest: Bone;
   /** Root to tip. */
   tail: Bone[];
+  /** For each tail joint, the level axis square to the tail that lifts the rest of it off the floor. */
+  tailLifts: Vector3[];
   lids: NonNullable<DogSkeleton['lids']>;
   /** Where the neck leaves the body, in dog space: lifting the head turns it about here. */
   neckBase: Vector3;
@@ -40,6 +42,10 @@ export function createSleepingRig(): SleepingRig {
   root.add(chest);
 
   const tail = boneChain(root, TAIL_PATH, 'dogTail');
+  const up = new Vector3(0, 1, 0);
+  const tailLifts = tail.map((_, i) =>
+    new Vector3(...TAIL_PATH[i + 1]).sub(new Vector3(...TAIL_PATH[i])).setY(0).cross(up).normalize(),
+  );
 
   const head = bone('dogHead');
   headBoneMatrix().decompose(head.position, head.quaternion, head.scale);
@@ -58,6 +64,7 @@ export function createSleepingRig(): SleepingRig {
     root,
     chest,
     tail,
+    tailLifts,
     head,
     headOrigin: pivot.negate(),
     ears,

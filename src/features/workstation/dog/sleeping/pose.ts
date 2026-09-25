@@ -18,6 +18,8 @@ export interface SleepPose {
   ears: [{ out: number; forward: number }, { out: number; forward: number }];
   /** Turn of each tail joint about the upright, root first: positive swings the tail out, away from the face. */
   tail: number[];
+  /** Lift of each tail joint off the floor, root first, for a soft thump as it swishes. */
+  tailLift: number[];
 }
 
 export function createSleepPose(): SleepPose {
@@ -31,12 +33,13 @@ export function createSleepPose(): SleepPose {
       { out: 0, forward: 0 },
     ],
     tail: new Array(SLEEP_TAIL_BONES).fill(0),
+    tailLift: new Array(SLEEP_TAIL_BONES).fill(0),
   };
 }
 
 const TIMING = {
   /** Now and then it lifts its head a little, opens its eyes sleepily and looks up, then settles back. */
-  lookUp: { period: 23, duration: 7, ease: 1.8, chance: 0.7 },
+  lookUp: { period: 23, duration: 7.4, ease: 2.1, chance: 0.7 },
   /** Now and then the tail swishes a few times across the floor. */
   wag: { period: 12, duration: 3.2, ease: 0.6, chance: 0.65 },
   /** Small twitches in its sleep: an ear flicks and the lids stir. */
@@ -48,19 +51,28 @@ const BREATH_RATE = 0.23;
 /** How far the head turns up about the base of the neck when fully lifted. */
 export const LIFT_ANGLE = 0.2;
 /**
- * Where it looks once its head is up: at Edison, who sits above and behind its right shoulder, or at
- * whoever is watching, straight ahead. Either way the face stays turned to the camera.
+ * Where it looks once its head is up, as turns from its resting three quarter view: up at Edison, who
+ * sits high behind its right shoulder, turning to face the room on the way, or at whoever is watching,
+ * turning its face to the camera. Negative yaw turns the nose away from the tail, toward its right.
  */
 const LOOKS = [
-  { yaw: -0.16, pitch: 0.2 },
-  { yaw: 0.04, pitch: 0.12 },
+  { yaw: -0.48, pitch: 0.24 },
+  { yaw: -0.36, pitch: 0.12 },
 ] as const;
 /** How far the lids open when it wakes a little: never wide, just a sleepy look. */
-const SLEEPY = 0.58;
+const SLEEPY = 0.62;
 /** How much of the head's lift the ears undo, hanging back toward the floor. */
 const EAR_GRAVITY = 0.25;
-/** Tail swishes a second, how far each joint lags the one before, and how far each joint turns at full swing. */
-const WAG = { rate: 1.3, lag: 0.5, reach: [0.05, 0.07, 0.08, 0.09, 0.1, 0.1] } as const;
+/**
+ * The swish: swishes a second, how far each joint lags the one before, how far each joint turns out at
+ * full swing, and how far each lifts off the floor at the top of a swish before it thumps back down.
+ */
+const WAG = {
+  rate: 1.2,
+  lag: 0.5,
+  reach: [0.06, 0.08, 0.1, 0.12, 0.12, 0.12],
+  lift: [0.02, 0.05, 0.07, 0.07, 0.06, 0.05],
+} as const;
 
 const lookUp = createOccurrence();
 const wag = createOccurrence();
@@ -82,9 +94,11 @@ export function sleepPose(t: number, motion: number, seed: number, pose: SleepPo
 
   const looking = occurrence(t, TIMING.lookUp, seed + 7, lookUp);
   const lift = looking.weight * motion;
-  const look = LOOKS[looking.roll < 0.55 ? 0 : 1];
+  const look = LOOKS[looking.index % 2];
   pose.lift = lift;
-  pose.look.yaw = look.yaw * lift + 0.02 * noise(t * 0.3, seed + 3) * lift;
+  // The head rises first and turns once it is up, so the muzzle clears the tail lying in front of it.
+  const turned = smootherstep(0.25, 1, lift);
+  pose.look.yaw = (look.yaw + 0.03 * noise(t * 0.3, seed + 3)) * turned;
   pose.look.pitch = look.pitch * lift;
 
   // The eyes open a moment after the head starts up and close again before it settles, with one slow
@@ -105,6 +119,7 @@ export function sleepPose(t: number, motion: number, seed: number, pose: SleepPo
   for (let i = 0; i < SLEEP_TAIL_BONES; i++) {
     const swing = 0.5 - 0.5 * Math.cos(t * Math.PI * 2 * WAG.rate - i * WAG.lag);
     pose.tail[i] = wagging * swing * WAG.reach[i];
+    pose.tailLift[i] = wagging * swing * swing * WAG.lift[i];
   }
   return pose;
 }
@@ -140,5 +155,7 @@ export function applySleepPose(rig: SleepingRig, pose: SleepPose) {
     rig.lids[side].rotation.x = lerp(LID_TURN.open, LID_TURN.shut, pose.lids);
   }
 
-  for (let i = 0; i < rig.tail.length; i++) rig.tail[i].rotation.set(0, pose.tail[i], 0);
+  for (let i = 0; i < rig.tail.length; i++) {
+    rig.tail[i].quaternion.setFromAxisAngle(UP, pose.tail[i]).multiply(turn.setFromAxisAngle(rig.tailLifts[i], pose.tailLift[i]));
+  }
 }

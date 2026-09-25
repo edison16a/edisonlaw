@@ -92,6 +92,33 @@ describe('the built sleeping dog', () => {
     expect(checked / idle.length).toBeGreaterThan(500);
   }, 60000);
 
+  it('lifts and turns its head clear of its tail and body through the idle', () => {
+    const skull = new Field([...headForms(), ...headFur()], PART_COUNT);
+    const dogToHead = headToDog.clone().invert();
+    const rest = new Vector3();
+    const toHead = new Matrix4();
+    const inHead = new Vector3();
+    // The face: head vertices well in front of the skull's back, where the neck joins.
+    const face: number[] = [];
+    for (let n = 0; n < count; n++) {
+      if (coat.skinIndices[n * 4] !== SLEEP_BONE.head || coat.skinWeights[n * 4] < 0.99) continue;
+      if (rest.fromArray(coat.positions, n * 3).applyMatrix4(dogToHead).z > 0.03) face.push(n);
+    }
+    const onFace = new Set(face);
+    const onTail = (n: number) => coat.skinIndices[n * 4] >= SLEEP_BONE.tail + 1;
+    expect(face.length).toBeGreaterThan(1000);
+    throughIdle((rig) => {
+      toHead.makeTranslation(-rig.headOrigin.x, -rig.headOrigin.y, -rig.headOrigin.z).multiply(rig.head.matrixWorld.clone().invert());
+      const scale = rig.head.matrixWorld.getMaxScaleOnAxis();
+      skinCoat(coat, rig, 1, (posed, n) => {
+        if (onTail(n)) {
+          inHead.copy(posed).applyMatrix4(toHead);
+          expect(skull.distance(inHead.x, inHead.y, inHead.z) * scale).toBeGreaterThan(0.012);
+        } else if (onFace.has(n)) expect(body.distance(posed.x, posed.y, posed.z)).toBeGreaterThan(0.01);
+      });
+    });
+  }, 120000);
+
   it('hangs its ears clear of its head, its body, its tail and the floor through the idle', () => {
     // Coarser than the page builds them, which only thickens the flap a little: a fair test.
     const ear = meshPart(new Field(earShapes(), PART_COUNT), 0.004, true);

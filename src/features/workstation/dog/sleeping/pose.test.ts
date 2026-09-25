@@ -9,8 +9,9 @@ function values(pose: SleepPose): [number, number][] {
     // Breath is a normalised cycle rather than an angle.
     [pose.breath, 0.03],
     [pose.lift, 0.02],
-    [pose.look.yaw, 0.01],
-    [pose.look.pitch, 0.01],
+    // The head turns once it is up, as a slow and gentle turn, never a snap.
+    [pose.look.yaw, 0.02],
+    [pose.look.pitch, 0.012],
     // A slow sleepy blink takes about a third of a second to close.
     [pose.lids, 0.06],
     ...pose.ears.flatMap((ear): [number, number][] => [
@@ -18,6 +19,7 @@ function values(pose: SleepPose): [number, number][] {
       [ear.forward, 0.02],
     ]),
     ...pose.tail.map((swing): [number, number] => [swing, 0.012]),
+    ...pose.tailLift.map((lift): [number, number] => [lift, 0.008]),
   ];
 }
 
@@ -71,13 +73,18 @@ describe('sleepPose', () => {
     });
   });
 
-  it('now and then swishes its tail out across the floor, never in toward its face', () => {
+  it('now and then swishes and thumps its tail out across the floor, never in toward its face', () => {
     let wags = 0;
     let wasWagging = false;
     sample((pose) => {
       for (const swing of pose.tail) {
         expect(swing).toBeGreaterThanOrEqual(0);
-        expect(swing).toBeLessThan(0.12);
+        expect(swing).toBeLessThan(0.15);
+      }
+      // It lifts off the floor a little as it swishes, never up into the air.
+      for (const lift of pose.tailLift) {
+        expect(lift).toBeGreaterThanOrEqual(0);
+        expect(lift).toBeLessThan(0.1);
       }
       const wagging = pose.tail[3] > 0.02;
       if (wagging && !wasWagging) wags++;
