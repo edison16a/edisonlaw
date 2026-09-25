@@ -19,6 +19,25 @@ export function BracesGlyph(props: IconProps) {
   );
 }
 
+/** An audio waveform, for the Web Audio API. */
+export function WaveformGlyph(props: IconProps) {
+  return (
+    <IconBase {...props}>
+      <path d="M3 10v4M7.5 6.5v11M12 3v18M16.5 8v8M21 10.5v3" />
+    </IconBase>
+  );
+}
+
+/** A paintbrush, for drawing on a 2D canvas. */
+export function BrushGlyph(props: IconProps) {
+  return (
+    <IconBase {...props}>
+      <path d="M10.2 13.8l8.4-8.4a2 2 0 0 1 2.9 2.9l-8.4 8.4" />
+      <path d="M10.2 13.8c-2-.9-4.4.3-4.9 2.4-.4 1.7-1.2 3.1-3.3 3.5 1.4 1.4 3.4 2 5.4 1.6 2.6-.5 4.3-3 3.7-5.6" />
+    </IconBase>
+  );
+}
+
 export function EyeGlyph(props: IconProps) {
   return (
     <IconBase {...props}>

@@ -49,6 +49,7 @@ export const skills: SkillGroup[] = [
     category: 'AI & Data',
     items: ['PyTorch', 'NumPy', 'Pandas', 'OpenAI API', 'Google Vertex AI', 'Meta SAM 3'],
   },
+  { category: 'Graphics & Real-time', items: ['Three.js', 'Web Audio API', 'Canvas 2D rendering'] },
   {
     category: 'Cloud & Infrastructure',
     items: ['Google Cloud Platform', 'Cloud Run', 'AWS', 'Docker', 'Vercel', 'Stripe', 'OAuth', 'Linux'],

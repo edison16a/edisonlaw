@@ -29,6 +29,7 @@ import {
   siSvg,
   siSupabase,
   siSwift,
+  siThreedotjs,
   siTypescript,
   siUnity,
   siVercel,
@@ -36,7 +37,7 @@ import {
 } from 'simple-icons';
 import type { IconProps } from '@/components/icons/IconBase';
 import { visibleOnBlack } from '@/lib/color';
-import { BracesGlyph, DatabaseGlyph, EyeGlyph, MapPinGlyph } from './glyphs';
+import { BracesGlyph, BrushGlyph, DatabaseGlyph, EyeGlyph, MapPinGlyph, WaveformGlyph } from './glyphs';
 
 /**
  * How a skill's mark is drawn.
@@ -51,7 +52,7 @@ import { BracesGlyph, DatabaseGlyph, EyeGlyph, MapPinGlyph } from './glyphs';
  *   MDAnalysis is traced from the project's own logo, with its black half drawn light for the dark UI.
  *   The gilbarbara logos set (CC0) for the WebSocket logo, drawn white like other black marks.
  * letter: a single display letter, for WESTPA.
- * glyph: a line icon for concepts that have no logo at all, like SQL and REST.
+ * glyph: a line icon for concepts that have no logo at all, like SQL, REST, Web Audio and Canvas 2D.
  */
 export type SkillIcon =
   | { kind: 'brand'; icon: SimpleIcon; color: string }
@@ -103,6 +104,9 @@ const ICONS: Record<string, SkillIcon> = {
   'OpenAI API': logo('openai'),
   'Google Vertex AI': logo('vertexai'),
   'Meta SAM 3': brand(siMeta),
+  'Three.js': brand(siThreedotjs),
+  'Web Audio API': glyph(WaveformGlyph, '2DD4BF'),
+  'Canvas 2D rendering': glyph(BrushGlyph, 'F472B6'),
   'Google Cloud Platform': logo('googlecloud'),
   'Cloud Run': logo('cloudrun'),
   AWS: logo('aws'),
