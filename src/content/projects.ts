@@ -17,7 +17,7 @@ export const projects: Project[] = [
     badges: [],
     stack: ['Next.js', 'Vercel', 'Google Cloud Run', 'Cloud SQL', 'OAuth', 'Stripe', 'Amazon SES', 'Amazon SNS'],
     description:
-      'Production platform for Optagon Labs, an AI tool that helps drug developers run R&D. Built the core infrastructure, including billing, usage metering, organizations and project ingestion.',
+      'Computational design platform for R&D. Built the core infrastructure, security and databases, plus billing, usage metering, organizations and project ingestion.',
     links: [{ label: 'backbond.net', href: 'https://backbond.net' }],
     image: '/projects/backbond.webp',
     screenshots: ['/projects/backbond-2.webp'],
