@@ -1,8 +1,9 @@
 import { Vector3 } from 'three';
 import type { Vec3 } from '../../layout';
 import { ball, cone, ellipsoid, flatLock } from '../anatomy/sculpt';
-import { PART, TONE } from '../dimensions';
-import type { Shape } from '../sdf/field';
+import { PART, PART_COUNT, TONE } from '../dimensions';
+import { Field, type Shape } from '../sdf/field';
+import { torsoForms } from './body';
 
 /**
  * The folded legs of the curled dog in dog space. It lies on its right side, so its left legs lie on
@@ -21,22 +22,26 @@ interface HindLeg {
   paw: Vec3;
   /** Half sizes of the haunch: across, thickness and length. */
   haunch: Vec3;
+  /** Which way the broad outer face of the haunch looks. */
+  face: Vec3;
 }
 
 export const HIND: { upper: HindLeg; lower: HindLeg } = {
   upper: {
-    hip: [0.12, 0.19, -0.03],
-    stifle: [0.095, 0.15, 0.08],
-    hock: [0.175, 0.06, 0.1],
-    paw: [0.13, 0.03, 0.18],
-    haunch: [0.085, 0.062, 0.115],
+    hip: [0.125, 0.175, -0.03],
+    stifle: [0.08, 0.14, 0.074],
+    hock: [0.15, 0.06, 0.09],
+    paw: [0.075, 0.03, 0.1],
+    haunch: [0.088, 0.064, 0.118],
+    face: [0, 1, 0.55],
   },
   lower: {
     hip: [0.12, 0.08, -0.02],
-    stifle: [0.08, 0.06, 0.08],
-    hock: [0.18, 0.035, 0.06],
-    paw: [0.175, 0.028, 0.16],
+    stifle: [0.07, 0.06, 0.07],
+    hock: [0.17, 0.035, 0.05],
+    paw: [0.12, 0.028, 0.1],
     haunch: [0.07, 0.05, 0.1],
+    face: [0, 1, 0],
   },
 };
 
@@ -64,12 +69,12 @@ function paw(center: Vec3, from: Vec3): Shape[] {
   return [ellipsoid(center, [0.034, 0.024, 0.041], body(TONE.light, 0.018), [0, 1, 0], toward.clone().setY(0).toArray()), ...toes(center, toward)];
 }
 
-function hindLeg({ hip, stifle, hock, paw: pawAt, haunch }: HindLeg): Shape[] {
+function hindLeg({ hip, stifle, hock, paw: pawAt, haunch, face }: HindLeg): Shape[] {
   const thigh = new Vector3(...stifle).sub(new Vector3(...hip));
   const middle = new Vector3(...hip).addScaledVector(thigh, 0.48).toArray();
   return [
     // The haunch: one full round muscle from the hip to the stifle, lying on the flank.
-    ellipsoid(middle, haunch, body(TONE.coat, 0.05), [0, 1, 0], thigh.toArray()),
+    ellipsoid(middle, haunch, body(TONE.coat, 0.05), face, thigh.toArray()),
     // Gaskin, from the stifle back to the hock.
     cone(stifle, hock, 0.038, 0.027, body(TONE.coat, 0.03)),
     // Rear pastern, from the hock forward to the paw.
@@ -86,19 +91,50 @@ export function legForms(): Shape[] {
   return [...hindLeg(HIND.lower), ...foreleg(FORE.lower), ...foreleg(FORE.upper), ...hindLeg(HIND.upper)];
 }
 
-/** Britches: soft lighter fur down the back of the upper haunch, from the hip round toward the hock. */
-export function britches(): Shape[] {
-  const { hip, stifle, hock } = HIND.upper;
-  const back = new Vector3(...hock).sub(new Vector3(...stifle)).normalize();
-  const start = new Vector3(...hip).addScaledVector(back, 0.05).setY(hip[1] + 0.02);
-  return flatLock({
-    path: [start.toArray(), start.clone().addScaledVector(back, 0.05).setY(0.12).toArray(), new Vector3(...hock).addScaledVector(back, -0.01).setY(0.08).toArray()],
-    width: 0.034,
-    flatness: 0.42,
-    facing: [back.x, 0.6, back.z],
-    tones: [TONE.coat + 0.12, TONE.light + 0.2],
-    blend: 0.03,
-    part: PART.body,
-    segments: 5,
+/**
+ * Where the britches grow, as angles round the curl in degrees: along the outside of the haunch and the
+ * rump on the side toward the camera, down to the root of the tail.
+ */
+const BRITCHES = [-2, -16, -30, -44];
+
+/** Where a line in from `outside` toward `inside` first meets `sculpt`, sunk `sink` into it. */
+function onBody(sculpt: Field, outside: Vector3, inside: Vector3, sink: number) {
+  const point = outside.clone();
+  const direction = inside.clone().sub(outside).normalize();
+  for (let i = 0; i < 200; i++) {
+    const distance = sculpt.distance(point.x, point.y, point.z);
+    if (distance < 1e-5) break;
+    point.addScaledVector(direction, distance * 0.9);
+  }
+  return point.addScaledVector(direction, sink);
+}
+
+/**
+ * Britches: long cream feathering on the back of the upper haunch and the rump, which lie toward the camera
+ * in the curl. Each lock is laid onto `sculpt` (the torso and legs by default) from high on the
+ * haunch down to the rug, over a soft cream pad, like the reference's fluffy hind quarters.
+ */
+export function britches(sculpt: Field = new Field([...torsoForms(), ...legForms()], PART_COUNT)): Shape[] {
+  const outAt = (angle: number) => new Vector3(Math.cos((angle * Math.PI) / 180), 0, -Math.sin((angle * Math.PI) / 180));
+  const lay = (out: Vector3, height: number, sink: number) =>
+    onBody(sculpt, out.clone().multiplyScalar(0.5).setY(height), out.clone().multiplyScalar(0.08).setY(height), sink);
+  // A soft cream pad under the locks, so the back of the haunch reads lighter as a whole.
+  const middle = outAt(-24);
+  const pad = ellipsoid(lay(middle, 0.09, 0.03).toArray(), [0.1, 0.07, 0.035], body(TONE.light + 0.12, 0.04), [0, 1, 0], middle.toArray());
+  const locks = BRITCHES.flatMap((angle) => {
+    const out = outAt(angle);
+    // Down the haunch to the floor, where the tip spreads out on the rug instead of hanging free.
+    const tip = lay(out, 0.03, 0.012).addScaledVector(out, 0.016).setY(0.014);
+    return flatLock({
+      path: [lay(out, 0.2, 0.008).toArray(), lay(out, 0.12, 0.006).toArray(), tip.toArray()],
+      width: 0.042,
+      flatness: 0.36,
+      facing: out.clone().setY(0.3).toArray(),
+      tones: [TONE.coat + 0.14, TONE.cream],
+      blend: 0.03,
+      part: PART.body,
+      segments: 5,
+    });
   });
+  return [pad, ...locks];
 }

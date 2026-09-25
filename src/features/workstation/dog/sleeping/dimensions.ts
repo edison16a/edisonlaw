@@ -66,7 +66,7 @@ export const JOINTS = {
   /** Middle of the rib cage, which swells with each breath. */
   chest: onCurl(RIBS_ANGLE, 0.125, 0.117),
   /** Root of the tail, low at the end of the rump. */
-  tail: [0.1, 0.085, 0.118] as Vec3,
+  tail: [0.108, 0.09, 0.112] as Vec3,
 } as const;
 
 /**
@@ -91,7 +91,7 @@ export const HEAD_REST = {
    * shows rather than its edge; the left one lies closer, against the curl.
    */
   ears: [
-    { out: 0.24, turn: 0, back: -0.22 },
+    { out: 0.3, turn: 0.14, back: -0.25 },
     { out: 0.62, turn: 0.25, back: 0.1 },
   ],
 } as const;

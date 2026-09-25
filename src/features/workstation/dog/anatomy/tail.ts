@@ -37,6 +37,8 @@ export interface TailSpec {
   center: Vec3;
   /** Where the flick of fur past the tip ends. */
   flick: Vec3;
+  /** Tone of the tail along its length past the root: deeper than the plume, so it reads as its own line. */
+  coreTone?: number;
 }
 
 const [sittingTip] = TAIL_PATH.slice(-1);
@@ -51,10 +53,10 @@ export const SITTING_TAIL: TailSpec = {
 
 const tail = (tone: number, blend: number) => ({ tone, blend, part: PART.tail });
 
-export function tailForms({ path, radii }: TailSpec = SITTING_TAIL): Shape[] {
+export function tailForms({ path, radii, coreTone = TONE.saddle + 0.1 }: TailSpec = SITTING_TAIL): Shape[] {
   const shapes: Shape[] = [];
   for (let i = 1; i < path.length; i++) {
-    shapes.push(cone(path[i - 1], path[i], radii[i - 1], radii[i], tail(i === 1 ? TONE.coat : TONE.saddle + 0.1, i === 1 ? 0.045 : 0.018)));
+    shapes.push(cone(path[i - 1], path[i], radii[i - 1], radii[i], tail(i === 1 ? TONE.coat : coreTone, i === 1 ? 0.045 : 0.018)));
   }
   return shapes;
 }
