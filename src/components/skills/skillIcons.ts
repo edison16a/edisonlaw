@@ -12,12 +12,16 @@ import {
   siJavascript,
   siKeras,
   siKonva,
+  siLeaflet,
   siLinux,
+  siMediapipe,
   siMeta,
+  siModelcontextprotocol,
   siNextdotjs,
   siNodedotjs,
   siNumpy,
   siOnnx,
+  siPalantir,
   siPandas,
   siPostgresql,
   siPython,
@@ -26,9 +30,10 @@ import {
   siReact,
   siRedis,
   siStripe,
-  siSvg,
   siSupabase,
+  siSvg,
   siSwift,
+  siTailwindcss,
   siThreedotjs,
   siTypescript,
   siUnity,
@@ -37,7 +42,7 @@ import {
 } from 'simple-icons';
 import type { IconProps } from '@/components/icons/IconBase';
 import { visibleOnBlack } from '@/lib/color';
-import { BracesGlyph, BrushGlyph, DatabaseGlyph, EyeGlyph, MapPinGlyph, WaveformGlyph } from './glyphs';
+import { BracesGlyph, BrushGlyph, DatabaseGlyph, EyeGlyph, MapPinGlyph, MicGlyph, WaveformGlyph } from './glyphs';
 
 /**
  * How a skill's mark is drawn.
@@ -51,8 +56,11 @@ import { BracesGlyph, BrushGlyph, DatabaseGlyph, EyeGlyph, MapPinGlyph, Waveform
  *   Bright Data, Niantic Spatial and SwiftUI come from each product's own site.
  *   MDAnalysis is traced from the project's own logo, with its black half drawn light for the dark UI.
  *   The gilbarbara logos set (CC0) for the WebSocket logo, drawn white like other black marks.
+ *   Poimandres' own mark, from github.com/pmndrs/branding (MIT), for React Three Fiber, which it
+ *   makes. Its white blocks are kept and the black square behind them is dropped.
  * letter: a single display letter, for WESTPA.
- * glyph: a line icon for concepts that have no logo at all, like SQL, REST, Web Audio and Canvas 2D.
+ * glyph: a line icon for concepts that have no logo at all, like SQL, REST, Web Audio, Web Speech
+ *   and Canvas 2D.
  */
 export type SkillIcon =
   | { kind: 'brand'; icon: SimpleIcon; color: string }
@@ -141,6 +149,14 @@ const ICONS: Record<string, SkillIcon> = {
   'Niantic Lightship': logo('niantic.png'),
   VPS: glyph(MapPinGlyph, '5B8DEF'),
   'Chrome Extensions API': logo('chrome'),
+  'Tailwind CSS': brand(siTailwindcss),
+  'React Three Fiber': logo('pmndrs'),
+  MediaPipe: brand(siMediapipe),
+  Leaflet: brand(siLeaflet),
+  'Palantir AIP': brand(siPalantir),
+  'Model Context Protocol': brand(siModelcontextprotocol),
+  'Web Speech API': glyph(MicGlyph, 'FB7185'),
+  AVFoundation: brand(siApple),
 };
 
 export function getSkillIcon(name: string): SkillIcon | undefined {
