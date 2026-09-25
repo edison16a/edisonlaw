@@ -7,6 +7,8 @@ export interface OneShotSettings {
   throttle: number;
   /** How many copies of this sound may ring at once. */
   voices: number;
+  /** Random pitch spread for this sound, when it wants less than PITCH_JITTER. */
+  jitter?: number;
 }
 
 /** The final mix. The sprite is already balanced by ear, so these are gentle trims. */
@@ -19,6 +21,7 @@ export const SOUNDS: Record<SoundName, OneShotSettings> = {
   blip: { volume: 0.8, throttle: 120, voices: 2 },
   focus: { volume: 1, throttle: 160, voices: 2 },
   swish: { volume: 0.8, throttle: 200, voices: 1 },
+  move: { volume: 0.8, throttle: 120, voices: 2, jitter: 0.012 },
 };
 
 /** Loops sit well under the one-shots: typing peaks land about 10 dB below a tick. */

@@ -67,7 +67,7 @@ export const sound = {
     if (!enabled || !backend || !visible) return;
     const now = performance.now();
     if (!throttle(name, now)) return;
-    const rate = jitterRate(options?.rate ?? 1);
+    const rate = jitterRate(options?.rate ?? 1, SOUNDS[name].jitter);
     if (!voices.tryStart(name, now, SPRITE_REGIONS[name].duration / rate)) return;
     try {
       backend.play(name, rate, clamp(SOUNDS[name].volume * (options?.volume ?? 1)));

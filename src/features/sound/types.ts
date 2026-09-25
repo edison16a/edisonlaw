@@ -6,6 +6,8 @@ export type SoundName =
   | 'focus'
   /** Faint airy swish as the project detail panel opens. */
   | 'swish'
+  /** Soft felt tap as the focus moves to another project, the one sound of the Projects section. */
+  | 'move'
   /** Soft click when the nav underline slides to a new tab. */
   | 'tab'
   /** Very quiet tick on hover over cards, icons and buttons. */

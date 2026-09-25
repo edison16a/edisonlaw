@@ -10,17 +10,18 @@ export interface SpriteRegion {
 }
 
 /** Versioned by content, so a rebuilt sprite is never served from a stale cache. */
-export const SPRITE_URL = '/audio/sprite.mp3?v=6d6511c73d';
+export const SPRITE_URL = '/audio/sprite.mp3?v=3e211ef94b';
 
 export const SPRITE_REGIONS: Record<SoundName | LoopName, SpriteRegion> = {
-  tick: { start: 112.06, duration: 66.99, loop: false },
-  hover: { start: 346.05, duration: 56.99, loop: false },
-  tab: { start: 570.04, duration: 93, loop: false },
-  toggle: { start: 830.04, duration: 153, loop: false },
-  dot: { start: 1150.04, duration: 193, loop: false },
-  blip: { start: 1510.04, duration: 333, loop: false },
-  focus: { start: 2010.04, duration: 513, loop: false },
-  swish: { start: 2690.04, duration: 453, loop: false },
-  desk: { start: 3373.04, duration: 8000, loop: true },
-  room: { start: 11673.04, duration: 7000, loop: true },
+  move: { start: 112.06, duration: 203, loop: false },
+  tick: { start: 482.06, duration: 66.99, loop: false },
+  hover: { start: 716.05, duration: 56.99, loop: false },
+  tab: { start: 940.04, duration: 93, loop: false },
+  toggle: { start: 1200.04, duration: 153, loop: false },
+  dot: { start: 1520.04, duration: 193, loop: false },
+  blip: { start: 1880.04, duration: 333, loop: false },
+  focus: { start: 2380.04, duration: 513, loop: false },
+  swish: { start: 3060.04, duration: 453, loop: false },
+  desk: { start: 3743.04, duration: 8000, loop: true },
+  room: { start: 12043.04, duration: 7000, loop: true },
 };
