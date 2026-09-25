@@ -17,6 +17,8 @@ export interface NeckSpec {
   arch: Vec3;
   /** The dog's left, square to the neck or nearly, which the locks round it are laid out from. */
   left: Vec3;
+  /** Angles of the collar locks round the base of the neck (see COLLAR). */
+  collar?: readonly number[];
 }
 
 /** The sitting dog's neck, rising from its withers and its chest. */
@@ -118,7 +120,7 @@ export function neckFur(headToDog: Matrix4, spec: NeckSpec = SITTING_NECK): Shap
   const collar = ringAt(headToDog, spec, 0.1);
   const mane = ringAt(headToDog, spec, 0.42);
   return [
-    ...COLLAR.map((angle) => ringLock(collar, { angle, radius: RADII.base - 0.004, up: 0.06, down: 0.07, width: 0.034 })).flat(),
+    ...(spec.collar ?? COLLAR).map((angle) => ringLock(collar, { angle, radius: RADII.base - 0.004, up: 0.06, down: 0.07, width: 0.034 })).flat(),
     ...MANE.map((angle) => ringLock(mane, { angle, radius: RADII.crest - 0.004, up: 0.035, down: 0.05, width: 0.028 })).flat(),
   ];
 }
