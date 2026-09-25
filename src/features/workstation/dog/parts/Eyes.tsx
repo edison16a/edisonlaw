@@ -6,6 +6,7 @@ import { mergeParts } from '../../character/geometry/merge';
 import { EYE_RADII, PUPIL, type FaceLayout } from '../anatomy/face';
 import { useDogMaterials } from '../MaterialsContext';
 import type { DogSkeleton } from '../rig/skeleton';
+import { Lid } from './Lids';
 
 /** Catch lights, placed the same on both eyes as if lit from one window. */
 const SHINES = [
@@ -28,7 +29,10 @@ function shineGeometry() {
   );
 }
 
-/** Big, dark brown, glossy eyes with near black pupils and white catch lights, seated on the skull. Head space. */
+/**
+ * Big, dark brown, glossy eyes with near black pupils and white catch lights, seated on the skull, with
+ * lids over them when the pose has any. Head space.
+ */
 export function Eyes({ rig, face }: { rig: DogSkeleton; face: FaceLayout }) {
   const materials = useDogMaterials();
   const eye = useDisposable(() => new SphereGeometry(1, 28, 20));
@@ -40,6 +44,7 @@ export function Eyes({ rig, face }: { rig: DogSkeleton; face: FaceLayout }) {
           <mesh geometry={eye} material={materials.eye} scale={EYE_RADII} />
           <mesh geometry={eye} material={materials.pupil} scale={PUPIL.radii} position-z={PUPIL.forward} />
           <mesh geometry={shine} material={materials.eyeShine} />
+          {rig.lids && <Lid group={rig.lids[index]} />}
         </primitive>
       ))}
     </>
