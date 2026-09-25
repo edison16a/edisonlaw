@@ -5,11 +5,11 @@ import { describe, expect, it } from 'vitest';
 /**
  * One typeface across the site. font-sans and font-display both point at Satoshi.
  * Any other family class, including font-mono, serif and arbitrary families, is off limits.
- * Geist Mono is only for the painted monitor screens, so the workstation is exempt.
+ * Geist Mono is only for the painted monitor screens, so only that folder is exempt.
  */
 const OTHER_FAMILY = /\bfont-(mono|serif)\b|\bfont-\[(?!\d)[^\]]*\]|\bfont-\(family-name:[^)]*\)/g;
 
-const EXEMPT = ['features/workstation/'];
+const EXEMPT = ['features/workstation/screens/'];
 
 const SRC = join(__dirname, '..', '..');
 
