@@ -8,14 +8,21 @@ describe('projectBadges', () => {
       badges: ['App Store'],
     });
     expect(badges).toEqual([
-      { label: 'Winner, CruzHacks 2023', trophy: true },
-      { label: 'Best Lightship AR VPS Game', trophy: true },
-      { label: 'App Store', trophy: false },
+      { label: 'Winner, CruzHacks 2023', mark: 'trophy' },
+      { label: 'Best Lightship AR VPS Game', mark: 'trophy' },
+      { label: 'App Store' },
     ]);
   });
 
   it('gives a project without a win only its status badges', () => {
-    expect(projectBadges({ badges: ['In progress'] })).toEqual([{ label: 'In progress', trophy: false }]);
+    expect(projectBadges({ badges: ['In progress'] })).toEqual([{ label: 'In progress' }]);
     expect(projectBadges({ badges: [] })).toEqual([]);
+  });
+
+  it('marks a store feature with a star', () => {
+    expect(projectBadges({ badges: ['Featured on the Chrome Web Store', '5.0 stars'] })).toEqual([
+      { label: 'Featured on the Chrome Web Store', mark: 'star' },
+      { label: '5.0 stars' },
+    ]);
   });
 });
