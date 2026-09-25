@@ -29,7 +29,7 @@ export function BadgeList({ items, className }: { items: BadgeItem[]; className?
   return (
     <ul className={cn('flex flex-wrap gap-1.5', className)} aria-label="Awards and status">
       {items.map((item) => (
-        <li key={item.label}>
+        <li key={item.label} className="flex">
           <Badge icon={item.trophy ? <TrophyIcon size={13} strokeWidth={2} /> : undefined}>{item.label}</Badge>
         </li>
       ))}
