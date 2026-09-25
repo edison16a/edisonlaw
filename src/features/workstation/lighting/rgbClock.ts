@@ -11,9 +11,12 @@ const FAVOURED_HUE = 0.76;
 const LINGER = 0.6;
 
 /**
- * One hue clock shared by everything RGB in a scene (tower, strips, lights), so they all cycle
- * together. Consumers call `sample` with the frame time first; repeated calls in the same frame are free.
- * Only the hue moves. Brightness never depends on the clock.
+ * One hue clock shared by every glowing RGB part in a scene (the tower's fans and light bars, the desk
+ * strip), so they all cycle together. Consumers call `sample` with the frame time first; repeated calls
+ * in the same frame are free.
+ * The clock only moves the hue and has no brightness of its own. writeRgb only partly evens out
+ * brightness between hues, so a glowing part still reads brighter at yellow than at blue. No room
+ * light reads the clock.
  */
 export interface RgbClock {
   /** 0 to 1, the hue at the last sampled time. */

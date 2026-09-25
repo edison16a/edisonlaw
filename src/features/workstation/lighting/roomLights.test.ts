@@ -45,7 +45,7 @@ describe('room lights', () => {
 });
 
 describe('rgb clock', () => {
-  it('only moves the hue, so it never makes anything brighter or dimmer', () => {
+  it('only moves the hue: it has no brightness of its own', () => {
     const clock = createRgbClock();
     expect(Object.keys(clock).sort()).toEqual(['frozen', 'hue', 'sample', 'setFrozen']);
   });
