@@ -10,7 +10,6 @@ export function ExperienceSection() {
           <SectionHeader
             id="experience-title"
             title="Work Experience"
-            lead="Startups, research labs and open source, newest first."
             className="mb-20"
           />
         }
