@@ -1,4 +1,4 @@
-import { stepTarget } from '../spiral/loop';
+import { MAX_LEAD, stepTarget } from '../spiral/loop';
 import { spiralMotion } from '../state/spiralMotion';
 import { wakeSpiral } from '../state/spiralWake';
 
@@ -14,7 +14,14 @@ export function moveSpiralTo(index: number) {
   wakeSpiral();
 }
 
-/** Turns the spiral one project on (1) or back (-1). Quick presses queue up. */
-export function stepSpiral(direction: 1 | -1) {
-  moveSpiralTo(stepTarget(spiralMotion.target, spiralMotion.value, direction));
+/**
+ * Turns the spiral `steps` projects on, or back when negative: one for a
+ * press, and a few for wheel notches merged into one event. Quick presses
+ * queue up, at most `maxLead` cards ahead of the card passing the slot.
+ */
+export function stepSpiral(steps: number, maxLead = MAX_LEAD) {
+  const direction = steps > 0 ? 1 : -1;
+  let target = spiralMotion.target;
+  for (let step = 0; step < Math.abs(steps); step++) target = stepTarget(target, spiralMotion.value, direction, maxLead);
+  moveSpiralTo(target);
 }

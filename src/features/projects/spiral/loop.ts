@@ -6,6 +6,12 @@
 
 /** Furthest quick presses can queue up ahead of the card passing the slot, so a burst of clicks stays readable. */
 export const MAX_LEAD = 3;
+/**
+ * Furthest a spin of the mouse wheel can queue up. Every notch of a quick
+ * spin counts up to here, and a wheel spun on and on keeps the spiral at most
+ * this far ahead, so it stops soon after the wheel does.
+ */
+export const WHEEL_LEAD = 6;
 
 /** The project at card `index`. A continuous index counts as its nearest card. */
 export function projectAt(index: number, count: number) {

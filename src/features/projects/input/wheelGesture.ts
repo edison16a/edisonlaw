@@ -3,8 +3,8 @@ import { createWheelStrokes, type WheelSample } from './wheelStrokes';
 export interface GestureRead {
   /** True when the spiral takes the event, so the page must not scroll. */
   capture: boolean;
-  /** The step the spiral should take: 1 on, -1 back, or 0 for none. */
-  step: -1 | 0 | 1;
+  /** The projects the spiral should turn: positive on, negative back, 0 for none. */
+  step: number;
 }
 
 const PASS: GestureRead = { capture: false, step: 0 };

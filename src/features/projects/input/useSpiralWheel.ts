@@ -2,6 +2,7 @@
 
 import { useEffect, type RefObject } from 'react';
 import { SIDE_PANEL_QUERY } from '../hooks/useStageMetrics';
+import { WHEEL_LEAD } from '../spiral/loop';
 import { useSpiralStore } from '../state/spiralStore';
 import { stepSpiral } from './steering';
 import { createWheelGesture } from './wheelGesture';
@@ -15,6 +16,7 @@ function navBottom() {
 /**
  * The mouse wheel and trackpad turn the spiral while the pointer is over it:
  * one project per stroke, round and round forever, and the page stays put.
+ * Every notch of a quick spin counts, up to WHEEL_LEAD projects ahead.
  * Down, or a swipe to the left, brings the next project. Over the detail
  * panel, and whenever the stage is not in full view, the wheel scrolls the
  * page as usual. Pinches and ctrl with the wheel still zoom.
@@ -56,7 +58,7 @@ export function useSpiralWheel(stage: RefObject<HTMLElement | null>, column: Ref
       if (!read.capture) return;
       event.preventDefault();
       event.stopPropagation();
-      if (read.step !== 0) stepSpiral(read.step);
+      if (read.step !== 0) stepSpiral(read.step, WHEEL_LEAD);
     };
 
     window.addEventListener('wheel', onWheel, { passive: false, capture: true });

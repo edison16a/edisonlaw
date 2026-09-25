@@ -24,8 +24,11 @@ export interface StrokeRead {
   idle: boolean;
   /** True when this event starts a new stroke. */
   begins: boolean;
-  /** The step this event asks for: 1 on, -1 back, or 0 for none. */
-  step: -1 | 0 | 1;
+  /**
+   * The projects this event asks to turn: positive on, negative back, 0 for
+   * none. It is 1 or -1, except for a few wheel notches merged into one event.
+   */
+  step: number;
 }
 
 /**
@@ -38,7 +41,11 @@ export const IDLE_GAP = 200;
 const COMMIT = 4;
 /** A single event this big straight after a pause is a mouse wheel notch, in pixels. */
 const NOTCH = 40;
-/** Notches closer together than this, in milliseconds, are one notch split in two. */
+/**
+ * Small events that follow a notch closer together than this, in
+ * milliseconds, are a trackpad's stream. Further apart, they are what is left
+ * of the notch.
+ */
 const NOTCH_GAP = 25;
 /**
  * How far, in pixels per notch, an event may be off a whole number of the
@@ -163,19 +170,21 @@ export function createWheelStrokes() {
       if (size === 0) return { idle, begins: false, step: NONE };
       const rate = size / Math.min(IDLE_GAP, Math.max(FRAME_MIN, gap));
 
-      // A stroke that began with a few notches merged into one event learns the size of one here.
-      if (stroke?.kind === 'notch' && size >= NOTCH && notchesIn(stroke.notch, size) > 1) stroke.notch = size;
-      // Lines and pages only come from mouse wheels, and so does a big jump out of a
-      // pause. After it, only an event of the same notches is the wheel again.
-      const notch =
-        sample.mode !== 0 ||
-        (stroke === null && size >= NOTCH) ||
-        (stroke?.kind === 'notch' && gap >= NOTCH_GAP && notchesIn(size, stroke.notch) > 0);
-      if (notch) {
-        stroke = start('notch', stroke?.kind === 'notch' && sample.mode === 0 ? stroke.notch : size);
+      // Lines and pages only come from mouse wheels, and so does a big jump out of a pause.
+      if (sample.mode !== 0 || (stroke === null && size >= NOTCH)) {
+        stroke = start('notch', size);
         return { idle, begins: true, step: commit(stroke, x, y, rate) };
       }
       if (stroke?.kind === 'notch') {
+        // A stroke that began with a few notches merged into one event learns the size of one here.
+        if (size >= NOTCH && notchesIn(stroke.notch, size) > 1) stroke.notch = size;
+        // After that, an event of whole notches is the wheel again. However quick the
+        // spin, every notch counts, and so does each of a few merged into one event.
+        const notches = notchesIn(size, stroke.notch);
+        if (notches > 0) {
+          stroke = start('notch', stroke.notch);
+          return { idle, begins: true, step: commit(stroke, x, y, rate) * notches };
+        }
         // Small events a moment after a notch belong to it. Anything else is a trackpad
         // swipe: a steady stream, or one a busy page handed over as a few big uneven
         // events. It glides on from here.

@@ -14,9 +14,23 @@ describe('createWheelStrokes', () => {
     expect(stepsFor([notch(0, -100), notch(400, -100)])).toEqual([-1, -1]);
   });
 
-  it('counts every notch of a quick spin, but not one notch split across two events', () => {
-    expect(stepsFor([notch(0, 100), notch(40, 100), notch(80, 100)])).toEqual([1, 1, 1]);
-    expect(stepsFor([notch(0, 100), notch(10, 100)])).toEqual([1]);
+  it('counts every notch of a spin, however quick', () => {
+    for (const gap of [8, 16, 20, 24, 40, 120]) {
+      const spin = [0, 1, 2, 3, 4].map((index) => notch(index * gap, 100));
+      expect(stepsFor(spin)).toEqual([1, 1, 1, 1, 1]);
+    }
+  });
+
+  it('counts each of a few notches merged into one event', () => {
+    const steps = (samples: WheelSample[]) => {
+      const strokes = createWheelStrokes();
+      return samples.map((sample) => strokes.read(sample).step);
+    };
+    expect(steps([notch(0, 100), notch(40, 300), notch(56, -200)])).toEqual([1, 3, -2]);
+  });
+
+  it('turns back at once when the wheel turns back', () => {
+    expect(stepsFor([notch(0, 100), notch(10, -100)])).toEqual([1, -1]);
   });
 
   it('reads wheels that report lines or pages as one notch per event', () => {
