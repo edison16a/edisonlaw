@@ -24,7 +24,7 @@ export const projects: Project[] = [
     id: 'standoff',
     name: 'Standoff',
     badges: [],
-    stack: ['Next.js', 'React', 'TypeScript', 'Three.js', 'WebSockets', 'Redis', 'MediaPipe', 'Web Audio API', 'Vercel'],
+    stack: ['Next.js', 'React', 'TypeScript', 'Three.js', 'WebSockets', 'Redis', 'MediaPipe', 'Web Audio API'],
     description:
       'A game console for the web. Multiple phones can be used at the same time as controllers, with motion tracking, and some games use computer vision for movement. No installation needed, and up to six players pick from 11 games, including Magic Kart, Fruit Ninja, Zombie Survival and Shooting Gallery. The 3D games run on Three.js, and WebSockets and Redis keep the phones in sync with the screen.',
     links: [
@@ -72,7 +72,7 @@ export const projects: Project[] = [
     name: 'WESTPA CLI Dashboard',
     org: 'NumFOCUS',
     badges: ['Open source contribution'],
-    stack: ['Python', 'WESTPA', 'MDAnalysis'],
+    stack: ['Python', 'WESTPA', 'MDAnalysis', 'NumPy'],
     description:
       'A command line dashboard for Weighted Ensemble simulations. It tracks iteration summaries and reports molecular dynamics data. Built with the MDAnalysis and WESTPA maintainers.',
     links: [{ label: 'WESTPA on GitHub', href: 'https://github.com/westpa/westpa' }],
@@ -83,7 +83,7 @@ export const projects: Project[] = [
     name: 'SensePlan',
     badges: [],
     win: { hackathon: 'Luma A2A Agents Hackathon 2025', prizes: ['Best Use of Vapi'] },
-    stack: ['Next.js', 'React', 'TypeScript', 'Google Gemini API', 'Vapi', 'Bright Data', 'Google Calendar', 'Model Context Protocol', 'Tailwind CSS'],
+    stack: ['Next.js', 'React', 'TypeScript', 'Google Gemini API', 'Vapi', 'Bright Data', 'Model Context Protocol', 'Tailwind CSS'],
     description:
       'An AI agent that finds local providers, from clinics to barbershops, and books appointments over real phone calls. It searches with Bright Data, makes the calls with Vapi, and adds the booking to Google Calendar. Won the Luma A2A Agents Hackathon 2025 against 130+ engineers, plus Best Use of Vapi.',
     links: [],
@@ -94,7 +94,7 @@ export const projects: Project[] = [
     name: 'FlameSense',
     badges: [],
     win: { hackathon: 'Los Altos Hacks 2025' },
-    stack: ['JavaScript', 'HTML', 'CSS', 'Leaflet', 'Palantir AIP'],
+    stack: ['JavaScript', 'HTML', 'CSS', 'Leaflet', 'Palantir AIP', 'OpenStreetMap'],
     description:
       'A wildfire spread simulator. Pick a spot on the map and a model trained in Palantir AIP on past burns predicts how the fire spreads with the live weather there, shown as a heat map. Won Los Altos Hacks 2025 against 350+ competitors.',
     links: [{ label: 'GitHub', href: 'https://github.com/edison16a/FlameSense' }],
@@ -105,7 +105,7 @@ export const projects: Project[] = [
     name: 'CallSense',
     badges: [],
     win: { hackathon: 'Milpitas Hacks 2025' },
-    stack: ['Next.js', 'React', 'TypeScript', 'Google Gemini API', 'Web Speech API'],
+    stack: ['Next.js', 'React', 'TypeScript', 'Google Gemini API', 'Web Speech API', 'Framer Motion'],
     description:
       'A live call assistant for 911 dispatchers. It transcribes the call as it happens, and Google Gemini pulls out the key details, suggests follow-up questions and ranks incidents by priority. Won Milpitas Hacks 2025.',
     links: [{ label: 'GitHub', href: 'https://github.com/edison16a/CallSense' }],
@@ -143,7 +143,7 @@ export const projects: Project[] = [
     name: 'Text & Image Replacer',
     badges: ['Featured on the Chrome Web Store'],
     users: '1k+',
-    stack: ['JavaScript', 'HTML', 'CSS', 'Chrome Extensions API'],
+    stack: ['JavaScript', 'HTML', 'CSS', 'Extensions API'],
     description:
       'A Chrome extension that replaces the text and images on any page with whatever you want. Over 10,000 lifetime users, and it is featured on the Chrome Web Store. A Manifest V3 service worker keeps every open tab updated.',
     links: [
@@ -159,7 +159,7 @@ export const projects: Project[] = [
     name: 'SunBlock',
     badges: ['Featured on the Chrome Web Store'],
     users: '250+',
-    stack: ['JavaScript', 'HTML', 'CSS', 'Chrome Extensions API'],
+    stack: ['JavaScript', 'HTML', 'CSS', 'Extensions API'],
     description:
       'An ad and tracker blocker for Chrome with over 1,000 lifetime users. It blocks requests with declarativeNetRequest, so ads never load. It counts what it blocks, pauses on sites you choose, and has a Zapper that removes any element you click.',
     links: [{ label: 'Chrome Web Store', href: 'https://chromewebstore.google.com/detail/sunblock/dokdhfglhjcdfjblneeaglmhbchkkafk' }],
@@ -169,7 +169,7 @@ export const projects: Project[] = [
     id: 'poker-strategy-trainer',
     name: 'Poker Strategy Trainer',
     badges: [],
-    stack: ['Next.js', 'React', 'TypeScript', 'CSS', 'Vercel'],
+    stack: ['Next.js', 'React', 'TypeScript', 'CSS', 'Vercel', 'Vitest'],
     description:
       'A poker trainer with an AI coach that scores each fold, call or raise out of 100 and explains the best play. You climb Elo ranks from Bronze to Champion, and an Outs Trainer drills the odds. The scoring engine runs in the browser.',
     links: [
@@ -182,7 +182,7 @@ export const projects: Project[] = [
     id: 'clue-ai',
     name: 'Clue.ai',
     badges: [],
-    stack: ['Next.js', 'React', 'TypeScript', 'OpenAI API', 'Vercel'],
+    stack: ['Next.js', 'React', 'TypeScript', 'OpenAI API', 'Vercel', 'Vitest'],
     description:
       'An AI tutor that helps students get unstuck on assignments without giving away the answer. It gives hints and asks clarifying questions instead, using the OpenAI API.',
     links: [],
@@ -192,7 +192,7 @@ export const projects: Project[] = [
     id: 'betterbart',
     name: 'BetterBART',
     badges: [],
-    stack: ['Next.js', 'React', 'JavaScript', 'SVG', 'Vercel'],
+    stack: ['Next.js', 'React', 'JavaScript', 'SVG', 'CSS', 'Vercel'],
     description:
       'A UI mockup of a simpler BART map and trip planner. Pick two stations and follow one clear step at a time. Train times are placeholders until it gets BART API access.',
     links: [
