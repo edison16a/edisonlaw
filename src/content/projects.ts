@@ -12,11 +12,10 @@ export const projects: Project[] = [
   {
     id: 'backbond',
     name: 'Backbond',
-    org: 'Optagon Labs',
     badges: [],
     stack: ['Next.js', 'Vercel', 'Google Cloud Run', 'Cloud SQL', 'OAuth', 'Stripe', 'AWS', 'Amazon Bedrock'],
     description:
-      'Computational design platform for R&D. Built the core infrastructure, security and databases, plus billing, usage metering, organizations and project ingestion.',
+      'Computational design platform for R&D, developed at Optagon Labs. Built the core infrastructure, security and databases, plus billing, usage metering, organizations and project ingestion.',
     links: [{ label: 'backbond.net', href: 'https://backbond.net' }],
     image: '/projects/backbond.webp',
   },
@@ -70,11 +69,10 @@ export const projects: Project[] = [
   {
     id: 'westpa-dashboard',
     name: 'WESTPA CLI Dashboard',
-    org: 'NumFOCUS',
     badges: ['Open source contribution'],
     stack: ['Python', 'WESTPA', 'MDAnalysis', 'NumPy'],
     description:
-      'A command line dashboard for Weighted Ensemble simulations. It tracks iteration summaries and reports molecular dynamics data. Built with the MDAnalysis and WESTPA maintainers.',
+      'A command line dashboard for Weighted Ensemble simulations, developed in the NumFOCUS ecosystem. It tracks iteration summaries and reports molecular dynamics data. Built with the MDAnalysis and WESTPA maintainers.',
     links: [{ label: 'WESTPA on GitHub', href: 'https://github.com/westpa/westpa' }],
     image: '/projects/westpa-dashboard.webp',
   },
