@@ -1,26 +1,36 @@
+import type { ReactNode } from 'react';
+import { TrophyIcon } from '@/components/icons';
 import { cn } from '@/lib/cn';
 
 /** Solid white pill for awards and status. It is the loudest element a card gets. */
-export function Badge({ children, className }: { children: React.ReactNode; className?: string }) {
+export function Badge({ children, icon, className }: { children: ReactNode; icon?: ReactNode; className?: string }) {
   return (
     <span
       className={cn(
-        'inline-flex items-center rounded-full bg-white px-2.5 py-0.5 text-[11px] font-medium leading-5 text-black',
+        'inline-flex items-center gap-1 rounded-full bg-white px-2.5 py-0.5 text-[11px] font-medium leading-5 text-black',
+        icon && 'pl-2',
         className,
       )}
     >
+      {icon}
       {children}
     </span>
   );
 }
 
-export function BadgeList({ items, className }: { items: string[]; className?: string }) {
+export interface BadgeItem {
+  label: string;
+  /** Draws a trophy before the label, for a hackathon win or prize. */
+  trophy?: boolean;
+}
+
+export function BadgeList({ items, className }: { items: BadgeItem[]; className?: string }) {
   if (items.length === 0) return null;
   return (
     <ul className={cn('flex flex-wrap gap-1.5', className)} aria-label="Awards and status">
       {items.map((item) => (
-        <li key={item}>
-          <Badge>{item}</Badge>
+        <li key={item.label}>
+          <Badge icon={item.trophy ? <TrophyIcon size={13} strokeWidth={2} /> : undefined}>{item.label}</Badge>
         </li>
       ))}
     </ul>

@@ -5,14 +5,24 @@ export interface Link {
   href: string;
 }
 
+/** A hackathon a project won, shown as badges with a trophy. */
+export interface HackathonWin {
+  /** The hackathon and its year, like "CruzHacks 2023". The badge reads "Winner, CruzHacks 2023". */
+  hackathon: string;
+  /** Track prizes won on top of it, like "Best Use of Vapi". Each gets a trophy badge of its own. */
+  prizes?: string[];
+}
+
 export interface Project {
   /** Stable slug. It also names the photo file in /public/projects. */
   id: string;
   name: string;
   /** Organisation or team the project belongs to, if any. */
   org?: string;
-  /** Awards and status, shown as small badges. */
+  /** Status and store honours, like "In progress" or "Featured on the Chrome Web Store", as small badges. */
   badges: string[];
+  /** Set when the project won a hackathon. Its badges come first and carry a trophy. */
+  win?: HackathonWin;
   stack: string[];
   description: string;
   links: Link[];

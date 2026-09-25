@@ -31,6 +31,12 @@ describe('projects', () => {
     }
   });
 
+  it('keep hackathon wins in the win field, so they get their trophy', () => {
+    for (const project of projects) {
+      for (const badge of project.badges) expect(badge, project.id).not.toMatch(/winner|hack/i);
+    }
+  });
+
   it('only link to secure urls', () => {
     for (const link of projects.flatMap((project) => project.links)) {
       expect(isUrl(link.href), link.href).toBe(true);

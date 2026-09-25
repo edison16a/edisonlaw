@@ -6,6 +6,7 @@ import { BadgeList } from '@/components/ui/Badge';
 import { cn } from '@/lib/cn';
 import { padIndex } from '@/lib/format';
 import { EASE_OUT_EXPO } from '@/lib/easing';
+import { projectBadges } from '../badges';
 import { ProjectLinks } from './ProjectLinks';
 import { ProjectStack } from './ProjectStack';
 
@@ -37,6 +38,7 @@ interface ProjectDetailsProps {
  * stay short enough to leave the pictures in view.
  */
 export function ProjectDetails({ project, index, total, className }: ProjectDetailsProps) {
+  const badges = projectBadges(project);
   return (
     <motion.div variants={group} initial="hidden" animate="shown" exit="gone" className={cn('@container w-full', className)}>
       <div className="grid gap-4 [grid-template-areas:'head'_'stack'_'links'] @xl:grid-cols-2 @xl:grid-rows-[auto_1fr] @xl:gap-x-10 @xl:[grid-template-areas:'head_stack'_'links_stack']">
@@ -48,9 +50,9 @@ export function ProjectDetails({ project, index, total, className }: ProjectDeta
             <h3 className="font-display text-4xl leading-[0.95] font-bold xl:text-5xl">{project.name}</h3>
             {project.org && <p className="text-sm text-grey-400">{project.org}</p>}
           </motion.div>
-          {project.badges.length > 0 && (
+          {badges.length > 0 && (
             <motion.div variants={item}>
-              <BadgeList items={project.badges} />
+              <BadgeList items={badges} />
             </motion.div>
           )}
           <motion.p variants={item} className="max-w-md text-[15px] leading-relaxed text-grey-300">

@@ -1,4 +1,5 @@
 import type { Project } from '@/content/types';
+import { projectBadges } from '../badges';
 import { ProjectLinks } from './ProjectLinks';
 
 /**
@@ -9,18 +10,21 @@ import { ProjectLinks } from './ProjectLinks';
 export function ProjectsIndex({ projects }: { projects: Project[] }) {
   return (
     <ol className="sr-only">
-      {projects.map((project) => (
-        <li key={project.id}>
-          <p>
-            <strong>{project.name}</strong>
-            {project.org && `, ${project.org}`}
-          </p>
-          {project.badges.length > 0 && <p>{project.badges.join('. ')}.</p>}
-          <p>{project.description}</p>
-          <p>Built with {project.stack.join(', ')}.</p>
-          <ProjectLinks links={project.links} tabIndex={-1} />
-        </li>
-      ))}
+      {projects.map((project) => {
+        const badges = projectBadges(project).map((badge) => badge.label);
+        return (
+          <li key={project.id}>
+            <p>
+              <strong>{project.name}</strong>
+              {project.org && `, ${project.org}`}
+            </p>
+            {badges.length > 0 && <p>{badges.join('. ')}.</p>}
+            <p>{project.description}</p>
+            <p>Built with {project.stack.join(', ')}.</p>
+            <ProjectLinks links={project.links} tabIndex={-1} />
+          </li>
+        );
+      })}
     </ol>
   );
 }

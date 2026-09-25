@@ -26,6 +26,16 @@ export function CheckIcon(props: IconProps) {
 }
 
 
+/** A trophy, for hackathon wins. */
+export function TrophyIcon(props: IconProps) {
+  return (
+    <IconBase {...props}>
+      <path d="M7.5 4h9v5a4.5 4.5 0 0 1-9 0V4z" />
+      <path d="M7.5 6H5v1.5a3 3 0 0 0 3 3M16.5 6H19v1.5a3 3 0 0 1-3 3M12 13.5V17M8.5 20h7M9.5 20c0-1.7 1.1-3 2.5-3s2.5 1.3 2.5 3" />
+    </IconBase>
+  );
+}
+
 export function SpeakerIcon(props: IconProps) {
   return (
     <IconBase {...props}>

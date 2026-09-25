@@ -45,7 +45,8 @@ export const projects: Project[] = [
   {
     id: 'senseplan',
     name: 'SensePlan',
-    badges: ['Winner, Luma A2A Agents Hackathon 2025', 'Best Use of Vapi'],
+    badges: [],
+    win: { hackathon: 'Luma A2A Agents Hackathon 2025', prizes: ['Best Use of Vapi'] },
     stack: ['React', 'Next.js', 'Bright Data', 'Vapi'],
     description:
       'Autonomous AI agent that finds reputable local providers, from medical clinics to barbershops, and books appointments end to end over real phone calls. It beat 130+ engineers.',
@@ -55,7 +56,8 @@ export const projects: Project[] = [
   {
     id: 'callsense',
     name: 'CallSense',
-    badges: ['Winner, Milpitas Hacks 2025'],
+    badges: [],
+    win: { hackathon: 'Milpitas Hacks 2025' },
     stack: ['React', 'Next.js', 'Google Gemini API'],
     description:
       'Real-time transcription and summaries of 911 dispatcher calls. It highlights the key details, suggests follow-up questions and ranks incidents by priority.',
@@ -65,7 +67,8 @@ export const projects: Project[] = [
   {
     id: 'flamesense',
     name: 'FlameSense',
-    badges: ['Winner, Los Altos Hacks 2025'],
+    badges: [],
+    win: { hackathon: 'Los Altos Hacks 2025' },
     stack: ['HTML', 'CSS', 'Keras'],
     description:
       'Wildfire spread simulator built on a sequential neural network trained on historical burn data and live weather. Pick a location and the predicted spread shows up as a heat map. It beat 350+ competitors.',
@@ -130,7 +133,8 @@ export const projects: Project[] = [
   {
     id: 'trashgo',
     name: 'TrashGo',
-    badges: ['Winner, CruzHacks 2023', 'Best Lightship AR VPS Game'],
+    badges: [],
+    win: { hackathon: 'CruzHacks 2023', prizes: ['Best Lightship AR VPS Game'] },
     stack: ['Unity', 'C#', 'Niantic Lightship', 'VPS'],
     description:
       'Mobile AR game that discourages littering and rewards people for throwing trash away properly. It won out over 650+ participants.',
