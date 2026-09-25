@@ -64,9 +64,10 @@ const bliss = createOccurrence();
 
 /**
  * The tail sweeps slowly across the floor: sweeps a second, how far each joint's swing lags the one
- * before it so the sweep rolls down the tail, and how far each joint turns at full swing.
+ * before it so the sweep rolls down the tail, and how far each joint turns at full swing. The tail lies
+ * curled round the left haunch, so the sweep mostly swings it out and back, and only a little inward.
  */
-const SWEEP = { rate: 0.42, lag: 0.5, reach: [0.05, 0.05, 0.05, 0.045, 0.04, 0.035] } as const;
+const SWEEP = { rate: 0.4, lag: 0.45, inward: 0.3, reach: [0.085, 0.08, 0.075, 0.07, 0.06, 0.05] } as const;
 
 /**
  * The dog's idle as a pure function of time: a slow sweep of the tail on the floor, calm breathing,
@@ -95,7 +96,8 @@ export function dogPose(t: number, motion: number, seed: number, pose: DogPose) 
   // The sweep grows and settles in waves, and livens up while it looks up at him.
   const energy = (0.55 + 0.3 * noise(t * 0.2, seed + 5) + 0.35 * looking) * motion;
   for (let i = 0; i < TAIL_BONES; i++) {
-    pose.tail[i] = Math.sin(t * Math.PI * 2 * SWEEP.rate - i * SWEEP.lag) * energy * SWEEP.reach[i];
+    const swing = Math.sin(t * Math.PI * 2 * SWEEP.rate - i * SWEEP.lag);
+    pose.tail[i] = (swing * (1 + SWEEP.inward) + 1 - SWEEP.inward) * 0.5 * energy * SWEEP.reach[i];
   }
 
   // Ears hang back toward the floor as the head swings, with a little bounce of their own.
