@@ -94,7 +94,7 @@ const bump = (x: number, from: number, to: number) => {
 export function sleepPose(t: number, motion: number, seed: number, pose: SleepPose) {
   pose.breath = Math.sin(t * Math.PI * 2 * BREATH_RATE) * motion;
 
-  const looking = occurrence(t, TIMING.lookUp, seed + 7, lookUp);
+  const looking = occurrence(t, TIMING.lookUp, seed + 10, lookUp);
   // It lets the first spell pass asleep, so it is sound asleep when the room first comes into view.
   const lift = looking.index > 0 ? looking.weight * motion : 0;
   const look = LOOKS[looking.index % 2];
