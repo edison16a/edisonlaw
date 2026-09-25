@@ -71,7 +71,7 @@ export const projects: Project[] = [
     id: 'westpa-dashboard',
     name: 'WESTPA CLI Dashboard',
     org: 'NumFOCUS',
-    badges: [],
+    badges: ['Open source contribution'],
     stack: ['Python', 'WESTPA', 'MDAnalysis'],
     description:
       'A command line dashboard for Weighted Ensemble simulations. It tracks iteration summaries and reports molecular dynamics data. Built with the MDAnalysis and WESTPA maintainers.',
