@@ -9,26 +9,18 @@ const FROZEN_HUE = 0.74;
 const FAVOURED_HUE = 0.76;
 /** 0 is an even cycle. 0.6 spends four times longer at the favoured hue than at its opposite. */
 const LINGER = 0.6;
-/** Length of the pulse surge, in seconds. */
-const PULSE_DURATION = 0.7;
-/** Extra brightness at the peak of a pulse, so the peak reads 1.8x. */
-const PULSE_GAIN = 0.8;
 
 /**
- * One hue clock shared by everything RGB in a scene (tower, strips, keyboard, lights),
- * so they all cycle together. Consumers call `sample` with the frame time first;
- * repeated calls in the same frame are free.
+ * One hue clock shared by everything RGB in a scene (tower, strips, lights), so they all cycle
+ * together. Consumers call `sample` with the frame time first; repeated calls in the same frame are free.
+ * Only the hue moves. Brightness never depends on the clock.
  */
 export interface RgbClock {
   /** 0 to 1, the hue at the last sampled time. */
   readonly hue: number;
-  /** Brightness multiplier. 1 at rest, up to 1 + PULSE_GAIN during a pulse. */
-  readonly boost: number;
   sample(elapsed: number): void;
-  /** True holds a still hue and ignores pulses, for reduced motion. */
+  /** True holds a still hue, for reduced motion. */
   setFrozen(frozen: boolean): void;
-  /** Starts a pulse at the next sampled frame. */
-  pulse(): void;
 }
 
 /**
@@ -40,34 +32,16 @@ function warpHue(phase: number) {
   return wrap(phase - (LINGER * Math.sin(2 * Math.PI * offset)) / (2 * Math.PI), 0, 1);
 }
 
-/** Eased bump from 0 up to 1 and back to 0 over `progress` 0 to 1. */
-function pulseEnvelope(progress: number) {
-  if (progress <= 0 || progress >= 1) return 0;
-  const s = Math.sin(Math.PI * progress);
-  return s * s;
-}
-
 export function createRgbClock(frozen = false): RgbClock {
   let lastElapsed = Number.NaN;
-  let pulseStart = Number.NEGATIVE_INFINITY;
-  let pulsePending = false;
 
   const clock = {
     hue: FROZEN_HUE,
-    boost: 1,
     frozen,
     sample(elapsed: number) {
       if (elapsed === lastElapsed) return;
       lastElapsed = elapsed;
-      if (pulsePending) {
-        pulseStart = elapsed;
-        pulsePending = false;
-      }
       clock.hue = clock.frozen ? FROZEN_HUE : warpHue(0.62 + elapsed * HUE_SPEED);
-      clock.boost = 1 + PULSE_GAIN * pulseEnvelope((elapsed - pulseStart) / PULSE_DURATION);
-    },
-    pulse() {
-      if (!clock.frozen) pulsePending = true;
     },
     setFrozen(value: boolean) {
       clock.frozen = value;

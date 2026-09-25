@@ -27,7 +27,6 @@ import { Rug } from './Rug';
 export interface DeskSceneProps {
   variant: StageVariant;
   centerScreen?: ScreenId;
-  pulseKey?: number;
   /** False freezes every animation, for reduced motion. */
   animate: boolean;
   /** False holds the RGB hue on a calm violet, for reduced motion and still captures. */
@@ -39,12 +38,12 @@ export interface DeskSceneProps {
 
 /** Everything inside the canvas: room, props, character, lights, camera and effects. */
 export function DeskScene(props: DeskSceneProps) {
-  const { variant, centerScreen, pulseKey, animate, rgbCycle, screensLive, onReady } = props;
+  const { variant, centerScreen, animate, rgbCycle, screensLive, onReady } = props;
   const seated = variant === 'work';
   const placement = seated ? SEATED_PLACEMENT : STANDING_PLACEMENT;
 
   return (
-    <RgbClockProvider animate={rgbCycle} pulseKey={pulseKey}>
+    <RgbClockProvider animate={rgbCycle}>
       <color attach="background" args={['#000000']} />
       <CameraRig variant={variant} />
       <Lighting />

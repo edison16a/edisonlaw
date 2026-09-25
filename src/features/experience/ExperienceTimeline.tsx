@@ -9,7 +9,7 @@ import { useDotSound } from './useDotSound';
 
 /**
  * The timeline column and the pinned desk scene. They share the entry being read:
- * the centre monitor follows it and the RGB pulses on each new one.
+ * the centre monitor follows it. Nothing else in the room changes with it.
  */
 export function ExperienceTimeline({ header }: { header: ReactNode }) {
   const listRef = useRef<HTMLOListElement>(null);
@@ -25,7 +25,7 @@ export function ExperienceTimeline({ header }: { header: ReactNode }) {
         <Timeline listRef={listRef} active={active} />
       </div>
       <div className="order-first mt-nav aspect-[4/3] w-full lg:sticky lg:top-nav lg:order-none lg:mt-0 lg:aspect-auto lg:h-[calc(100dvh-var(--spacing-nav))]">
-        <WorkstationStage variant="work" centerScreen={current.screen} pulseKey={Math.max(active, 0)} />
+        <WorkstationStage variant="work" centerScreen={current.screen} />
       </div>
     </>
   );

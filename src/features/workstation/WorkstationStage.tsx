@@ -31,8 +31,6 @@ export interface WorkstationStageProps {
   variant: StageVariant;
   /** What the centre monitor shows. Defaults to Codex. */
   centerScreen?: ScreenId;
-  /** Change this number to make the RGB lighting pulse once. */
-  pulseKey?: number;
   className?: string;
 }
 
@@ -41,7 +39,7 @@ export interface WorkstationStageProps {
  * The canvas mounts once the stage comes near the viewport and pauses while off-screen.
  * Phones, tablets, browsers without WebGL and scenes that fail to render get a pre-rendered still instead.
  */
-export function WorkstationStage({ variant, centerScreen, pulseKey, className }: WorkstationStageProps) {
+export function WorkstationStage({ variant, centerScreen, className }: WorkstationStageProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [imageFailed, setImageFailed] = useState(false);
   const [canvasFailed, setCanvasFailed] = useState(false);
@@ -56,7 +54,6 @@ export function WorkstationStage({ variant, centerScreen, pulseKey, className }:
         <WorkstationCanvas
           variant={variant}
           centerScreen={centerScreen}
-          pulseKey={pulseKey}
           onReady={onReady}
           {...canvasMode}
         />

@@ -4,7 +4,6 @@ import { useFrame } from '@react-three/fiber';
 import { useLayoutEffect, useRef } from 'react';
 import { InstancedBufferAttribute, MeshBasicMaterial, MeshStandardMaterial, type InstancedMesh } from 'three';
 import { DESK_MAT, KEYBOARD } from '../../layout';
-import { useRgbClock } from '../../lighting/RgbClockProvider';
 import { useDisposable } from '../../useDisposable';
 import { createKeyboardCaseGeometry, createKeycapGeometry, createKeyHaloGeometry, HALO_ALPHA_ATTRIBUTE } from './keyboardGeometry';
 import { createKeycapMaterial, createKeyHaloMaterial, KEY_STRETCH_ATTRIBUTE } from './keycapMaterial';
@@ -49,7 +48,6 @@ interface KeyboardProps {
  * a shimmering gradient from navy on the left to sky blue on the right, and flash pale blue where Edison types.
  */
 export function Keyboard({ typing, animate }: KeyboardProps) {
-  const clock = useRgbClock();
   const caps = useRef<InstancedMesh>(null);
   const halos = useRef<InstancedMesh>(null);
 
@@ -77,8 +75,7 @@ export function Keyboard({ typing, animate }: KeyboardProps) {
 
   useFrame(({ clock: time }, delta) => {
     if (!caps.current || !halos.current) return;
-    clock.sample(time.elapsedTime);
-    parts.animator.update(caps.current, halos.current, clock, delta, animate ? time.elapsedTime : 0, typing && animate);
+    parts.animator.update(caps.current, halos.current, delta, animate ? time.elapsedTime : 0, typing && animate);
   });
 
   const [x, , z] = KEYBOARD.position;

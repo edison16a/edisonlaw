@@ -19,7 +19,7 @@ interface RgbLightSpec {
 
 const [towerX, , towerZ] = PC_TOWER.position;
 
-// The colour lives on the emissive parts (tower, strips, keyboard). These lights only hint at it, with
+// The colour lives on the emissive parts (tower, strips). These lights only hint at it, with
 // short reach and washed out colour, so the room itself stays neutral whatever the hue.
 const LIGHTS: RgbLightSpec[] = [
   // Inside the tower, so a little colour spills out through the glass onto the floor beside it.
@@ -30,7 +30,7 @@ const LIGHTS: RgbLightSpec[] = [
   { position: [-0.35, 0.3, -0.62], hueOffset: 0.12, intensity: 0.35, distance: 1.8, saturation: 0.2 },
 ];
 
-/** Coloured point lights that follow the shared RGB hue and its pulse. */
+/** Coloured point lights that follow the shared RGB hue. */
 export function RgbLights() {
   const clock = useRgbClock();
   const refs = useRef<(PointLight | null)[]>([]);
@@ -39,9 +39,7 @@ export function RgbLights() {
     clock.sample(time.elapsedTime);
     LIGHTS.forEach((spec, index) => {
       const light = refs.current[index];
-      if (!light) return;
-      writeRgb(light.color, clock.hue + spec.hueOffset, 1, spec.saturation);
-      light.intensity = spec.intensity * clock.boost;
+      if (light) writeRgb(light.color, clock.hue + spec.hueOffset, 1, spec.saturation);
     });
   });
 

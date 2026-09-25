@@ -18,7 +18,7 @@ interface RgbMaterialOptions {
 }
 
 /**
- * An unlit glowing material whose colour follows the shared RGB clock and pulse.
+ * An unlit glowing material whose colour follows the shared RGB clock.
  * Used for LED strips, fan rings and light bars.
  */
 export function useRgbMaterial({ hueOffset = 0, intensity = 2, saturation = 1, side = FrontSide }: RgbMaterialOptions = {}) {
@@ -27,7 +27,7 @@ export function useRgbMaterial({ hueOffset = 0, intensity = 2, saturation = 1, s
 
   useFrame(({ clock: time }) => {
     clock.sample(time.elapsedTime);
-    writeRgb(material.color, clock.hue + hueOffset, intensity * clock.boost, saturation);
+    writeRgb(material.color, clock.hue + hueOffset, intensity, saturation);
   });
 
   return material;

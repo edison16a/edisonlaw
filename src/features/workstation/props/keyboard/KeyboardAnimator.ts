@@ -1,5 +1,4 @@
 import { Color, DataTexture, Object3D, RGBAFormat, SRGBColorSpace, type InstancedMesh } from 'three';
-import type { RgbClock } from '../../lighting/rgbClock';
 import { FLASH_BLUE, writeKeyboardBlue } from './keyboardBlue';
 import { KEYS, LAYOUT_WIDTH_U } from './keyLayout';
 import { createTypingModel } from './typingModel';
@@ -23,8 +22,8 @@ export interface KeycapMetrics {
 
 /**
  * Drives the keyboard every frame: the typing simulation, key flashes and travel, and the shimmering
- * navy to sky blue gradient on the caps and on the plate between them. The shared RGB clock only
- * lends its pulse, so a new timeline entry still brightens the board.
+ * navy to sky blue gradient on the caps and on the plate between them. The board keeps its own blue
+ * at a steady strength, apart from the shimmer and the flashes of struck keys.
  */
 export class KeyboardAnimator {
   /** Gradient shown on the plate between the keys, one texel row across the board. */
@@ -46,15 +45,15 @@ export class KeyboardAnimator {
    * @param elapsed seconds since start, frozen at 0 when motion is reduced
    * @param typing whether Edison is typing right now
    */
-  update(caps: InstancedMesh, halos: InstancedMesh, clock: RgbClock, delta: number, elapsed: number, typing: boolean) {
+  update(caps: InstancedMesh, halos: InstancedMesh, delta: number, elapsed: number, typing: boolean) {
     if (typing) {
       this.typing.advance(Math.min(delta, 0.1), (label) => {
         const index = this.indexByLabel.get(label);
         if (index !== undefined) this.flashes[index] = 1;
       });
     }
-    this.updateCaps(caps, halos, clock, delta, elapsed);
-    this.updatePlate(clock, elapsed);
+    this.updateCaps(caps, halos, delta, elapsed);
+    this.updatePlate(elapsed);
   }
 
   /** Lays the halos flat on the plate under their keys. They never move, so this runs once. */
@@ -68,7 +67,7 @@ export class KeyboardAnimator {
     halos.instanceMatrix.needsUpdate = true;
   }
 
-  private updateCaps(caps: InstancedMesh, halos: InstancedMesh, clock: RgbClock, delta: number, elapsed: number) {
+  private updateCaps(caps: InstancedMesh, halos: InstancedMesh, delta: number, elapsed: number) {
     const { unit, restY, pressDepth } = this.metrics;
     const { flashes, dummy, color, haloColor } = this;
     const fade = Math.exp(-FLASH_FADE * delta);
@@ -76,7 +75,7 @@ export class KeyboardAnimator {
     KEYS.forEach((key, index) => {
       const flash = flashes[index];
       flashes[index] = flash < 0.01 ? 0 : flash * fade;
-      writeKeyboardBlue(color, key.x / LAYOUT_WIDTH_U + 0.5, elapsed, BASE_GLOW * clock.boost);
+      writeKeyboardBlue(color, key.x / LAYOUT_WIDTH_U + 0.5, elapsed, BASE_GLOW);
       if (flash > 0) color.lerp(FLASH_BLUE, flash).multiplyScalar(1 + flash * (FLASH_GLOW - 1));
       caps.setColorAt(index, color);
       halos.setColorAt(index, haloColor.copy(color).multiplyScalar(HALO_GAIN));
@@ -90,11 +89,11 @@ export class KeyboardAnimator {
     if (halos.instanceColor) halos.instanceColor.needsUpdate = true;
   }
 
-  private updatePlate(clock: RgbClock, elapsed: number) {
+  private updatePlate(elapsed: number) {
     const data = this.plate.image.data as Uint8Array;
     const { color } = this;
     for (let i = 0; i < PLATE_TEXELS; i++) {
-      writeKeyboardBlue(color, i / (PLATE_TEXELS - 1), elapsed, PLATE_GLOW * clock.boost);
+      writeKeyboardBlue(color, i / (PLATE_TEXELS - 1), elapsed, PLATE_GLOW);
       color.convertLinearToSRGB();
       data[i * 4] = Math.min(255, color.r * 255);
       data[i * 4 + 1] = Math.min(255, color.g * 255);
