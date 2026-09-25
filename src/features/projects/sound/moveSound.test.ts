@@ -1,11 +1,22 @@
 import { describe, expect, it } from 'vitest';
 import { createMoveSound, GESTURE_GAP, SOFTER, SOFTER_WITHIN } from './moveSound';
 
-/** Feeds moves at the given times and returns the volume of every sound they played. */
-function volumesFor(times: number[]) {
+/**
+ * Plays out moves at the given times, with something still moving every
+ * frame through each of the `busy` spans, and returns the volume of every
+ * sound they played.
+ */
+function volumesFor(moves: number[], busy: [number, number][] = []) {
   const played: number[] = [];
-  const move = createMoveSound((volume) => played.push(volume));
-  times.forEach((time) => move(time));
+  const sound = createMoveSound((volume) => played.push(volume));
+  const frames = busy.flatMap(([from, to]) => Array.from({ length: Math.floor((to - from) / 16) + 1 }, (_, frame) => from + frame * 16));
+  const events = [...moves.map((time) => ({ time, move: true })), ...frames.map((time) => ({ time, move: false }))];
+  // A move and a frame at the same moment: the frame comes first, as a scroll event does.
+  events.sort((a, b) => a.time - b.time || Number(a.move) - Number(b.move));
+  for (const { time, move } of events) {
+    if (move) sound.move(time);
+    else sound.hold(time);
+  }
   return played;
 }
 
@@ -17,10 +28,6 @@ describe('createMoveSound', () => {
   it('sounds once for a quick wheel spin, not once per notch', () => {
     const spin = [0, 1, 2, 3, 4, 5].map((notch) => 5000 + notch * 40);
     expect(volumesFor(spin)).toEqual([1]);
-  });
-
-  it('sounds once as the phone strip scrolls past a few projects on its way to one', () => {
-    expect(volumesFor([0, 70, 130, 200, 260, 330, 390].map((time) => 8000 + time))).toEqual([1]);
   });
 
   it('sounds once while a held key turns the spiral a card every 200 ms', () => {
@@ -36,5 +43,24 @@ describe('createMoveSound', () => {
   it('waits for a spin to pause before it sounds again', () => {
     const spin = Array.from({ length: 30 }, (_, notch) => notch * 50);
     expect(volumesFor([...spin, 1450 + GESTURE_GAP])).toEqual([1, 1]);
+  });
+
+  it('sounds once as the phone strip glides across many projects and slows down at the end', () => {
+    // The strip passes a project quickly at first, then ever more slowly as it eases to a stop.
+    const passes = [100, 160, 220, 290, 380, 500, 680, 950];
+    expect(volumesFor(passes)).toEqual([1, 1]);
+    expect(volumesFor(passes, [[0, 1200]])).toEqual([1]);
+  });
+
+  it('sounds again for the next swipe once the strip has come to rest', () => {
+    const spans: [number, number][] = [
+      [0, 300],
+      [2000, 2300],
+    ];
+    expect(volumesFor([150, 2150], spans)).toEqual([1, 1]);
+  });
+
+  it('pays no heed to scrolling before the strip reaches another project', () => {
+    expect(volumesFor([1100], [[0, 1200]])).toEqual([1]);
   });
 });

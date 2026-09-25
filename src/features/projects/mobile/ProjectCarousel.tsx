@@ -1,7 +1,7 @@
 'use client';
 
 import { getImageProps } from 'next/image';
-import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react';
+import { useCallback, useRef, useState, type KeyboardEvent } from 'react';
 import { preload } from 'react-dom';
 import { AnimatePresence } from 'motion/react';
 import type { Project } from '@/content/types';
@@ -14,10 +14,10 @@ import { featuredIndex } from '../featured';
 import { hasGallery, projectPictures } from '../gallery/pictures';
 import { NO_SELECTION, selectPicture, shownPicture } from '../gallery/selection';
 import { CAROUSEL_QUERY } from '../hooks/useSpiralFits';
-import { soundMove } from '../sound/moveSound';
 import { CarouselControls } from './CarouselControls';
 import { CarouselGallery } from './CarouselGallery';
 import { slideStride, useActiveSlide } from './useActiveSlide';
+import { useStripSound } from './useStripSound';
 
 /** Slide widths for next/image, so phones download a sensible size. */
 const SLIDE_SIZES = '(min-width: 768px) 768px, 82vw';
@@ -54,16 +54,11 @@ export function ProjectCarousel({ projects, className }: ProjectCarouselProps) {
   const active = useActiveSlide(strip, projects.length, opening);
   preloadPhoto(projects[opening]);
   const project = projects[active];
-  const previous = useRef(active);
+  useStripSound(strip, active);
 
   // A screenshot picked under the current slide. Moving to another slide puts its thumbnail back.
   const [gallery, setGallery] = useState(NO_SELECTION);
   if (gallery.project !== null && gallery.project !== active) setGallery(NO_SELECTION);
-
-  useEffect(() => {
-    if (previous.current !== active) soundMove();
-    previous.current = active;
-  }, [active]);
 
   const reducedMotion = useReducedMotion();
   const moveTo = useCallback(
