@@ -74,6 +74,7 @@ export function biquad(signal: Signal, type: FilterType, frequency: Frequency, q
 
 export const lowpass = (signal: Signal, frequency: Frequency, q?: number) => biquad(signal, 'lowpass', frequency, q);
 export const bandpass = (signal: Signal, frequency: Frequency, q?: number) => biquad(signal, 'bandpass', frequency, q);
+export const highpass = (signal: Signal, frequency: Frequency, q?: number) => biquad(signal, 'highpass', frequency, q);
 
 /** Gentle 6 dB per octave lowpass, in place. Useful for damping and muffling. */
 export function onePoleLowpass(signal: Signal, frequency: number): Signal {

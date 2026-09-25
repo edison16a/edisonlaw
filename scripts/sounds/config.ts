@@ -6,6 +6,20 @@ export const SPRITE_MODULE = 'src/features/sound/sprite.ts';
 /** Public URL the page loads the sprite from. */
 export const SPRITE_PATH = '/audio/sprite.mp3';
 
+/** The background music, a file of its own that loads only once sound is on. */
+export const MUSIC_FILE = 'public/audio/music.mp3';
+export const MUSIC_MODULE = 'src/features/sound/musicTrack.ts';
+export const MUSIC_PATH = '/audio/music.mp3';
+/** Joint stereo at 96 kbps keeps the keys and brushes clean in about 1.2 MB. */
+export const MUSIC_BITRATE = 96;
+/**
+ * At that bitrate LAME codes stereo at 32 kHz. The music is lowpassed at 9 kHz, so
+ * nothing is lost, but the decoder delay then counts in 32 kHz samples.
+ */
+export const MUSIC_CODED_RATE = 32000;
+/** Wraparound copy on each side of the music lap, so a decoder that lands a little off still loops cleanly. */
+export const MUSIC_PAD = 0.05;
+
 /** MP3 bitrate in kbps. Mono at 112 keeps soft transients clean at a small size. */
 export const BITRATE = 112;
 

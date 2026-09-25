@@ -49,3 +49,29 @@ export function modes(seconds: number, list: Mode[]): Signal {
 
 /** Nearest frequency that fits a whole number of cycles in `seconds`, so tones loop without a seam. */
 export const loopableFrequency = (frequency: number, seconds: number) => Math.max(1, Math.round(frequency * seconds)) / seconds;
+
+/** PolyBLEP correction for a phase `phase` (0 to 1) that wraps every cycle, `step` of a cycle per sample. */
+function polyBlep(phase: number, step: number) {
+  if (phase < step) {
+    const x = phase / step;
+    return x + x - x * x - 1;
+  }
+  if (phase > 1 - step) {
+    const x = (phase - 1) / step;
+    return x * x + x + x + 1;
+  }
+  return 0;
+}
+
+/** Band limited sawtooth (PolyBLEP), bright but free of the aliasing a naive ramp has. Starts at `phase` (0 to 1). */
+export function saw(seconds: number, frequency: number, phase = 0): Signal {
+  const out = silence(seconds);
+  const step = frequency / SAMPLE_RATE;
+  let p = phase;
+  for (let i = 0; i < out.length; i++) {
+    out[i] = 2 * p - 1 - polyBlep(p, step);
+    p += step;
+    if (p >= 1) p -= 1;
+  }
+  return out;
+}

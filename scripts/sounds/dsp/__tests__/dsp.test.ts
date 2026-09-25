@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { fromDb, peak, rms, seamRatio } from '../analysis';
+import { fromDb, mean, peak, rms, seamRatio } from '../analysis';
 import { softLimit } from '../dynamics';
-import { lowpass } from '../filters';
+import { highpass, lowpass } from '../filters';
 import { crossfadeLoop, mixCircular, padLoop, processLoop } from '../loop';
 import { whiteNoise } from '../noise';
-import { sine } from '../oscillators';
+import { saw, sine } from '../oscillators';
 import { createRandom } from '../random';
 import { reverb } from '../reverb';
 import { slice, toSamples } from '../signal';
@@ -72,5 +72,21 @@ describe('loops', () => {
     const window = padded.slice(shift, shift + loop.length);
     const rotated = Float32Array.from(loop, (_, i) => loop[(i + loop.length - toSamples(0.01) + shift) % loop.length]);
     expect(Array.from(window)).toEqual(Array.from(rotated));
+  });
+});
+
+describe('saw', () => {
+  it('ramps between -1 and 1 with no offset', () => {
+    const wave = saw(0.5, 220);
+    expect(Math.abs(mean(wave))).toBeLessThan(0.01);
+    expect(peak(wave)).toBeLessThan(1.2);
+    expect(rms(wave)).toBeCloseTo(1 / Math.sqrt(3), 1);
+  });
+});
+
+describe('highpass', () => {
+  it('removes low tones and passes high ones', () => {
+    expect(rms(slice(highpass(sine(0.2, 40), 1000), 0.05))).toBeLessThan(0.01);
+    expect(rms(slice(highpass(sine(0.2, 8000), 1000), 0.05))).toBeGreaterThan(0.65);
   });
 });
