@@ -3,6 +3,7 @@
  * The text is set in Geist Mono from the site's own dependencies.
  */
 import { readFileSync } from 'node:fs';
+import { MARGIN, fit } from './base.mjs';
 
 const FONT_DIR = new URL('../../../../node_modules/geist/dist/fonts/geist-mono/', import.meta.url);
 
@@ -38,9 +39,14 @@ ${fontFace(600, 'GeistMono-SemiBold.woff2')}
 /**
  * `panes` is a list of { command, output, grow, tail }. A tail pane is anchored to the bottom,
  * like a terminal that has scrolled; the others read from the top, like a dashboard that
- * clears the screen.
+ * clears the screen. `width` and `height` are the window in CSS pixels, the size its text is
+ * laid out at. The window is scaled to the largest size that keeps `margin` clear on every
+ * side of the card, and centred.
  */
-export function terminal({ title, cwd, panes, left, top, width, height }) {
+export function terminal({ title, cwd, panes, width, height, margin = MARGIN }) {
+  const box = fit(width / height, margin);
+  const zoom = box.width / width;
+  const z = (value) => (value / zoom).toFixed(2);
   const sections = panes
     .map(({ command, output, grow = 1, tail = false }) => {
       const prompt = `<span class="path">${escape(cwd)}</span> <span class="prompt">$</span> ${escape(command)}`;
@@ -48,7 +54,7 @@ export function terminal({ title, cwd, panes, left, top, width, height }) {
     })
     .join('');
 
-  return `<div class="term" style="left: ${left}px; top: ${top}px; width: ${width}px; height: ${height}px;">
+  return `<div class="term" style="zoom: ${zoom}; left: ${z(box.left)}px; top: ${z(box.top)}px; width: ${width}px; height: ${height}px;">
 <div class="bar"><i></i><i></i><i></i><span>${escape(title)}</span></div>
 <div class="panes">${sections}</div>
 </div>`;

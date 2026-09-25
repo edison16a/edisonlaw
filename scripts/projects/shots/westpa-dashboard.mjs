@@ -14,8 +14,6 @@ export async function capture({ compose }) {
   const body = terminal({
     title: 'odld',
     cwd: '~/edison16a/odld',
-    left: 64,
-    top: 56,
     width: 1472,
     height: 888,
     panes: [
