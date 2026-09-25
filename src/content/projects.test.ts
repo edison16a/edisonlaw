@@ -30,12 +30,11 @@ describe('project pictures', () => {
     }
   });
 
-  it('give Photo Craft five screenshots, its cover first, and every other project just its cover', () => {
+  it('give Backbond two pictures, Standoff and Photo Craft five, and every other project just its cover', () => {
+    const galleries: Record<string, number> = { backbond: 1, standoff: 4, 'photo-craft': 4 };
     for (const project of projects) {
-      const expected = project.id === 'photo-craft' ? 4 : 0;
-      expect(project.screenshots?.length ?? 0, project.id).toBe(expected);
+      expect(project.screenshots?.length ?? 0, project.id).toBe(galleries[project.id] ?? 0);
+      expect(project.image, project.id).toBe(`/projects/${project.id}.webp`);
     }
-    const photoCraft = projects.find((project) => project.id === 'photo-craft');
-    expect(photoCraft?.image).toBe('/projects/photo-craft.webp');
   });
 });

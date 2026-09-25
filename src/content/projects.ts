@@ -6,7 +6,8 @@ export const featuredProjectId = 'backbond';
 /**
  * Every project card in the spiral, in display order.
  * Drop a photo into /public/projects and set `image` to replace a generated cover.
- * List up to four more in `screenshots` to give a project a row of screenshots.
+ * List up to four more in `screenshots` to give a project a row of screenshots, as Backbond,
+ * Standoff and Photo Craft do.
  */
 export const projects: Project[] = [
   {
@@ -19,6 +20,7 @@ export const projects: Project[] = [
       "Production platform for Optagon Labs' AI-native R&D for drug developers. I built the core infrastructure, including billing, usage metering, organizations and project ingestion.",
     links: [{ label: 'backbond.net', href: 'https://backbond.net' }],
     image: '/projects/backbond.webp',
+    screenshots: ['/projects/backbond-2.webp'],
   },
   {
     id: 'standoff',
@@ -32,6 +34,12 @@ export const projects: Project[] = [
       { label: 'GitHub', href: 'https://github.com/edison16a/standoff' },
     ],
     image: '/projects/standoff.webp',
+    screenshots: [
+      '/projects/standoff-2.webp',
+      '/projects/standoff-3.webp',
+      '/projects/standoff-4.webp',
+      '/projects/standoff-5.webp',
+    ],
   },
   {
     id: 'photo-craft',
