@@ -58,11 +58,10 @@ export const projects: Project[] = [
   {
     id: 'autolab',
     name: 'AutoLab',
-    org: 'Neurotech@Berkeley',
     badges: ['In progress'],
     stack: ['Python', 'C++', 'Raspberry Pi', 'Computer Vision'],
     description:
-      'A low-cost robot for growing neuron cultures. It handles X, Y and Z motion, motorized pipetting, imaging and environmental control, so cultures stay alive and fed for weeks.',
+      'A low-cost robot for growing neuron cultures, developed at Neurotech@Berkeley. It handles X, Y and Z motion, motorized pipetting, imaging and environmental control, so cultures stay alive and fed for weeks.',
     links: [],
     image: '/projects/autolab.webp',
   },
