@@ -20,11 +20,12 @@ export interface CameraFraming {
 
 export const CAMERA_FRAMINGS: Record<StageVariant, CameraFraming> = {
   // Elevated three-quarter view from behind and to the right, like the reference. The plant, the shelf,
-  // the cork board, the picture and the tower stay clear of the stage's faded edges; the portrait shot
-  // is tuned for a desktop half panel, and taller panels keep its width.
+  // the cork board, the picture, the tower and the golden retriever asleep beside the chair, the plume of
+  // its tail included, stay clear of the stage's faded edges; the portrait shot is tuned for a desktop
+  // half panel, and taller panels keep its width.
   work: {
     portrait: { position: [2.95, 3.2, 4.3], target: [0.36, 0.74, -0.3], fov: 37.6 },
-    landscape: { position: [2.6, 2.85, 3.6], target: [0.35, 0.92, -0.3], fov: 36.5 },
+    landscape: { position: [2.6, 2.85, 3.6], target: [0.35, 0.86, -0.3], fov: 38 },
     aspects: [0.86, 1.4],
   },
   // From the left, a little above eye level, so the standing figure reads in three-quarter profile
