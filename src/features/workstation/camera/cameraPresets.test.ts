@@ -1,6 +1,9 @@
 import { PerspectiveCamera, Vector3 } from 'three';
 import { describe, expect, it } from 'vitest';
 import { SEATED_PLACEMENT, STANDING_PLACEMENT } from '../character/placement';
+import { TAIL_PATH } from '../dog/anatomy/tail';
+import { PAWS } from '../dog/dimensions';
+import { DOG_PLACEMENT } from '../dog/placement';
 import { CHAIR, DESK, DOG_PAT_POINT, MONITOR, MONITORS, PC_TOWER, type Vec3 } from '../layout';
 import type { StageVariant } from '../types';
 import { CAMERA_FRAMINGS, createResolvedShot, resolveShot } from './cameraPresets';
@@ -58,6 +61,23 @@ const DESK_AND_MONITORS: [string, Vec3][] = [
   ...MONITORS.map(({ slot, position }): [string, Vec3] => [`the ${slot} monitor`, [position[0], MONITOR.centerY, position[2]]]),
 ];
 
+/** A point on the sitting dog, from its own space into the room. */
+const onDog = (x: number, y: number, z: number): Vec3 =>
+  new Vector3(x, y, z).applyAxisAngle(new Vector3(0, 1, 0), DOG_PLACEMENT.rotationY).add(new Vector3(...DOG_PLACEMENT.position)).toArray();
+const [tailX, , tailZ] = TAIL_PATH[TAIL_PATH.length - 1];
+
+/**
+ * The sitting dog's footprint: its head under Edison's hand, its nose, its forepaws, the back of its
+ * seat, and its plume spread on the floor round its left haunch.
+ */
+const DOG: [string, Vec3][] = [
+  ["the dog's head", DOG_PAT_POINT],
+  ["the dog's nose", onDog(0.08, 0.66, 0.36)],
+  ...[1, -1].map((side): [string, Vec3] => [`the dog's forepaw on its ${side > 0 ? 'left' : 'right'}`, onDog(PAWS.front[0] * side, 0, PAWS.front[1] + 0.04)]),
+  ["the back of the dog's seat", onDog(0, 0, -0.3)],
+  ["the dog's plume", onDog(tailX + 0.1, 0, tailZ)],
+];
+
 const [standX, , standZ] = STANDING_PLACEMENT.position;
 const [seatX, seatY, seatZ] = SEATED_PLACEMENT.position;
 const [towerX, , towerZ] = PC_TOWER.position;
@@ -72,8 +92,7 @@ const SUBJECTS: Record<StageVariant, [string, Vec3][]> = {
   about: [
     ["Edison's head", [standX, STANDING_HEIGHT, standZ]],
     ["Edison's feet", [standX, 0, standZ]],
-    ["the dog's head", DOG_PAT_POINT],
-    ["the dog's hind feet", [DOG_PAT_POINT[0], 0, 1.2]],
+    ...DOG,
     ...DESK_AND_MONITORS,
   ],
 };
