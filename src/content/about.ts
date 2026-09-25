@@ -21,7 +21,7 @@ export const socials: Social[] = [
 export const education: Education[] = [
   {
     school: 'University of California, Berkeley',
-    detail: 'B.S. Bioengineering, intended second major in EECS',
+    detail: 'BS EECS; Bioengineering',
     coursework: [
       'Structure and Interpretation of Computer Programs',
       'Linear Algebra & Differential Equations',
@@ -31,7 +31,6 @@ export const education: Education[] = [
   {
     school: 'CodePath',
     detail: 'TIP102: Advanced Data Structures & Algorithms in Python',
-    when: 'Summer 2026',
   },
 ];
 
