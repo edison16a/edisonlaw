@@ -8,9 +8,9 @@ import { cone, ellipsoid, flatLock } from './sculpt';
 const neck = (tone: number, blend: number) => ({ tone, blend, part: PART.neck });
 
 /** Where the neck leaves the withers, in dog space. */
-const BASE: Vec3 = [0, 0.452, 0.17];
+const BASE: Vec3 = [0, 0.49, 0.075];
 /** Where the throat leaves the forechest, in dog space. */
-const THROAT_BASE: Vec3 = [0, 0.392, 0.246];
+const THROAT_BASE: Vec3 = [0, 0.45, 0.19];
 
 /** Radius of the neck at the withers, halfway up the crest, and where it meets the head. */
 const RADII = { base: 0.08, crest: 0.062, head: 0.046 } as const;

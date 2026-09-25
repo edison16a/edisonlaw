@@ -18,9 +18,10 @@ export interface DogProps {
 }
 
 /**
- * Edison's golden retriever, sculpted procedurally in the same soft clay style as him. It stands at his
- * left side with the top of its head under his hand at DOG_PAT_POINT (see layout.ts), wagging, panting
- * and leaning into the petting. In its own space it faces +Z; DOG_PLACEMENT puts it in the room.
+ * Edison's golden retriever, sculpted procedurally in the same soft clay style as him. It sits at his
+ * left side with the top of its head under his hand at DOG_PAT_POINT (see layout.ts), sweeping its tail
+ * across the floor and leaning into the petting. In its own space it faces +Z; DOG_PLACEMENT puts it in
+ * the room.
  * The sculpt is built in a worker, and the dog fades in as soon as it is ready without holding up the room.
  */
 export function Dog({ animate = true }: DogProps) {

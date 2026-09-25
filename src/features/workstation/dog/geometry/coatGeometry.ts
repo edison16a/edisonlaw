@@ -5,7 +5,7 @@ import { headRestMatrix } from '../anatomy/headPose';
 import { EYE_RADII, faceLayout } from '../anatomy/face';
 import { neckAxis } from '../anatomy/neck';
 import { TAIL_PATH } from '../anatomy/tail';
-import { HEAD, JOINTS, PART, RIBS } from '../dimensions';
+import { BODY_RISE, HEAD, JOINTS, PART, RIBS } from '../dimensions';
 import { DOG_PALETTE } from '../materials';
 import { toneColor } from './paint';
 import { BONE, TAIL_BONES } from '../rig/createDogRig';
@@ -14,10 +14,10 @@ import { meshField } from '../sdf/surfaceNets';
 
 /**
  * Loose bounds of the posed coat in dog space, for culling, so three never skins every vertex on the CPU
- * to measure the pose. Wide enough for the nose, the tip of the wagging tail and the head lifted to look
- * up, with room to spare, so the dog is never culled while any of it is on screen.
+ * to measure the pose. Wide enough for the nose, the plume swept across the floor and the head lifted to
+ * look up, with room to spare, so the dog is never culled while any of it is on screen.
  */
-export const COAT_BOUNDS = new Sphere(new Vector3(0, 0.35, -0.03), 0.7);
+export const COAT_BOUNDS = new Sphere(new Vector3(0.04, 0.36, 0), 0.62);
 
 /** Grid cell for the coat, in metres. Fine enough for the smallest fur clumps and the lips. */
 export const COAT_CELL = 0.005;
@@ -53,8 +53,13 @@ function tailParam(point: Vector3) {
   return param;
 }
 
-/** Heights over which the legs hand over from the planted paws to the body, which leans. */
-const PLANTED = { from: 0.06, to: 0.24 } as const;
+/** Heights over which the seat, haunches and forelegs hand over from the planted root to the body, which leans. */
+const PLANTED = { from: 0.08, to: 0.3 } as const;
+
+/** The rib cage's own up and forward, sloping up with the sitting body. */
+const RIB_UP = new Vector3(0, Math.cos(BODY_RISE), -Math.sin(BODY_RISE));
+const RIB_FORWARD = new Vector3(0, Math.sin(BODY_RISE), Math.cos(BODY_RISE));
+const CHEST = new Vector3(...JOINTS.chest);
 
 /** Dark lids round each eye: full pigment within `inner` eye widths of its centre, none past `outer`. */
 const LIDS = { inner: 1.1, outer: 1.42, strength: 0.6 } as const;
@@ -65,9 +70,9 @@ interface Influence {
 }
 
 /**
- * Bone weights from the part shares the field blended at this point. Paws stay planted on the root,
- * the rib cage breathes, the neck hands over from the chest to the head along its length, and the
- * tail passes smoothly from joint to joint.
+ * Bone weights from the part shares the field blended at this point. The seat, the haunches and the paws
+ * stay planted on the root while the upper body leans, the rib cage breathes, the neck hands over from
+ * the chest to the head along its length, and the tail passes smoothly from joint to joint.
  */
 function influences(point: Vector3, parts: Float32Array, neck: { base: Vector3; direction: Vector3; length: number }) {
   const list: Influence[] = [];
@@ -76,9 +81,10 @@ function influences(point: Vector3, parts: Float32Array, neck: { base: Vector3; 
   };
 
   const planted = 1 - smoothstep(PLANTED.from, PLANTED.to, point.y);
-  const dx = point.x / RIBS[0];
-  const dy = (point.y - JOINTS.chest[1]) / RIBS[1];
-  const dz = (point.z - JOINTS.chest[2]) / RIBS[2];
+  const offset = point.clone().sub(CHEST);
+  const dx = offset.x / RIBS[0];
+  const dy = offset.dot(RIB_UP) / RIBS[1];
+  const dz = offset.dot(RIB_FORWARD) / RIBS[2];
   const ribs = Math.exp(-(dx * dx + dy * dy + dz * dz) * 1.2) * (1 - planted);
 
   const along = point.clone().sub(neck.base).dot(neck.direction) / neck.length;

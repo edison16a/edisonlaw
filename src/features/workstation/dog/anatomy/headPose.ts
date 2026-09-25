@@ -24,8 +24,9 @@ let crown: Vector3 | null = null;
 export function headCrown(): Vector3 {
   if (crown) return crown.clone();
   const field = new Field(headForms(), PART_COUNT);
-  // Toward the palm, in dog space: up, leaning toward the dog's right (-X) where Edison stands.
-  const toPalm = new Vector3(-Math.sin(HEAD.contactLean), Math.cos(HEAD.contactLean), 0);
+  // Toward the palm, in dog space: up, leaning toward Edison, behind the dog's right shoulder.
+  const from = new Vector3(-Math.cos(HEAD.contactFrom), 0, -Math.sin(HEAD.contactFrom));
+  const toPalm = new Vector3(0, Math.cos(HEAD.contactLean), 0).addScaledVector(from, Math.sin(HEAD.contactLean));
   const up = toPalm.applyQuaternion(restRotation().invert());
   const across = new Vector3(1, 0, 0).addScaledVector(up, -up.x).normalize();
   const along = new Vector3().crossVectors(up, across);

@@ -130,8 +130,9 @@ export const CHAIR = {
 
 /**
  * About scene only: the point on top of the golden retriever's head where Edison's left hand rests
- * while he pets it. It sits on his left, the camera side, about a forearm out from his hip.
+ * while he pets it. The dog sits on his left, the camera side, with its head up about a forearm out from
+ * his hip, a touch behind him.
  * The dog is built so its head top sits here, and the character reaches for it.
  * Frozen contract between the dog and the character; change it only together with both.
  */
-export const DOG_PAT_POINT: Vec3 = [0.03, 0.66, 0.4];
+export const DOG_PAT_POINT: Vec3 = [-0.06, 0.735, 0.52];

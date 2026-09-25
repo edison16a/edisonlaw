@@ -14,9 +14,8 @@ function values(pose: DogPose): [number, number][] {
     [pose.head.yaw, 0.06],
     [pose.head.pitch, 0.06],
     [pose.head.tilt, 0.06],
-    // A happy wag is quick.
-    ...pose.tail.map((swing): [number, number] => [swing, 0.12]),
-    [pose.tailLift, 0.03],
+    // The tail only sweeps slowly across the floor.
+    ...pose.tail.map((swing): [number, number] => [swing, 0.01]),
     ...pose.ears.flatMap((ear): [number, number][] => [
       [ear.out, 0.06],
       [ear.forward, 0.06],

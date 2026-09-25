@@ -24,11 +24,20 @@ function surfaceBelow(x: number, z: number) {
   return y;
 }
 
+/** Across the floor plan in dog space, the way from the crown toward Edison that the palm leans in from. */
+const PALM_FROM = new Vector3(-Math.cos(HEAD.contactFrom), 0, -Math.sin(HEAD.contactFrom));
+
 describe('dog placement', () => {
-  it('stands on the floor with its crown on DOG_PAT_POINT', () => {
+  it('sits on the floor with its crown on DOG_PAT_POINT', () => {
     expect(DOG_PLACEMENT.position[1]).toBe(0);
     const crown = toDog(...DOG_PAT_POINT);
     expect(crown.distanceTo(new Vector3(...HEAD.top))).toBeLessThan(1e-9);
+  });
+
+  it('leans the crown into the hand from the side Edison stands on', () => {
+    const [x, , z] = STANDING_PLACEMENT.position;
+    const edison = toDog(x, 0, z).sub(new Vector3(HEAD.top[0], 0, HEAD.top[2])).normalize();
+    expect(edison.angleTo(PALM_FROM)).toBeLessThan(0.15);
   });
 
   it('has the top of its head right under the hand', () => {
@@ -42,15 +51,9 @@ describe('dog placement', () => {
       [0, 0.02],
       [0, -0.02],
     ]) {
-      expect(surfaceBelow(x + dx, z + dz)).toBeLessThan(y + dx * slope + 0.003);
+      const towardEdison = dx * PALM_FROM.x + dz * PALM_FROM.z;
+      expect(surfaceBelow(x + dx, z + dz)).toBeLessThan(y - towardEdison * slope + 0.003);
     }
-  });
-
-  it('is a grown retriever, 0.50 to 0.55 at the shoulder', () => {
-    // Just behind the neck, over the shoulder blades.
-    const withers = surfaceBelow(0, 0.12);
-    expect(withers).toBeGreaterThan(0.5);
-    expect(withers).toBeLessThan(0.55);
   });
 
   it('keeps clear of Edison and of the desk legs', () => {
@@ -72,14 +75,14 @@ describe('dog placement', () => {
         for (let along = -0.03; along <= 0.12; along += 0.015) {
           for (const y of [0.01, 0.05, 0.09]) {
             const local = new Vector3(across, y, along).applyAxisAngle(UP, foot.turn);
-            expect(clearance(inRoom(foot.x + local.x, y, foot.z + local.z))).toBeGreaterThan(0.02);
+            expect(clearance(inRoom(foot.x + local.x, y, foot.z + local.z))).toBeGreaterThan(0.03);
           }
         }
       }
     }
     for (let share = 0; share <= 1; share += 0.05) {
       const leg = inRoom(0.104 - 0.032 * share, 0.07 + 0.49 * share, 0.035 * (1 - share));
-      expect(clearance(leg) - 0.05).toBeGreaterThan(0.015);
+      expect(clearance(leg) - 0.05).toBeGreaterThan(0.03);
     }
     // The desk: its legs at the corners and the front edge of its top.
     for (const sx of [1, -1]) {

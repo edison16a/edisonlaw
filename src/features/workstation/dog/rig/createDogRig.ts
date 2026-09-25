@@ -11,11 +11,11 @@ import { JOINTS } from '../dimensions';
  */
 export interface DogRig {
   root: Bone;
-  /** Torso, pivoting on the floor under its middle so a lean keeps the paws planted. */
+  /** Upper body, pivoting between the hips, so it leans and rocks over the haunches with the paws planted. */
   body: Bone;
   /** Rib cage, scaled to breathe. */
   chest: Bone;
-  /** Root to tip. */
+  /** Root to tip. Each turns about the upright, so the tail sweeps across the floor. */
   tail: Bone[];
   /** Pivots on the crown contact point. */
   head: Bone;
@@ -48,14 +48,15 @@ const offset = (from: readonly number[], to: readonly number[]) => to.map((value
 
 export function createDogRig(): DogRig {
   const root = bone('dogRoot');
-  const body = bone('dogBody');
-  const chest = bone('dogChest', JOINTS.chest);
+  const body = bone('dogBody', JOINTS.hips);
+  const chest = bone('dogChest', offset(JOINTS.hips, JOINTS.chest));
   root.add(body);
   body.add(chest);
 
-  // Tail joints along its centre line; the last point is the tip and needs no bone.
+  // Tail joints along its centre line; the last point is the tip and needs no bone. The tail lies on
+  // the floor, so it hangs from the root and stays put when the body leans.
   const tail: Bone[] = [];
-  let parent: Bone = body;
+  let parent: Bone = root;
   let from: readonly number[] = [0, 0, 0];
   for (let i = 0; i < TAIL_BONES; i++) {
     const joint = bone(`dogTail${i}`, offset(from, TAIL_PATH[i]));
