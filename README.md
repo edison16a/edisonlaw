@@ -6,7 +6,7 @@ This is Edison Law's personal website. Edison studies Bioengineering at UC Berke
 - **Work Experience.** A timeline next to a 3D model of Edison seated at his desk at night, typing. The centre monitor changes to match the job you are reading, while the room's lighting stays the same.
 - **About Me.** The same room with Edison standing by the desk with a coffee, petting his golden retriever as it sits beside him, next to his intro, contact links, education, skills, honors and activities.
 
-The page is black and white in one typeface, Satoshi. Colour only shows up inside the 3D scenes, in the project photos and in the skill logos. Once you turn sound on, soft sounds made from scratch play as the projects turn and as you use the navbar, with quiet loops near the desk.
+The page is black and white in one typeface, Satoshi. Colour only shows up inside the 3D scenes, in the project photos and in the skill logos. Once you turn sound on, soft sounds made from scratch play as the projects turn, as the timeline moves on and as you hover and click the controls and navbar, with quiet loops near the desk.
 
 ## Screenshots
 
@@ -56,7 +56,7 @@ Next.js 16 with the App Router, React 19 and TypeScript. Tailwind CSS 4 for styl
 
 ### Sound
 
-Every sound is synthesised in Node by `scripts/sounds` from oscillators, seeded noise, filters, envelopes and a small reverb, then packed into one MP3 sprite. Howler only loads after you turn sound on. The engine throttles each sound and varies its pitch a little. The project spiral and the phone strip play one soft sound each time they move to another project, and a quick spin or a long glide counts as one move. A muffled keyboard and fan loop plays near Work Experience and a quieter room tone near About Me. Sound starts off and the site remembers your choice.
+Every sound is synthesised in Node by `scripts/sounds` from oscillators, seeded noise, filters, envelopes and a small reverb, then packed into one MP3 sprite. Howler only loads after you turn sound on. The engine throttles each sound and varies its pitch a little. The project spiral and the phone strip play one soft sound each time they move to another project, and a quick spin or a long glide counts as one move. Soft ticks answer hovers, clicks and the navbar tabs, and a dot sound plays each time the timeline reaches another job. A muffled keyboard and fan loop plays near Work Experience and a quieter room tone near About Me. Sound starts off and the site remembers your choice.
 
 ### Accessibility and quality
 
