@@ -16,7 +16,7 @@ import { dataUrl } from '../lib/layouts/base.mjs';
 import { BROWSER_CSS, backdrop, browserWindow, icon, productShell } from '../lib/layouts/product.mjs';
 
 const PHOTO = 'https://picsum.photos/id/237/1200/800';
-const TEXT = 'Biscuit is the goodest boy';
+const TEXT = 'Biscuit is a good boy';
 const ACCENT = '#38b6e8';
 
 /** The extension's icon: two looping arrows, in its sky blue. */
