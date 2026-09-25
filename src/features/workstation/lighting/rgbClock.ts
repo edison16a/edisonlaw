@@ -3,8 +3,8 @@ import { clamp, wrap } from '@/lib/math';
 
 /** Full hue cycles per second. One lap takes about 26 seconds. */
 const HUE_SPEED = 1 / 26;
-/** Hue shown when motion is reduced: a calm violet. */
-const FROZEN_HUE = 0.74;
+/** Hue shown when motion is reduced, and the one the stills are captured at: a calm violet. */
+export const FROZEN_HUE = 0.74;
 /** The cycle lingers around this hue (violet) and hurries through the opposite side (green). */
 const FAVOURED_HUE = 0.76;
 /** 0 is an even cycle. 0.6 spends four times longer at the favoured hue than at its opposite. */
@@ -50,6 +50,11 @@ export function createRgbClock(frozen = false): RgbClock {
   return clock;
 }
 
+/** Relative luminance of a linear colour. */
+export function luminance(color: Color) {
+  return 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
+}
+
 /** Brightness every hue is balanced toward, as relative luminance. */
 const BALANCE_TARGET = 0.25;
 /** Keeps dark hues like blue from being boosted too far. */
@@ -57,19 +62,28 @@ const BALANCE_FLOOR = 0.1;
 
 /**
  * Pure green and yellow look many times brighter than blue at the same strength.
- * This gain evens that out halfway (a square root), so the room keeps a similar mood
+ * This gain evens that out halfway (a square root), so the glowing parts keep a similar mood
  * as the hue cycles without every colour looking the same.
  */
 function perceptualGain(color: Color) {
-  const luminance = 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
-  return Math.sqrt(BALANCE_TARGET / (luminance + BALANCE_FLOOR));
+  return Math.sqrt(BALANCE_TARGET / (luminance(color) + BALANCE_FLOOR));
 }
 
 /**
  * Writes a saturated RGB colour for `hue` into `target`, scaled by `intensity` and balanced
  * for perceived brightness. `intensity` above 1 pushes the colour into bloom range.
+ * For the glowing parts themselves. Lights use writeSteadyRgb.
  */
 export function writeRgb(target: Color, hue: number, intensity = 1, saturation = 1, lightness = 0.5) {
   target.setHSL(wrap(hue, 0, 1), saturation, clamp(lightness), SRGBColorSpace);
   return target.multiplyScalar(intensity * perceptualGain(target));
+}
+
+/**
+ * Writes the colour of `hue` at `saturation` into `target`, scaled to exactly `level` relative
+ * luminance. Lights use it so the room keeps one brightness while their tint follows the clock.
+ */
+export function writeSteadyRgb(target: Color, hue: number, saturation: number, level: number) {
+  target.setHSL(wrap(hue, 0, 1), saturation, 0.5, SRGBColorSpace);
+  return target.multiplyScalar(level / Math.max(luminance(target), 1e-6));
 }
