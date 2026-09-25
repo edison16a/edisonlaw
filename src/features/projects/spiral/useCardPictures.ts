@@ -5,10 +5,10 @@ import { useThree } from '@react-three/fiber';
 import type { WebGLRenderer } from 'three';
 import type { Project } from '@/content/types';
 import { projectPictures } from '../gallery/pictures';
-import { shownPicture, type GallerySelection } from '../gallery/selection';
+import type { GallerySelection } from '../gallery/selection';
 import { createPictureBank, type PictureBank } from '../media/pictureBank';
 import { showPicture, type CardRuntime } from './cardFrame';
-import { FOCUS, slotOffset } from './geometry';
+import { pictureOnCard } from './pictureOnCard';
 
 /**
  * Loads the pictures the cards show and returns a function that hands them
@@ -53,10 +53,8 @@ export function useCardPictures(projects: Project[], cards: CardRuntime[], gl: W
       const waiting = current.uploadNext();
       for (const card of cards) {
         const list = pictures[card.project];
-        const inSlot = Math.abs(slotOffset(card.slot, value, cards.length)) < FOCUS.reach;
-        const index = inSlot ? Math.min(shownPicture(selection, card.project), list.length - 1) : 0;
         // A screenshot still on its way leaves the card on what it shows until it lands.
-        const picture = current.ready(list[index]);
+        const picture = current.ready(list[pictureOnCard(card, list.length, value, cards.length, selection)]);
         if (picture) showPicture(card, picture);
       }
       return waiting;
