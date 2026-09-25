@@ -136,3 +136,10 @@ export const CHAIR = {
  * Frozen contract between the dog and the character; change it only together with both.
  */
 export const DOG_PAT_POINT: Vec3 = [-0.06, 0.735, 0.52];
+
+/**
+ * Work scene only: where the golden retriever sleeps, curled up on the rug at the right of Edison's chair,
+ * the side the work camera sees, clear of the chair's frame and the desk's legs. `position` is the middle
+ * of the curl on the floor, and `rotationY` turns the dog so its face looks toward the camera.
+ */
+export const DOG_NAP = { position: [0.5, 0, 0.15] as Vec3, rotationY: 0.33 } as const;
