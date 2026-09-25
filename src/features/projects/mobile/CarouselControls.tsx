@@ -9,10 +9,14 @@ interface CarouselControlsProps {
   onMove: (index: number) => void;
 }
 
-/** Previous and next buttons for the photo strip, for mice and switch access. Swipes and arrow keys also work. */
+/**
+ * Previous and next buttons for the photo strip, for mice and switch access.
+ * Swipes and the arrow keys also work. On touch screens a swipe is the way,
+ * so there the buttons stay out of sight until keyboard focus reaches them.
+ */
 export function CarouselControls({ index, count, onMove }: CarouselControlsProps) {
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 pointer-coarse:not-focus-within:sr-only">
       <StepButton label="Previous project" disabled={index <= 0} onClick={() => onMove(index - 1)} path="m14.5 6-6 6 6 6" />
       <StepButton label="Next project" disabled={index >= count - 1} onClick={() => onMove(index + 1)} path="m9.5 6 6 6-6 6" />
     </div>
