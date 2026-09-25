@@ -1,16 +1,16 @@
-import { siAppstore, siChromewebstore, siGithub } from 'simple-icons';
+import { siAppstore, siGithub, siGooglechrome } from 'simple-icons';
 import { IconBase } from '@/components/icons/IconBase';
 import type { LinkKind } from './linkKind';
 
 const BRANDS = {
   github: siGithub,
   appStore: siAppstore,
-  chromeWebStore: siChromewebstore,
+  chromeWebStore: siGooglechrome,
 } as const;
 
 /**
  * The logo at the start of a project link: GitHub, the App Store or the Chrome
- * Web Store, or a globe for a website. Drawn in the button's text colour.
+ * Web Store (shown as the Chrome logo), or a globe for a website. Drawn in the button's text colour.
  */
 export function LinkMark({ kind, size = 16 }: { kind: LinkKind; size?: number }) {
   if (kind === 'site') {
