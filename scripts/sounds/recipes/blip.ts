@@ -14,7 +14,7 @@ function tone(frequency: number, seconds: number, tau: number) {
   return shape(body, (t) => strike(t, 0.005, tau));
 }
 
-/** Short confirm for contact links and copying the email: two soft rising tones. */
+/** Short confirm for copying the email: two soft rising tones. */
 export const blip: OneShotRecipe = {
   kind: 'oneShot',
   name: 'blip',

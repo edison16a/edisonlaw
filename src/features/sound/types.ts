@@ -4,11 +4,11 @@ export type SoundName =
   | 'move'
   /** Soft click when the nav underline slides to a new tab. */
   | 'tab'
-  /** Very quiet tick on hover over cards, icons and buttons. */
+  /** Very quiet tick on hovering a navbar tab. */
   | 'hover'
   /** Soft tick when a timeline dot fills. */
   | 'dot'
-  /** Short confirm blip for contact links and copy. */
+  /** Short confirm blip for copying the email. */
   | 'blip'
   /** Toggle between spiral and list, or sound on. */
   | 'toggle';

@@ -3,7 +3,7 @@ import { createRandom } from '../dsp/random';
 import { softClick } from './parts/softClick';
 import type { OneShotRecipe } from './types';
 
-/** A barely there tick for hovering cards, icons and buttons. */
+/** A barely there tick for hovering a navbar tab. */
 export const hover: OneShotRecipe = {
   kind: 'oneShot',
   name: 'hover',

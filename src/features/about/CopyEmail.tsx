@@ -32,7 +32,6 @@ export function CopyEmail({ email }: { email: string }) {
       <button
         type="button"
         onClick={copy}
-        onPointerEnter={() => sound.play('hover')}
         aria-label="Copy email address"
         className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-grey-700 px-3.5 text-xs text-grey-300 transition-colors hover:border-white hover:text-white sm:min-h-0 sm:px-2.5 sm:py-1"
       >

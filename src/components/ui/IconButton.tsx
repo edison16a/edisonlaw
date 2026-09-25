@@ -1,7 +1,4 @@
-'use client';
-
 import type { ReactNode } from 'react';
-import { sound } from '@/features/sound';
 import { cn } from '@/lib/cn';
 
 interface IconLinkProps {
@@ -25,8 +22,6 @@ export function IconLink({ href, label, children, className }: IconLinkProps) {
       className={cn(base, className)}
       target={external ? '_blank' : undefined}
       rel={external ? 'noreferrer' : undefined}
-      onPointerEnter={() => sound.play('hover')}
-      onClick={() => sound.play('blip')}
     >
       {children}
     </a>
