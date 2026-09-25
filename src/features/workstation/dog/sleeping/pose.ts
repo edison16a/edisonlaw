@@ -51,7 +51,7 @@ const BREATH_RATE = 0.23;
 /** How far the resting head dips with a full breath, in radians. */
 const BREATH_SIGH = 0.012;
 /** How far the head turns up about the base of the neck when fully lifted. */
-export const LIFT_ANGLE = 0.17;
+const LIFT_ANGLE = 0.17;
 /**
  * Where it looks once its head is up, as turns from its resting three quarter view: up at Edison, who
  * sits high behind its right shoulder, turning to face the room on the way, or at whoever is watching,
@@ -135,7 +135,7 @@ const offset = new Vector3();
 const UP = new Vector3(0, 1, 0);
 
 /** Radians the lids turn through, from open (tucked up under the brow) to shut. See parts/Lids. */
-export const LID_TURN = { open: -0.95, shut: 0.9 } as const;
+const LID_TURN = { open: -0.95, shut: 0.9 } as const;
 /** How far each lid tips down toward the outer corner of its eye, for a soft sleepy look. Radians. */
 const LID_DROOP = 0.2;
 /**

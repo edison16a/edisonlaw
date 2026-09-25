@@ -44,7 +44,7 @@ export interface TailSpec {
 const [sittingTip] = TAIL_PATH.slice(-1);
 
 /** The sitting dog's tail, curled round its left haunch. */
-export const SITTING_TAIL: TailSpec = {
+const SITTING_TAIL: TailSpec = {
   path: TAIL_PATH,
   radii: CORE_RADII,
   center: SEAT,

@@ -26,7 +26,7 @@ interface HindLeg {
   face: Vec3;
 }
 
-export const HIND: { upper: HindLeg; lower: HindLeg } = {
+const HIND: { upper: HindLeg; lower: HindLeg } = {
   upper: {
     hip: [0.125, 0.175, -0.03],
     stifle: [0.08, 0.14, 0.074],
@@ -46,7 +46,7 @@ export const HIND: { upper: HindLeg; lower: HindLeg } = {
 };
 
 /** Elbow, wrist and paw of each foreleg, folded back under the chest. */
-export const FORE = {
+const FORE = {
   upper: { elbow: [-0.13, 0.06, -0.02] as Vec3, wrist: [-0.07, 0.04, -0.01] as Vec3, paw: [-0.03, 0.028, -0.03] as Vec3 },
   lower: { elbow: [-0.14, 0.04, -0.03] as Vec3, wrist: [-0.08, 0.03, -0.03] as Vec3, paw: [-0.04, 0.024, -0.05] as Vec3 },
 } as const;

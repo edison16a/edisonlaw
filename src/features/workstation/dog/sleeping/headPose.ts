@@ -11,7 +11,8 @@ import { HEAD_REST } from './dimensions';
  * the rug. The head turns about its atlas, where the skull meets the neck.
  */
 
-export function restRotation(out = new Quaternion()) {
+/** The resting turn of the head, from HEAD_REST. */
+function restRotation(out = new Quaternion()) {
   const { yaw, pitch, tilt } = HEAD_REST.rest;
   return out.setFromEuler(new Euler(-pitch, yaw, tilt, 'YXZ'));
 }
@@ -49,7 +50,7 @@ function headDrop() {
 }
 
 /** The atlas in dog space, at rest. */
-export function restingAtlas() {
+function restingAtlas() {
   const [x, z] = HEAD_REST.at;
   return new Vector3(x, HEAD_REST.chin + headDrop(), z);
 }

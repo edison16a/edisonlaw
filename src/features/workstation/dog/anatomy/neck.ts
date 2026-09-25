@@ -22,7 +22,7 @@ export interface NeckSpec {
 }
 
 /** The sitting dog's neck, rising from its withers and its chest. */
-export const SITTING_NECK: NeckSpec = { base: [0, 0.49, 0.075], throatBase: [0, 0.45, 0.19], arch: [0, 0.012, -0.006], left: [1, 0, 0] };
+const SITTING_NECK: NeckSpec = { base: [0, 0.49, 0.075], throatBase: [0, 0.45, 0.19], arch: [0, 0.012, -0.006], left: [1, 0, 0] };
 
 /** Radius of the neck at the withers, halfway up the crest, and where it meets the head. */
 const RADII = { base: 0.08, crest: 0.062, head: 0.046 } as const;
