@@ -17,7 +17,7 @@ export const projects: Project[] = [
     badges: [],
     stack: ['Next.js', 'Vercel', 'Google Cloud Run', 'Cloud SQL', 'OAuth', 'Stripe', 'Amazon SES', 'Amazon SNS'],
     description:
-      "Production platform for Optagon Labs' AI-native R&D for drug developers. I built the core infrastructure, including billing, usage metering, organizations and project ingestion.",
+      'Production platform for Optagon Labs, an AI tool that helps drug developers run R&D. Built the core infrastructure, including billing, usage metering, organizations and project ingestion.',
     links: [{ label: 'backbond.net', href: 'https://backbond.net' }],
     image: '/projects/backbond.webp',
     screenshots: ['/projects/backbond-2.webp'],
@@ -28,7 +28,7 @@ export const projects: Project[] = [
     badges: [],
     stack: ['Next.js', 'React', 'TypeScript', 'Three.js', 'WebSockets', 'Redis', 'MediaPipe', 'Web Audio API', 'Vercel'],
     description:
-      "A games console for the web. Everyone's phone becomes a motion controller, and some games use the computer's camera to track your whole body. There is nothing to install, and up to six players pick from 11 games, including Magic Kart, Fruit Ninja, Zombie Survival and Shooting Gallery.",
+      'A game console for the web. Multiple phones can be used at the same time as controllers, with motion tracking, and some games use computer vision for movement. No installation needed, and up to six players pick from 11 games, including Magic Kart, Fruit Ninja, Zombie Survival and Shooting Gallery. The 3D games run on Three.js, and WebSockets and Redis keep the phones in sync with the screen.',
     links: [
       { label: 'standoff-five.vercel.app', href: 'https://standoff-five.vercel.app' },
       { label: 'GitHub', href: 'https://github.com/edison16a/standoff' },
@@ -47,7 +47,7 @@ export const projects: Project[] = [
     badges: [],
     stack: ['Next.js', 'React', 'TypeScript', 'Konva', 'ONNX Runtime Web', 'Vercel'],
     description:
-      'Free photo editor with one-click background removal that runs entirely in the browser, so nothing gets uploaded. It exports transparent PNGs at any size, which Canva charges for.',
+      'A free photo editor that runs in the browser. Background removal runs on your own device with ONNX Runtime Web, so nothing gets uploaded. It exports transparent PNGs at any size, which Canva charges for.',
     links: [
       { label: 'photo-craft.vercel.app', href: 'https://photo-craft.vercel.app' },
       { label: 'GitHub', href: 'https://github.com/edison16a/photo-craft' },
@@ -66,7 +66,7 @@ export const projects: Project[] = [
     badges: [],
     stack: ['Next.js', 'React', 'TypeScript', 'Three.js', 'React Three Fiber', 'Tailwind CSS', 'Web Audio API', 'Vercel'],
     description:
-      'The site you are on. Projects turn on a WebGL spiral, the desk scenes are 3D rooms built by hand in code, and every sound is synthesized from scratch.',
+      'This site. A WebGL spiral of projects, 3D desk scenes in React Three Fiber, and synthesized sound and music.',
     links: [{ label: 'GitHub', href: 'https://github.com/edison16a/edisonlaw' }],
     image: '/projects/personal-website.webp',
   },
@@ -77,7 +77,7 @@ export const projects: Project[] = [
     badges: ['In progress'],
     stack: ['Python', 'C++', 'Raspberry Pi', 'Computer Vision'],
     description:
-      'Low-cost robotic platform for growing neuron cultures. It handles X, Y and Z motion, motorized pipetting, imaging and environmental control, so cultures can be kept alive and fed automatically for weeks.',
+      'A low-cost robot for growing neuron cultures. It handles X, Y and Z motion, motorized pipetting, imaging and environmental control, so cultures stay alive and fed for weeks.',
     links: [],
     image: '/projects/autolab.webp',
   },
@@ -88,7 +88,7 @@ export const projects: Project[] = [
     badges: [],
     stack: ['Python', 'WESTPA', 'MDAnalysis'],
     description:
-      'Command line dashboard for Weighted Ensemble simulations. It tracks iteration summaries and reports molecular dynamics data, and I built it with the MDAnalysis and WESTPA maintainers.',
+      'A command line dashboard for Weighted Ensemble simulations. It tracks iteration summaries and reports molecular dynamics data. Built with the MDAnalysis and WESTPA maintainers.',
     links: [{ label: 'WESTPA on GitHub', href: 'https://github.com/westpa/westpa' }],
     image: '/projects/westpa-dashboard.webp',
   },
@@ -98,7 +98,7 @@ export const projects: Project[] = [
     badges: ['App Store'],
     stack: ['Swift', 'SwiftUI', 'Vision', 'AVFoundation'],
     description:
-      'iOS food label scanner that flags allergens on ingredient lists in real time. It checks about 1,500 allergen keywords in six languages against the allergens you choose.',
+      "An iOS app that scans food labels for allergens. It reads ingredient lists with Apple's Vision framework and checks about 1,500 allergen keywords in six languages against the allergens you pick.",
     links: [
       { label: 'App Store', href: 'https://apps.apple.com/us/app/safeeats-food-scanner/id6739729515' },
       { label: 'GitHub', href: 'https://github.com/edison16a/SafeEats' },
@@ -111,7 +111,7 @@ export const projects: Project[] = [
     badges: ['Featured on the Chrome Web Store'],
     stack: ['JavaScript', 'HTML', 'CSS', 'Chrome Extensions API'],
     description:
-      'Chrome extension that replaces the text and images on any page with whatever you want, text, images or both, in one click from the toolbar. Nearly 900 people use it, and Google features it on the Chrome Web Store.',
+      'A Chrome extension that replaces the text and images on any page with whatever you want. About 1,000 people use it now and over 10,000 have used it, and it is featured on the Chrome Web Store. A Manifest V3 service worker keeps every open tab updated.',
     links: [
       {
         label: 'Chrome Web Store',
@@ -126,7 +126,7 @@ export const projects: Project[] = [
     badges: ['Featured on the Chrome Web Store', '5.0 stars'],
     stack: ['JavaScript', 'HTML', 'CSS', 'Chrome Extensions API'],
     description:
-      "Ad and tracker blocker built on Chrome's declarativeNetRequest, so ads are dropped before they ever load. It counts everything it blocks, pauses on any site you choose, and has a Zapper that removes any element you click.",
+      'An ad and tracker blocker for Chrome. It blocks requests with declarativeNetRequest, so ads never load. It counts what it blocks, pauses on sites you choose, and has a Zapper that removes any element you click.',
     links: [{ label: 'Chrome Web Store', href: 'https://chromewebstore.google.com/detail/sunblock/dokdhfglhjcdfjblneeaglmhbchkkafk' }],
     image: '/projects/sunblock.webp',
   },
@@ -136,7 +136,7 @@ export const projects: Project[] = [
     badges: [],
     stack: ['Next.js', 'React', 'TypeScript', 'CSS', 'Vercel'],
     description:
-      'Poker puzzle trainer with an AI Coach that scores every fold, call or raise out of 100 and gives the best action with its reasons. Your Elo rank climbs from Bronze to Champion, an Outs Trainer drills the maths, and Hands, Playthrough and Full Game modes go from single spots to whole hands.',
+      'A poker trainer with an AI coach that scores each fold, call or raise out of 100 and explains the best play. You climb Elo ranks from Bronze to Champion, and an Outs Trainer drills the odds. The scoring engine runs in the browser.',
     links: [
       { label: 'poker-strats.vercel.app', href: 'https://poker-strats.vercel.app' },
       { label: 'GitHub', href: 'https://github.com/edison16a/poker-strategy-trainer' },
@@ -149,7 +149,7 @@ export const projects: Project[] = [
     badges: [],
     stack: ['Next.js', 'React', 'TypeScript', 'OpenAI API', 'Vercel'],
     description:
-      'AI learning assistant that helps students get unstuck on assignments with hints, clarifying questions and step-by-step guidance, without giving away the answer.',
+      'An AI tutor that helps students get unstuck on assignments without giving away the answer. It gives hints and asks clarifying questions instead, using the OpenAI API.',
     links: [],
     image: '/projects/clue-ai.webp',
   },
@@ -159,7 +159,7 @@ export const projects: Project[] = [
     badges: ['UI mockup'],
     stack: ['Next.js', 'React', 'JavaScript', 'SVG', 'Vercel'],
     description:
-      'A UI mockup of a focused BART map, departures viewer and trip planner. Pick an origin and a destination, drag between stations, and follow one clear instruction at a time. Its train times are placeholders until it gets BART API access.',
+      'A UI mockup of a simpler BART map and trip planner. Pick two stations and follow one clear step at a time. Train times are placeholders until it gets BART API access.',
     links: [
       { label: 'betterbart.vercel.app', href: 'https://betterbart.vercel.app' },
       { label: 'GitHub', href: 'https://github.com/edison16a/BetterBart' },
@@ -173,7 +173,7 @@ export const projects: Project[] = [
     win: { hackathon: 'CruzHacks 2023', prizes: ['Best Lightship AR VPS Game'] },
     stack: ['Unity', 'C#', 'Niantic Lightship', 'VPS'],
     description:
-      'Sustainability AR game on the App Store as Trash Go. You pick up trash in a virtual park and sort it into AR bins. It won the CruzHacks 2023 hackathon and Best Lightship AR VPS Game, beating 650+ hackers.',
+      'A sustainability AR game on the App Store. You pick up trash in a virtual park, then sort it into AR bins around you. Built in Unity with Niantic Lightship. Won CruzHacks 2023 and Best Lightship AR VPS Game against 650+ hackers.',
     links: [
       { label: 'App Store', href: 'https://apps.apple.com/us/app/trash-go/id6452390061' },
       { label: 'GitHub', href: 'https://github.com/Aldicodi/Cruzhacks-2023-TrashGo' },
@@ -187,7 +187,7 @@ export const projects: Project[] = [
     win: { hackathon: 'Luma A2A Agents Hackathon 2025', prizes: ['Best Use of Vapi'] },
     stack: ['Next.js', 'React', 'TypeScript', 'Google Gemini API', 'Vapi', 'Bright Data', 'Model Context Protocol', 'Tailwind CSS'],
     description:
-      'AI agent that finds reputable local providers, from clinics to barbershops, with Bright Data search, books the appointment over a real phone call with Vapi, and adds it to Google Calendar. It won the Luma A2A Agents Hackathon 2025 against 130+ engineers, and Best Use of Vapi too.',
+      'An AI agent that finds local providers, from clinics to barbershops, and books appointments over real phone calls. It searches with Bright Data and makes the calls with Vapi. Won the Luma A2A Agents Hackathon 2025 against 130+ engineers, plus Best Use of Vapi.',
     links: [],
     image: '/projects/senseplan.webp',
   },
@@ -198,7 +198,7 @@ export const projects: Project[] = [
     win: { hackathon: 'Milpitas Hacks 2025' },
     stack: ['Next.js', 'React', 'TypeScript', 'Google Gemini API', 'Web Speech API'],
     description:
-      'Live call transcription for 911 dispatchers. Google Gemini pulls out the key details as the caller talks, suggests follow-up questions, and ranks incidents in a priority queue. It won the Milpitas Hacks 2025 hackathon.',
+      'A live call assistant for 911 dispatchers. It transcribes the call as it happens, and Google Gemini pulls out the key details, suggests follow-up questions and ranks incidents by priority. Won Milpitas Hacks 2025.',
     links: [{ label: 'GitHub', href: 'https://github.com/edison16a/CallSense' }],
     image: '/projects/callsense.webp',
   },
@@ -209,7 +209,7 @@ export const projects: Project[] = [
     win: { hackathon: 'Los Altos Hacks 2025' },
     stack: ['JavaScript', 'HTML', 'CSS', 'Leaflet', 'Palantir AIP'],
     description:
-      'Wildfire spread simulator built on a neural network trained in Palantir AIP on historical burns and conditions like temperature, humidity and wind. Pick a spot on the map and the predicted spread grows as a heat map, using the live weather there. It won the Los Altos Hacks 2025 hackathon against 350+ competitors.',
+      'A wildfire spread simulator. Pick a spot on the map and a model trained in Palantir AIP on past burns predicts how the fire spreads with the live weather there, shown as a heat map. Won Los Altos Hacks 2025 against 350+ competitors.',
     links: [{ label: 'GitHub', href: 'https://github.com/edison16a/FlameSense' }],
     image: '/projects/flamesense.webp',
   },
