@@ -2,6 +2,7 @@ import { peak, rms, toDb } from '../dsp/analysis';
 import { toSamples, type Signal } from '../dsp/signal';
 import type { Region } from '../sprite';
 import { spectrum } from '../dsp/fft';
+import { SPECTROGRAM_SCRIPT } from './spectrogram';
 import type { SoundCheck } from './measure';
 
 export interface PlotRow {
@@ -104,8 +105,11 @@ function row({ check, region, decoded, loop = false }: PlotRow, index: number) {
   </g>`;
 }
 
-/** A standalone page with one row per sound: waveform and dB envelope, spectrum, and an attack or seam zoom. */
-export function plotPage(rows: PlotRow[]) {
+/**
+ * A standalone page with one row per sound: waveform and dB envelope, spectrum, and an attack
+ * or seam zoom. Any `extra` HTML, such as spectrograms, follows below.
+ */
+export function plotPage(rows: PlotRow[], extra = '') {
   const height = rows.length * ROW + 40;
   return `<!doctype html><html><body style="margin:0;background:#0b0b0b">
   <svg xmlns="http://www.w3.org/2000/svg" width="${WIDTH}" height="${height}" font-family="monospace">
@@ -121,7 +125,7 @@ export function plotPage(rows: PlotRow[]) {
       .grid { stroke: #333 }
     </style>
     ${rows.map(row).join('')}
-  </svg></body></html>`;
+  </svg>${extra}<script>${SPECTROGRAM_SCRIPT}</script></body></html>`;
 }
 
 export const PLOT_WIDTH = WIDTH;
