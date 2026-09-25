@@ -1,6 +1,7 @@
+import { Vector3 } from 'three';
 import type { Vec3 } from '../../layout';
 import { PART, TONE } from '../dimensions';
-import type { Shape } from '../sdf/field';
+import type { Field, Shape } from '../sdf/field';
 import { bothSides, ellipsoid, flatLock } from './sculpt';
 
 /** Fur on the sitting body in dog space: the cream bib, the foreleg fringes and the britches. */
@@ -34,8 +35,29 @@ export function frill(): Shape[] {
   return [ellipsoid([0, 0.39, 0.183], [0.07, 0.11, 0.044], { tone: TONE.cream - 0.06, blend: 0.045, part: PART.body }), ...locks];
 }
 
-/** Feathering: long cream fur down the backs of the forelegs and the britches on the haunches. */
-function feathering(side: 1 | -1): Shape[] {
+/**
+ * Where a line from `outside` toward `inside` first meets the sculpted body, sunk `sink` into it, so a
+ * lock laid through such points hugs the body however it curves and never hangs free of it.
+ */
+function onBody(body: Field, outside: Vec3, inside: Vec3, sink: number): Vec3 {
+  const point = new Vector3(...outside);
+  const direction = new Vector3(...inside).sub(point).normalize();
+  for (let i = 0; i < 200; i++) {
+    const distance = body.distance(point.x, point.y, point.z);
+    if (distance < 1e-5) break;
+    point.addScaledVector(direction, distance * 0.9);
+  }
+  return point.addScaledVector(direction, sink).toArray();
+}
+
+/** Heights on the backs of the haunches that the britches are laid through, from the top down. */
+const BRITCHES = [0.2, 0.135, 0.075];
+
+/**
+ * Feathering: long cream fur down the backs of the forelegs, and the britches down the backs of the
+ * haunches, laid onto the sculpted `body` so they follow it round to the floor.
+ */
+function feathering(body: Field, side: 1 | -1): Shape[] {
   return [
     // A fringe down the back of each foreleg, from the elbow to a rounded tip above the wrist.
     ...lock(
@@ -49,20 +71,16 @@ function feathering(side: 1 | -1): Shape[] {
       [side * 0.3, 0, -1],
       0.014,
     ),
-    // Britches: soft lighter fur down the backs of the haunches, spreading onto the floor behind the seat.
+    // Britches: soft lighter fur down the backs of the haunches.
     ...lock(
-      [
-        [0.088 * side, 0.18, -0.2],
-        [0.098 * side, 0.115, -0.224],
-        [0.098 * side, 0.06, -0.214],
-      ],
+      BRITCHES.map((y) => onBody(body, [0.22 * side, y, -0.36], [0.05 * side, y, -0.14], 0.004)),
       0.036,
       0.42,
       [side * 0.6, 0.1, -1],
-      0.032,
+      0.03,
       [TONE.coat + 0.12, TONE.light + 0.2],
     ),
   ];
 }
 
-export const bodyFeathering = () => bothSides(feathering);
+export const bodyFeathering = (body: Field) => bothSides((side) => feathering(body, side));

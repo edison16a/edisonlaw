@@ -1,6 +1,6 @@
 import type { Vec3 } from '../../layout';
-import { BODY_RISE, JOINTS, PART, RIBS, TONE } from '../dimensions';
-import type { Shape } from '../sdf/field';
+import { BODY_RISE, JOINTS, PART, PART_COUNT, RIBS, TONE } from '../dimensions';
+import { Field, type Shape } from '../sdf/field';
 import { bodyFeathering, frill } from './bodyFur';
 import { frontLegs, hindLegs } from './legs';
 import { cone, ellipsoid } from './sculpt';
@@ -49,5 +49,5 @@ export function bodyForms(): Shape[] {
 
 /** Fur details, added after every big form so broad blends never soften them. */
 export function bodyFur(): Shape[] {
-  return [...frill(), ...bodyFeathering()];
+  return [...frill(), ...bodyFeathering(new Field(bodyForms(), PART_COUNT))];
 }
