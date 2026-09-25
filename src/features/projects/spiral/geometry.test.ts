@@ -27,7 +27,6 @@ describe('cardPose', () => {
     expect(pose.z).toBeCloseTo(SPIRAL.radius, 6);
     expect(pose.y).toBeCloseTo(SPIRAL.focusHeight, 6);
     expect(pose.rotationY).toBeCloseTo(0, 6);
-    expect(pose.facing).toBeCloseTo(1, 6);
     expect(pose.scale).toBe(1);
   });
 
@@ -57,8 +56,11 @@ describe('cardPose', () => {
   });
 
   it('turns cards away from the camera on the far side', () => {
-    expect(cardPose(Math.PI / 2 / SPIRAL.step, 0, 0, createPose()).facing).toBeCloseTo(0, 6);
-    expect(cardPose(4, 0, 0, createPose()).facing).toBeLessThan(0);
+    // The camera looks down the z axis, so this is how squarely a card faces it.
+    const facing = (offset: number) => Math.cos(cardPose(offset, 0, 0, createPose()).rotationY);
+    expect(facing(0)).toBeCloseTo(1, 6);
+    expect(facing(Math.PI / 2 / SPIRAL.step)).toBeCloseTo(0, 6);
+    expect(facing(4)).toBeLessThan(0);
   });
 
   it('lifts and grows the settled card and leaves the rest alone', () => {

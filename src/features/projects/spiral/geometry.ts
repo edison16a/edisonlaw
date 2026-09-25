@@ -19,8 +19,6 @@ export interface Point3 {
 export interface CardPose extends Point3 {
   /** Turn around the vertical axis so the card faces away from the axis. */
   rotationY: number;
-  /** 1 facing the camera, 0 edge on, negative once it faces away. */
-  facing: number;
   scale: number;
   /** 1 while the card sits locked in the focus slot. */
   focus: number;
@@ -93,7 +91,6 @@ export function cardPose(offset: number, settle: number, hidden: number, out: Ca
   out.z = Math.sin(angle) * radius;
   out.y = SPIRAL.focusHeight - offset * SPIRAL.rise - hidden * HIDDEN_DROP;
   out.rotationY = offset * SPIRAL.step;
-  out.facing = Math.cos(offset * SPIRAL.step);
 
   const focus = focusWeight(offset) * settle;
   out.z += FOCUS.lift * focus;
@@ -116,5 +113,5 @@ export function sweepOffset(y: number, centreY: number, flat: number) {
 }
 
 export function createPose(): CardPose {
-  return { x: 0, y: 0, z: 0, rotationY: 0, facing: 1, scale: 1, focus: 0 };
+  return { x: 0, y: 0, z: 0, rotationY: 0, scale: 1, focus: 0 };
 }
