@@ -3,7 +3,7 @@ import { describe, expect, expectTypeOf, it } from 'vitest';
 import type { WorkstationStageProps } from '../WorkstationStage';
 import type { DeskSceneProps } from '../scene/DeskScene';
 import { createRgbClock, FROZEN_HUE, luminance, writeRgb, writeSteadyRgb } from './rgbClock';
-import { RGB_ROOM_LIGHTS, writeRoomLightColor } from './roomLights';
+import { RGB_ROOM_LIGHTS, SCREEN_LIGHT, writeRoomLightColor } from './roomLights';
 
 const HUES = Array.from({ length: 240 }, (_, step) => step / 240);
 
@@ -11,6 +11,12 @@ describe('room lights', () => {
   it('take nothing from the timeline: the only thing an entry changes on the stage is the centre picture', () => {
     expectTypeOf<keyof WorkstationStageProps>().toEqualTypeOf<'variant' | 'centerScreen' | 'className'>();
     expectTypeOf<DeskSceneProps>().not.toHaveProperty('pulseKey');
+  });
+
+  it('give every monitor one fixed cool white, whatever it shows', () => {
+    expect(SCREEN_LIGHT.intensity).toBe(4);
+    expect(SCREEN_LIGHT.color.b).toBeGreaterThan(SCREEN_LIGHT.color.r);
+    expect(luminance(SCREEN_LIGHT.color) * SCREEN_LIGHT.intensity).toBeGreaterThan(3);
   });
 
   it('keep each RGB light at one brightness through the whole hue cycle', () => {

@@ -30,7 +30,7 @@ interface MonitorProps {
  */
 export function Monitor({ slot, screen, live }: MonitorProps) {
   const materials = getMaterials();
-  const { texture, glow } = useScreenTexture(screen, { animate: live });
+  const { texture } = useScreenTexture(screen, { animate: live });
   const index = Math.max(0, MONITORS.findIndex((monitor) => monitor.slot === slot));
   const spec = MONITORS[index];
   const { screenWidth: w, screenHeight: h, bezel, depth } = MONITOR;
@@ -73,7 +73,7 @@ export function Monitor({ slot, screen, live }: MonitorProps) {
         material={materials.aluminium}
         position={[0, -drop + FOOT.thickness / 2, FOOT.offsetZ]}
       />
-      <ScreenLight texture={glow} width={w} height={h} phase={index / MONITORS.length} />
+      <ScreenLight width={w} height={h} />
     </group>
   );
 }

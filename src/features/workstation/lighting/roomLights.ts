@@ -3,9 +3,19 @@ import { PC_TOWER, ROOM, type Vec3 } from '../layout';
 import { FROZEN_HUE, luminance, writeRgb, writeSteadyRgb } from './rgbClock';
 
 /**
- * The coloured lights the RGB set throws into the room. Nothing here reads the timeline, and no
- * brightness changes over time. Only the tower's own spill follows the RGB hue.
+ * Every light the setup throws into the room. Nothing here reads the screens or the timeline, and no
+ * brightness changes over time, so the room holds one look while the centre monitor changes. Only the
+ * tower's own spill follows the RGB hue.
  */
+
+/**
+ * The light each monitor throws: one cool screen white for all three, whatever they show, as strong
+ * as the brightest picture in the set lights the desk (Claude Code on the left).
+ */
+export const SCREEN_LIGHT = {
+  color: new Color('#e0e6ff'),
+  intensity: 4,
+} as const;
 
 export interface RgbRoomLight {
   position: Vec3;
