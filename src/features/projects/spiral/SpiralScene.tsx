@@ -5,6 +5,7 @@ import { useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
 import { PlaneGeometry, type PerspectiveCamera } from 'three';
 import type { Project } from '@/content/types';
 import { useReducedMotion } from '@/lib/hooks/useReducedMotion';
+import { createProjectMoveSound } from '../sound/moveSound';
 import { spiralMotion } from '../state/spiralMotion';
 import { useSpiralStore, type FocusSnapshot } from '../state/spiralStore';
 import { onSpiralWake } from '../state/spiralWake';
@@ -53,6 +54,7 @@ export function SpiralScene({ projects, startAt, onSelect }: SpiralSceneProps) {
   const handOutPictures = useCardPictures(projects, cards, gl, startAt);
   const [cursor] = useState(createPointerCursor);
   const [lens] = useState(() => createLensView(stageMetrics));
+  const [moveSound] = useState(createProjectMoveSound);
 
   useEffect(() => () => geometry.dispose(), [geometry]);
   useEffect(() => () => cards.forEach((card) => card.material.dispose()), [cards]);
@@ -79,8 +81,11 @@ export function SpiralScene({ projects, startAt, onSelect }: SpiralSceneProps) {
     stepMotion(spiralMotion, delta, reducedMotion);
     const { value, velocity, settle } = spiralMotion;
     syncFocus(readFocus(value, velocity, settle, count, focus));
+    // One sound for every project the spiral moves to, in step with the cards as they pass.
+    moveSound.track(value, spiralMotion.target, performance.now());
 
-    let busy = easeLensView(lens, stageMetrics, delta, reducedMotion);
+    let busy = moveSound.pending();
+    busy = easeLensView(lens, stageMetrics, delta, reducedMotion) || busy;
     frameCamera(camera, state.size.width, state.size.height, stageMetrics.focusShift, lens.lift, lens.zoom);
     gl.getDrawingBufferSize(cardViewport);
     busy = handOutPictures(value, focus.panel, useSpiralStore.getState().gallery) || busy;

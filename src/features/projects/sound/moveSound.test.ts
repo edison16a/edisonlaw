@@ -1,90 +1,86 @@
 import { describe, expect, it } from 'vitest';
-import { createMoveSound, GESTURE_GAP, SOFTER, SOFTER_WITHIN } from './moveSound';
+import { CALM_GAP, MIN_SPACING, SOFTEST, createMoveSound, runVolume } from './moveSound';
+
+interface Played {
+  at: number;
+  volume: number;
+}
 
 /**
- * Plays out moves at the given times, with something still moving every
- * frame through each of the `busy` spans and a new touch at each of the
- * `touches`, and returns the volume of every sound they played.
+ * Plays out a view that heads for `heading(t)` and sits at `position(t)`, read
+ * every 16 ms frame from 0 to `until`, and returns every sound it played.
  */
-function volumesFor(moves: number[], busy: [number, number][] = [], touches: number[] = []) {
-  const played: number[] = [];
-  const sound = createMoveSound((volume) => played.push(volume));
-  const frames = busy.flatMap(([from, to]) => Array.from({ length: Math.floor((to - from) / 16) + 1 }, (_, frame) => from + frame * 16));
-  // At the same moment a touch comes first, then a frame, as a scroll event does, then a move.
-  const order = { touch: 0, frame: 1, move: 2 };
-  const events = [
-    ...touches.map((time) => ({ time, kind: 'touch' as const })),
-    ...frames.map((time) => ({ time, kind: 'frame' as const })),
-    ...moves.map((time) => ({ time, kind: 'move' as const })),
-  ];
-  events.sort((a, b) => a.time - b.time || order[a.kind] - order[b.kind]);
-  for (const { time, kind } of events) {
-    if (kind === 'touch') sound.endGlide();
-    else if (kind === 'frame') sound.hold(time);
-    else sound.move(time);
-  }
+function run(position: (t: number) => number, heading: (t: number) => number, until: number) {
+  const played: Played[] = [];
+  let now = 0;
+  const sound = createMoveSound((volume) => played.push({ at: now, volume }));
+  for (now = 0; now <= until; now += 16) sound.track(position(now), heading(now), now);
   return played;
 }
 
+/** A view that cruises at `speed` projects per second from 0 toward `to`, then stays there. */
+const cruise = (to: number, speed: number) => (t: number) => Math.min(to, (t / 1000) * speed);
+
+const gapsOf = (played: Played[]) => played.slice(1).map((sound, i) => sound.at - played[i].at);
+
 describe('createMoveSound', () => {
-  it('sounds once for each move a moment apart, at full volume', () => {
-    expect(volumesFor([1000, 2000, 3000])).toEqual([1, 1, 1]);
+  it('stays quiet where the view opens and while it rests', () => {
+    expect(run(() => 4, () => 4, 1000)).toEqual([]);
   });
 
-  it('sounds once for a quick wheel spin, not once per notch', () => {
-    const spin = [0, 1, 2, 3, 4, 5].map((notch) => 5000 + notch * 40);
-    expect(volumesFor(spin)).toEqual([1]);
+  it('sounds at once for a press from rest', () => {
+    expect(run((t) => (t < 100 ? 0 : 1), () => 1, 500)).toEqual([{ at: 0, volume: 1 }]);
   });
 
-  it('sounds once while a held key turns the spiral a card every 200 ms', () => {
-    expect(volumesFor(Array.from({ length: 10 }, (_, card) => 3000 + card * 200))).toEqual([1]);
+  it('sounds once for every project a held key passes', () => {
+    // A held key turns the spiral at its top speed of five projects a second, eight projects on.
+    const played = run(cruise(8, 5), (t) => Math.min(8, Math.floor((t / 1000) * 5) + 1), 3000);
+    expect(played).toHaveLength(8);
+    for (const gap of gapsOf(played)) expect(gap).toBeGreaterThanOrEqual(180);
   });
 
-  it('plays quick deliberate steps softer', () => {
-    const steps = [0, 1, 2, 3].map((step) => 1000 + step * (GESTURE_GAP + 20));
-    expect(volumesFor(steps)).toEqual([1, SOFTER, SOFTER, SOFTER]);
-    expect(volumesFor([1000, 1000 + SOFTER_WITHIN, 1000 + SOFTER_WITHIN * 2])).toEqual([1, 1, 1]);
+  it('sounds once per notch for five quick wheel notches', () => {
+    // Five notches 40 ms apart queue five projects up, which the spiral then turns through.
+    expect(run(cruise(5, 5), (t) => Math.min(5, Math.floor(t / 40) + 1), 2000)).toHaveLength(5);
   });
 
-  it('waits for a spin to pause before it sounds again', () => {
-    const spin = Array.from({ length: 30 }, (_, notch) => notch * 50);
-    expect(volumesFor([...spin, 1450 + GESTURE_GAP])).toEqual([1, 1]);
+  it('plays a long click jump as a quick soft run, one sound per project passed', () => {
+    const played = run(cruise(6, 12), () => 6, 1500);
+    expect(played).toHaveLength(6);
+    expect(played[0].volume).toBe(1);
+    for (const { volume } of played.slice(1)) expect(volume).toBeLessThan(1);
   });
 
-  it('sounds once as the phone strip glides across many projects and slows down at the end', () => {
-    // The strip passes a project quickly at first, then ever more slowly as it eases to a stop.
-    const passes = [100, 160, 220, 290, 380, 500, 680, 950];
-    expect(volumesFor(passes)).toEqual([1, 1]);
-    expect(volumesFor(passes, [[0, 1200]])).toEqual([1]);
+  it('never drops a sound when the view outruns the spacing, it plays them out at that pace', () => {
+    // The view lands six projects on in a single frame, as it does for reduced motion.
+    const played = run((t) => (t === 0 ? 0 : 6), () => 6, 1000);
+    expect(played).toHaveLength(6);
+    for (const gap of gapsOf(played)) expect(gap).toBeGreaterThanOrEqual(MIN_SPACING);
   });
 
-  it('sounds again for the next swipe once the strip has come to rest', () => {
-    const spans: [number, number][] = [
-      [0, 300],
-      [2000, 2300],
-    ];
-    expect(volumesFor([150, 2150], spans)).toEqual([1, 1]);
+  it('keeps asking to be called while projects wait to sound', () => {
+    const sound = createMoveSound(() => undefined);
+    sound.track(0, 0, 0);
+    expect(sound.pending()).toBe(false);
+    sound.track(0, 3, 100);
+    expect(sound.pending()).toBe(true);
+    for (const now of [200, 300, 400]) sound.track(3, 3, now);
+    expect(sound.pending()).toBe(false);
   });
 
-  it('sounds for each flick of the strip, however soon after the last glide it begins', () => {
-    // Three flicks, each gliding for half a second and resting 150 ms before the next.
-    const spans: [number, number][] = [
-      [0, 500],
-      [650, 1150],
-      [1300, 1800],
-    ];
-    // Scrolling alone would hold the first gesture open across each short rest. The touch ends it.
-    expect(volumesFor([150, 800, 1450], spans)).toEqual([1]);
-    expect(volumesFor([150, 800, 1450], spans, [0, 650, 1300])).toEqual([1, 1, 1]);
-    // A flick that catches the strip while it still glides.
-    expect(volumesFor([150, 700], [[0, 1200]], [0, 600])).toEqual([1, SOFTER]);
+  it('sounds again at once when the view turns back', () => {
+    const played = run((t) => (t < 200 ? t / 1000 : 0.2), (t) => (t < 200 ? 1 : 0), 600);
+    expect(played.map(({ at }) => at)).toEqual([0, 208]);
   });
+});
 
-  it('still joins taps closer together than a gesture', () => {
-    expect(volumesFor([150, 300], [[0, 600]], [0, 200])).toEqual([1]);
-  });
-
-  it('pays no heed to scrolling before the strip reaches another project', () => {
-    expect(volumesFor([1100], [[0, 1200]])).toEqual([1]);
+describe('runVolume', () => {
+  it('plays calm moves at full volume and quick ones softer, but never below the floor', () => {
+    expect(runVolume(Infinity)).toBe(1);
+    expect(runVolume(CALM_GAP)).toBe(1);
+    expect(runVolume(200)).toBeLessThan(1);
+    expect(runVolume(200)).toBeGreaterThan(SOFTEST);
+    expect(runVolume(MIN_SPACING)).toBe(SOFTEST);
+    expect(runVolume(0)).toBe(SOFTEST);
   });
 });

@@ -1,39 +1,24 @@
 'use client';
 
-import { useEffect, useRef, type RefObject } from 'react';
-import { sampleOf } from '../input/wheelSample';
-import { createWheelStrokes } from '../input/wheelStrokes';
-import { endMoveGlide, holdMove, soundMove } from '../sound/moveSound';
+import { useEffect, useState } from 'react';
+import { createProjectMoveSound } from '../sound/moveSound';
 
 /**
- * The phone strip's move sound: once as the strip reaches another project,
- * and not again until it comes to rest, however many projects a long glide
- * passes and however slowly it passes the last of them. A new touch or a
- * fresh trackpad swipe starts a gesture of its own, which sounds again as it
- * reaches a project, and so do the buttons and the arrow keys.
+ * The phone strip's move sound: once for every project the strip reaches,
+ * whether a swipe, a long glide, a button or an arrow key moved it. A strip
+ * that skips several projects between two frames still sounds each of them,
+ * a moment apart.
  */
-export function useStripSound(strip: RefObject<HTMLElement | null>, active: number) {
-  const previous = useRef(active);
+export function useStripSound(active: number) {
+  const [moveSound] = useState(createProjectMoveSound);
 
   useEffect(() => {
-    if (previous.current !== active) soundMove();
-    previous.current = active;
-  }, [active]);
-
-  useEffect(() => {
-    const node = strip.current;
-    if (!node) return;
-    const strokes = createWheelStrokes();
-    const onWheel = (event: WheelEvent) => {
-      if (strokes.read(sampleOf(event)).begins) endMoveGlide();
+    let frame = 0;
+    const play = () => {
+      moveSound.track(active, active, performance.now());
+      frame = moveSound.pending() ? requestAnimationFrame(play) : 0;
     };
-    node.addEventListener('scroll', holdMove, { passive: true });
-    node.addEventListener('pointerdown', endMoveGlide, { passive: true });
-    node.addEventListener('wheel', onWheel, { passive: true });
-    return () => {
-      node.removeEventListener('scroll', holdMove);
-      node.removeEventListener('pointerdown', endMoveGlide);
-      node.removeEventListener('wheel', onWheel);
-    };
-  }, [strip]);
+    play();
+    return () => cancelAnimationFrame(frame);
+  }, [active, moveSound]);
 }

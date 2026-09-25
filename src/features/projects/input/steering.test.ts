@@ -1,15 +1,11 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { soundMove } from '../sound/moveSound';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { MAX_LEAD, WHEEL_LEAD } from '../spiral/loop';
 import { spiralMotion } from '../state/spiralMotion';
 import { moveSpiralTo, stepSpiral } from './steering';
 
-vi.mock('../sound/moveSound', () => ({ soundMove: vi.fn() }));
-
 beforeEach(() => {
   spiralMotion.target = 4;
   spiralMotion.value = 4;
-  vi.mocked(soundMove).mockClear();
 });
 
 describe('stepSpiral', () => {
@@ -42,21 +38,11 @@ describe('stepSpiral', () => {
   });
 });
 
-describe('the move sound', () => {
-  it('sounds once when the spiral heads for another project, however far', () => {
+describe('moveSpiralTo', () => {
+  it('heads straight for any card, however far', () => {
     moveSpiralTo(9);
-    expect(soundMove).toHaveBeenCalledTimes(1);
+    expect(spiralMotion.target).toBe(9);
     stepSpiral(-1);
-    expect(soundMove).toHaveBeenCalledTimes(2);
-  });
-
-  it('stays quiet when the spiral already heads for that card', () => {
-    moveSpiralTo(4);
-    expect(soundMove).not.toHaveBeenCalled();
-  });
-
-  it('stays quiet for a press that adds nothing at the lead limit', () => {
-    for (let press = 0; press < 5; press++) stepSpiral(1);
-    expect(soundMove).toHaveBeenCalledTimes(MAX_LEAD);
+    expect(spiralMotion.target).toBe(8);
   });
 });

@@ -1,4 +1,3 @@
-import { soundMove } from '../sound/moveSound';
 import { MAX_LEAD, stepTarget } from '../spiral/loop';
 import { spiralMotion } from '../state/spiralMotion';
 import { wakeSpiral } from '../state/spiralWake';
@@ -10,11 +9,10 @@ import { wakeSpiral } from '../state/spiralWake';
  */
 
 /**
- * Sends the spiral to card `index` on its looping index. Heading for another
- * card plays the move sound once, however far the spiral has to turn.
+ * Sends the spiral to card `index` on its looping index. The scene plays the
+ * move sound for every card it turns through on the way.
  */
 export function moveSpiralTo(index: number) {
-  if (index !== spiralMotion.target) soundMove();
   spiralMotion.target = index;
   wakeSpiral();
 }

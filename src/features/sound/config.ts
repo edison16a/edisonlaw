@@ -18,7 +18,7 @@ export const SOUNDS: Record<SoundName, OneShotSettings> = {
   toggle: { volume: 0.9, throttle: 80, voices: 2 },
   dot: { volume: 0.6, throttle: 50, voices: 3 },
   blip: { volume: 0.8, throttle: 120, voices: 2 },
-  move: { volume: 0.8, throttle: 120, voices: 2, jitter: 0.012 },
+  move: { volume: 0.8, throttle: 40, voices: 4, jitter: 0.012 },
 };
 
 /** Everything goes through this master level. */
