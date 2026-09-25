@@ -39,5 +39,5 @@ export async function checkMusic(root: string, width: number) {
   const mono = Float32Array.from(left, (value, i) => (value + right[i]) / 2);
   console.log(`music as decoded: rms ${toDb(rms(mono)).toFixed(1)} dB, loudest ${loudestDbA(mono).toFixed(1)} dBA`);
   console.log(`  balance ${bandBalance(mono).map(({ name, db }) => `${name} ${db.toFixed(1)}`).join(', ')}`);
-  return { rows, extra: spectrogramBlock('music', mono, width - 28, 260) };
+  return { rows, loudestDbA: loudestDbA(mono), extra: spectrogramBlock('music', mono, width - 28, 260) };
 }

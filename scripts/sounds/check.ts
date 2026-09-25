@@ -11,6 +11,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
+import { MUSIC_VOLUME, SOUNDS } from '../../src/features/sound/config';
 import { SPRITE_REGIONS } from '../../src/features/sound/sprite';
 import { buildSprite } from './build';
 import { decodeInChromium } from './check/decode';
@@ -18,6 +19,8 @@ import { checkMusic } from './check/music';
 import { checkSound } from './check/measure';
 import { PLOT_WIDTH, plotPage } from './check/plot';
 import { DECODER_DELAY, SPRITE_FILE } from './config';
+import { toDb } from './dsp/analysis';
+import { loudestDbA } from './dsp/loudness';
 
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 
@@ -40,6 +43,13 @@ async function main() {
   console.log(off.length ? `\ndelay differs from DECODER_DELAY (${DECODER_DELAY}) for ${off.map(({ check }) => check.name).join(', ')}` : '\ndecoder delay matches');
 
   const music = await checkMusic(ROOT, PLOT_WIDTH);
+  // Levels as the page plays them: each file's loudest moment times the level the engine gives it.
+  const musicHeard = music.loudestDbA + toDb(MUSIC_VOLUME);
+  console.log(`\nin the page the music peaks at ${musicHeard.toFixed(1)} dBA, under each effect by`);
+  for (const { recipe, audio } of layout.placed) {
+    const heard = loudestDbA(audio) + toDb(SOUNDS[recipe.name].volume);
+    console.log(`  ${recipe.name.padEnd(8)} ${(heard - musicHeard).toFixed(1)} dB`);
+  }
 
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: PLOT_WIDTH, height: 400 } });
