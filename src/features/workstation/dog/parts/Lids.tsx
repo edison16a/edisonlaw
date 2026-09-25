@@ -18,8 +18,8 @@ import { useDogMaterials } from '../MaterialsContext';
  * the middle of the eye, drawn by a dark lash line, so a sleeping eye reads as a gentle closed crescent.
  */
 
-/** Half sizes of the lid: a little wider than the eye across, and round about X a little taller than it. */
-const LID = { across: EYE_RADII[0] * 1.12, round: EYE_RADII[1] * 1.1 } as const;
+/** Half sizes of the lid: a little wider than the eye across, and round about X tall enough to close over its catch lights. */
+const LID = { across: EYE_RADII[0] * 1.14, round: EYE_RADII[1] * 1.22 } as const;
 /** How far the parent flattens the lid front to back, so its front stands just proud of the eye's. */
 const FLATTEN = (EYE_RADII[2] * 1.16) / LID.round;
 /** Radius of the lash line along the lid's edge. */
