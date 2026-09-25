@@ -1,4 +1,4 @@
-import { Matrix4, Vector3 } from 'three';
+import type { Vector3 } from 'three';
 import { describe, expect, it } from 'vitest';
 import { BONE, COAT_BOUNDS, createDogRig, TAIL_BONES } from '../rig/createDogRig';
 import { hindLegs } from '../anatomy/legs';
@@ -7,23 +7,7 @@ import { applyDogPose, createDogPose, dogPose } from '../rig/dogPose';
 import { Field } from '../sdf/field';
 import { buildCoatData } from './sittingCoat';
 import { buildDogData } from './dogData';
-
-/** Edges not shared by exactly one triangle each way: holes, and pinches where two sheets touch. */
-function openEdges(indices: ArrayLike<number>) {
-  const edges = new Map<string, number>();
-  for (let t = 0; t < indices.length; t += 3) {
-    for (let e = 0; e < 3; e++) {
-      const key = `${indices[t + e]},${indices[t + ((e + 1) % 3)]}`;
-      edges.set(key, (edges.get(key) ?? 0) + 1);
-    }
-  }
-  let open = 0;
-  for (const [key, count] of edges) {
-    const [a, b] = key.split(',');
-    if (count !== 1 || edges.get(`${b},${a}`) !== 1) open++;
-  }
-  return open;
-}
+import { openEdges, skinCoat } from './meshChecks';
 
 describe('buildCoatData', () => {
   // A coarse grid keeps the test quick; the painting and skinning rules are the same at any size.
@@ -72,26 +56,11 @@ describe('the built dog', () => {
 
   /** Calls `visit` with every `stride`th coat vertex, skinned to the idle pose at each of `times`. */
   function throughIdle(times: number[], stride: number, visit: (posed: Vector3, index: number) => void) {
-    const { coat } = data;
     const rig = createDogRig();
     const pose = createDogPose();
-    const skin = rig.bones.map(() => new Matrix4());
-    const rest = new Vector3();
-    const posed = new Vector3();
-    const part = new Vector3();
     for (const t of times) {
       applyDogPose(rig, dogPose(t, 1, 53, pose));
-      rig.root.updateMatrixWorld(true);
-      rig.bones.forEach((bone, index) => skin[index].multiplyMatrices(bone.matrixWorld, rig.restInverses[index]));
-      for (let n = 0; n < coat.positions.length / 3; n += stride) {
-        rest.fromArray(coat.positions, n * 3);
-        posed.set(0, 0, 0);
-        for (let slot = 0; slot < 4; slot++) {
-          const weight = coat.skinWeights[n * 4 + slot];
-          if (weight > 0) posed.addScaledVector(part.copy(rest).applyMatrix4(skin[coat.skinIndices[n * 4 + slot]]), weight);
-        }
-        visit(posed, n);
-      }
+      skinCoat(data.coat, rig, stride, visit);
     }
   }
 
