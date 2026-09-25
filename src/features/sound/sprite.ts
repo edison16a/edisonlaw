@@ -9,13 +9,13 @@ export interface SpriteRegion {
 }
 
 /** Versioned by content, so a rebuilt sprite is never served from a stale cache. */
-export const SPRITE_URL = '/audio/sprite.mp3?v=61d5bf48c7';
+export const SPRITE_URL = '/audio/sprite.mp3?v=48d4dba05f';
 
 export const SPRITE_REGIONS: Record<SoundName, SpriteRegion> = {
-  toggle: { start: 112.06, duration: 153 },
-  dot: { start: 432.06, duration: 193 },
-  blip: { start: 792.06, duration: 333 },
-  move: { start: 1292.06, duration: 203 },
-  hover: { start: 1662.06, duration: 56.99 },
-  tab: { start: 1886.05, duration: 93 },
+  tab: { start: 112.06, duration: 93 },
+  dot: { start: 372.06, duration: 193 },
+  toggle: { start: 732.06, duration: 153 },
+  blip: { start: 1052.06, duration: 333 },
+  move: { start: 1552.06, duration: 203 },
+  hover: { start: 1922.06, duration: 56.99 },
 };

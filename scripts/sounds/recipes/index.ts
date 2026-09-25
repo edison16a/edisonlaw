@@ -9,6 +9,6 @@ import type { Recipe } from './types';
 /**
  * Every sound in sprite order. Where a sound falls against the MP3 frames
  * changes how cleanly it codes, and this order keeps every one-shot at least
- * 36 dB above its coding noise, as scripts/sounds/check.ts measures it.
+ * 40 dB above its coding noise, as scripts/sounds/check.ts measures it.
  */
-export const recipes: Recipe[] = [toggle, dot, blip, move, hover, tab];
+export const recipes: Recipe[] = [tab, dot, toggle, blip, move, hover];

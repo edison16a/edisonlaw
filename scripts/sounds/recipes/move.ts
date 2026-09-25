@@ -19,7 +19,7 @@ const PITCH = 440;
  */
 export const move: Recipe = {
   name: 'move',
-  peakDb: -19,
+  peakDb: -13.5,
   render: () => {
     const tap = softClick({
       seconds: SECONDS,
