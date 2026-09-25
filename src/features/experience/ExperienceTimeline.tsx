@@ -21,8 +21,11 @@ export function ExperienceTimeline({ header }: { header: ReactNode }) {
   return (
     <>
       <div className="gutter pt-16 pb-24 lg:pt-[calc(var(--spacing-nav)+4rem)] lg:pb-[40vh]">
-        {header}
-        <Timeline listRef={listRef} active={active} />
+        {/* On very wide screens the column keeps a readable width and leans toward the middle of the page. */}
+        <div className="lg:ml-auto lg:max-w-3xl">
+          {header}
+          <Timeline listRef={listRef} active={active} />
+        </div>
       </div>
       <div className="order-first mt-nav aspect-[4/3] w-full lg:sticky lg:top-nav lg:order-none lg:mt-0 lg:aspect-auto lg:h-[calc(100dvh-var(--spacing-nav))]">
         <WorkstationStage variant="work" centerScreen={current.screen} />
