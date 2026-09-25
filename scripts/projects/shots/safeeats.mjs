@@ -17,6 +17,6 @@ export async function capture({ download, compose }) {
   const images = await Promise.all(PANELS.map(async (url) => dataUrl(await download(url))));
   const body =
     blurredBackdrop(images[0], { dim: 0.12, fit: 'stretch', scale: 1.2 }) +
-    row({ images, height: 880, aspect: 1242 / 2688, gap: 40, radius: 30 });
+    row({ images, aspect: 1242 / 2688, gap: 40, radius: 30 });
   return { png: await compose(shell({ background: '#1b1b1f', body })) };
 }

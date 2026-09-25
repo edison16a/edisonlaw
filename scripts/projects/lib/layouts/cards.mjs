@@ -3,6 +3,7 @@
  * and a centred row of phones or store panels.
  */
 import { CARD_HEIGHT, CARD_WIDTH } from '../encode.mjs';
+import { MARGIN } from './base.mjs';
 
 function card({ src, left, top, width, height, radius, bezel = 0, trim }) {
   const frame = bezel ? `padding: ${bezel}px; background: #0b0b0d;` : '';
@@ -33,9 +34,16 @@ export function cascade({ images, width, aspect, radius = 18, margin = 64, trim 
 /**
  * Equal height items in a centred row. A `bezel` draws a thin dark device frame
  * around each one, which turns raw phone screenshots into phones.
- * `lift` raises or lowers individual items in pixels.
+ * `lift` raises or lowers individual items in pixels. The row is as tall as `height`, or as
+ * tall as keeps `margin` clear on every side of the card if that is less.
  */
-export function row({ images, height, aspect, gap, radius, bezel = 0, lift = [] }) {
+export function row({ images, height: most = Infinity, aspect, gap, radius, bezel = 0, lift = [], margin = MARGIN }) {
+  const count = images.length;
+  const height = Math.min(
+    most,
+    CARD_HEIGHT - 2 * margin - 2 * bezel,
+    (CARD_WIDTH - 2 * margin - (count - 1) * gap - 2 * count * bezel) / (count * aspect),
+  );
   const width = Math.round(height * aspect);
   const outer = width + 2 * bezel;
   const total = images.length * outer + (images.length - 1) * gap;
