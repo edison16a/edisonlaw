@@ -135,7 +135,7 @@ const offset = new Vector3();
 const UP = new Vector3(0, 1, 0);
 
 /** Radians the lids turn through, from open (tucked up under the brow) to shut. See parts/Lids. */
-export const LID_TURN = { open: -0.95, shut: 1.05 } as const;
+export const LID_TURN = { open: -0.95, shut: 0.9 } as const;
 /** How far each lid tips down toward the outer corner of its eye, for a soft sleepy look. Radians. */
 const LID_DROOP = 0.2;
 
