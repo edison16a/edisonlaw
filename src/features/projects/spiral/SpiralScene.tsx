@@ -15,6 +15,7 @@ import { cardViewport } from './cardMaterial';
 import { readFocus } from './focus';
 import { CARD_HEIGHT, CARD_WIDTH } from './geometry';
 import { frameCamera } from './lens';
+import { createLensView, easeLensView } from './lensView';
 import { createPointerCursor } from './pointerCursor';
 import { isAtRest, stepMotion } from './motionStep';
 import { tickDetents } from './ticks';
@@ -52,6 +53,7 @@ export function SpiralScene({ projects, startAt, onSelect }: SpiralSceneProps) {
   const [focus] = useState<FocusSnapshot>(() => ({ panel: null, settled: null }));
   const handOutPictures = useCardPictures(projects, cards, gl, startAt);
   const [cursor] = useState(createPointerCursor);
+  const [lens] = useState(() => createLensView(stageMetrics));
 
   useEffect(() => () => geometry.dispose(), [geometry]);
   useEffect(() => () => cards.forEach((card) => card.material.dispose()), [cards]);
@@ -81,9 +83,10 @@ export function SpiralScene({ projects, startAt, onSelect }: SpiralSceneProps) {
     const { value, velocity, settle } = spiralMotion;
     syncFocus(readFocus(value, velocity, settle, count, focus));
 
-    frameCamera(camera, state.size.width, state.size.height, stageMetrics.focusShift, stageMetrics.focusLift);
+    let busy = easeLensView(lens, stageMetrics, delta, reducedMotion);
+    frameCamera(camera, state.size.width, state.size.height, stageMetrics.focusShift, lens.lift, lens.zoom);
     gl.getDrawingBufferSize(cardViewport);
-    let busy = handOutPictures(value, focus.panel, useSpiralStore.getState().gallery);
+    busy = handOutPictures(value, focus.panel, useSpiralStore.getState().gallery) || busy;
     for (const card of cards) busy = updateCard(card, spiralMotion, cards.length, delta, reducedMotion) || busy;
     if (focusCardShown(cards)) markReady();
     cursor.update(velocity, gl.domElement);

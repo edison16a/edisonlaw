@@ -1,6 +1,7 @@
 import { PerspectiveCamera, Vector3 } from 'three';
 import { describe, expect, it } from 'vitest';
-import { CLEARANCE, focusCardRect, shiftForPanel } from './anchor';
+import { rowSpace } from '../gallery/rowSize';
+import { CLEARANCE, fitAbovePanel, focusCardRect, MIN_ZOOM, shiftForPanel, STACKED_CLEARANCE } from './anchor';
 import { cardBend } from './appearance';
 import { bendCardPoint } from './cardHit';
 import { cardPose, createPose, SPIRAL, sweepOffset } from './geometry';
@@ -10,10 +11,10 @@ import { CAMERA, frameCamera } from './lens';
  * Pushes points on the card, from 0 to 1 across and up, through a real
  * three.js camera framed the way the canvas frames it, with the vertex shader's bend and sweep.
  */
-function projectWithThree(width: number, height: number, shift: number, lift: number) {
+function projectWithThree(width: number, height: number, shift: number, lift: number, zoom = 1) {
   const camera = new PerspectiveCamera(CAMERA.fov, width / height, 0.1, 40);
   camera.position.set(0, 0, CAMERA.z);
-  frameCamera(camera, width, height, shift, lift);
+  frameCamera(camera, width, height, shift, lift, zoom);
   camera.updateProjectionMatrix();
   camera.updateMatrixWorld();
 
@@ -31,13 +32,14 @@ function projectWithThree(width: number, height: number, shift: number, lift: nu
 
 describe('focusCardRect', () => {
   it('matches what a three.js camera draws, on wide and tall stages', () => {
-    for (const [width, height, shift, lift] of [
-      [1440, 836, 167, 0],
-      [768, 960, 0, 192],
-      [1920, 1016, 173, 0],
+    for (const [width, height, shift, lift, zoom] of [
+      [1440, 836, 167, 0, 1],
+      [768, 960, 0, 192, 1],
+      [1920, 1016, 173, 0, 1],
+      [900, 636, 0, 150, 0.7],
     ]) {
-      const ours = focusCardRect(width, height, shift, lift);
-      const project = projectWithThree(width, height, shift, lift);
+      const ours = focusCardRect(width, height, shift, lift, zoom);
+      const project = projectWithThree(width, height, shift, lift, zoom);
       expect(ours.left).toBeCloseTo(project(0, 0.5).x, 1);
       expect(ours.right).toBeCloseTo(project(1, 0.5).x, 1);
       expect(ours.top).toBeCloseTo(project(1, 1).y, 1);
@@ -97,5 +99,48 @@ describe('shiftForPanel', () => {
   it('never pushes the card off the left of the stage', () => {
     const shift = shiftForPanel(1024, 1302, 300, 134);
     expect(focusCardRect(1024, 1302, shift, 0).left).toBeCloseTo(CLEARANCE.edge, 6);
+  });
+});
+
+describe('fitAbovePanel', () => {
+  const room = (viewportHeight: number) => (cardWidth: number) => rowSpace(cardWidth, viewportHeight);
+  /** The card and the row under it, on a stage `height` tall once the fit is applied. */
+  const placed = (width: number, height: number, panelTop: number, preferred: number) => {
+    const fit = fitAbovePanel(width, height, panelTop, preferred, room(height + 64));
+    const card = focusCardRect(width, height, 0, fit.lift, fit.zoom);
+    return { fit, card, rowBottom: card.bottom + rowSpace(card.right - card.left, height + 64) };
+  };
+
+  it('keeps the usual lift at full size where there is room', () => {
+    expect(fitAbovePanel(768, 960, 700, 192, room(1024))).toEqual({ lift: 192, zoom: 1 });
+  });
+
+  it('rises as far as it must, and no further, before it shrinks', () => {
+    const { fit, card, rowBottom } = placed(768, 960, 460, 192);
+    expect(fit.zoom).toBe(1);
+    expect(fit.lift).toBeGreaterThan(192);
+    expect(rowBottom).toBeCloseTo(460 - STACKED_CLEARANCE.panel, 6);
+    expect(card.top).toBeGreaterThanOrEqual(STACKED_CLEARANCE.top);
+  });
+
+  it('shrinks the scene on a short stage so the card and the row clear the panel and the top', () => {
+    // A 768 by 600 window: the stage under the navbar is 536 tall, and Photo Craft's details start 258 down it.
+    for (const [width, height, panelTop] of [
+      [768, 536, 258],
+      [900, 636, 274],
+      [1000, 636, 358],
+    ]) {
+      const { fit, card, rowBottom } = placed(width, height, panelTop, height * 0.2);
+      expect(fit.zoom).toBeLessThan(1);
+      expect(fit.zoom).toBeGreaterThanOrEqual(MIN_ZOOM);
+      expect(card.top).toBeCloseTo(STACKED_CLEARANCE.top, 1);
+      expect(rowBottom).toBeLessThanOrEqual(panelTop - STACKED_CLEARANCE.panel + 0.5);
+    }
+  });
+
+  it('keeps the card clear of the top when even the smallest scene cannot clear the panel', () => {
+    const { fit, card } = placed(768, 457, 90, 91);
+    expect(fit.zoom).toBe(MIN_ZOOM);
+    expect(card.top).toBeCloseTo(STACKED_CLEARANCE.top, 6);
   });
 });

@@ -16,12 +16,24 @@ export function fitFov(aspect: number) {
 }
 
 /**
+ * The field of view for a canvas of this aspect ratio that shows the picture
+ * at `zoom` times the size fitFov gives, in degrees. A zoom under 1 widens the
+ * view, so the whole scene shrinks about the centre of the lens.
+ */
+export function viewFov(aspect: number, zoom = 1) {
+  const fov = fitFov(aspect);
+  if (zoom === 1) return fov;
+  return (2 * Math.atan(Math.tan((fov * Math.PI) / 360) / zoom) * 180) / Math.PI;
+}
+
+/**
  * Frames the spiral for a `width` by `height` canvas and slides the picture
  * `shift` CSS pixels to the left and `lift` pixels up, like a shifted lens, so
- * perspective does not change as the scene makes room for the panel.
+ * perspective does not change as the scene makes room for the panel. `zoom`
+ * under 1 shrinks the scene where the panel leaves too little room for it.
  */
-export function frameCamera(camera: PerspectiveCamera, width: number, height: number, shift: number, lift: number) {
-  const fov = fitFov(width / height);
+export function frameCamera(camera: PerspectiveCamera, width: number, height: number, shift: number, lift: number, zoom = 1) {
+  const fov = viewFov(width / height, zoom);
   const view = camera.view;
   const unchanged =
     camera.fov === fov &&
