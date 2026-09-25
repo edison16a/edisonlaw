@@ -91,6 +91,26 @@ describe('createWheelStrokes', () => {
     expect(stepsFor([...first, ...second])).toEqual([1, 1]);
   });
 
+  it('turns again for a fresh swipe after one a stalled page began with a big event', () => {
+    // A stall hands over the start of a swipe as one event the size of a notch. The rest arrives
+    // two frames to an event, too small and too far apart to be notches, and so does the next swipe.
+    for (const peak of [15, 20]) {
+      const first = coalesce(swipe({ peak }), 2, 6);
+      const cut = first.findIndex((sample) => sample.time >= 300);
+      const again = coalesce(swipe({ at: first[cut].time + 32, peak }), 2);
+      const back = coalesce(swipe({ at: first[cut].time + 32, peak: -peak }), 2);
+      expect(stepsFor([...first.slice(0, cut + 1), ...again])).toEqual([1, 1]);
+      expect(stepsFor([...first.slice(0, cut + 1), ...back])).toEqual([1, -1]);
+    }
+  });
+
+  it('turns for a swipe that starts a moment after a notch', () => {
+    for (const gap of [30, 100, 150]) {
+      expect(stepsFor([notch(0, 100), ...swipe({ at: gap, peak: 30 })])).toEqual([1, 1]);
+      expect(stepsFor([notch(0, 100), ...swipe({ at: gap, peak: -30 })])).toEqual([1, -1]);
+    }
+  });
+
   it('turns back at once when a swipe reverses during the tail', () => {
     const first = swipe({ peak: 50 });
     const cut = first.findIndex((sample) => sample.time >= 300);

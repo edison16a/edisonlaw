@@ -6,7 +6,8 @@
  *
  * A new stroke starts after the wheel has been idle for a moment, on every
  * notch of a mouse wheel, when a trackpad swipe turns round, and when a fresh
- * swipe speeds up again while the last one is still gliding to a stop.
+ * swipe speeds up again while the last one is still gliding to a stop. The
+ * last two hold even straight after a notch.
  */
 
 import { notchesIn } from './wheelNotches';
@@ -162,14 +163,6 @@ export function createWheelStrokes() {
           stroke = start('notch', stroke.notch);
           return { idle, begins: true, step: commit(stroke, x, y, rate) * notches };
         }
-        // Small events a moment after a notch belong to it. Anything else is a trackpad
-        // swipe: a steady stream, or one a busy page handed over as a few big uneven
-        // events. It glides on from here.
-        if (gap >= NOTCH_GAP && size < NOTCH) return { idle, begins: false, step: NONE };
-        stroke.kind = 'glide';
-        stroke.peak = Math.max(stroke.peak, rate);
-        stroke.trough = rate;
-        return { idle, begins: false, step: NONE };
       }
 
       let begins = false;
@@ -177,11 +170,19 @@ export function createWheelStrokes() {
         stroke = start('glide');
         begins = true;
       } else if (stroke.direction !== NONE && breaksOff(stroke, x, y, rate)) {
+        // This holds after a notch too. A busy page can hand over the start of a swipe
+        // as one big event that reads like a notch, and the next swipe must still count.
         const turned = stroke.against >= FLIP;
         stroke = start('glide');
         begins = true;
         // A turn has already travelled far enough the other way, so it counts at once.
         if (turned) return { idle, begins, step: commit(stroke, x, y, rate) };
+      } else if (stroke.kind === 'notch') {
+        // Small events a moment after a notch belong to it. Anything else is a trackpad
+        // swipe: a steady stream, or one a busy page handed over as a few big uneven
+        // events. It glides on from here.
+        if (gap < NOTCH_GAP || size >= NOTCH) stroke.kind = 'glide';
+        return { idle, begins, step: NONE };
       }
 
       if (stroke.direction !== NONE) return { idle, begins, step: NONE };

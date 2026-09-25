@@ -40,12 +40,13 @@ export const endOf = (samples: WheelSample[]) => samples[samples.length - 1].tim
 
 /**
  * The same stream as a busy page hands it over: every `frames` events arrive
- * as one, at the time of the last, with their travel added up.
+ * as one, at the time of the last, with their travel added up. A page that
+ * stalls just as the stream begins hands over the `first` events as one.
  */
-export function coalesce(samples: WheelSample[], frames: number): WheelSample[] {
+export function coalesce(samples: WheelSample[], frames: number, first = frames): WheelSample[] {
   const merged: WheelSample[] = [];
-  for (let index = 0; index < samples.length; index += frames) {
-    const group = samples.slice(index, index + frames);
+  for (let index = 0; index < samples.length; index += index === 0 ? first : frames) {
+    const group = samples.slice(index, index + (index === 0 ? first : frames));
     merged.push({
       dx: group.reduce((sum, sample) => sum + sample.dx, 0),
       dy: group.reduce((sum, sample) => sum + sample.dy, 0),
