@@ -43,7 +43,13 @@ export function Eyes({ rig, face }: { rig: DogSkeleton; face: FaceLayout }) {
         <primitive key={group.name} object={group} position={face.eyes[index].position} quaternion={face.eyes[index].quaternion}>
           <mesh geometry={eye} material={materials.eye} scale={EYE_RADII} />
           <mesh geometry={eye} material={materials.pupil} scale={PUPIL.radii} position-z={PUPIL.forward} />
-          <mesh geometry={shine} material={materials.eyeShine} />
+          {rig.shines ? (
+            <primitive object={rig.shines[index]}>
+              <mesh geometry={shine} material={materials.eyeShine} />
+            </primitive>
+          ) : (
+            <mesh geometry={shine} material={materials.eyeShine} />
+          )}
           {rig.lids && <Lid group={rig.lids[index]} />}
         </primitive>
       ))}

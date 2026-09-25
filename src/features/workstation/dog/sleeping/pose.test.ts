@@ -102,6 +102,19 @@ describe('sleepPose', () => {
     expect(wags).toBeGreaterThan(20);
   });
 
+  it('puts out the catch lights in its eyes while the lids are shut, and lights them when it looks up', () => {
+    const rig = createSleepingRig();
+    applySleepPose(rig, sleepPose(0, 0, SLEEP_SEED, createSleepPose()));
+    expect(rig.shines.map((shine) => shine.visible)).toEqual([false, false]);
+    let lit = false;
+    sample((pose) => {
+      applySleepPose(rig, pose);
+      expect(rig.shines[0].visible).toBe(pose.lids < 0.8);
+      lit ||= rig.shines[0].visible;
+    });
+    expect(lit).toBe(true);
+  });
+
   it('keeps the head in the curl, lifting only a little', () => {
     const rig = createSleepingRig();
     const rest = rig.head.position.clone();

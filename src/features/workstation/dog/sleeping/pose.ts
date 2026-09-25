@@ -138,6 +138,11 @@ const UP = new Vector3(0, 1, 0);
 export const LID_TURN = { open: -0.95, shut: 0.9 } as const;
 /** How far each lid tips down toward the outer corner of its eye, for a soft sleepy look. Radians. */
 const LID_DROOP = 0.2;
+/**
+ * Past this much shut the lids cover the catch lights, which are only reflections on an open eye: they go
+ * out, so their bright white never glints through a sleeping lid.
+ */
+const SHINE_OUT = 0.8;
 
 /** Writes a pose onto the rig. */
 export function applySleepPose(rig: SleepingRig, pose: SleepPose) {
@@ -162,6 +167,7 @@ export function applySleepPose(rig: SleepingRig, pose: SleepPose) {
     rig.ears[side].quaternion.copy(rig.rest.ears[side]).multiply(turn.setFromEuler(euler));
     // Each eye's own X runs toward the head's left, so the outer corner is +X on the left eye, -X on the right.
     rig.lids[side].rotation.set(lerp(LID_TURN.open, LID_TURN.shut, pose.lids), 0, -sign * LID_DROOP);
+    rig.shines[side].visible = pose.lids < SHINE_OUT;
   }
 
   for (let i = 0; i < rig.tail.length; i++) {

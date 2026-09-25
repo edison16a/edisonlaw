@@ -2,7 +2,7 @@
 
 import { CatmullRomCurve3, CircleGeometry, Color, Float32BufferAttribute, SphereGeometry, TubeGeometry, Vector3, type Group } from 'three';
 import { useDisposable } from '../../useDisposable';
-import { mergeParts } from '../../character/geometry/merge';
+import { mergeParts, paintSolid } from '../../character/geometry/merge';
 import { EYE_RADII } from '../anatomy/face';
 import { TONE } from '../dimensions';
 import { toneColor } from '../geometry/paint';
@@ -58,7 +58,8 @@ function lashGeometry() {
     const a = Math.PI / 2 + LASH_SPAN * (i / 8 - 1);
     return new Vector3(LID.across * Math.cos(a), 0, LID.round * Math.sin(a));
   });
-  return new TubeGeometry(new CatmullRomCurve3(points), 48, LASH, 8, false);
+  // Matte like the fur round it: a glossy line would catch the monitors and glint like an open eye.
+  return paintSolid(new TubeGeometry(new CatmullRomCurve3(points), 48, LASH, 8, false), new Color(DOG_PALETTE.pigment));
 }
 
 /** One lid on its lid group, which the pose turns about X between open and shut (see sleeping/pose.ts). */
@@ -69,7 +70,7 @@ export function Lid({ group }: { group: Group }) {
     <group scale-z={FLATTEN}>
       <primitive object={group}>
         <mesh geometry={parts.lid} material={materials.ear} />
-        <mesh geometry={parts.lash} material={materials.lips} />
+        <mesh geometry={parts.lash} material={materials.ear} />
       </primitive>
     </group>
   );
