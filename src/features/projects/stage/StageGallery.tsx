@@ -1,10 +1,12 @@
 'use client';
 
+import type { CSSProperties } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import type { Project } from '@/content/types';
 import { EASE_OUT_EXPO } from '@/lib/easing';
 import { ScreenshotRow } from '../components/ScreenshotRow';
 import { hasGallery, projectPictures } from '../gallery/pictures';
+import { ROW } from '../gallery/rowSize';
 import { shownPicture } from '../gallery/selection';
 import { useSpiralStore } from '../state/spiralStore';
 
@@ -15,6 +17,13 @@ import { useSpiralStore } from '../state/spiralStore';
  * the spiral moves. It sits centred under the card, from the card's place
  * that the stage publishes, with each picture sized from the card's width.
  */
+/** Centred under the card, the gap and the pictures sized as rowSpace counts them, so the stage keeps room for them. */
+const PLACE = {
+  left: 'calc((var(--card-left, 25%) + var(--card-right, 75%)) / 2)',
+  top: `calc(var(--card-bottom, 75%) + clamp(${ROW.gapMin}px, ${ROW.gapShare * 100}dvh, ${ROW.gapMax}px))`,
+  '--thumb': `clamp(${ROW.thumbMin}px, calc((var(--card-right) - var(--card-left)) * ${ROW.thumbShare}), ${ROW.thumbMax}px)`,
+} as CSSProperties;
+
 export function StageGallery({ projects }: { projects: Project[] }) {
   const panel = useSpiralStore((state) => state.panel);
   const settled = useSpiralStore((state) => state.settled);
@@ -36,11 +45,8 @@ export function StageGallery({ projects }: { projects: Project[] }) {
           }
           exit={{ opacity: 0, transition: { duration: 0.15 } }}
           inert={!shown}
-          style={{
-            left: 'calc((var(--card-left, 25%) + var(--card-right, 75%)) / 2)',
-            top: 'calc(var(--card-bottom, 75%) + clamp(1rem, 2.4dvh, 1.75rem))',
-          }}
-          className="absolute isolate z-10 -translate-x-1/2 [--thumb:clamp(3.25rem,calc((var(--card-right)_-_var(--card-left))_*_0.125),5.5rem)]"
+          style={PLACE}
+          className="absolute isolate z-10 -translate-x-1/2"
         >
           {/* A soft dark pool under the row lifts it off the busy cards further down the strand. It fades out without a blur. */}
           <div
