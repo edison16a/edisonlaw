@@ -4,8 +4,6 @@ import { SEATED_PLACEMENT, STANDING_PLACEMENT } from '../character/placement';
 import { TAIL_PATH } from '../dog/anatomy/tail';
 import { PAWS } from '../dog/dimensions';
 import { DOG_PLACEMENT } from '../dog/placement';
-import { sleepingCoatField } from '../dog/sleeping/coat';
-import { SLEEPING_PLACEMENT } from '../dog/sleeping/placement';
 import { CHAIR, DESK, DOG_PAT_POINT, MONITOR, MONITORS, PC_TOWER, type Vec3 } from '../layout';
 import type { StageVariant } from '../types';
 import { CAMERA_FRAMINGS, createResolvedShot, resolveShot } from './cameraPresets';
@@ -80,26 +78,6 @@ const DOG: [string, Vec3][] = [
   ["the dog's plume", onDog(tailX + 0.1, 0, tailZ)],
 ];
 
-/**
- * The sleeping dog's outline round the floor, found on its sculpture every few degrees, and the top of
- * its flank, in the room: the whole curl, the plume of its tail and the face resting in front.
- */
-function sleepingDog(): [string, Vec3][] {
-  const field = sleepingCoatField();
-  const toRoom = (p: Vector3): Vec3 =>
-    p.applyAxisAngle(new Vector3(0, 1, 0), SLEEPING_PLACEMENT.rotationY).add(new Vector3(...SLEEPING_PLACEMENT.position)).toArray();
-  const outline: [string, Vec3][] = [];
-  for (let angle = 0; angle < 360; angle += 15) {
-    const a = (angle * Math.PI) / 180;
-    let edge = 0;
-    for (let r = 0; r < 0.7; r += 0.005) if (field.distance(Math.cos(a) * r, 0.02, Math.sin(a) * r) < 0) edge = r;
-    outline.push([`the sleeping dog's edge at ${angle} degrees`, toRoom(new Vector3(Math.cos(a) * edge, 0, Math.sin(a) * edge))]);
-  }
-  let top = 0;
-  while (field.distance(-0.06, top, -0.1) < 0) top += 0.005;
-  return [...outline, ["the top of the sleeping dog's flank", toRoom(new Vector3(-0.06, top, -0.1))]];
-}
-
 const [standX, , standZ] = STANDING_PLACEMENT.position;
 const [seatX, seatY, seatZ] = SEATED_PLACEMENT.position;
 const [towerX, , towerZ] = PC_TOWER.position;
@@ -109,7 +87,6 @@ const SUBJECTS: Record<StageVariant, [string, Vec3][]> = {
     ['the chair base', CHAIR.position],
     ['the top of the tower', [towerX, PC_TOWER.size[1], towerZ]],
     ['the foot of the tower', [towerX, 0, towerZ]],
-    ...sleepingDog(),
     ...DESK_AND_MONITORS,
   ],
   about: [

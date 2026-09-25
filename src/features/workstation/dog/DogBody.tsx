@@ -6,10 +6,10 @@ import { Ear } from './parts/Ear';
 import { Eyes } from './parts/Eyes';
 import { Lips } from './parts/Lips';
 import { Nose } from './parts/Nose';
-import type { DogSkeleton } from './rig/skeleton';
+import type { DogRig } from './rig/createDogRig';
 
 /** Every part on the rig: the skinned coat, and the face parts and ears riding the head. */
-export function DogBody({ rig, data }: { rig: DogSkeleton; data: DogData }) {
+export function DogBody({ rig, data }: { rig: DogRig; data: DogData }) {
   return (
     <primitive object={rig.root}>
       <Coat rig={rig} data={data.coat} />

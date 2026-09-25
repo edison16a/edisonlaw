@@ -1,5 +1,4 @@
 import { Color, MeshBasicMaterial, MeshPhysicalMaterial } from 'three';
-import type { Vec3 } from '../layout';
 
 /** Every colour on the dog. Colour is allowed here because it lives inside the 3D scene. */
 export const DOG_PALETTE = {
@@ -35,12 +34,6 @@ export interface DogMaterials {
  */
 const SHEEN_BY_COAT = /* glsl */ `material.sheenColor = sheenColor * smoothstep( 0.03, 0.2, dot( vColor.rgb, vec3( 0.2126, 0.7152, 0.0722 ) ) );`;
 
-/**
- * The fur's emissive is a soft fill of light on the coat alone rather than a glow: it lights the painted
- * coat, so it brings out each tone's own colour, gold as gold and cream as cream. Black, it adds nothing.
- */
-const FILL_BY_COAT = /* glsl */ `totalEmissiveRadiance *= diffuseColor.rgb;`;
-
 /** Soft clay fur: matte, with a warm sheen at grazing angles that reads as fuzz on the silhouette. */
 function furMaterial() {
   const material = new MeshPhysicalMaterial({
@@ -52,39 +45,23 @@ function furMaterial() {
     sheenRoughness: 0.45,
   });
   material.onBeforeCompile = (shader) => {
-    shader.fragmentShader = shader.fragmentShader
-      .replace('#include <lights_physical_fragment>', `#include <lights_physical_fragment>\n#ifdef USE_SHEEN\n${SHEEN_BY_COAT}\n#endif`)
-      .replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>\n${FILL_BY_COAT}`);
+    shader.fragmentShader = shader.fragmentShader.replace(
+      '#include <lights_physical_fragment>',
+      `#include <lights_physical_fragment>\n#ifdef USE_SHEEN\n${SHEEN_BY_COAT}\n#endif`,
+    );
   };
   material.customProgramCacheKey = () => 'dogFur';
   return material;
 }
 
 /**
- * How the coat is kept golden under coloured light where a dog lies, the way a painter keeps a golden
- * coat golden in a violet room. Both are linear RGB.
- */
-export interface CoatLight {
-  /** Multiplies the coat's colour, balancing it against the colour of the light. */
-  balance: Vec3;
-  /** A soft fill of light on the coat alone, which brings out each tone's own colour (see FILL_BY_COAT). */
-  fill: Vec3;
-}
-
-/**
  * Every material draws in the transparent pass, so the dog can fade in (see useFadeIn) without its
  * shaders changing when the fade ends. At full opacity each still writes depth and covers what is
- * behind it, so it draws exactly as an opaque model would. The fur is lit by `coatLight` when given.
+ * behind it, so it draws exactly as an opaque model would.
  */
-export function createDogMaterials(coatLight?: CoatLight): DogMaterials {
+export function createDogMaterials(): DogMaterials {
   const materials = buildMaterials();
   for (const material of Object.values(materials)) material.transparent = true;
-  if (coatLight) {
-    for (const fur of [materials.coat, materials.ear]) {
-      fur.color.setRGB(...coatLight.balance);
-      fur.emissive.setRGB(...coatLight.fill);
-    }
-  }
   return materials;
 }
 

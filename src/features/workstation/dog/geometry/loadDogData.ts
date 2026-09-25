@@ -1,4 +1,4 @@
-import { buildDogData, type DogData, type DogPoseName } from './dogData';
+import { buildDogData, type DogData } from './dogData';
 
 /**
  * A promise that also says when it has settled, in the shape React's `use` reads: once fulfilled,
@@ -6,33 +6,31 @@ import { buildDogData, type DogData, type DogPoseName } from './dogData';
  */
 type TrackedPromise<T> = Promise<T> & { status?: 'pending' | 'fulfilled' | 'rejected'; value?: T };
 
-const pending = new Map<DogPoseName, TrackedPromise<DogData>>();
+let pending: TrackedPromise<DogData> | null = null;
 
 /**
- * The dog's meshes in a pose, sculpted once per page in a worker. Mounts share the same arrays and only
- * wrap them in fresh GPU buffers. Without workers (or if one fails) it builds on the main thread instead.
+ * The dog's meshes, sculpted once per page in a worker. Mounts share the same arrays and only wrap them
+ * in fresh GPU buffers. Without workers (or if one fails) it builds on the main thread instead.
  */
-export function loadDogData(pose: DogPoseName = 'sitting'): Promise<DogData> {
-  let promise = pending.get(pose);
-  if (!promise) {
-    const tracked: TrackedPromise<DogData> = buildInWorker(pose).catch(() => buildOnMainThread(pose));
-    tracked.status = 'pending';
-    tracked.then(
+export function loadDogData(): Promise<DogData> {
+  if (!pending) {
+    const promise: TrackedPromise<DogData> = buildInWorker().catch(buildOnMainThread);
+    promise.status = 'pending';
+    promise.then(
       (value) => {
-        tracked.status = 'fulfilled';
-        tracked.value = value;
+        promise.status = 'fulfilled';
+        promise.value = value;
       },
       () => {
-        tracked.status = 'rejected';
+        promise.status = 'rejected';
       },
     );
-    pending.set(pose, tracked);
-    promise = tracked;
+    pending = promise;
   }
-  return promise;
+  return pending;
 }
 
-function buildInWorker(pose: DogPoseName) {
+function buildInWorker() {
   return new Promise<DogData>((resolve, reject) => {
     if (typeof Worker === 'undefined') {
       reject(new Error('Web workers are not available.'));
@@ -47,10 +45,10 @@ function buildInWorker(pose: DogPoseName) {
       worker.terminate();
       reject(new Error(event.message || 'The dog worker failed.'));
     };
-    worker.postMessage(pose);
+    worker.postMessage(null);
   });
 }
 
-function buildOnMainThread(pose: DogPoseName) {
-  return new Promise<DogData>((resolve) => setTimeout(() => resolve(buildDogData(pose)), 0));
+function buildOnMainThread() {
+  return new Promise<DogData>((resolve) => setTimeout(() => resolve(buildDogData()), 0));
 }

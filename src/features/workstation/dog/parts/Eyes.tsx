@@ -5,8 +5,7 @@ import { useDisposable } from '../../useDisposable';
 import { mergeParts } from '../../character/geometry/merge';
 import { EYE_RADII, PUPIL, type FaceLayout } from '../anatomy/face';
 import { useDogMaterials } from '../MaterialsContext';
-import type { DogSkeleton } from '../rig/skeleton';
-import { Lid, ShutEye } from './Lids';
+import type { DogRig } from '../rig/createDogRig';
 
 /** Catch lights, placed the same on both eyes as if lit from one window. */
 const SHINES = [
@@ -29,11 +28,8 @@ function shineGeometry() {
   );
 }
 
-/**
- * Big, dark brown, glossy eyes with near black pupils and white catch lights, seated on the skull, with
- * lids over them and the line each leaves on the face once shut when the pose has any. Head space.
- */
-export function Eyes({ rig, face }: { rig: DogSkeleton; face: FaceLayout }) {
+/** Big, dark brown, glossy eyes with near black pupils and white catch lights, seated on the skull. Head space. */
+export function Eyes({ rig, face }: { rig: DogRig; face: FaceLayout }) {
   const materials = useDogMaterials();
   const eye = useDisposable(() => new SphereGeometry(1, 28, 20));
   const shine = useDisposable(shineGeometry);
@@ -43,20 +39,8 @@ export function Eyes({ rig, face }: { rig: DogSkeleton; face: FaceLayout }) {
         <primitive key={group.name} object={group} position={face.eyes[index].position} quaternion={face.eyes[index].quaternion}>
           <mesh geometry={eye} material={materials.eye} scale={EYE_RADII} />
           <mesh geometry={eye} material={materials.pupil} scale={PUPIL.radii} position-z={PUPIL.forward} />
-          {rig.shines ? (
-            <primitive object={rig.shines[index]}>
-              <mesh geometry={shine} material={materials.eyeShine} />
-            </primitive>
-          ) : (
-            <mesh geometry={shine} material={materials.eyeShine} />
-          )}
-          {rig.lids && <Lid group={rig.lids[index]} />}
+          <mesh geometry={shine} material={materials.eyeShine} />
         </primitive>
-      ))}
-      {rig.creases?.map((group, index) => (
-        <group key={group.name} position={face.eyes[index].position} quaternion={face.eyes[index].quaternion}>
-          <ShutEye group={group} line={face.creases[index]} />
-        </group>
       ))}
     </>
   );

@@ -1,7 +1,7 @@
 import { Euler, Matrix4, Quaternion, Vector3 } from 'three';
 import { HEAD, PART_COUNT } from '../dimensions';
 import { Field } from '../sdf/field';
-import { furthestAlong } from '../sdf/trace';
+import { surfaceFrame } from '../sdf/trace';
 import { FACE, headForms } from './head';
 
 /**
@@ -10,12 +10,10 @@ import { FACE, headForms } from './head';
  * of its crown's curve, below that point, so the crown stays in his palm however it turns.
  */
 
-/** A turn of the head as a rotation: yaw about the upright, then pitch with the nose up positive, then tilt. */
-export function headTurn({ yaw, pitch, tilt }: { yaw: number; pitch: number; tilt: number }) {
+function restRotation() {
+  const { yaw, pitch, tilt } = HEAD.rest;
   return new Quaternion().setFromEuler(new Euler(-pitch, yaw, tilt, 'YXZ'));
 }
-
-const restRotation = () => headTurn(HEAD.rest);
 
 /** Out of the crown toward Edison's palm, in dog space: up, leaning toward him behind its right shoulder. */
 function towardPalm() {
@@ -31,7 +29,32 @@ let crown: Vector3 | null = null;
  * tracing the skull in a fan of directions and keeping the best hit.
  */
 function headCrown(): Vector3 {
-  crown ??= furthestAlong(new Field(headForms(), PART_COUNT), FACE.core, towardPalm().applyQuaternion(restRotation().invert()), 30);
+  if (crown) return crown.clone();
+  const field = new Field(headForms(), PART_COUNT);
+  const up = towardPalm().applyQuaternion(restRotation().invert());
+  const across = new Vector3(1, 0, 0).addScaledVector(up, -up.x).normalize();
+  const along = new Vector3().crossVectors(up, across);
+  const direction = new Vector3();
+  let best = -Infinity;
+  const found = new Vector3();
+  for (let ring = 0; ring <= 30; ring++) {
+    const tilt = (ring * Math.PI) / 180;
+    for (let step = 0; step < (ring === 0 ? 1 : 36); step++) {
+      const turn = (step * Math.PI) / 18;
+      direction
+        .copy(up)
+        .multiplyScalar(Math.cos(tilt))
+        .addScaledVector(across, Math.sin(tilt) * Math.cos(turn))
+        .addScaledVector(along, Math.sin(tilt) * Math.sin(turn));
+      const { position } = surfaceFrame(field, FACE.core, direction.toArray());
+      const height = position.dot(up);
+      if (height > best) {
+        best = height;
+        found.copy(position);
+      }
+    }
+  }
+  crown = found;
   return crown.clone();
 }
 

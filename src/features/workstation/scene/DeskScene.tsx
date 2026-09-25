@@ -3,7 +3,6 @@
 import { CameraRig } from '../camera/CameraRig';
 import { Character } from '../character/Character';
 import { Dog } from '../dog/Dog';
-import { SleepingDog } from '../dog/SleepingDog';
 import { SEATED_PLACEMENT, STANDING_PLACEMENT } from '../character/placement';
 import { Effects } from '../effects/Effects';
 import { Lighting } from '../lighting/Lighting';
@@ -64,7 +63,7 @@ export function DeskScene(props: DeskSceneProps) {
       <group position={placement.position} rotation-y={placement.rotationY}>
         <Character pose={seated ? 'seated' : 'standing'} animate={animate} />
       </group>
-      {seated ? <SleepingDog animate={animate} /> : <Dog animate={animate} />}
+      {!seated && <Dog animate={animate} />}
       <Effects />
       <ReadySignal onReady={onReady} />
     </RgbClockProvider>

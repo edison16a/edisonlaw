@@ -1,14 +1,29 @@
-import type { Vector3 } from 'three';
+import { Matrix4, Vector3 } from 'three';
 import { describe, expect, it } from 'vitest';
-import { BONE, COAT_BOUNDS, createDogRig, TAIL_BONES } from '../rig/createDogRig';
+import { BONE, createDogRig, TAIL_BONES } from '../rig/createDogRig';
 import { hindLegs } from '../anatomy/legs';
 import { PART_COUNT } from '../dimensions';
 import { applyDogPose, createDogPose, dogPose } from '../rig/dogPose';
 import { Field } from '../sdf/field';
-import { chainInfluences } from './coatGeometry';
-import { buildCoatData } from './sittingCoat';
+import { buildCoatData, COAT_BOUNDS } from './coatGeometry';
 import { buildDogData } from './dogData';
-import { openEdges, skinCoat } from './meshChecks';
+
+/** Edges not shared by exactly one triangle each way: holes, and pinches where two sheets touch. */
+function openEdges(indices: ArrayLike<number>) {
+  const edges = new Map<string, number>();
+  for (let t = 0; t < indices.length; t += 3) {
+    for (let e = 0; e < 3; e++) {
+      const key = `${indices[t + e]},${indices[t + ((e + 1) % 3)]}`;
+      edges.set(key, (edges.get(key) ?? 0) + 1);
+    }
+  }
+  let open = 0;
+  for (const [key, count] of edges) {
+    const [a, b] = key.split(',');
+    if (count !== 1 || edges.get(`${b},${a}`) !== 1) open++;
+  }
+  return open;
+}
 
 describe('buildCoatData', () => {
   // A coarse grid keeps the test quick; the painting and skinning rules are the same at any size.
@@ -57,11 +72,26 @@ describe('the built dog', () => {
 
   /** Calls `visit` with every `stride`th coat vertex, skinned to the idle pose at each of `times`. */
   function throughIdle(times: number[], stride: number, visit: (posed: Vector3, index: number) => void) {
+    const { coat } = data;
     const rig = createDogRig();
     const pose = createDogPose();
+    const skin = rig.bones.map(() => new Matrix4());
+    const rest = new Vector3();
+    const posed = new Vector3();
+    const part = new Vector3();
     for (const t of times) {
       applyDogPose(rig, dogPose(t, 1, 53, pose));
-      skinCoat(data.coat, rig, stride, visit);
+      rig.root.updateMatrixWorld(true);
+      rig.bones.forEach((bone, index) => skin[index].multiplyMatrices(bone.matrixWorld, rig.restInverses[index]));
+      for (let n = 0; n < coat.positions.length / 3; n += stride) {
+        rest.fromArray(coat.positions, n * 3);
+        posed.set(0, 0, 0);
+        for (let slot = 0; slot < 4; slot++) {
+          const weight = coat.skinWeights[n * 4 + slot];
+          if (weight > 0) posed.addScaledVector(part.copy(rest).applyMatrix4(skin[coat.skinIndices[n * 4 + slot]]), weight);
+        }
+        visit(posed, n);
+      }
     }
   }
 
@@ -85,29 +115,4 @@ describe('the built dog', () => {
     });
     expect(checked / idle.length).toBeGreaterThan(500);
   }, 60000);
-});
-
-describe('chainInfluences', () => {
-  /** The bones a point `param` joints along a chain of six takes its share from, with their weights. */
-  const at = (param: number) =>
-    Object.fromEntries(
-      chainInfluences(1, param, 4, 6)
-        .filter(({ weight }) => weight > 1e-9)
-        .map(({ bone, weight }) => [bone, +weight.toFixed(6)]),
-    );
-
-  it('gives each stretch of the chain to the bone at its start, and splits it round each joint', () => {
-    expect(at(0.3)).toEqual({ 4: 1 });
-    expect(at(1.5)).toEqual({ 5: 1 });
-    expect(at(2)).toEqual({ 5: 0.5, 6: 0.5 });
-    expect(at(5.6)).toEqual({ 9: 1 });
-  });
-
-  it('hands over the whole share and never a negative one', () => {
-    for (let param = 0; param <= 6; param += 0.05) {
-      const list = chainInfluences(0.7, param, 0, 6);
-      for (const { weight } of list) expect(weight).toBeGreaterThanOrEqual(0);
-      expect(list.reduce((sum, { weight }) => sum + weight, 0)).toBeCloseTo(0.7, 9);
-    }
-  });
 });

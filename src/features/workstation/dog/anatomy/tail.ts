@@ -24,39 +24,12 @@ export const TAIL_PATH: Vec3[] = [
 /** Radius of the tail core at each point of the path. */
 const CORE_RADII = [0.034, 0.03, 0.026, 0.023, 0.02, 0.017, 0.013];
 
-/** Middle of the seat on the floor, which the curl bends round. */
-const SEAT: Vec3 = [0, 0, -0.12];
-
-/** Where a pose lays its tail, in dog space. */
-export interface TailSpec {
-  /** Centre line from the root to the tip, lying on the floor from its third point on. */
-  path: readonly Vec3[];
-  /** Radius of the core at each point of the path. */
-  radii: readonly number[];
-  /** The point on the floor the tail curls round: the plume streams out away from it. */
-  center: Vec3;
-  /** Where the flick of fur past the tip ends. */
-  flick: Vec3;
-  /** Tone of the tail along its length past the root: deeper than the plume, so it reads as its own line. */
-  coreTone?: number;
-}
-
-const [sittingTip] = TAIL_PATH.slice(-1);
-
-/** The sitting dog's tail, curled round its left haunch. */
-const SITTING_TAIL: TailSpec = {
-  path: TAIL_PATH,
-  radii: CORE_RADII,
-  center: SEAT,
-  flick: [sittingTip[0] + 0.004, 0.018, sittingTip[2] + 0.055],
-};
-
 const tail = (tone: number, blend: number) => ({ tone, blend, part: PART.tail });
 
-export function tailForms({ path, radii, coreTone = TONE.saddle + 0.1 }: TailSpec = SITTING_TAIL): Shape[] {
+export function tailForms(): Shape[] {
   const shapes: Shape[] = [];
-  for (let i = 1; i < path.length; i++) {
-    shapes.push(cone(path[i - 1], path[i], radii[i - 1], radii[i], tail(i === 1 ? TONE.coat : coreTone, i === 1 ? 0.045 : 0.018)));
+  for (let i = 1; i < TAIL_PATH.length; i++) {
+    shapes.push(cone(TAIL_PATH[i - 1], TAIL_PATH[i], CORE_RADII[i - 1], CORE_RADII[i], tail(i === 1 ? TONE.coat : TONE.saddle + 0.1, i === 1 ? 0.045 : 0.018)));
   }
   return shapes;
 }
@@ -73,13 +46,15 @@ const PLUME = [
 
 /** How far out of the line of the tail the plume streams toward the tip, in radians. */
 const PLUME_SPREAD = 0.42;
+/** Middle of the seat on the floor, which the curl bends round. */
+const SEAT: Vec3 = [0, 0, -0.12];
 
 /**
  * The plume: long cream locks lying flat on the floor along the outside of the curl like shingles, each
  * streaming on toward the tip past the one before, so together they make one feathered flag.
  */
-export function tailFur({ path, center, flick }: TailSpec = SITTING_TAIL): Shape[] {
-  const curve = new CatmullRomCurve3(path.map(([x, y, z]) => new Vector3(x, y, z)));
+export function tailFur(): Shape[] {
+  const curve = new CatmullRomCurve3(TAIL_PATH.map(([x, y, z]) => new Vector3(x, y, z)));
   const point = new Vector3();
   const along = new Vector3();
   const out = new Vector3();
@@ -91,7 +66,7 @@ export function tailFur({ path, center, flick }: TailSpec = SITTING_TAIL): Shape
     along.normalize();
     // Square to the tail across the floor, away from the seat.
     out.set(along.z, 0, -along.x);
-    if (out.dot(point.clone().sub(new Vector3(...center))) < 0) out.negate();
+    if (out.dot(point.clone().sub(new Vector3(...SEAT))) < 0) out.negate();
     stream.copy(along).multiplyScalar(Math.cos(PLUME_SPREAD)).addScaledVector(out, Math.sin(PLUME_SPREAD));
     const root = point.clone().addScaledVector(out, 0.006).setY(0.022);
     // Each lock bends back toward the line of the tail as it goes, so the plume closes into one flag.
@@ -109,9 +84,9 @@ export function tailFur({ path, center, flick }: TailSpec = SITTING_TAIL): Shape
     });
   });
   // The tip flicks on past the end of the tail.
-  const [beforeTip, tip] = path.slice(-2);
+  const [tip, beforeTip] = [TAIL_PATH[TAIL_PATH.length - 1], TAIL_PATH[TAIL_PATH.length - 2]];
   const end = flatLock({
-    path: [beforeTip, tip, flick],
+    path: [beforeTip, tip, [tip[0] + 0.004, 0.018, tip[2] + 0.055]],
     width: 0.019,
     flatness: 0.6,
     facing: [0, 1, 0],

@@ -1,12 +1,12 @@
-import { buildDogData, dogDataBuffers, type DogPoseName } from './dogData';
+import { buildDogData, dogDataBuffers } from './dogData';
 
-/** Builds the dog off the main thread, so sculpting it never stalls scrolling. The message names the pose. */
+/** Builds the dog off the main thread, so sculpting it never stalls scrolling. */
 const scope = self as unknown as {
-  onmessage: ((event: MessageEvent<DogPoseName>) => void) | null;
+  onmessage: (() => void) | null;
   postMessage(message: unknown, transfer: Transferable[]): void;
 };
 
-scope.onmessage = (event) => {
-  const data = buildDogData(event.data);
+scope.onmessage = () => {
+  const data = buildDogData();
   scope.postMessage(data, dogDataBuffers(data));
 };

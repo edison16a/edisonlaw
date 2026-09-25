@@ -3,7 +3,7 @@
 This is Edison Law's personal website. Edison studies Bioengineering at UC Berkeley, is working toward a second major in EECS, and works as a software engineer. The site is one dark page with three parts:
 
 - **Projects.** A 3D spiral of project cards with one project up close and a panel with its details beside it. The wheel, a swipe or a click on any card turns it to another project.
-- **Work Experience.** A timeline next to a 3D model of Edison seated at his desk at night, typing, with his golden retriever curled up asleep on the rug by his chair. The centre monitor changes to match the job you are reading, while the room's lighting stays the same.
+- **Work Experience.** A timeline next to a 3D model of Edison seated at his desk at night, typing. The centre monitor changes to match the job you are reading, while the room's lighting stays the same.
 - **About Me.** The same room with Edison standing by the desk with a coffee, petting his golden retriever as it sits beside him, next to his intro, contact links, education, skills, honors and activities.
 
 The page is black and white in one typeface, Satoshi. Colour only shows up inside the 3D scenes, in the project photos and in the skill logos. Once you turn sound on, a calm lo fi track plays softly under the whole page, and a few soft sounds made from scratch answer the projects turning, the timeline, the navbar and copying the email.
@@ -16,7 +16,7 @@ The page is black and white in one typeface, Satoshi. Colour only shows up insid
 
 ![Photo Craft with its row of screenshots](docs/screenshots/projects-gallery.png)
 
-![Work Experience with Edison typing at his desk and his dog asleep by his chair](docs/screenshots/work-experience.png)
+![Work Experience with Edison typing at his desk](docs/screenshots/work-experience.png)
 
 ![About Me with Edison petting his dog by the desk](docs/screenshots/about-me.png)
 
@@ -48,7 +48,7 @@ Next.js 16 with the App Router, React 19 and TypeScript. Tailwind CSS 4 for styl
 ### The desk scene
 
 - The room, the props, Edison and his dog are all built from primitives in code, with no model files. `src/features/workstation/layout.ts` holds the shared measurements, so the desk, keyboard, chair, character and dog line up.
-- Edison has a small rig with two-bone IK. Seated, his hands type on the real keyboard position and his feet hang free under the chair, with no footrest. Standing, he sips his coffee, stops to think and strokes the golden retriever, which sits at his side, leans into his hand and sweeps its tail. While he works, the same dog sleeps curled nose to tail beside his chair: it breathes slowly, now and then lifts its head for a sleepy look round, and swishes its full plumed tail along the rug. Each pose of the dog is sculpted in a worker and fades in once it is ready.
+- Edison has a small rig with two-bone IK. Seated, his hands type on the real keyboard position and his feet hang free under the chair, with no footrest. Standing, he sips his coffee, stops to think and strokes the golden retriever, which sits at his side, leans into his hand and sweeps its tail. The dog is sculpted in a worker and fades in once it is ready.
 - The desk has three matching monitors, a Mac mini and a MacBook Pro with its lid shut. The wall has a shelf, a cork board and a framed picture of a sailboat at dusk.
 - The monitors show Claude Code, Codex and VS Code, painted with Canvas 2D at high resolution and animated by one shared scheduler. The faces are shown exactly as painted and sampled carefully, so their text stays sharp. Each job in the timeline has its own picture for the centre monitor.
 - The lighting is steady and bright. Each monitor throws the same cool white area light whatever it shows, the RGB setup spills a soft violet onto the floor and the wall behind the desk, and a faint moonlight comes from the left. None of it changes while you scroll, so only the centre screen changes. One RGB clock cycles the hue of the glowing parts alone, the tower fans and light strips. Bloom, AgX tone mapping, a vignette and a little grain finish it.
@@ -146,7 +146,7 @@ npm run screenshots  # recapture the README screenshots (needs a running build o
 - **Text.** Edit the files in `src/content`.
 - **Project photos.** Drop a 1280 x 800 WebP into `public/projects/<project-id>.webp`. `node scripts/projects/capture.mjs <project-id>` recreates the current ones.
 - **Screenshot rows.** List up to four more pictures in a project's `screenshots` in `src/content/projects.ts`. Photo Craft's come from the recipes `scripts/projects/shots/photo-craft-2.mjs` to `photo-craft-5.mjs`, and `GALLERIES` in `scripts/projects/capture.mjs` counts them, so `node scripts/projects/capture.mjs photo-craft` recreates the cover and all four.
-- **Desk scene stills.** Run `npm run dev`, then `node scripts/capture-renders.mjs http://localhost:3000`. It writes a phone still and a desktop poster for Work Experience and About Me into `public/renders`. On a slow machine add `--settle 90000`, so the dog has faded in, and in Work Experience is sound asleep: `node scripts/capture-renders.mjs http://localhost:3000 --settle 90000`.
+- **Desk scene stills.** Run `npm run dev`, then `node scripts/capture-renders.mjs http://localhost:3000`. It writes a phone still and a desktop poster for Work Experience and About Me into `public/renders`. On a slow machine add `--settle 90000` for About Me, so the dog has faded in: `node scripts/capture-renders.mjs http://localhost:3000 --only about --settle 90000`.
 - **Sounds.** Edit a recipe in `scripts/sounds/recipes`, or the music in `scripts/sounds/music`, run `npm run sounds`, then `npx tsx scripts/sounds/check.ts out.png` to plot and check the result. The check also measures the music's loop seam, its balance and how far each effect rises above it.
 
 ## Copyright and usage
