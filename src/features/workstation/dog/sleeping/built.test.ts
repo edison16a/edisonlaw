@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { earShapes } from '../anatomy/ear';
 import { headForms, headFur } from '../anatomy/head';
 import { neckForms, neckFur } from '../anatomy/neck';
-import { tailForms, tailFur } from '../anatomy/tail';
+import { tailForms } from '../anatomy/tail';
 import { PART_COUNT } from '../dimensions';
 import { buildDogData } from '../geometry/dogData';
 import { openEdges, skinCoat } from '../geometry/meshChecks';
@@ -15,7 +15,7 @@ import { headRestMatrix } from './headPose';
 import { britches, legForms } from './legs';
 import { applySleepPose, createSleepPose, sleepPose } from './pose';
 import { createSleepingRig, SLEEP_BONE, SLEEP_TAIL_BONES, SLEEPING_COAT_BOUNDS } from './rig';
-import { SLEEPING_TAIL } from './tail';
+import { SLEEPING_TAIL, sleepingTailFur } from './tail';
 import { SLEEP_SEED } from './useSleepingMotion';
 
 const headToDog = headRestMatrix();
@@ -23,7 +23,7 @@ const head = new Field([...transformShapes(headForms(), headToDog), ...transform
 const neck = new Field([...neckForms(headToDog, SLEEPING_NECK), ...neckFur(headToDog, SLEEPING_NECK)], PART_COUNT);
 const legs = new Field([...legForms(), ...britches()], PART_COUNT);
 /** Everything that stays put while it sleeps, and the tail at rest. */
-const body = new Field([...torsoForms(), ...legForms(), ...bib(), ...britches(), ...tailForms(SLEEPING_TAIL), ...tailFur(SLEEPING_TAIL)], PART_COUNT);
+const body = new Field([...torsoForms(), ...legForms(), ...bib(), ...britches(), ...tailForms(SLEEPING_TAIL), ...sleepingTailFur()], PART_COUNT);
 
 /** Two minutes of the idle, every half second: several look ups and wags. */
 const idle = Array.from({ length: 240 }, (_, i) => i * 0.5);

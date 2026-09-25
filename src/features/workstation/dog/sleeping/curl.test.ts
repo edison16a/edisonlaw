@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { headForms, headFur } from '../anatomy/head';
-import { tailForms, tailFur } from '../anatomy/tail';
+import { tailForms } from '../anatomy/tail';
 import { PART_COUNT } from '../dimensions';
 import { meshPart } from '../geometry/partGeometry';
 import { Field, transformShapes } from '../sdf/field';
@@ -8,7 +8,7 @@ import { sleepingCoatField } from './coat';
 import { TORSO, onCurl } from './dimensions';
 import { headRestMatrix } from './headPose';
 import { britches, legForms } from './legs';
-import { SLEEPING_TAIL, TAIL_PATH } from './tail';
+import { SLEEPING_TAIL, sleepingTailFur, TAIL_PATH } from './tail';
 
 const field = sleepingCoatField();
 
@@ -63,7 +63,7 @@ describe('the sleeping dog', () => {
   });
 
   it('keeps its head clear of its tail and legs, so it lifts off cleanly', () => {
-    const others = new Field([...legForms(), ...britches(), ...tailForms(SLEEPING_TAIL), ...tailFur(SLEEPING_TAIL)], PART_COUNT);
+    const others = new Field([...legForms(), ...britches(), ...tailForms(SLEEPING_TAIL), ...sleepingTailFur()], PART_COUNT);
     for (const [x, y, z] of headPoints) expect(others.distance(x, y, z)).toBeGreaterThan(0.02);
   });
 
