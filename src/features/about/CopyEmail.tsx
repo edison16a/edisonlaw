@@ -26,7 +26,7 @@ export function CopyEmail({ email }: { email: string }) {
 
   return (
     <div className="flex items-center gap-3">
-      <a href={`mailto:${email}`} className="text-sm text-grey-100 underline-offset-4 hover:underline">
+      <a href={`mailto:${email}`} className="text-sm text-white underline-offset-4 hover:underline">
         {email}
       </a>
       <button

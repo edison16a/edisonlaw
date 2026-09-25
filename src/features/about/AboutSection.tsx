@@ -16,7 +16,7 @@ export function AboutSection() {
       </div>
       <div className="gutter flex flex-col gap-16 pt-16 pb-24 lg:pt-[calc(var(--spacing-nav)+4rem)]">
         <SectionHeader id="about-title" title="About Me" />
-        <div className="flex max-w-xl flex-col gap-4 text-lg leading-relaxed text-grey-100 sm:text-xl">
+        <div className="flex max-w-xl flex-col gap-4 text-lg leading-relaxed text-white sm:text-xl">
           {intro.map((paragraph) => (
             <p key={paragraph}>{paragraph}</p>
           ))}
