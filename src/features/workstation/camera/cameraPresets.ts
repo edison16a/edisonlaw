@@ -29,12 +29,12 @@ export const CAMERA_FRAMINGS: Record<StageVariant, CameraFraming> = {
   },
   // From the left, a little above eye level, so the standing figure reads in three-quarter profile
   // against the glowing screens. The camera stands well back past the left wall, which is single sided
-  // and so invisible, with a long lens that keeps the near end of the room from looming. The plant, the
-  // shelf, the cork board, the picture, the desk with all three monitors, Edison and the whole golden
-  // retriever on his left all stay clear of the stage's faded edges. The portrait shot is tuned for a
-  // desktop half panel, and taller panels keep its width.
+  // and so invisible, with a long lens that keeps the near end of the room from looming. The shelf, the
+  // cork board, the picture, the desk with all three monitors, Edison and the whole golden retriever
+  // sitting on his left all stay clear of the stage's faded edges, and the plant stands at the left edge.
+  // The portrait shot is tuned for a desktop half panel, and taller panels keep its width.
   about: {
-    portrait: { position: [-9, 2.85, 3.95], target: [0.11, 0.92, -0.03], fov: 23.9 },
+    portrait: { position: [-9, 2.85, 3.95], target: [0.035, 0.92, -0.1], fov: 23.9 },
     landscape: { position: [-9, 2.85, 3.95], target: [0.11, 0.93, -0.04], fov: 19.6 },
     aspects: [0.86, 1.4],
   },
