@@ -1,5 +1,5 @@
 import { Bone, Euler, Group, Matrix4, Quaternion, Vector3 } from 'three';
-import { headBoneMatrix, headCrown } from '../anatomy/headPose';
+import { headBoneMatrix, headPivot } from '../anatomy/headPose';
 import { EAR } from '../anatomy/ear';
 import { TAIL_PATH } from '../anatomy/tail';
 import { JOINTS } from '../dimensions';
@@ -17,7 +17,7 @@ export interface DogRig {
   chest: Bone;
   /** Root to tip. Each turns about the upright, so the tail sweeps across the floor. */
   tail: Bone[];
-  /** Pivots on the crown contact point. */
+  /** Pivots in the middle of the crown's curve, so the crown stays under Edison's hand. */
   head: Bone;
   /** Head space origin in the head bone's space: face parts go under a group moved by this. */
   headOrigin: Vector3;
@@ -66,14 +66,14 @@ export function createDogRig(): DogRig {
     from = TAIL_PATH[i];
   }
 
-  // The head bone sits on the crown contact; everything on the head is placed relative to the crown.
+  // The head bone sits on the pivot below the crown contact; everything on the head is placed from it.
   const head = bone('dogHead');
   headBoneMatrix().decompose(head.position, head.quaternion, head.scale);
   root.add(head);
-  const crown = headCrown();
+  const pivot = headPivot();
 
   const ears = ([1, -1] as const).map((side) => {
-    const ear = bone(side === 1 ? 'dogEarLeft' : 'dogEarRight', offset(crown.toArray(), [EAR.root[0] * side, EAR.root[1], EAR.root[2]]));
+    const ear = bone(side === 1 ? 'dogEarLeft' : 'dogEarRight', offset(pivot.toArray(), [EAR.root[0] * side, EAR.root[1], EAR.root[2]]));
     ear.quaternion.copy(earRestRotation(side));
     head.add(ear);
     return ear;
@@ -88,7 +88,7 @@ export function createDogRig(): DogRig {
   root.updateMatrixWorld(true);
   const restInverses = bones.map((b) => b.matrixWorld.clone().invert());
   const rest = { ears: [ears[0].quaternion.clone(), ears[1].quaternion.clone()] as [Quaternion, Quaternion] };
-  return { root, body, chest, tail, head, headOrigin: crown.negate(), ears, eyes, bones, restInverses, rest };
+  return { root, body, chest, tail, head, headOrigin: pivot.negate(), ears, eyes, bones, restInverses, rest };
 }
 
 /** Resting hang of an ear in head space. Mirrored for the right ear. */

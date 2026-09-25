@@ -8,8 +8,8 @@ import { DOG_PAT_POINT, type Vec3 } from '../layout';
  */
 
 /**
- * The head is sculpted in head space: origin on the crown where Edison's hand rests, +Z toward the nose.
- * It turns about that point, so the hand stays in contact however the head moves.
+ * The head is sculpted in head space: +Z toward the nose, its crown where Edison's hand rests. It turns
+ * about the middle of the crown's curve, so the crown stays in his palm however the head moves.
  */
 export const HEAD = {
   /**
@@ -35,6 +35,11 @@ export const HEAD = {
    * positive turns toward its back. Edison stands behind its right shoulder.
    */
   contactFrom: 0.62,
+  /**
+   * How far inside the skull, straight in from the crown contact, the head turns about, in head space:
+   * about the radius of the crown's curve, so turning leaves the crown where it was.
+   */
+  pivotDepth: 0.09,
 } as const;
 
 /** Where each bone pivots, in dog space. */

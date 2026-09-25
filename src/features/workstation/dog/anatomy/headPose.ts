@@ -6,7 +6,8 @@ import { FACE, headForms } from './head';
 
 /**
  * Where the head rests: head space is sculpted around the skull, and these matrices turn, scale and
- * seat it so the point Edison's palm touches lands exactly on HEAD.top.
+ * seat it so the point Edison's palm touches lands exactly on HEAD.top. The head turns about the middle
+ * of its crown's curve, below that point, so the crown stays in his palm however it turns.
  */
 
 function restRotation() {
@@ -14,20 +15,23 @@ function restRotation() {
   return new Quaternion().setFromEuler(new Euler(-pitch, yaw, tilt, 'YXZ'));
 }
 
+/** Out of the crown toward Edison's palm, in dog space: up, leaning toward him behind its right shoulder. */
+function towardPalm() {
+  const from = new Vector3(-Math.cos(HEAD.contactFrom), 0, -Math.sin(HEAD.contactFrom));
+  return new Vector3(0, Math.cos(HEAD.contactLean), 0).addScaledVector(from, Math.sin(HEAD.contactLean));
+}
+
 let crown: Vector3 | null = null;
 
 /**
  * Where Edison's palm meets the sculpted head in its resting pose, in head space: the point that sticks
- * out furthest toward the palm, which faces down and leans in from his side (HEAD.contactLean). The
- * head pivots there too. Found by tracing the skull in a fan of directions and keeping the best hit.
+ * out furthest toward the palm, which faces down and leans in from his side (HEAD.contactLean). Found by
+ * tracing the skull in a fan of directions and keeping the best hit.
  */
 export function headCrown(): Vector3 {
   if (crown) return crown.clone();
   const field = new Field(headForms(), PART_COUNT);
-  // Toward the palm, in dog space: up, leaning toward Edison, behind the dog's right shoulder.
-  const from = new Vector3(-Math.cos(HEAD.contactFrom), 0, -Math.sin(HEAD.contactFrom));
-  const toPalm = new Vector3(0, Math.cos(HEAD.contactLean), 0).addScaledVector(from, Math.sin(HEAD.contactLean));
-  const up = toPalm.applyQuaternion(restRotation().invert());
+  const up = towardPalm().applyQuaternion(restRotation().invert());
   const across = new Vector3(1, 0, 0).addScaledVector(up, -up.x).normalize();
   const along = new Vector3().crossVectors(up, across);
   const direction = new Vector3();
@@ -54,12 +58,23 @@ export function headCrown(): Vector3 {
   return crown.clone();
 }
 
-/** The head bone's resting matrix in dog space: on the crown contact, scaled up and turned. */
+/**
+ * Where the head pivots, in head space: the middle of the crown's curve, HEAD.pivotDepth straight in
+ * from the contact. The skull is near enough a ball there that turning about it leaves the crown where
+ * it was, so the palm stays on it through every look and tilt.
+ */
+export function headPivot(): Vector3 {
+  const inward = towardPalm().applyQuaternion(restRotation().invert());
+  return headCrown().addScaledVector(inward, -HEAD.pivotDepth);
+}
+
+/** The head bone's resting matrix in dog space: on the pivot below the crown contact, scaled up and turned. */
 export function headBoneMatrix(out = new Matrix4()) {
-  return out.compose(new Vector3(...HEAD.top), restRotation(), new Vector3(HEAD.scale, HEAD.scale, HEAD.scale));
+  const pivot = new Vector3(...HEAD.top).addScaledVector(towardPalm(), -HEAD.pivotDepth * HEAD.scale);
+  return out.compose(pivot, restRotation(), new Vector3(HEAD.scale, HEAD.scale, HEAD.scale));
 }
 
 /** Head space to dog space for the resting pose: the crown lands on the contact point. */
 export function headRestMatrix(out = new Matrix4()) {
-  return headBoneMatrix(out).multiply(new Matrix4().makeTranslation(headCrown().negate()));
+  return headBoneMatrix(out).multiply(new Matrix4().makeTranslation(headPivot().negate()));
 }
