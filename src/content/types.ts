@@ -57,8 +57,6 @@ export interface Experience {
   dateLabel?: string;
   /** Bullet points, one short sentence each. */
   points: string[];
-  /** An earlier role at the same company. */
-  earlier?: { role: string; points: string[] };
   screen: ExperienceScreen;
 }
 

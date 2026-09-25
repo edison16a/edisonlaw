@@ -10,16 +10,11 @@ export const experience: Experience[] = [
     start: { year: 2026, month: 5 },
     end: 'present',
     points: [
-      'I own and develop the core full-stack production platform across backend APIs, databases, authentication, billing, cloud infrastructure, security, observability and analytics, working directly with the CEO and CTO on engineering and product.',
-      'I architect and ship production systems including Stripe subscriptions and usage metering, multi-user organizations, project ingestion, database migrations, internal admin and analytics tooling, and Amazon SES/SNS email infrastructure.',
+      'Own and develop the core full-stack production platform across backend APIs, databases, authentication, billing, cloud infrastructure, security, observability and analytics, working directly with the CEO and CTO on engineering and product.',
+      'Architect and ship production systems including Stripe subscriptions and usage metering, multi-user organizations, project ingestion, database migrations, internal admin and analytics tooling, and Amazon SES/SNS email infrastructure.',
+      'Built and deployed the full-stack web app and production infrastructure for a computational design platform with Google Cloud Run, Cloud SQL, Next.js, Vercel and OAuth.',
+      'Integrated cloud-hosted scientific algorithms through authenticated services and production APIs, with streaming run state and cost tracking, and improved reliability, scalability and security through testing, rate limiting, access controls and deployment safeguards.',
     ],
-    earlier: {
-      role: 'Software Engineer Intern',
-      points: [
-        'Built and deployed the full-stack web app and production infrastructure for a computational design platform with Google Cloud Run, Cloud SQL, Next.js, Vercel and OAuth.',
-        'Integrated cloud-hosted scientific algorithms through authenticated services and production APIs, with streaming run state and cost tracking, and improved reliability, scalability and security through testing, rate limiting, access controls and deployment safeguards.',
-      ],
-    },
     screen: 'optagon',
   },
   {

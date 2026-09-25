@@ -55,17 +55,10 @@ export function TimelineEntry({ entry, current, reached }: TimelineEntryProps) {
           <h3 className="text-2xl leading-tight font-bold sm:text-[1.7rem]">{entry.role}</h3>
           <p className="text-grey-200">
             {entry.company}
-            {entry.context && <span className="text-grey-400">, {entry.context}</span>}
+            {entry.context && <>, {entry.context}</>}
           </p>
         </div>
         <BulletList points={entry.points} className="text-grey-200" />
-        {entry.earlier && (
-          <div className="max-w-xl border-l border-grey-800 pl-4 text-sm leading-relaxed text-grey-400">
-            <p className="mb-1 text-xs font-medium tracking-[0.14em] text-grey-400 uppercase">Earlier</p>
-            <p className="mb-1.5 text-grey-200">{entry.earlier.role}</p>
-            <BulletList points={entry.earlier.points} />
-          </div>
-        )}
       </div>
     </motion.li>
   );

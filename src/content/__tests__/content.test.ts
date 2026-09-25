@@ -56,7 +56,7 @@ describe('experience', () => {
   it('keeps each entry to a few short bullet points', () => {
     for (const entry of experience) {
       expect(entry.points.length, entry.id).toBeGreaterThan(0);
-      expect(entry.points.length, entry.id).toBeLessThanOrEqual(3);
+      expect(entry.points.length, entry.id).toBeLessThanOrEqual(4);
       for (const point of entry.points) expect(sentenceCount(point), entry.id).toBe(1);
     }
   });
