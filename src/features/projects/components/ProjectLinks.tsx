@@ -1,7 +1,6 @@
 'use client';
 
 import type { Link } from '@/content/types';
-import { sound } from '@/features/sound';
 import { cn } from '@/lib/cn';
 import { LinkMark } from './LinkMark';
 import { linkKind } from './linkKind';
@@ -21,7 +20,7 @@ interface ProjectLinksProps {
   tabIndex?: number;
 }
 
-/** A project's links, each led by the logo of where it goes. */
+/** A project's links, each led by the logo of where it goes. Silent: the Projects section only sounds a move. */
 export function ProjectLinks({ links, className, tabIndex }: ProjectLinksProps) {
   if (links.length === 0) return null;
   return (
@@ -35,8 +34,6 @@ export function ProjectLinks({ links, className, tabIndex }: ProjectLinksProps) 
               target="_blank"
               rel="noreferrer"
               tabIndex={tabIndex}
-              // The same click as every other button on the site. The Projects section plays no hover sounds.
-              onClick={() => sound.play('blip')}
               className={cn(base, kind === 'github' ? outlined : filled)}
             >
               <LinkMark kind={kind} />
