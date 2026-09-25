@@ -2,7 +2,6 @@
 
 import Image from 'next/image';
 import type { Project } from '@/content/types';
-import { sound } from '@/features/sound';
 import { cn } from '@/lib/cn';
 import { projectPictures } from '../gallery/pictures';
 
@@ -33,12 +32,7 @@ export function ScreenshotRow({ project, shown, onChoose, className }: Screensho
             type="button"
             aria-label={`Show screenshot ${index + 1} of ${pictures.length} of ${project.name}`}
             aria-pressed={current}
-            onClick={() => {
-              if (current) return;
-              sound.play('tab');
-              onChoose(index);
-            }}
-            onPointerEnter={() => sound.play('hover')}
+            onClick={() => !current && onChoose(index)}
             // The band after the button makes the tap target taller than the picture.
             className="group relative block aspect-[16/10] w-(--thumb) shrink-0 rounded-[calc(var(--thumb)*0.1)] shadow-[0_10px_28px_-6px_rgb(0_0_0/0.8)] transition-transform duration-300 ease-out-expo after:absolute after:-inset-x-1 after:-inset-y-1.5 after:content-[''] active:scale-95"
           >

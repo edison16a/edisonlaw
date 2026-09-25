@@ -35,7 +35,7 @@ export function ProjectLinks({ links, className, tabIndex }: ProjectLinksProps) 
               target="_blank"
               rel="noreferrer"
               tabIndex={tabIndex}
-              onPointerEnter={() => sound.play('hover')}
+              // The same click as every other button on the site. The Projects section plays no hover sounds.
               onClick={() => sound.play('blip')}
               className={cn(base, kind === 'github' ? outlined : filled)}
             >

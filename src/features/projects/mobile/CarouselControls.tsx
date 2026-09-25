@@ -1,7 +1,6 @@
 'use client';
 
 import { IconBase } from '@/components/icons/IconBase';
-import { sound } from '@/features/sound';
 
 interface CarouselControlsProps {
   index: number;
@@ -39,7 +38,6 @@ function StepButton({ label, disabled, onClick, path }: StepButtonProps) {
       // aria-disabled instead of disabled, so a keyboard user keeps focus on the button at either end.
       aria-disabled={disabled || undefined}
       onClick={() => !disabled && onClick()}
-      onPointerEnter={() => !disabled && sound.play('hover')}
       className="inline-flex size-11 items-center justify-center rounded-full border border-grey-700 text-grey-200 transition-[border-color,color,opacity,transform] duration-300 ease-out-expo hover:border-grey-400 hover:text-white active:scale-95 aria-disabled:cursor-default aria-disabled:opacity-35 aria-disabled:hover:border-grey-700 aria-disabled:hover:text-grey-200 aria-disabled:active:scale-100"
     >
       <IconBase size={18}>
