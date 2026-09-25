@@ -48,16 +48,18 @@ const TIMING = {
 
 /** Slow, deep breaths while it sleeps, a little over a dozen a minute. */
 const BREATH_RATE = 0.23;
+/** How far the resting head dips with a full breath, in radians. */
+const BREATH_SIGH = 0.012;
 /** How far the head turns up about the base of the neck when fully lifted. */
-export const LIFT_ANGLE = 0.2;
+export const LIFT_ANGLE = 0.17;
 /**
  * Where it looks once its head is up, as turns from its resting three quarter view: up at Edison, who
  * sits high behind its right shoulder, turning to face the room on the way, or at whoever is watching,
  * turning its face to the camera. Negative yaw turns the nose away from the tail, toward its right.
  */
 const LOOKS = [
-  { yaw: -0.48, pitch: 0.24 },
-  { yaw: -0.36, pitch: 0.12 },
+  { yaw: -0.44, pitch: 0.12 },
+  { yaw: -0.36, pitch: 0.06 },
 ] as const;
 /** How far the lids open when it wakes a little: never wide, just a sleepy look. */
 const SLEEPY = 0.62;
@@ -133,11 +135,14 @@ const UP = new Vector3(0, 1, 0);
 
 /** Radians the lids turn through, from open (tucked up under the brow) to shut. See parts/Lids. */
 export const LID_TURN = { open: -0.95, shut: 1.05 } as const;
+/** How far each lid tips down toward the outer corner of its eye, for a soft sleepy look. Radians. */
+const LID_DROOP = 0.2;
 
 /** Writes a pose onto the rig. */
 export function applySleepPose(rig: SleepingRig, pose: SleepPose) {
   const b = pose.breath;
-  rig.chest.scale.set(1 + 0.03 * b, 1 + 0.036 * b, 1 + 0.01 * b);
+  // The flank rises and falls with each slow breath.
+  rig.chest.scale.set(1 + 0.04 * b, 1 + 0.048 * b, 1 + 0.012 * b);
 
   // Lift the head by turning it up about the base of the neck, then turn it to look.
   offset.copy(rig.rest.headPosition).sub(rig.neckBase);
@@ -145,14 +150,17 @@ export function applySleepPose(rig: SleepingRig, pose: SleepPose) {
   liftTurn.setFromAxisAngle(axis, LIFT_ANGLE * pose.lift);
   rig.head.position.copy(offset.applyQuaternion(liftTurn)).add(rig.neckBase);
   const { yaw, pitch, tilt } = HEAD_REST.rest;
-  euler.set(-(pitch + pose.look.pitch), yaw + pose.look.yaw, lerp(tilt, tilt * 0.4, pose.lift));
+  // Resting, the head sighs with each breath: the nose dips a hair as the chest fills.
+  const sigh = BREATH_SIGH * b * (1 - pose.lift);
+  euler.set(-(pitch + pose.look.pitch - sigh), yaw + pose.look.yaw, lerp(tilt, tilt * 0.4, pose.lift));
   rig.head.quaternion.setFromEuler(euler).premultiply(liftTurn);
 
   for (let side = 0; side < 2; side++) {
     const sign = side === 0 ? 1 : -1;
     euler.set(-pose.ears[side].forward, 0, sign * pose.ears[side].out);
     rig.ears[side].quaternion.copy(rig.rest.ears[side]).multiply(turn.setFromEuler(euler));
-    rig.lids[side].rotation.x = lerp(LID_TURN.open, LID_TURN.shut, pose.lids);
+    // Each eye's own X runs toward the head's left, so the outer corner is +X on the left eye, -X on the right.
+    rig.lids[side].rotation.set(lerp(LID_TURN.open, LID_TURN.shut, pose.lids), 0, -sign * LID_DROOP);
   }
 
   for (let i = 0; i < rig.tail.length; i++) {
