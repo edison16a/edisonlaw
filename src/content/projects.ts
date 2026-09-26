@@ -33,19 +33,6 @@ export const projects: Project[] = [
     image: '/projects/standoff.webp',
   },
   {
-    id: 'photo-craft',
-    name: 'Photo Craft',
-    badges: [],
-    stack: ['Next.js', 'React', 'TypeScript', 'Konva', 'ONNX Runtime Web', 'Vercel'],
-    description:
-      'A free photo editor that runs in the browser. Background removal runs on your own device with ONNX Runtime Web, so nothing gets uploaded. It exports transparent PNGs at any size, which Canva charges for. It\'s also great for making clean, modern logos.',
-    links: [
-      { label: 'photo-craft.vercel.app', href: 'https://photo-craft.vercel.app' },
-      { label: 'GitHub', href: 'https://github.com/edison16a/photo-craft' },
-    ],
-    image: '/projects/photo-craft.webp',
-  },
-  {
     id: 'autolab',
     name: 'AutoLab',
     badges: [],
@@ -113,6 +100,32 @@ export const projects: Project[] = [
     image: '/projects/trashgo.webp',
   },
   {
+    id: 'safeeats',
+    name: 'SafeEats',
+    badges: [],
+    stack: ['Swift', 'SwiftUI', 'Vision', 'AVFoundation'],
+    description:
+      "An iOS app that scans food labels for allergens. It reads ingredient lists with Apple's Vision framework and checks about 1,500 allergen keywords in six languages against the allergens you pick.",
+    links: [
+      { label: 'App Store', href: 'https://apps.apple.com/us/app/safeeats-food-scanner/id6739729515' },
+      { label: 'GitHub', href: 'https://github.com/edison16a/SafeEats' },
+    ],
+    image: '/projects/safeeats.webp',
+  },
+  {
+    id: 'photo-craft',
+    name: 'Photo Craft',
+    badges: [],
+    stack: ['Next.js', 'React', 'TypeScript', 'Konva', 'ONNX Runtime Web', 'Vercel'],
+    description:
+      'A free photo editor that runs in the browser. Background removal runs on your own device with ONNX Runtime Web, so nothing gets uploaded. It exports transparent PNGs at any size, which Canva charges for. It\'s also great for making clean, modern logos.',
+    links: [
+      { label: 'photo-craft.vercel.app', href: 'https://photo-craft.vercel.app' },
+      { label: 'GitHub', href: 'https://github.com/edison16a/photo-craft' },
+    ],
+    image: '/projects/photo-craft.webp',
+  },
+  {
     id: 'text-image-replacer',
     name: 'Text & Image Replacer',
     badges: ['Featured on the Chrome Web Store'],
@@ -127,19 +140,6 @@ export const projects: Project[] = [
       },
     ],
     image: '/projects/text-image-replacer.webp',
-  },
-  {
-    id: 'safeeats',
-    name: 'SafeEats',
-    badges: [],
-    stack: ['Swift', 'SwiftUI', 'Vision', 'AVFoundation'],
-    description:
-      "An iOS app that scans food labels for allergens. It reads ingredient lists with Apple's Vision framework and checks about 1,500 allergen keywords in six languages against the allergens you pick.",
-    links: [
-      { label: 'App Store', href: 'https://apps.apple.com/us/app/safeeats-food-scanner/id6739729515' },
-      { label: 'GitHub', href: 'https://github.com/edison16a/SafeEats' },
-    ],
-    image: '/projects/safeeats.webp',
   },
   {
     id: 'sunblock',
