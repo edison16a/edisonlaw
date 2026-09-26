@@ -27,7 +27,7 @@ export const projects: Project[] = [
     description:
       'A game console for the web. Multiple phones can be used at the same time as controllers, with motion tracking, and some games use computer vision for movement. No installation needed, and up to six players pick from 11 games. The 3D games run on Three.js, and WebSockets and Redis keep the phones in sync with the screen.',
     links: [
-      { label: 'standoff-five.vercel.app', href: 'https://standoff-five.vercel.app' },
+      { label: 'standoffgames.vercel.app', href: 'https://standoffgames.vercel.app' },
       { label: 'GitHub', href: 'https://github.com/edison16a/standoff' },
     ],
     image: '/projects/standoff.webp',

@@ -2,7 +2,7 @@
  * Standoff: the home screen, a console menu. The row of game tiles sits on top with Magic Kart
  * chosen, its clip of a real race playing behind, and its name, players and Host Game below.
  * Source: Standoff running from github.com/edison16a/standoff (see lib/standoff.mjs), live at
- * https://standoff-five.vercel.app
+ * https://standoffgames.vercel.app
  */
 import { SITE, VIEW } from '../lib/standoff.mjs';
 

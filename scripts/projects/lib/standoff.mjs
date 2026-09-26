@@ -10,7 +10,7 @@
  *   git clone https://github.com/edison16a/standoff && cd standoff
  *   npm install && npm run build && PORT=3000 npm start
  *
- * STANDOFF_URL points somewhere else, like the live site at https://standoff-five.vercel.app.
+ * STANDOFF_URL points somewhere else, like the live site at https://standoffgames.vercel.app.
  *
  * Headless Chromium draws WebGL on the CPU, so a game runs at a frame or two a second. The
  * phones get a browser of their own, so their pages do not slow the big screen down further.
