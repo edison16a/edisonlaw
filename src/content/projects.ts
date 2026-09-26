@@ -38,7 +38,7 @@ export const projects: Project[] = [
     badges: [],
     stack: ['Next.js', 'React', 'TypeScript', 'Konva', 'ONNX Runtime Web', 'Vercel'],
     description:
-      'A free photo editor that runs in the browser. Background removal runs on your own device with ONNX Runtime Web, so nothing gets uploaded. It exports transparent PNGs at any size, which Canva charges for.',
+      'A free photo editor that runs in the browser. Background removal runs on your own device with ONNX Runtime Web, so nothing gets uploaded. It exports transparent PNGs at any size, which Canva charges for. It's also great for making clean, modern logos.',
     links: [
       { label: 'photo-craft.vercel.app', href: 'https://photo-craft.vercel.app' },
       { label: 'GitHub', href: 'https://github.com/edison16a/photo-craft' },
