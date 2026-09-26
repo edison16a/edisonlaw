@@ -153,26 +153,13 @@ export const projects: Project[] = [
     image: '/projects/sunblock.webp',
   },
   {
-    id: 'poker-strategy-trainer',
-    name: 'Poker Strategy Trainer',
-    badges: [],
-    stack: ['Next.js', 'React', 'TypeScript', 'CSS', 'Vercel', 'Vitest'],
-    description:
-      'A poker trainer with an AI coach that scores each fold, call or raise out of 100 and explains the best play. You climb Elo ranks from Bronze to Champion, and an Outs Trainer drills the odds. The scoring engine runs in the browser.',
-    links: [
-      { label: 'poker-strats.vercel.app', href: 'https://poker-strats.vercel.app' },
-      { label: 'GitHub', href: 'https://github.com/edison16a/poker-strategy-trainer' },
-    ],
-    image: '/projects/poker-strategy-trainer.webp',
-  },
-  {
     id: 'clue-ai',
     name: 'Clue.ai',
     badges: [],
     stack: ['Next.js', 'React', 'TypeScript', 'OpenAI API', 'Vercel', 'Vitest'],
     description:
       'An AI tutor that helps students get unstuck on assignments without giving away the answer. It gives hints and asks clarifying questions instead, using the OpenAI API.',
-    links: [],
+    links: [{ label: 'GitHub', href: 'https://github.com/edison16a/clue-ai' }],
     image: '/projects/clue-ai.webp',
   },
   {
@@ -184,6 +171,19 @@ export const projects: Project[] = [
       'This site. A WebGL spiral of projects, 3D desk scenes in React Three Fiber, and synthesized sound and music.',
     links: [{ label: 'GitHub', href: 'https://github.com/edison16a/edisonlaw' }],
     image: '/projects/personal-website.webp',
+  },
+  {
+    id: 'poker-strategy-trainer',
+    name: 'Poker Strategy Trainer',
+    badges: [],
+    stack: ['Next.js', 'React', 'TypeScript', 'CSS', 'Vercel', 'Vitest'],
+    description:
+      'A poker trainer with an AI coach that scores each fold, call or raise out of 100 and explains the best play. You climb Elo ranks from Bronze to Champion, and an Outs Trainer drills the odds. The scoring engine runs in the browser.',
+    links: [
+      { label: 'poker-strats.vercel.app', href: 'https://poker-strats.vercel.app' },
+      { label: 'GitHub', href: 'https://github.com/edison16a/poker-strategy-trainer' },
+    ],
+    image: '/projects/poker-strategy-trainer.webp',
   },
   {
     id: 'betterbart',

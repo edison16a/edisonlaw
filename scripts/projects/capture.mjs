@@ -42,9 +42,9 @@ const PROJECTS = [
   'photo-craft',
   'text-image-replacer',
   'sunblock',
-  'poker-strategy-trainer',
   'clue-ai',
   'personal-website',
+  'poker-strategy-trainer',
   'betterbart',
 ];
 
