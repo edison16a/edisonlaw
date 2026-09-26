@@ -8,6 +8,7 @@ const create = (value: number): SpiralMotion => ({
   velocity: 0,
   settle: 0,
   reveal: 0,
+  held: false,
 });
 
 const run = (motion: SpiralMotion, target: number, seconds: number, reducedMotion = false) => {

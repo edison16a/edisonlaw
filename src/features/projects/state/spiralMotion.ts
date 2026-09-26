@@ -17,6 +17,8 @@ export interface SpiralMotion extends SpringState {
   settle: number;
   /** 0 to 1, the entrance. Cards rise into place as it grows. */
   reveal: number;
+  /** True while the mouse drags the spiral, so it follows the mouse closely instead of easing. */
+  held: boolean;
 }
 
 export const spiralMotion: SpiralMotion = {
@@ -25,6 +27,7 @@ export const spiralMotion: SpiralMotion = {
   velocity: 0,
   settle: 0,
   reveal: 0,
+  held: false,
 };
 
 /** False until the spiral first opens. After that a remount keeps the card it was on. */
@@ -43,4 +46,5 @@ export function placeSpiral(index: number) {
   spiralMotion.velocity = 0;
   spiralMotion.settle = 0;
   spiralMotion.reveal = 0;
+  spiralMotion.held = false;
 }

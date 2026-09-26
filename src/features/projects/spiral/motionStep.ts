@@ -13,6 +13,8 @@ const MAX_SPEED = 5;
 const LONG_JUMP_TIME = 0.8;
 /** Short and calm for visitors who prefer reduced motion. */
 const CALM_SMOOTH_TIME = 0.06;
+/** Held by the mouse, the spiral keeps this close behind it, with no speed limit. */
+const HELD_SMOOTH_TIME = 0.05;
 
 /**
  * Closer than this to its card, and slower than the speed below, the spiral
@@ -27,9 +29,9 @@ const REST_SPEED = 0.3;
  * settled it is and the entrance. Mutates `motion` so nothing is allocated.
  */
 export function stepMotion(motion: SpiralMotion, delta: number, reducedMotion: boolean) {
-  const smoothTime = reducedMotion ? CALM_SMOOTH_TIME : SMOOTH_TIME;
+  const smoothTime = motion.held ? HELD_SMOOTH_TIME : reducedMotion ? CALM_SMOOTH_TIME : SMOOTH_TIME;
   const maxSpeed = Math.max(MAX_SPEED, Math.abs(motion.target - motion.value) / LONG_JUMP_TIME);
-  stepSpring(motion, motion.target, smoothTime, delta, reducedMotion ? Infinity : maxSpeed);
+  stepSpring(motion, motion.target, smoothTime, delta, reducedMotion || motion.held ? Infinity : maxSpeed);
 
   const nearest = Math.round(motion.value);
   const resting =

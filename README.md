@@ -2,7 +2,7 @@
 
 This is Edison Law's personal website. Edison studies Bioengineering at UC Berkeley, is working toward a second major in EECS, and works as a software engineer. The site is one dark page with three parts:
 
-- **Projects.** A 3D spiral of project cards with one project up close and a panel with its details beside it. The wheel, a swipe or a click on any card turns it to another project.
+- **Projects.** A 3D spiral of project cards with one project up close and a panel with its details beside it. The wheel, a drag with the mouse, a swipe or a click on any card turns it to another project.
 - **Work Experience.** A timeline next to a 3D model of Edison seated at his desk at night, typing. The centre monitor changes to match the job you are reading, while the room's lighting stays the same.
 - **About Me.** The same room with Edison standing by the desk with a coffee, petting his golden retriever as it sits beside him, next to his intro, contact links, education, skills, honors and activities.
 
@@ -39,7 +39,7 @@ Next.js 16 with the App Router, React 19 and TypeScript. Tailwind CSS 4 for styl
 
 - The stage is one viewport tall and the page scrolls past it like any other section. It opens on the featured project, set in `src/content/projects.ts`, and there is no title over it.
 - The cards wind around a vertical axis like a spiral staircase, and every project appears twice so the loop never runs out of cards. It turns round and round forever. Going forward moves the strand to the left.
-- The wheel over the spiral turns it one project per notch or trackpad swipe, and the page stays put. Over the detail panel, the wheel scrolls the page as usual. A click on any card in sight spins straight to it. The left and right arrow keys still work, and their step buttons only show when they take keyboard focus.
+- The wheel over the spiral turns it one project per notch or trackpad swipe, and the page stays put. Over the detail panel, the wheel scrolls the page as usual. You can also grab the spiral with the mouse and drag it round. Letting go settles on the nearest card, and a flick carries on a few more. A click on any card in sight spins straight to it. The left and right arrow keys still work, and their step buttons only show when they take keyboard focus.
 - The card in focus comes forward flat and bigger than the rest, and its detail panel slides in beside it, or below it on narrower screens. A project can also list extra screenshots, which show as a row under the card. For now every project has just its cover. A hackathon win shows as a badge with a small trophy, set by a project's `win` in `src/content/projects.ts`.
 - The vertex shader bends each card around the cylinder and bows it with speed. The fragment shader fits each photo to the card and rounds the corners, and every card stays sharp. The canvas renders on demand, so it stops drawing when nothing moves.
 - Phones get a swipe strip of the same projects instead, and browsers without WebGL get it on every screen. Reduced motion keeps the spiral but makes each move short and calm.
@@ -67,7 +67,7 @@ Every sound is synthesised in Node by `scripts/sounds` from oscillators, seeded 
 
 - Reduced motion, keyboard access to the spiral and the phone strip, a skip link, focus management and AA text contrast. A plain list of every project stays in the page for screen readers and search engines.
 - three.js loads after the page is interactive, and phones never download it.
-- Tests cover the spiral maths, the wheel and swipe input, the sound engine and its DSP, the character and dog poses, the lighting, the shared helpers and the content. Three guards fail the build on em dashes, bullets or arrows in the copy, on text greys below AA contrast and on any font family class besides Satoshi outside the painted monitor screens.
+- Tests cover the spiral maths, the wheel, drag and swipe input, the sound engine and its DSP, the character and dog poses, the lighting, the shared helpers and the content. Three guards fail the build on em dashes, bullets or arrows in the copy, on text greys below AA contrast and on any font family class besides Satoshi outside the painted monitor screens.
 
 ## Project layout
 
@@ -80,7 +80,7 @@ src/
     projects/
       stage/           Spiral stage, detail panel, screenshot row and step buttons
       spiral/          Canvas, card layout, shaders, focus and motion
-      input/           Wheel, swipe and arrow key steering
+      input/           Wheel, drag, swipe and arrow key steering
       components/      Detail panel parts, the screenshot row and the screen reader list
       gallery/         The screenshot row's picture list, sizing and selection
       hooks/           Layout fit, stage sizing and the opening card

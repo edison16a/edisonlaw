@@ -6,6 +6,7 @@ import { moveSpiralTo, stepSpiral } from './steering';
 beforeEach(() => {
   spiralMotion.target = 4;
   spiralMotion.value = 4;
+  spiralMotion.held = false;
 });
 
 describe('stepSpiral', () => {
@@ -29,6 +30,14 @@ describe('stepSpiral', () => {
     expect(spiralMotion.target).toBe(9);
     for (let notch = 0; notch < 5; notch++) stepSpiral(1, WHEEL_LEAD);
     expect(spiralMotion.target).toBe(4 + WHEEL_LEAD);
+  });
+
+  it('leaves the spiral to the mouse while a drag holds it', () => {
+    spiralMotion.held = true;
+    spiralMotion.target = 4.4;
+    stepSpiral(1, WHEEL_LEAD);
+    stepSpiral(-1);
+    expect(spiralMotion.target).toBe(4.4);
   });
 
   it('keeps presses to the shorter queue', () => {

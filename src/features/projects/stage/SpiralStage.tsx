@@ -24,9 +24,9 @@ const SpiralCanvas = dynamic(() => import('../spiral/SpiralCanvas').then((loaded
 /**
  * One viewport under the navbar, and the page scrolls past it like any other
  * section. The spiral always shows one project up close, starting on the
- * featured one. The wheel over the spiral, sideways swipes, the left and
- * right arrow keys and clicks on any card turn the spiral from project to
- * project, round and round forever.
+ * featured one. The wheel over the spiral, dragging it with the mouse,
+ * sideways swipes, the left and right arrow keys and clicks on any card turn
+ * the spiral from project to project, round and round forever.
  */
 export function SpiralStage({ projects }: { projects: Project[] }) {
   const stage = useRef<HTMLDivElement>(null);

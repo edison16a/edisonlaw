@@ -5,6 +5,7 @@ import { useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
 import { PlaneGeometry, type PerspectiveCamera } from 'three';
 import type { Project } from '@/content/types';
 import { useReducedMotion } from '@/lib/hooks/useReducedMotion';
+import { DRAG_SLOP } from '../input/drag';
 import { createProjectMoveSound } from '../sound/moveSound';
 import { spiralMotion } from '../state/spiralMotion';
 import { useSpiralStore, type FocusSnapshot } from '../state/spiralStore';
@@ -28,9 +29,6 @@ export interface SpiralSceneProps {
   /** A card was clicked. Receives the card's place on the looping index. */
   onSelect: (index: number) => void;
 }
-
-/** Pointer travel in pixels beyond which a press is a swipe, not a click. */
-const CLICK_SLOP = 6;
 
 /**
  * The strand of cards and the one frame loop that drives it. A click on any
@@ -110,7 +108,7 @@ export function SpiralScene({ projects, startAt, onSelect }: SpiralSceneProps) {
 
   const select = (card: CardRuntime) => (event: ThreeEvent<MouseEvent>) => {
     event.stopPropagation();
-    if (event.delta <= CLICK_SLOP) onSelect(Math.round(spiralMotion.value + card.offset));
+    if (event.delta <= DRAG_SLOP) onSelect(Math.round(spiralMotion.value + card.offset));
   };
 
   return cards.map((card) => (
