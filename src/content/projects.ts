@@ -25,7 +25,7 @@ export const projects: Project[] = [
     badges: [],
     stack: ['Next.js', 'React', 'TypeScript', 'Three.js', 'WebSockets', 'Redis', 'MediaPipe', 'Web Audio API'],
     description:
-      'A game console for the web. Multiple phones can be used at the same time as controllers, with motion tracking, and some games use computer vision for movement. No installation needed, and up to six players pick from 11 games, including Magic Kart, Fruit Ninja, Zombie Survival and Shooting Gallery. The 3D games run on Three.js, and WebSockets and Redis keep the phones in sync with the screen.',
+      'A game console for the web. Multiple phones can be used at the same time as controllers, with motion tracking, and some games use computer vision for movement. No installation needed, and up to six players pick from 11 games, including Magic Kart, Fruit Runner, Subway Runner, Zombie Survival and Shooting Gallery. The 3D games run on Three.js, and WebSockets and Redis keep the phones in sync with the screen.',
     links: [
       { label: 'standoff-five.vercel.app', href: 'https://standoff-five.vercel.app' },
       { label: 'GitHub', href: 'https://github.com/edison16a/standoff' },
