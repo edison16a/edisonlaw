@@ -10,7 +10,7 @@ export const BODY = {
   seatedPelvisHeight: 0.13,
 
   /** Hip joints relative to the pelvis joint. */
-  hip: { x: 0.088, y: -0.036 },
+  hip: { x: 0.092, y: -0.036 },
   thigh: 0.412,
   shin: 0.389,
   /** Height of the ankle joint above the sole. */
@@ -21,7 +21,7 @@ export const BODY = {
   /** Chest pivot above the waist pivot. */
   chest: 0.168,
   /** Shoulder joints relative to the chest pivot. */
-  shoulder: { x: 0.174, y: 0.204, z: -0.006 },
+  shoulder: { x: 0.184, y: 0.204, z: -0.006 },
   /** Base of the neck above the chest pivot. */
   neck: 0.255,
   /** Head pivot above the base of the neck. */
@@ -38,9 +38,9 @@ export const BODY = {
  * them to the adult build above: wider, much longer and a little deeper. The spine, chest, neck and
  * shoulder measurements above are the originals stretched the same way, so every seam still meets.
  */
-export const TRUNK_SCALE = [1.15, 1.34, 1.0] as const;
+export const TRUNK_SCALE = [1.22, 1.34, 1.1] as const;
 /** The trouser seat is stretched less in height, so he sits on the chair rather than floating over it. */
-export const SEAT_SCALE = [1.18, 1.2, 1.08] as const;
+export const SEAT_SCALE = [1.25, 1.2, 1.15] as const;
 /** The head and everything on it (face, hair, ears) is modelled large and shrunk to this size. */
 export const HEAD_SCALE = 0.62;
 /** The sneaker is modelled small and stretched to an adult foot about 26 cm long. */

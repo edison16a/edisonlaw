@@ -61,7 +61,7 @@ describe('dog placement', () => {
   it('keeps clear of Edison and of the desk legs', () => {
     // Roughly where his sneakers and left leg are in his own space (see character/rig/standingPose.ts):
     // each shoe about 0.13 wide and running from 0.045 behind the ankle to 0.18 in front, and his left
-    // leg rising from that ankle to the hip in trousers 0.06 to 0.08 thick. The dog keeps a little more
+    // leg rising from that ankle to the hip in trousers 0.066 to 0.092 thick. The dog keeps a little more
     // room than the lean into his hand takes up.
     const inRoom = (x: number, y: number, z: number) =>
       new Vector3(x, y, z).applyAxisAngle(UP, STANDING_PLACEMENT.rotationY).add(new Vector3(...STANDING_PLACEMENT.position));
@@ -83,7 +83,7 @@ describe('dog placement', () => {
     for (let share = 0; share <= 1; share += 0.05) {
       const leg = inRoom(footX + (BODY.hip.x - footX) * share, 0.08 + (BODY.standingPelvisHeight - 0.08) * share, footZ * (1 - share));
       // The trouser leg thickens from the shin to the top of the thigh.
-      expect(clearance(leg) - (0.06 + 0.02 * share)).toBeGreaterThan(0.03);
+      expect(clearance(leg) - (0.066 + 0.026 * share)).toBeGreaterThan(0.03);
     }
     // The desk: its legs at the corners and the front edge of its top.
     for (const sx of [1, -1]) {

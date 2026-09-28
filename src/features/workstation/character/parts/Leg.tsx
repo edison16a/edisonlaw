@@ -13,11 +13,11 @@ import { Shoe } from './Shoe';
  * surface there, then flares to the hem.
  */
 const LEG = {
-  hip: 0.08,
-  knee: 0.058,
-  shin: { top: 0.0574, cap: 0.047, flare: 1.07 },
+  hip: 0.092,
+  knee: 0.066,
+  shin: { top: 0.0654, cap: 0.054, flare: 1.07 },
   trouserLength: 0.345,
-  sock: { top: 0.042, ankle: 0.033 },
+  sock: { top: 0.046, ankle: 0.037 },
 } as const;
 
 /** Black trouser leg, a glimpse of sock and a sneaker along the leg's bones. */

@@ -23,6 +23,6 @@ export const SEATED_PLACEMENT: Placement = {
  * a step back from its edge, turned a little toward the left monitors and the about camera.
  */
 export const STANDING_PLACEMENT: Placement = {
-  position: [0.23, 0, 0.42],
+  position: [0.24, 0, 0.42],
   rotationY: Math.PI + 0.15,
 };
