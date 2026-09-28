@@ -7,7 +7,7 @@ import { createDogRig } from '../../dog/rig/createDogRig';
 import { applyDogPose, createDogPose, dogPose } from '../../dog/rig/dogPose';
 import { Field } from '../../dog/sdf/field';
 import { CHAIR, DOG_PAT_POINT, ROOM } from '../../layout';
-import { BODY, HAND, SHOE_SCALE } from '../dimensions';
+import { BODY, HAND, HEAD_SCALE, MUG, SHOE_SCALE, TRUNK_SCALE } from '../dimensions';
 import { SEATED_PLACEMENT, STANDING_PLACEMENT, type Placement } from '../placement';
 import { applyBodyPose, createBodyPose, type BodyPose } from './bodyPose';
 import { createRig } from './createRig';
@@ -108,6 +108,22 @@ describe('standing pose', () => {
       // Pressed a few millimetres into the fur at most, and never lifting off it.
       expect(deepest).toBeGreaterThan(-0.006);
       expect(highest).toBeLessThan(0.0015);
+    }
+  });
+
+  it('keeps the mug clear of his face and chest as he sips and thinks', () => {
+    const skull = [0.19, 0.215, 0.198].map((r) => r * HEAD_SCALE);
+    const mug = new Vector3();
+    for (let t = 0; t < 120; t += 0.05) {
+      poseAt(standingPose, 29, t, rig, root, pose);
+      mug.set(...MUG.centerInHand).applyMatrix4(rig.arms.right.end.matrixWorld);
+      // Outside the skull grown by the mug's own size: it may touch his lips, never sink into his face.
+      const head = rig.head.worldToLocal(mug.clone()).sub(new Vector3(0, BODY.headCenter.y, BODY.headCenter.z));
+      const [sx, sy, sz] = skull;
+      expect(Math.hypot(head.x / (sx + MUG.radius), head.y / (sy + MUG.height / 2), head.z / (sz + MUG.radius))).toBeGreaterThan(1);
+      // In front of the shirt by more than the mug's radius wherever it is level with his chest.
+      const chest = rig.chest.worldToLocal(mug.clone());
+      if (chest.y < 0.19 * TRUNK_SCALE[1]) expect(chest.z).toBeGreaterThan(0.113 * TRUNK_SCALE[2] + MUG.radius);
     }
   });
 

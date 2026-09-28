@@ -12,8 +12,8 @@ const HEAD_Y = BODY.standingPelvisHeight + HEAD_ABOVE_PELVIS;
  */
 const HOLD = {
   rest: { at: new Vector3(-0.09, HEAD_Y - 0.55, 0.19), axis: new Vector3(0.06, 1, 0.08).normalize() },
-  think: { at: new Vector3(-0.03, HEAD_Y - 0.19, 0.165), axis: new Vector3(0.1, 1, -0.06).normalize() },
-  sip: { at: new Vector3(-0.004, HEAD_Y - 0.066, 0.172), axis: new Vector3(0.03, 0.74, -0.67).normalize() },
+  think: { at: new Vector3(-0.035, HEAD_Y - 0.2, 0.23), axis: new Vector3(0.1, 1, -0.06).normalize() },
+  sip: { at: new Vector3(-0.004, HEAD_Y - 0.115, 0.195), axis: new Vector3(0.03, 0.74, -0.67).normalize() },
 } as const;
 
 /** The back of the hand faces out to his right and a little back, so the fingers wrap the front. */
