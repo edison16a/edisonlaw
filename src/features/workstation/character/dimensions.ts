@@ -1,36 +1,36 @@
 /**
  * Body measurements in metres, in the character's own space (+Y up, facing +Z, his left is +X).
- * Standing he is about 1.76 tall and roughly 6.5 heads tall, a college student's build: long legs
+ * Standing he is about 1.69 tall and roughly 6.3 heads tall, a college student's build: long legs
  * and arms, broad shoulders and a head a little larger than life, so his face still reads from afar.
  */
 export const BODY = {
   /** Pelvis joint above the floor when standing, a touch under the straight leg length so the knees stay soft. */
-  standingPelvisHeight: 0.905,
+  standingPelvisHeight: 0.866,
   /** Pelvis joint above the seat contact point when seated. */
   seatedPelvisHeight: 0.13,
 
   /** Hip joints relative to the pelvis joint. */
   hip: { x: 0.088, y: -0.036 },
-  thigh: 0.43,
-  shin: 0.41,
+  thigh: 0.412,
+  shin: 0.389,
   /** Height of the ankle joint above the sole. */
   ankle: 0.077,
 
   /** Waist pivot above the pelvis joint. */
-  spine: 0.071,
+  spine: 0.067,
   /** Chest pivot above the waist pivot. */
-  chest: 0.178,
+  chest: 0.168,
   /** Shoulder joints relative to the chest pivot. */
-  shoulder: { x: 0.174, y: 0.216, z: -0.006 },
+  shoulder: { x: 0.174, y: 0.204, z: -0.006 },
   /** Base of the neck above the chest pivot. */
-  neck: 0.27,
+  neck: 0.255,
   /** Head pivot above the base of the neck. */
   headPivot: 0.05,
   /** Centre of the skull relative to the head pivot. */
   headCenter: { y: 0.122, z: 0.012 },
 
-  upperArm: 0.31,
-  forearm: 0.27,
+  upperArm: 0.302,
+  forearm: 0.263,
 } as const;
 
 /**
@@ -38,7 +38,7 @@ export const BODY = {
  * them to the adult build above: wider, much longer and a little deeper. The spine, chest, neck and
  * shoulder measurements above are the originals stretched the same way, so every seam still meets.
  */
-export const TRUNK_SCALE = [1.15, 1.42, 1.0] as const;
+export const TRUNK_SCALE = [1.15, 1.34, 1.0] as const;
 /** The trouser seat is stretched less in height, so he sits on the chair rather than floating over it. */
 export const SEAT_SCALE = [1.18, 1.2, 1.08] as const;
 /** The head and everything on it (face, hair, ears) is modelled large and shrunk to this size. */
