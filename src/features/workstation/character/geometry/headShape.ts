@@ -6,8 +6,8 @@ import { Matrix4, Quaternion, Vector3 } from 'three';
  * Angles: `theta` is measured down from the crown (+Y), `phi` around from the face (+Z) toward his left (+X).
  */
 
-/** Semi axes of the base ellipsoid: a wide, soft, slightly squashed chibi skull. */
-const SKULL = { x: 0.206, y: 0.197, z: 0.19 } as const;
+/** Semi axes of the base ellipsoid: a soft skull a little taller than it is wide, with room for a grown jaw. */
+const SKULL = { x: 0.19, y: 0.215, z: 0.198 } as const;
 
 const DEG = Math.PI / 180;
 
@@ -25,13 +25,18 @@ const sculpt = (x: number, y: number, z: number, amount: number, spread: number)
   spread,
 });
 
-/** Soft bumps and dents on the ellipsoid: fuller cheeks, a narrower rounded jaw and a round back. */
+/**
+ * Soft bumps and dents on the ellipsoid: a narrower jaw that tapers to a defined chin, cheeks that sit
+ * flat under the cheekbones rather than a child's round ones, and a round back.
+ */
 const SCULPTS: Sculpt[] = [
-  sculpt(0.78, -0.62, 0.05, -0.085, 0.16),
-  sculpt(-0.78, -0.62, 0.05, -0.085, 0.16),
-  sculpt(0.45, -0.42, 0.78, 0.035, 0.07),
-  sculpt(-0.45, -0.42, 0.78, 0.035, 0.07),
-  sculpt(0, -0.72, 0.7, -0.035, 0.1),
+  sculpt(0.78, -0.62, 0.05, -0.095, 0.16),
+  sculpt(-0.78, -0.62, 0.05, -0.095, 0.16),
+  sculpt(0.45, -0.42, 0.78, 0.006, 0.07),
+  sculpt(-0.45, -0.42, 0.78, 0.006, 0.07),
+  sculpt(0.6, -0.6, 0.5, -0.03, 0.05),
+  sculpt(-0.6, -0.6, 0.5, -0.03, 0.05),
+  sculpt(0, -0.8, 0.6, 0.045, 0.045),
   sculpt(0, -1, 0, -0.06, 0.25),
   sculpt(0, 0.15, -1, 0.035, 0.3),
   sculpt(0, -0.75, -0.66, -0.05, 0.08),

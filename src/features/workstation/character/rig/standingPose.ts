@@ -26,10 +26,13 @@ const GESTURES: readonly Gesture[] = ['sip', 'think', 'dog', 'idle', 'think', 's
 const gestureIn = (slot: number) => GESTURES[((slot % GESTURES.length) + GESTURES.length) % GESTURES.length];
 
 /** Planted feet, toes turned out, the right one a little behind and carrying most of his weight. */
-const FEET: Record<LimbName, { x: number; z: number; turn: number }> = {
-  left: { x: 0.104, z: 0.035, turn: 0.2 },
-  right: { x: -0.1, z: -0.01, turn: -0.26 },
+export const STANDING_FEET: Record<LimbName, { x: number; z: number; turn: number }> = {
+  left: { x: 0.09, z: 0.12, turn: 0.08 },
+  right: { x: -0.13, z: -0.015, turn: -0.26 },
 };
+
+/** Share of the way down to the screens the head tips while he reads them. */
+const SCREEN_TIP = 0.55;
 
 const events: Record<keyof typeof TIMING, Occurrence> = { sip: createOccurrence(), think: createOccurrence(), dog: createOccurrence() };
 const petting = createPetting();
@@ -38,7 +41,7 @@ const eyes: Look = { yaw: 0, pitch: 0 };
 const head: Look = { yaw: 0, pitch: 0 };
 
 function plantedFoot(side: Side, name: LimbName, out: LimbGoal) {
-  const foot = FEET[name];
+  const foot = STANDING_FEET[name];
   footOnSurface(sole.set(foot.x, 0, foot.z), foot.turn, 0, out);
   out.pole.set(side * 0.2, 0, 1);
 }
@@ -65,10 +68,10 @@ export function standingPose(t: number, motion: number, seed: number, pose: Body
 
   // Weight on his right leg, hip out that way, shoulders leaning toward the dog on his left so the
   // left arm reaches its head with a soft elbow. He turns a little toward the dog too.
-  pose.pelvisPosition.set(-0.014 + 0.006 * sway, BODY.standingPelvisHeight - 0.003 - 0.002 * Math.abs(sway), 0.004);
+  pose.pelvisPosition.set(-0.02 + 0.006 * sway, BODY.standingPelvisHeight - 0.025 - 0.002 * Math.abs(sway), 0.004);
   pose.pelvis.set(0.01, 0.07 + 0.02 * sway, -0.035 + 0.012 * sway);
-  pose.spine.set(0.035 + 0.006 * breath + 0.02 * think + 0.03 * dog, 0.05 + 0.03 * dog, -0.062 - 0.008 * sway);
-  pose.chest.set(0.02 - 0.012 * breath + 0.02 * think, 0.03 + 0.05 * dog - 0.04 * sip, -0.03);
+  pose.spine.set(0.06 + 0.006 * breath + 0.02 * think + 0.03 * dog, 0.05 + 0.03 * dog, -0.12 - 0.008 * sway);
+  pose.chest.set(0.02 - 0.012 * breath + 0.02 * think, 0.03 + 0.05 * dog - 0.04 * sip, -0.06);
   pose.shrug.left = -0.014 + 0.003 * breath;
   pose.shrug.right = 0.004 * breath + 0.004 * sip + 0.003 * think;
   pose.reach.left = 0.006;
@@ -90,7 +93,9 @@ export function standingPose(t: number, motion: number, seed: number, pose: Body
   // the way but only tips part way down, so his face stays in view from the about camera, and the eyes
   // look down the rest of the way.
   const headYaw = lerp(lerp(head.yaw + drift, 0, sip), toDog.yaw, 0.72 * dog);
-  const headPitch = lerp(head.pitch + nod + 0.05 * think + 0.16 * tip, toDog.pitch, 0.42 * dog);
+  // He stands tall over the desk, so the screens sit well below his eyes. The head tips only part of the
+  // way down to them and the eyes look the rest, which keeps his face up where the about camera sees it.
+  const headPitch = lerp(SCREEN_TIP * head.pitch + nod + 0.05 * think + 0.16 * tip, toDog.pitch, 0.42 * dog);
   const tilt = 0.035 - 0.13 * think - 0.08 * dog + noise(t * 0.15, seed + 5) * 0.04 * motion;
   aimHead(pose, headYaw, headPitch, tilt);
   const eyeYaw = lerp(lerp(eyes.yaw, 0, sip), toDog.yaw, lead);

@@ -11,19 +11,19 @@ import { useCharacterMaterials } from '../MaterialsContext';
 import type { Rig } from '../rig/types';
 
 /** Face layout on the skull, angles in degrees (crown angle, turn angle toward his left). */
-const EYE = { theta: 97, phi: 23.5, lift: -0.0036, radius: [0.028, 0.035, 0.0108] as const };
+const EYE = { theta: 93, phi: 21.5, lift: -0.0032, radius: [0.022, 0.019, 0.0092] as const };
 /** Catch lights, placed the same on both eyes as if lit from one window. */
 const SHINES = [
-  { x: 0.0085, y: 0.013, radius: 0.0082 },
-  { x: -0.0085, y: -0.0125, radius: 0.0042 },
+  { x: 0.0065, y: 0.0068, radius: 0.0052 },
+  { x: -0.0068, y: -0.0066, radius: 0.0026 },
 ] as const;
 type Stroke = [number, number][];
 
 /** Left brow from its inner to its outer end, mirrored for the right. */
 const BROW: Stroke = [
-  [81.2, 14],
-  [79.8, 19.5],
-  [80.6, 25.5],
+  [84.2, 10.5],
+  [83.2, 18.5],
+  [84, 27],
 ];
 /** Brow blend shapes as angle offsets per control point: raised, and raised at the inner end. */
 const BROW_LIFT: Stroke = [
@@ -93,7 +93,7 @@ function shineGeometry() {
 
 /** Both brows as one mesh, with blend shapes in the order of BROW_SHAPES. */
 function browsGeometry() {
-  const brow = (stroke: Stroke, side: number) => strokeGeometry(stroke, side, 0.0024, 0.0046, 0.0026);
+  const brow = (stroke: Stroke, side: number) => strokeGeometry(stroke, side, 0.0026, 0.006, 0.003);
   const lift = shifted(BROW, BROW_LIFT);
   const inner = shifted(BROW, BROW_INNER);
   return mergeParts(
@@ -116,7 +116,7 @@ function mouthGeometry() {
   return addBlendShapes(mouth(MOUTH), [mouth(MOUTH_HMM), mouth(MOUTH_SMILE)]);
 }
 
-/** Glossy black eyes with catch lights, small soft brows and a small smile. The nose is part of the head. */
+/** Glossy dark eyes with catch lights, straight full brows and a small smile. The nose is part of the head. */
 export function Face({ rig }: { rig: Rig }) {
   const materials = useCharacterMaterials();
   const sphere = useDisposable(() => new SphereGeometry(1, 28, 18));

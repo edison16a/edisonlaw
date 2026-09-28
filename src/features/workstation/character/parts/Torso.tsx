@@ -2,10 +2,11 @@
 
 import { TorusGeometry } from 'three';
 import { useDisposable } from '../../useDisposable';
+import { TRUNK_SCALE } from '../dimensions';
 import { loftGeometry, type LoftRing } from '../geometry/loft';
 import { useCharacterMaterials } from '../MaterialsContext';
 
-/** T-shirt body from the hem up to the neck hole, in the chest's space. Listed bottom to top. */
+/** T-shirt body from the hem up to the neck hole, in the chest's space before TRUNK_SCALE. Listed bottom to top. */
 const SHIRT: LoftRing[] = [
   { y: -0.222, x: 0.159, front: 0.12, back: 0.116 },
   { y: -0.211, x: 0.161, front: 0.121, back: 0.117 },
@@ -33,7 +34,7 @@ export function Torso() {
   const collar = useDisposable(() => new TorusGeometry(COLLAR.radius, COLLAR.tube, 10, 40));
 
   return (
-    <group>
+    <group scale={TRUNK_SCALE}>
       <mesh geometry={shirt} material={materials.shirt} castShadow receiveShadow />
       <mesh
         geometry={collar}

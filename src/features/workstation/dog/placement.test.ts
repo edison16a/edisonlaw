@@ -1,6 +1,8 @@
 import { Vector3 } from 'three';
 import { describe, expect, it } from 'vitest';
+import { BODY } from '../character/dimensions';
 import { STANDING_PLACEMENT } from '../character/placement';
+import { STANDING_FEET } from '../character/rig/standingPose';
 import { DESK, DOG_PAT_POINT } from '../layout';
 import { coatField } from './anatomy/coat';
 import { HEAD } from './dimensions';
@@ -58,21 +60,18 @@ describe('dog placement', () => {
 
   it('keeps clear of Edison and of the desk legs', () => {
     // Roughly where his sneakers and left leg are in his own space (see character/rig/standingPose.ts):
-    // each shoe about 0.1 to the side of his centre, 0.09 wide and running from 0.03 behind the ankle to
-    // 0.12 in front, and his left leg rising from that ankle to the hip in trousers about 0.05 thick. The
-    // dog keeps a little more room than the lean into his hand takes up.
+    // each shoe about 0.13 wide and running from 0.045 behind the ankle to 0.18 in front, and his left
+    // leg rising from that ankle to the hip in trousers 0.06 to 0.08 thick. The dog keeps a little more
+    // room than the lean into his hand takes up.
     const inRoom = (x: number, y: number, z: number) =>
       new Vector3(x, y, z).applyAxisAngle(UP, STANDING_PLACEMENT.rotationY).add(new Vector3(...STANDING_PLACEMENT.position));
     const clearance = (p: Vector3) => {
       const dog = toDog(p.x, p.y, p.z);
       return field.distance(dog.x, dog.y, dog.z);
     };
-    for (const foot of [
-      { x: 0.104, z: 0.035, turn: 0.2 },
-      { x: -0.1, z: -0.01, turn: -0.26 },
-    ]) {
-      for (let across = -0.046; across <= 0.046; across += 0.023) {
-        for (let along = -0.03; along <= 0.12; along += 0.015) {
+    for (const foot of [STANDING_FEET.left, STANDING_FEET.right]) {
+      for (let across = -0.066; across <= 0.066; across += 0.022) {
+        for (let along = -0.045; along <= 0.18; along += 0.015) {
           for (const y of [0.01, 0.05, 0.09]) {
             const local = new Vector3(across, y, along).applyAxisAngle(UP, foot.turn);
             expect(clearance(inRoom(foot.x + local.x, y, foot.z + local.z))).toBeGreaterThan(0.03);
@@ -80,9 +79,11 @@ describe('dog placement', () => {
         }
       }
     }
+    const { x: footX, z: footZ } = STANDING_FEET.left;
     for (let share = 0; share <= 1; share += 0.05) {
-      const leg = inRoom(0.104 - 0.032 * share, 0.07 + 0.49 * share, 0.035 * (1 - share));
-      expect(clearance(leg) - 0.05).toBeGreaterThan(0.03);
+      const leg = inRoom(footX + (BODY.hip.x - footX) * share, 0.08 + (BODY.standingPelvisHeight - 0.08) * share, footZ * (1 - share));
+      // The trouser leg thickens from the shin to the top of the thigh.
+      expect(clearance(leg) - (0.06 + 0.02 * share)).toBeGreaterThan(0.03);
     }
     // The desk: its legs at the corners and the front edge of its top.
     for (const sx of [1, -1]) {

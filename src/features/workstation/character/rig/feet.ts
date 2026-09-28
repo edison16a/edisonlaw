@@ -1,10 +1,10 @@
 import { Quaternion, Vector3 } from 'three';
-import { BODY } from '../dimensions';
+import { BODY, SHOE_SCALE } from '../dimensions';
 import { jointFor, type LimbGoal } from './limbs';
 
 /** Points under the sneaker in the foot bone's space: the middle of the sole and the ball of the foot. */
-const SOLE_MIDDLE = new Vector3(0, -BODY.ankle, 0.046);
-const BALL = new Vector3(0, -BODY.ankle, 0.088);
+const SOLE_MIDDLE = new Vector3(0, -BODY.ankle, 0.04 * SHOE_SCALE[2]);
+const BALL = new Vector3(0, -BODY.ankle, 0.077 * SHOE_SCALE[2]);
 const X_AXIS = new Vector3(1, 0, 0);
 const Y_AXIS = new Vector3(0, 1, 0);
 

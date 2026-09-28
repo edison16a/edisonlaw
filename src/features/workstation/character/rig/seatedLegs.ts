@@ -1,46 +1,32 @@
-import { Quaternion, Vector3 } from 'three';
-import { BODY } from '../dimensions';
+import { Vector3 } from 'three';
+import { CHAIR } from '../../layout';
+import { footOnSurface } from './feet';
 import type { LimbGoal } from './limbs';
 import type { LimbName, Side } from './types';
 
 /**
- * His feet do not reach the floor from the chair, so seated his thighs rest on the seat and his shins
- * hang back under its front edge, the feet dangling with the toes relaxed downward, the way a short
- * person sits on a tall chair. Angles in radians: `splay` turns the thigh out, `tuck` swings the shin
- * back from vertical, `point` lowers the toes from square to the shin and `turn` turns them out.
- * One foot is tucked further back than the other, so the pose does not look mirrored.
+ * Seated, his feet rest flat on the floor a little in front of the seat, knees apart and over the ankles,
+ * the way a grown man sits at a desk. Distances in metres in his own space, whose origin is the seat:
+ * `x` out to his side, `z` forward, `turn` turns the toes out in radians. One foot sits a little further
+ * forward than the other, so the pose does not look mirrored.
  */
-const LEGS: Record<LimbName, { splay: number; tuck: number; point: number; turn: number }> = {
-  left: { splay: 0.08, tuck: 0.3, point: 0.36, turn: 0.1 },
-  right: { splay: 0.05, tuck: 0.58, point: 0.42, turn: 0.04 },
+const FEET: Record<LimbName, { x: number; z: number; turn: number }> = {
+  left: { x: 0.15, z: 0.5, turn: 0.14 },
+  right: { x: -0.13, z: 0.44, turn: -0.08 },
 };
-/** How far the thighs tip down from level toward the knees, resting on the seat. */
-const THIGH_PITCH = 0.07;
-/** How far the shin swings each way at full swing. */
-const SWING = 0.1;
+/** How far the heel of the tapping foot lifts at the top of a tap, rolling over the ball of the foot. */
+const HEEL_LIFT = 0.12;
 
-const X_AXIS = new Vector3(1, 0, 0);
-const Y_AXIS = new Vector3(0, 1, 0);
-const thigh = new Vector3();
-const shin = new Vector3();
-const pitch = new Quaternion();
+const sole = new Vector3();
 
 /**
- * A seated leg hanging from the seat. The goal is in his own space and assumes the pelvis sits level at
- * its seated height, as the seated pose keeps it.
- * `swing`, from -1 to 1, swings the shin forward and back from its resting tuck.
+ * A seated leg with its foot planted on the floor in front of the chair. The goal is in his own space and
+ * assumes the pelvis sits level at its seated height, as the seated pose keeps it. `tap`, from -1 to 1,
+ * lifts the heel on its upswing, a restless tap while he thinks.
  */
-export function hangingLeg(side: Side, name: LimbName, swing: number, out: LimbGoal) {
-  const leg = LEGS[name];
-  const tuck = leg.tuck + SWING * swing;
-  const level = Math.cos(THIGH_PITCH);
-  thigh.set(side * Math.sin(leg.splay) * level, -Math.sin(THIGH_PITCH), Math.cos(leg.splay) * level);
-  shin.set(0, -Math.cos(tuck), -Math.sin(tuck));
-  out.target
-    .set(side * BODY.hip.x, BODY.seatedPelvisHeight + BODY.hip.y, 0)
-    .addScaledVector(thigh, BODY.thigh)
-    .addScaledVector(shin, BODY.shin);
-  // The knee points along the thigh, forward over the seat's edge.
-  out.pole.copy(thigh);
-  out.rotation.setFromAxisAngle(Y_AXIS, side * leg.turn).multiply(pitch.setFromAxisAngle(X_AXIS, tuck + leg.point));
+export function seatedLeg(side: Side, name: LimbName, tap: number, out: LimbGoal) {
+  const foot = FEET[name];
+  footOnSurface(sole.set(foot.x, -CHAIR.seatHeight, foot.z), foot.turn, HEEL_LIFT * Math.max(0, tap), out);
+  // The knee points forward over the toes and a little out.
+  out.pole.set(side * 0.25, 0.4, 1);
 }

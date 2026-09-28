@@ -11,10 +11,10 @@ export interface Placement {
 
 /**
  * Origin of the seated pose is the point where the seat meets the pelvis.
- * He sits a little forward of the chair centre so his short arms reach the keyboard with soft elbows.
+ * He sits a little back from the chair centre, against the backrest, and reaches the keyboard with soft elbows.
  */
 export const SEATED_PLACEMENT: Placement = {
-  position: [CHAIR.position[0], CHAIR.seatHeight, CHAIR.position[2] - 0.08],
+  position: [CHAIR.position[0], CHAIR.seatHeight, CHAIR.position[2] + 0.02],
   rotationY: Math.PI,
 };
 
@@ -23,6 +23,6 @@ export const SEATED_PLACEMENT: Placement = {
  * a step back from its edge, turned a little toward the left monitors and the about camera.
  */
 export const STANDING_PLACEMENT: Placement = {
-  position: [0.3, 0, 0.42],
+  position: [0.23, 0, 0.42],
   rotationY: Math.PI + 0.15,
 };

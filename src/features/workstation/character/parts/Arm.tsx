@@ -8,7 +8,7 @@ import { useCharacterMaterials } from '../MaterialsContext';
 import type { ArmRig } from '../rig/types';
 import { Hand } from './Hand';
 
-const ARM = { upperTop: 0.044, elbow: 0.0375, wrist: 0.0305, sleeve: 0.053, sleeveCap: 0.046, sleeveLength: 0.095 } as const;
+const ARM = { upperTop: 0.05, elbow: 0.04, wrist: 0.031, sleeve: 0.064, sleeveCap: 0.056, sleeveLength: 0.15 } as const;
 
 interface ArmProps {
   arm: ArmRig;

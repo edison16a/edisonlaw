@@ -1,7 +1,7 @@
 'use client';
 
 import { useDisposable } from '../../useDisposable';
-import { BODY } from '../dimensions';
+import { BODY, SHOE_SCALE } from '../dimensions';
 import { sleeveGeometry, taperedCapsule } from '../geometry/capsule';
 import { useCharacterMaterials } from '../MaterialsContext';
 import type { LimbRig } from '../rig/types';
@@ -13,11 +13,11 @@ import { Shoe } from './Shoe';
  * surface there, then flares to the hem.
  */
 const LEG = {
-  hip: 0.066,
-  knee: 0.062,
-  shin: { top: 0.0614, cap: 0.05, flare: 1.058 },
-  trouserLength: 0.2,
-  sock: { top: 0.04, ankle: 0.0305 },
+  hip: 0.08,
+  knee: 0.058,
+  shin: { top: 0.0574, cap: 0.047, flare: 1.07 },
+  trouserLength: 0.345,
+  sock: { top: 0.042, ankle: 0.033 },
 } as const;
 
 /** Black trouser leg, a glimpse of sock and a sneaker along the leg's bones. */
@@ -35,7 +35,7 @@ export function Leg({ leg }: { leg: LimbRig }) {
           <mesh geometry={shin} material={materials.pants} castShadow receiveShadow />
           <mesh geometry={sock} material={materials.sock} />
           <primitive object={leg.end}>
-            <group scale={[1.12, 1, 1.14]}>
+            <group scale={SHOE_SCALE}>
               <Shoe />
             </group>
           </primitive>

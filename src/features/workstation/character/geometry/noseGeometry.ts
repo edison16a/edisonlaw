@@ -3,18 +3,18 @@ import { PALETTE } from '../materials';
 import { headRadius, surfaceFrame } from './headShape';
 
 /**
- * A small button nose, sculpted as a patch of the skull pushed outward. The patch is finely
+ * A straight nose with a soft tip, sculpted as a patch of the skull pushed outward. The patch is finely
  * tessellated and its edge lies on the skull with the skull's own normal, so it melts into the face
  * with no rim. Softer above where it runs into the bridge, a little crisper underneath.
  */
 const NOSE = {
   theta: 109,
   /** Height of the tip above the skull, in metres. */
-  height: 0.0052,
+  height: 0.0105,
   /** Half widths of the bump: across, above the tip and below it, in metres. */
-  across: 0.0086,
-  above: 0.0092,
-  below: 0.0056,
+  across: 0.0095,
+  above: 0.022,
+  below: 0.0062,
   /** Half size of the patch in radians, well past where the bump fades out. */
   extent: 0.15,
   segments: 30,

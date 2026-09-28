@@ -7,7 +7,7 @@ import { createDogRig } from '../../dog/rig/createDogRig';
 import { applyDogPose, createDogPose, dogPose } from '../../dog/rig/dogPose';
 import { Field } from '../../dog/sdf/field';
 import { CHAIR, DOG_PAT_POINT, ROOM } from '../../layout';
-import { BODY, HAND } from '../dimensions';
+import { BODY, HAND, SHOE_SCALE } from '../dimensions';
 import { SEATED_PLACEMENT, STANDING_PLACEMENT, type Placement } from '../placement';
 import { applyBodyPose, createBodyPose, type BodyPose } from './bodyPose';
 import { createRig } from './createRig';
@@ -71,7 +71,7 @@ function dogHeadFrames(motion: number) {
 }
 
 /** Back of the heel and tip of the toe under the sneaker, in the foot bone's space with the shoe's scale in Leg.tsx. */
-const SOLE = [new Vector3(0, -BODY.ankle, -0.03 * 1.14), new Vector3(0, -BODY.ankle, 0.124 * 1.14)];
+const SOLE = [new Vector3(0, -BODY.ankle, -0.03 * SHOE_SCALE[2]), new Vector3(0, -BODY.ankle, 0.124 * SHOE_SCALE[2])];
 
 const point = new Vector3();
 
@@ -125,17 +125,24 @@ describe('seated pose', () => {
   const { rig, root } = mount(SEATED_PLACEMENT);
   const pose = createBodyPose();
 
-  it('lets the feet hang clear of the floor, under the front of the seat', () => {
+  it('rests both feet on the floor in front of the seat, knees a little above it', () => {
+    const [heel, toe] = SOLE;
+    // The ball of the foot, which a tapping heel rolls over (as in feet.ts).
+    const ball = new Vector3(0, -BODY.ankle, 0.077 * SHOE_SCALE[2]);
     for (let t = 0; t < 60; t += 0.1) {
       poseAt(seatedPose, 11, t, rig, root, pose);
       for (const leg of [rig.legs.left, rig.legs.right]) {
-        for (const local of SOLE) expect(point.copy(local).applyMatrix4(leg.end.matrixWorld).y).toBeGreaterThan(0.08);
-        // The knees stay up on the seat's level and the shins hang back from them, well below the seat.
+        // The ball stays down and the heel only ever lifts. The rigid toe dips a hair at the top of a tap,
+        // no deeper than the sneaker's upturned toe hides.
+        expect(point.copy(ball).applyMatrix4(leg.end.matrixWorld).y).toBeCloseTo(ROOM.floorY, 3);
+        expect(point.copy(heel).applyMatrix4(leg.end.matrixWorld).y).toBeGreaterThan(ROOM.floorY - 0.002);
+        expect(point.copy(toe).applyMatrix4(leg.end.matrixWorld).y).toBeGreaterThan(ROOM.floorY - 0.01);
         const knee = leg.lower.getWorldPosition(point);
         expect(knee.y).toBeGreaterThan(CHAIR.seatHeight);
+        expect(knee.y).toBeLessThan(CHAIR.seatHeight + 0.15);
+        // He faces -Z in the room, so his feet are out in front of the seat toward the desk.
         const ankle = leg.end.getWorldPosition(point);
-        expect(ankle.y).toBeLessThan(CHAIR.seatHeight - 0.12);
-        expect(ankle.z).toBeGreaterThan(SEATED_PLACEMENT.position[2] - BODY.thigh);
+        expect(ankle.z).toBeLessThan(SEATED_PLACEMENT.position[2] - 0.3);
       }
     }
   });

@@ -21,7 +21,7 @@ export function paintSkin(point: Vector3, out: Color) {
 
   let cheek = 0;
   for (const center of CHEEKS) cheek += Math.exp((direction.dot(center) - 1) / 0.0075);
-  out.lerp(blush, Math.min(1, cheek) * 0.55);
+  out.lerp(blush, Math.min(1, cheek) * 0.18);
 
   const [theta, phi] = anglesOf(point);
   const hairShadow = 0.45 * Math.exp(-Math.max(0, theta - coveredLineAt(phi)) / 5);

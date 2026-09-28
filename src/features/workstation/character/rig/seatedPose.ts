@@ -4,7 +4,7 @@ import { BODY, HAND } from '../dimensions';
 import type { BodyPose } from './bodyPose';
 import { aimRotation, createLimbGoal, jointFor, type LimbGoal } from './limbs';
 import { aimEyes, aimHead, type Look } from './look';
-import { hangingLeg } from './seatedLegs';
+import { seatedLeg } from './seatedLegs';
 import { SEATED_TARGETS } from './targets';
 import { breathAt, createOccurrence, noise, occurrence, type Recurring } from './timeline';
 import { createKeystroke, keystrokeAt, type Keystroke } from './typing';
@@ -39,27 +39,27 @@ const facing = new Vector3();
 function typingHand(side: Side, stroke: Keystroke, typing: number, out: LimbGoal) {
   const keys = SEATED_TARGETS.keyboard;
   point.set(
-    keys.x + side * 0.072 + stroke.across * typing,
-    keys.y + 0.037 - 0.005 * stroke.press * typing,
-    keys.z - 0.03 + stroke.along * typing,
+    keys.x + side * 0.1 + stroke.across * typing,
+    keys.y + 0.05 - 0.006 * stroke.press * typing,
+    keys.z - 0.045 + stroke.along * typing,
   );
   along.set(-side * 0.22, -0.4, 1);
   facing.set(side * 0.3, 1, 0.1);
   aimRotation(along, facing, out.rotation);
   jointFor(point, out.rotation, KNUCKLES, out.target);
-  // Elbows lift out to the sides: at an adult desk his forearms stay level with the keys.
-  out.pole.set(side, -0.28, -0.4);
+  // Elbows hang down by his sides and a little out, the forearms reaching forward to the keys.
+  out.pole.set(side * 0.6, -1, -0.5);
 }
 
 /** Right hand cupped over the mouse, drifting a little as he moves the pointer. */
 function mouseHand(t: number, seed: number, out: LimbGoal) {
   const target = SEATED_TARGETS.mouse;
-  point.set(target.x + noise(t * 0.9, seed + 5) * 0.012, target.y + 0.036, target.z - 0.03 + noise(t * 0.7, seed + 6) * 0.01);
+  point.set(target.x + noise(t * 0.9, seed + 5) * 0.012, target.y + 0.04, target.z - 0.035 + noise(t * 0.7, seed + 6) * 0.01);
   along.set(0.12, -0.22, 1);
   facing.set(-0.22, 1, 0);
   aimRotation(along, facing, out.rotation);
   jointFor(point, out.rotation, PALM, out.target);
-  out.pole.set(-1, -0.35, -0.45);
+  out.pole.set(-0.6, -1, -0.5);
 }
 
 const head: Look = { yaw: 0, pitch: 0 };
@@ -144,8 +144,8 @@ export function seatedPose(t: number, motion: number, seed: number, pose: BodyPo
   face.smile = 0.1 * onMouse;
   face.squint = 0.12 * typing;
 
-  // His feet hang under the seat. While he pauses to think, his right foot swings a little.
+  // Feet flat on the floor. While he pauses to think, his right heel taps a little.
   const idle = motion * (1 - burst.weight) * (1 - mouse.weight);
-  hangingLeg(1, 'left', 0, pose.legs.left);
-  hangingLeg(-1, 'right', idle * Math.sin(t * Math.PI * 1.25), pose.legs.right);
+  seatedLeg(1, 'left', 0, pose.legs.left);
+  seatedLeg(-1, 'right', idle * Math.sin(t * Math.PI * 1.25), pose.legs.right);
 }

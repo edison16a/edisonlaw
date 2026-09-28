@@ -23,6 +23,9 @@ const PALM: LoftRing[] = [
   { y: 0.0142, x: 0.002, front: 0.0016, back: 0.0016 },
 ];
 
+/** The palm below is drawn small and stretched to an adult hand: wider and longer, as thick as before. */
+const PALM_SCALE = [1.4, 1.45, 1] as const;
+
 /** Fleshy pad at the base of the thumb, on the palm side. */
 const THUMB_PAD = { y: -0.021, spreadY: 0.014, spreadX: 0.016, depth: 0.0048 } as const;
 
@@ -48,6 +51,7 @@ export function palmGeometry(thumbSide: number) {
     const pad = THUMB_PAD.depth * along * across * (0.35 + 0.65 * palmSide);
     positions.setXYZ(i, x + thumbSide * pad * 0.45, y, z - pad * palmSide);
   }
+  geometry.scale(...PALM_SCALE);
   geometry.computeVertexNormals();
   return geometry;
 }

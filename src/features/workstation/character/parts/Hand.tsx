@@ -6,7 +6,7 @@ import { useCharacterMaterials } from '../MaterialsContext';
 import type { ArmRig } from '../rig/types';
 
 /**
- * A soft chibi hand in the hand bone's space: a lofted palm with a thumb pad, four stubby fingers that
+ * A soft stylised hand in the hand bone's space: a lofted palm with a thumb pad, four fingers that
  * bend at the knuckle and the middle joint, and a thumb.
  */
 export function Hand({ arm }: { arm: ArmRig }) {

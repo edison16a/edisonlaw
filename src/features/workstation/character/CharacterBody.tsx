@@ -1,7 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { BODY } from './dimensions';
+import { BODY, HEAD_SCALE } from './dimensions';
 import { Arm } from './parts/Arm';
 import { Face } from './parts/Face';
 import { Hair } from './parts/Hair';
@@ -33,7 +33,7 @@ export function CharacterBody({ rig, rightHand }: CharacterBodyProps) {
           <primitive object={rig.neck}>
             <Neck />
             <primitive object={rig.head}>
-              <group position={[0, BODY.headCenter.y, BODY.headCenter.z]}>
+              <group position={[0, BODY.headCenter.y, BODY.headCenter.z]} scale={HEAD_SCALE}>
                 <Head />
                 <Face rig={rig} />
                 <Hair />

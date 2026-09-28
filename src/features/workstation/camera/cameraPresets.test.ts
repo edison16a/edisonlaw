@@ -1,5 +1,6 @@
 import { PerspectiveCamera, Vector3 } from 'three';
 import { describe, expect, it } from 'vitest';
+import { BODY, HEAD_ABOVE_PELVIS, HEAD_SCALE } from '../character/dimensions';
 import { SEATED_PLACEMENT, STANDING_PLACEMENT } from '../character/placement';
 import { TAIL_PATH } from '../dog/anatomy/tail';
 import { PAWS } from '../dog/dimensions';
@@ -13,9 +14,11 @@ const VARIANTS: StageVariant[] = ['work', 'about'];
 const ASPECTS = [0.6, 0.7, 0.86, 0.94, 1, 1.2, 1.4, 1.6];
 /** The stage's soft mask, as fractions of the panel: fully visible between these edges. */
 const SAFE = { left: 0.09, right: 0.94, top: 0.06, bottom: 0.9 };
-/** Edison stands about this tall, and seated the top of his head is about this far above the seat. */
-const STANDING_HEIGHT = 1.45;
-const SEATED_HEAD = 0.8;
+/** The top of Edison's hair above his pelvis joint, with his spine upright: the skull and a little hair over it. */
+const HEAD_TOP = HEAD_ABOVE_PELVIS + 0.22 * HEAD_SCALE + 0.02;
+/** How tall he stands, and how far the top of his head is above the seat when he sits. */
+const STANDING_HEIGHT = BODY.standingPelvisHeight + HEAD_TOP;
+const SEATED_HEAD = BODY.seatedPelvisHeight + HEAD_TOP;
 
 const halfWidth = (fov: number, aspect: number) => Math.tan((fov * Math.PI) / 360) * aspect;
 

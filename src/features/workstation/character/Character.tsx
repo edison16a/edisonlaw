@@ -19,7 +19,7 @@ export interface CharacterProps {
 const SEEDS: Record<CharacterPose, number> = { seated: 11, standing: 29 };
 
 /**
- * Edison as a chibi 3D character, built procedurally. In his own space he faces +Z.
+ * Edison as a stylised 3D character, built procedurally. In his own space he faces +Z.
  * Seated, the origin is where his pelvis meets the seat; standing, it is the floor between his feet.
  * Place him with SEATED_PLACEMENT or STANDING_PLACEMENT from ./placement.
  */
