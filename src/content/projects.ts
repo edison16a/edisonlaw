@@ -93,10 +93,7 @@ export const projects: Project[] = [
     stack: ['Unity', 'C#', 'Niantic Lightship', 'VPS'],
     description:
       'A sustainability AR game on the App Store. You pick up trash in a virtual park, then sort it into AR bins around you. Built in Unity with Niantic Lightship. Won CruzHacks 2023 and Best Lightship AR VPS Game against 650+ hackers.',
-    links: [
-      { label: 'App Store', href: 'https://apps.apple.com/us/app/trash-go/id6452390061' },
-      { label: 'GitHub', href: 'https://github.com/Aldicodi/Cruzhacks-2023-TrashGo' },
-    ],
+    links: [{ label: 'App Store', href: 'https://apps.apple.com/us/app/trash-go/id6452390061' }],
     image: '/projects/trashgo.webp',
   },
   {
