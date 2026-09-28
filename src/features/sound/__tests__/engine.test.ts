@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MUSIC_FADE_IN_MS, MUSIC_FADE_OUT_MS, MUSIC_HIDE_FADE_MS, MUSIC_VOLUME } from '../config';
 
 const effects = { play: vi.fn() };
-const music = { fadeTo: vi.fn() };
+const music = { fadeTo: vi.fn(), allowed: vi.fn(() => false) };
 vi.mock('../backend/howlerBackend', () => ({ createHowlerBackend: () => Promise.resolve(effects) }));
 vi.mock('../backend/musicBackend', () => ({ createMusicBackend: () => Promise.resolve(music) }));
 
@@ -17,6 +17,7 @@ async function freshEngine() {
 beforeEach(() => {
   effects.play.mockClear();
   music.fadeTo.mockClear();
+  music.allowed.mockReturnValue(false);
 });
 
 describe('the sound engine', () => {
@@ -53,6 +54,14 @@ describe('the sound engine', () => {
     await settle();
     sound.setEnabled(false);
     expect(music.fadeTo).toHaveBeenLastCalledWith(0, MUSIC_FADE_OUT_MS);
+  });
+
+  it('plays the music at once where the browser already allows audio, with no gesture', async () => {
+    music.allowed.mockReturnValue(true);
+    const { soundLifecycle } = await freshEngine();
+    soundLifecycle.restore(true);
+    await settle();
+    expect(music.fadeTo).toHaveBeenCalledWith(MUSIC_VOLUME, MUSIC_FADE_IN_MS);
   });
 
   it('plays the music for a visitor whose saved choice was on, from their first gesture', async () => {

@@ -21,8 +21,14 @@ let loading = false;
 let toggleFeedbackUntil = 0;
 
 const listeners = new Set<Listener>();
-/** The background music. Its player is a chunk of its own, fetched only once sound is on. */
-const music = createMusic(() => import('./backend/musicBackend').then(({ createMusicBackend }) => createMusicBackend()));
+/**
+ * The background music. Its player is a chunk of its own, fetched only once sound is on.
+ * A browser that already allows audio unlocks the page as soon as it loads.
+ */
+const music = createMusic(
+  () => import('./backend/musicBackend').then(({ createMusicBackend }) => createMusicBackend()),
+  () => soundLifecycle.unlock(),
+);
 const throttle = createThrottle((name: SoundName) => SOUNDS[name].throttle);
 const voices = createVoiceLimiter(MAX_VOICES, (name: SoundName) => SOUNDS[name].voices);
 

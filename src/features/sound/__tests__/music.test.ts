@@ -6,26 +6,50 @@ import { createMusic, type MusicState } from '../music';
 /** A music controller with a fake player whose load the test finishes by hand. */
 function setup() {
   const fades: [volume: number, duration: number][] = [];
-  const backend: MusicBackend = { fadeTo: (volume, duration) => fades.push([volume, duration]) };
+  let allowed = false;
+  const backend: MusicBackend = {
+    fadeTo: (volume, duration) => fades.push([volume, duration]),
+    allowed: () => allowed,
+  };
   let finish: (backend: MusicBackend) => void = () => undefined;
   const load = vi.fn(() => new Promise<MusicBackend>((resolve) => (finish = resolve)));
-  const music = createMusic(load);
+  const onAllowed = vi.fn();
+  const music = createMusic(load, onAllowed);
   const loaded = async () => {
     finish(backend);
     await Promise.resolve();
     await Promise.resolve();
   };
-  return { music, load, fades, loaded };
+  const allow = () => (allowed = true);
+  return { music, load, fades, loaded, onAllowed, allow };
 }
 
 const on: MusicState = { enabled: true, visible: true, unlocked: true };
 
 describe('createMusic', () => {
-  it('loads nothing while sound is off or audio is still locked', () => {
+  it('loads nothing while sound is off', () => {
     const { music, load } = setup();
     music.sync({ ...on, enabled: false });
-    music.sync({ ...on, unlocked: false });
     expect(load).not.toHaveBeenCalled();
+  });
+
+  it('loads while audio is still locked, and starts the moment it unlocks', async () => {
+    const { music, load, fades, loaded, onAllowed } = setup();
+    music.sync({ ...on, unlocked: false });
+    expect(load).toHaveBeenCalledTimes(1);
+    await loaded();
+    expect(fades).toEqual([]);
+    expect(onAllowed).not.toHaveBeenCalled();
+    music.sync(on);
+    expect(fades).toEqual([[MUSIC_VOLUME, MUSIC_FADE_IN_MS]]);
+  });
+
+  it('reports a browser that already allows audio, so the page can start without a click', async () => {
+    const { music, loaded, onAllowed, allow } = setup();
+    allow();
+    music.sync({ ...on, unlocked: false });
+    await loaded();
+    expect(onAllowed).toHaveBeenCalledTimes(1);
   });
 
   it('loads once sound is on, and swells in over about two seconds', async () => {

@@ -44,7 +44,7 @@ class FakeHowl {
   }
 }
 
-vi.mock('howler', () => ({ Howl: FakeHowl, Howler: { volume: vi.fn() } }));
+vi.mock('howler', () => ({ Howl: FakeHowl, Howler: { volume: vi.fn(), ctx: { state: 'suspended' } } }));
 
 const { createMusicBackend } = await import('../backend/musicBackend');
 

@@ -6,7 +6,7 @@ import { soundLifecycle } from './engine';
 import { loadSoundPreference } from './persistence';
 
 /** Events that count as a user gesture, after which browsers let audio start. */
-const GESTURES = ['pointerdown', 'keydown', 'touchend'] as const;
+const GESTURES = ['pointerdown', 'keydown', 'touchend', 'click'] as const;
 
 /**
  * Page wide audio upkeep, mounted once through SoundToggle. It restores the saved choice,

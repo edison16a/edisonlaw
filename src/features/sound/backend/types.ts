@@ -10,4 +10,6 @@ export interface AudioBackend {
 export interface MusicBackend {
   /** Fades the music toward `volume` over `duration` ms, resuming it if needed and pausing it once silent. */
   fadeTo(volume: number, duration: number): void;
+  /** True when the browser already lets the page play audio, before any click or key. */
+  allowed(): boolean;
 }

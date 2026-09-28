@@ -19,7 +19,8 @@ function loadMusic(HowlClass: typeof Howl) {
 
 /**
  * Howler behind the MusicBackend interface, with a Howl of its own so the long
- * track never sits in the effects sprite. Only create it after a user gesture.
+ * track never sits in the effects sprite. It may load before a gesture, but only
+ * plays once audio is allowed.
  */
 export async function createMusicBackend(): Promise<MusicBackend> {
   const { Howl, Howler } = await import('howler');
@@ -40,6 +41,8 @@ export async function createMusicBackend(): Promise<MusicBackend> {
   });
 
   return {
+    // Browsers that trust the page, such as Chrome on a site visited often, start its audio unlocked.
+    allowed: () => Howler.ctx?.state === 'running',
     fadeTo(volume, duration) {
       if (volume === target) return;
       target = volume;

@@ -12,27 +12,31 @@ export interface MusicState {
 
 /**
  * The background music's rules, apart from the player itself. The track loads
- * only once sound is on and audio may start, swells in slowly, fades out when
- * sound goes off, and pauses while the tab is hidden, picking up where it left
- * off. Pure apart from `load`, so it is unit tested.
+ * as soon as sound is on, so it can start the moment audio may. It swells in
+ * slowly, fades out when sound goes off, and pauses while the tab is hidden,
+ * picking up where it left off. A browser that lets the page play audio
+ * before any click is reported through `onAllowed`. Pure apart from `load`,
+ * so it is unit tested.
  */
-export function createMusic(load: () => Promise<MusicBackend>) {
+export function createMusic(load: () => Promise<MusicBackend>, onAllowed: () => void = () => undefined) {
   let backend: MusicBackend | null = null;
   let loading = false;
   let state: MusicState = { enabled: false, visible: true, unlocked: false };
 
   function apply() {
-    if (!backend) return;
+    // Nothing has played before audio is allowed, so there is nothing to fade either.
+    if (!backend || !state.unlocked) return;
     if (state.enabled && state.visible) backend.fadeTo(MUSIC_VOLUME, MUSIC_FADE_IN_MS);
     else backend.fadeTo(0, state.enabled ? MUSIC_HIDE_FADE_MS : MUSIC_FADE_OUT_MS);
   }
 
   function ensureBackend() {
-    if (backend || loading || !state.enabled || !state.unlocked) return;
+    if (backend || loading || !state.enabled) return;
     loading = true;
     load()
       .then((ready) => {
         backend = ready;
+        if (!state.unlocked && ready.allowed()) onAllowed();
         apply();
       })
       .catch((error: unknown) => {
