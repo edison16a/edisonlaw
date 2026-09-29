@@ -10,7 +10,7 @@ const ICONS: Record<SocialKind, (props: IconProps) => React.ReactNode> = {
   linkedin: LinkedInIcon,
 };
 
-/** Round icon buttons for each social, plus the email spelled out to copy. */
+/** Round icon buttons for each social, plus the email spelled out, which copies when clicked. */
 export function ContactLinks() {
   return (
     <div className="flex flex-col gap-5">

@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { CheckIcon, CopyIcon } from '@/components/icons';
+import { CheckIcon } from '@/components/icons';
 import { sound } from '@/features/sound';
 
-/** The email written out, with a button that copies it. */
+/** The email written out. Clicking it copies the address, and a small check confirms it. */
 export function CopyEmail({ email }: { email: string }) {
   const [copied, setCopied] = useState(false);
 
@@ -25,19 +25,22 @@ export function CopyEmail({ email }: { email: string }) {
   };
 
   return (
-    <div className="flex items-center gap-3">
-      <a href={`mailto:${email}`} className="text-sm text-white underline-offset-4 hover:underline">
-        {email}
-      </a>
+    <div className="flex items-center gap-2">
       <button
         type="button"
         onClick={copy}
-        aria-label="Copy email address"
-        className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-grey-700 px-3.5 text-xs text-grey-300 transition-colors hover:border-white hover:text-white sm:min-h-0 sm:px-2.5 sm:py-1"
+        title="Copy email address"
+        className="min-h-11 cursor-pointer text-left text-sm text-white underline-offset-4 hover:underline sm:min-h-0"
       >
-        {copied ? <CheckIcon size={14} /> : <CopyIcon size={14} />}
-        <span aria-hidden="true">{copied ? 'Copied' : 'Copy'}</span>
+        {email}
       </button>
+      <span
+        aria-hidden="true"
+        className={`inline-flex items-center gap-1 text-xs text-grey-300 transition-opacity duration-200 ${copied ? 'opacity-100' : 'opacity-0'}`}
+      >
+        <CheckIcon size={14} />
+        Copied
+      </span>
       <span role="status" className="sr-only">
         {copied ? 'Email address copied' : ''}
       </span>
