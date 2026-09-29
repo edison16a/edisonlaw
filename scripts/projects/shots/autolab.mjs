@@ -13,15 +13,17 @@ const ROBOT = { x: 28, y: 92, width: 1284, height: 1008 };
 const SOURCE = { width: 1406, height: 1154 };
 /** The render's backdrop, so the card around the robot runs on without a seam. */
 const BACKDROP = 'rgb(19, 18, 21)';
-/** The robot's height on the card: 88%, so the margins above and below are 6% each. */
+/** The robot's height on the card: 88%, leaving 12% to share above and below. */
 const HEIGHT = CARD_HEIGHT * 0.88;
+/** Raised by this share of the card, so it sits a little above centre: 2% above it and 10% below. */
+const LIFT = CARD_HEIGHT * 0.04;
 
 export async function capture({ compose }) {
   const src = dataUrl(await readSource('autolab-render.webp'));
   const k = HEIGHT / ROBOT.height;
   const css = `
 body { display: grid; place-items: center; }
-.frame { position: relative; overflow: hidden; width: ${ROBOT.width * k}px; height: ${HEIGHT}px; }
+.frame { position: relative; overflow: hidden; width: ${ROBOT.width * k}px; height: ${HEIGHT}px; transform: translateY(${-LIFT}px); }
 .frame img { position: absolute; left: ${-ROBOT.x * k}px; top: ${-ROBOT.y * k}px;
   width: ${SOURCE.width * k}px; height: ${SOURCE.height * k}px; }`;
   const html = shell({ background: BACKDROP, css, body: `<div class="frame"><img src="${src}"></div>` });
