@@ -20,9 +20,9 @@ export const SEATED_PLACEMENT: Placement = {
 
 /**
  * Origin of the standing pose is the floor between the feet. In front of the middle of the desk,
- * a step back from its edge, turned a little toward the left monitors and the about camera.
+ * a step back from its edge, turned toward the left monitors and the about camera, with the dog at his left hip.
  */
 export const STANDING_PLACEMENT: Placement = {
-  position: [0.24, 0, 0.42],
-  rotationY: Math.PI + 0.15,
+  position: [0.26, 0, 0.36],
+  rotationY: Math.PI + 0.3,
 };

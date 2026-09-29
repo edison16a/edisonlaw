@@ -25,10 +25,10 @@ type Gesture = keyof typeof TIMING | 'idle';
 const GESTURES: readonly Gesture[] = ['sip', 'think', 'dog', 'idle', 'think', 'sip', 'dog', 'think', 'idle', 'sip', 'think', 'dog'];
 const gestureIn = (slot: number) => GESTURES[((slot % GESTURES.length) + GESTURES.length) % GESTURES.length];
 
-/** Planted feet, toes turned out, the right one a little behind and carrying most of his weight. */
+/** Feet side by side under his hips, about shoulder width apart, toes turned a little out. */
 export const STANDING_FEET: Record<LimbName, { x: number; z: number; turn: number }> = {
-  left: { x: 0.09, z: 0.12, turn: 0.08 },
-  right: { x: -0.13, z: -0.015, turn: -0.26 },
+  left: { x: 0.11, z: 0.02, turn: 0.14 },
+  right: { x: -0.11, z: 0.0, turn: -0.16 },
 };
 
 /** Share of the way down to the screens the head tips while he reads them. */
@@ -66,12 +66,12 @@ export function standingPose(t: number, motion: number, seed: number, pose: Body
   // The mug tips toward his lips only once it is up there.
   const tip = sip * sip;
 
-  // Weight on his right leg, hip out that way, shoulders leaning toward the dog on his left so the
-  // left arm reaches its head with a soft elbow. He turns a little toward the dog too.
-  pose.pelvisPosition.set(-0.02 + 0.006 * sway, BODY.standingPelvisHeight - 0.025 - 0.002 * Math.abs(sway), 0.004);
-  pose.pelvis.set(0.01, 0.07 + 0.02 * sway, -0.035 + 0.012 * sway);
-  pose.spine.set(0.06 + 0.006 * breath + 0.02 * think + 0.03 * dog, 0.05 + 0.03 * dog, -0.12 - 0.008 * sway);
-  pose.chest.set(0.02 - 0.012 * breath + 0.02 * think, 0.03 + 0.05 * dog - 0.04 * sip, -0.06);
+  // Standing square with a slight lean of the shoulders toward the dog on his left, so the left arm
+  // reaches its head with a soft elbow. He turns a little toward the dog too.
+  pose.pelvisPosition.set(-0.01 + 0.006 * sway, BODY.standingPelvisHeight - 0.022 - 0.002 * Math.abs(sway), 0.004);
+  pose.pelvis.set(0.01, 0.03 + 0.02 * sway, -0.02 + 0.012 * sway);
+  pose.spine.set(0.06 + 0.006 * breath + 0.02 * think + 0.03 * dog, 0.05 + 0.03 * dog, -0.1 - 0.008 * sway);
+  pose.chest.set(0.02 - 0.012 * breath + 0.02 * think, 0.03 + 0.05 * dog - 0.04 * sip, -0.05);
   pose.shrug.left = -0.014 + 0.003 * breath;
   pose.shrug.right = 0.004 * breath + 0.004 * sip + 0.003 * think;
   pose.reach.left = 0.006;
