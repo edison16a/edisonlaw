@@ -1,17 +1,22 @@
 /**
- * Content Machine: the landing page's first screen. The install line for Claude Code sits over a
- * long YouTube video turning into a fan of short vertical clips, the way the tool works.
- * Source: https://contentmachine-install.vercel.app
+ * Content Machine: its dashboard with the player open on a finished short. The vertical video plays
+ * beside its caption and its TikTok, Instagram and YouTube slots, over the week calendar.
+ * Source: the player screenshot the landing page shows, https://contentmachine-install.vercel.app
  */
-const SITE = 'https://contentmachine-install.vercel.app';
+import { CARD_HEIGHT, CARD_WIDTH } from '../lib/encode.mjs';
+import { dataUrl, shell } from '../lib/layouts/base.mjs';
 
-export async function capture({ openPage }) {
-  // The page is 16:10 at this size, the shape of a card, so the first screen fills it exactly.
-  const page = await openPage({ width: 1440, height: 900, scale: 2, colorScheme: 'dark' });
-  await page.goto(SITE, { waitUntil: 'networkidle', timeout: 120_000 });
-  await page.getByText('Agentic content automation package').first().waitFor({ timeout: 60_000 });
-  // Every thumbnail and the hero fonts in, and the clips settled after they fan out.
-  await page.evaluate(() => Promise.all([document.fonts.ready, ...[...document.images].map((image) => image.decode().catch(() => {}))]));
-  await page.waitForTimeout(3_000);
-  return { png: await page.screenshot(), quality: 0.92 };
+const PLAYER = 'https://contentmachine-install.vercel.app/_next/static/immutable/media/player.0u9f06duk1e67.webp';
+const SOURCE = { width: 2000, height: 1134 };
+/** The player dialog's middle in the screenshot, so the 16:10 crop keeps it centred. */
+const FOCUS_X = 1000;
+
+export async function capture({ compose, download }) {
+  const src = dataUrl(await download(PLAYER));
+  // Fill the card's height and crop the sides evenly around the player.
+  const k = CARD_HEIGHT / SOURCE.height;
+  const left = CARD_WIDTH / 2 - FOCUS_X * k;
+  const css = `.shot { position: absolute; top: 0; left: ${left}px; width: ${SOURCE.width * k}px; height: ${CARD_HEIGHT}px; }`;
+  const html = shell({ background: '#000000', css, body: `<img class="shot" src="${src}">` });
+  return { png: await compose(html), quality: 0.92 };
 }

@@ -58,7 +58,7 @@ export const projects: Project[] = [
     badges: [],
     stack: ['Claude Code', 'TypeScript', 'Node.js', 'FFmpeg', 'Zod', 'Vitest'],
     description:
-      'Agentic content automation for Claude Code. It turns one long video into short vertical clips for TikTok, Instagram Reels and YouTube Shorts, cut at natural pauses and rendered with FFmpeg. Claude schedules three a day per platform, and a live dashboard plays every clip and tracks views.',
+      'An advanced Claude Code tool that turns one long video into a polished, scheduled content series. Claude studies the full transcript and makes the editorial calls, choosing the moments that will land and writing a title for each one. A local engine edits every short to the same high standard, cutting on natural pauses and rendering at 1080x1920 with FFmpeg. It then schedules three a day across TikTok, Instagram Reels and YouTube Shorts and tracks every post on a live dashboard.',
     links: [
       { label: 'contentmachine-install.vercel.app', href: 'https://contentmachine-install.vercel.app' },
       { label: 'GitHub', href: 'https://github.com/edison16a/Content-Machine' },
