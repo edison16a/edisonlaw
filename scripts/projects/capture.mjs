@@ -32,9 +32,9 @@ import { encodeWebp } from './lib/encode.mjs';
 const PROJECTS = [
   'backbond',
   'standoff',
-  'content-machine',
   'autolab',
   'westpa-dashboard',
+  'content-machine',
   'senseplan',
   'flamesense',
   'callsense',

@@ -33,19 +33,6 @@ export const projects: Project[] = [
     image: '/projects/standoff.webp',
   },
   {
-    id: 'content-machine',
-    name: 'Content Machine',
-    badges: [],
-    stack: ['Claude Code', 'TypeScript', 'Node.js', 'FFmpeg', 'Zod', 'Vitest'],
-    description:
-      'Agentic content automation for your coding agent. Give Claude Code one long video and it does the rest: it pulls the video and its transcript, finds the moments worth posting, cuts and renders vertical clips for TikTok, Instagram Reels and YouTube Shorts, and schedules them three a day per platform. It can even enter the posts in each platform\'s scheduler. A local engine snaps every cut to a pause and renders at 1080x1920 with FFmpeg, and a live dashboard plays each clip and tracks views and income.',
-    links: [
-      { label: 'contentmachine-install.vercel.app', href: 'https://contentmachine-install.vercel.app' },
-      { label: 'GitHub', href: 'https://github.com/edison16a/Content-Machine' },
-    ],
-    image: '/projects/content-machine.webp',
-  },
-  {
     id: 'autolab',
     name: 'AutoLab',
     badges: [],
@@ -64,6 +51,19 @@ export const projects: Project[] = [
       'A command line dashboard for Weighted Ensemble simulations, developed in the NumFOCUS ecosystem. It tracks iteration summaries and reports molecular dynamics data. Built with the MDAnalysis and WESTPA maintainers.',
     links: [{ label: 'WESTPA on GitHub', href: 'https://github.com/westpa/westpa' }],
     image: '/projects/westpa-dashboard.webp',
+  },
+  {
+    id: 'content-machine',
+    name: 'Content Machine',
+    badges: [],
+    stack: ['Claude Code', 'TypeScript', 'Node.js', 'FFmpeg', 'Zod', 'Vitest'],
+    description:
+      'Agentic content automation for Claude Code. It turns one long video into short vertical clips for TikTok, Instagram Reels and YouTube Shorts, cut at natural pauses and rendered with FFmpeg. Claude schedules three a day per platform, and a live dashboard plays every clip and tracks views.',
+    links: [
+      { label: 'contentmachine-install.vercel.app', href: 'https://contentmachine-install.vercel.app' },
+      { label: 'GitHub', href: 'https://github.com/edison16a/Content-Machine' },
+    ],
+    image: '/projects/content-machine.webp',
   },
   {
     id: 'senseplan',
