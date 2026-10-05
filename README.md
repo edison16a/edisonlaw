@@ -1,4 +1,43 @@
-# Edison Law
+<p align="center">
+  <img src="assets/brand/edisonlaw.svg" alt="Edison Law logo" width="72">
+</p>
+
+<h1 align="center">Edison Law</h1>
+
+<p align="center">
+  Edison Law's personal website, with a 3D spiral of projects and a desk scene that follows his work.
+  <br>
+  <a href="https://edisonlaw.vercel.app">edisonlaw.vercel.app</a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/license-all%20rights%20reserved-111111" alt="License: all rights reserved">
+  <img src="https://img.shields.io/badge/node-20.9%2B-111111" alt="Node 20.9 or newer">
+  <img src="https://img.shields.io/badge/platform-desktop%20%7C%20mobile%20web-111111" alt="Desktop and mobile web">
+</p>
+
+## Screenshots
+
+<p align="center">
+  <img src="docs/screenshots/projects-spiral.png" alt="The project spiral as the page opens" width="100%">
+</p>
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/projects-focus.png" alt="Another project up close with its details"></td>
+    <td width="50%"><img src="docs/screenshots/work-experience.png" alt="Work Experience with Edison typing at his desk"></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/about-me.png" alt="About Me with Edison petting his dog by the desk"></td>
+    <td width="50%"><img src="docs/screenshots/skills.png" alt="The skills grid"></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/phone-projects.png" alt="The project strip on a phone"></td>
+    <td width="50%"><img src="docs/screenshots/phone-work.png" alt="The desk scene still on a phone"></td>
+  </tr>
+</table>
+
+## What it is
 
 This is Edison Law's personal website. Edison studies Bioengineering at UC Berkeley, is working toward a second major in EECS, and works as a software engineer. The site is one dark page with three parts:
 
@@ -7,23 +46,6 @@ This is Edison Law's personal website. Edison studies Bioengineering at UC Berke
 - **About Me.** The same room with Edison standing by the desk with a coffee, petting his golden retriever as it sits beside him, next to his intro, contact links, education, skills, honors and activities.
 
 The page is black and white in one typeface, Satoshi. Colour only shows up inside the 3D scenes, in the project photos and in the skill logos. Once you turn sound on, a calm lo fi track plays softly under the whole page, and a few soft sounds made from scratch answer the projects turning, the timeline, the navbar and copying the email.
-
-## Screenshots
-
-![The project spiral as the page opens](docs/screenshots/projects-spiral.png)
-
-![Another project up close with its details](docs/screenshots/projects-focus.png)
-
-
-![Work Experience with Edison typing at his desk](docs/screenshots/work-experience.png)
-
-![About Me with Edison petting his dog by the desk](docs/screenshots/about-me.png)
-
-![The skills grid](docs/screenshots/skills.png)
-
-| Projects on a phone | Work Experience on a phone |
-| --- | --- |
-| ![Project strip on a phone](docs/screenshots/phone-projects.png) | ![Desk scene still on a phone](docs/screenshots/phone-work.png) |
 
 ## How it works
 
