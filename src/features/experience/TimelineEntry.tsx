@@ -10,11 +10,8 @@ interface TimelineEntryProps {
   entry: Experience;
   /** The entry the reader is on right now. */
   current: boolean;
-  /** The rail has reached this entry, so its dot is filled. */
-  reached: boolean;
 }
 
-/** One job on the timeline: dates, role, company and a few bullet points. */
 /** Short points with small round markers, indented so wrapped lines line up with the text. */
 function BulletList({ points, className }: { points: string[]; className?: string }) {
   return (
@@ -26,7 +23,8 @@ function BulletList({ points, className }: { points: string[]; className?: strin
   );
 }
 
-export function TimelineEntry({ entry, current, reached }: TimelineEntryProps) {
+/** One job on the timeline: dates, role, company and a few bullet points. */
+export function TimelineEntry({ entry, current }: TimelineEntryProps) {
   return (
     <motion.li
       data-entry
@@ -34,16 +32,7 @@ export function TimelineEntry({ entry, current, reached }: TimelineEntryProps) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '0px 0px -12% 0px' }}
       transition={{ duration: 0.9, ease: EASE_OUT_EXPO }}
-      className="relative pl-10 sm:pl-12"
     >
-      <span
-        aria-hidden="true"
-        className={cn(
-          'absolute top-1 left-0 size-[15px] rounded-full border transition-[background-color,border-color,box-shadow] duration-500',
-          reached ? 'border-white bg-white' : 'border-grey-600 bg-black',
-          current && 'shadow-[0_0_0_6px_rgba(255,255,255,0.08)]',
-        )}
-      />
       <div
         className={cn(
           'flex flex-col gap-3 transition-opacity duration-700 ease-out-expo',

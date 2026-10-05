@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { sound } from '@/features/sound';
 
-/** Soft tick each time the reading line reaches a new timeline dot. */
+/** Soft tick each time the reader moves on to the next job. */
 export function useDotSound(active: number) {
   const previous = useRef(active);
 

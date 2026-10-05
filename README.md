@@ -59,7 +59,7 @@ Every sound is synthesised in Node by `scripts/sounds` from oscillators, seeded 
 
 - **Music.** A calm lo fi track plays softly under the whole page: electric piano chords, a soft string pad, a round bass, brushes and a shaker at 76 bpm, centred on F, with a melody in the third of its four sections. It is 101 seconds long and loops without a seam. It lives in its own 1.2 MB file that only loads once sound is on. It swells in over 2 seconds, fades out when you turn sound off, and pauses while the tab is hidden. It sits well under the effects.
 - **Projects.** The spiral and the phone strip play one soft tap for every project they move to, whether you scroll, hold an arrow key or click a card further along. Quick runs play a little softer and never drop a tap.
-- **Work Experience.** A soft dot plays each time the timeline reaches another job.
+- **Work Experience.** A soft tick plays each time you scroll on to another job.
 - **About Me.** A short confirm plays when you copy the email. Nothing else there makes a sound.
 - **Navbar.** A soft click as the underline moves to another tab, a faint tick on hovering a tab, and a click on the sound switch itself.
 
