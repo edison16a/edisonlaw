@@ -21,8 +21,9 @@ export function ExperienceTimeline({ header }: { header: ReactNode }) {
   return (
     <>
       <div className="gutter pt-16 pb-24 lg:pt-[calc(var(--spacing-nav)+4rem)] lg:pb-[40vh]">
-        {/* On very wide screens the column keeps a readable width and leans toward the middle of the page. */}
-        <div className="lg:ml-auto lg:max-w-3xl">
+        {/* On very wide screens the column keeps a readable width and leans toward the middle of the page.
+            It sits a little in from the left edge, so the text never hugs the window. */}
+        <div className="sm:pl-6 lg:ml-auto lg:max-w-3xl lg:pl-16">
           {header}
           <Timeline listRef={listRef} active={active} />
         </div>
