@@ -33,6 +33,19 @@ export const projects: Project[] = [
     image: '/projects/standoff.webp',
   },
   {
+    id: 'content-machine',
+    name: 'Content Machine',
+    badges: [],
+    stack: ['Claude Code', 'TypeScript', 'Node.js', 'FFmpeg', 'Zod', 'Vitest'],
+    description:
+      'An open source package that lets Claude Code turn one long video into a scheduled stream of short vertical clips for TikTok, Instagram Reels and YouTube Shorts. Claude reads the transcript and picks the cuts, and a local engine snaps each cut to a pause, renders it at 1080x1920 with FFmpeg and gives it a fixed slot, three a day per platform. A live dashboard plays every clip and tracks views and income.',
+    links: [
+      { label: 'contentmachine-install.vercel.app', href: 'https://contentmachine-install.vercel.app' },
+      { label: 'GitHub', href: 'https://github.com/edison16a/Content-Machine' },
+    ],
+    image: '/projects/content-machine.webp',
+  },
+  {
     id: 'autolab',
     name: 'AutoLab',
     badges: [],
