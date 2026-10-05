@@ -58,7 +58,7 @@ export const projects: Project[] = [
     badges: [],
     stack: ['Claude Code', 'TypeScript', 'Node.js', 'FFmpeg', 'Zod', 'Vitest'],
     description:
-      'An agentic content automation package that lets Claude turn one long video into a polished content series. Using the package, Claude edits and polishes the video into a high quality format. Claude then uses the agentic skill to schedule the videos for you across platforms.',
+      'An agentic content automation package that lets Claude turn one long video into a polished content series. Claude runs a fully agentic editing pipeline: it reads the transcript, makes the creative calls on what to cut, and autonomously edits, frames and renders every video into a studio quality short. Claude then uses the agentic skill to schedule the videos for you across platforms.',
     links: [
       { label: 'contentmachine-install.vercel.app', href: 'https://contentmachine-install.vercel.app' },
       { label: 'GitHub', href: 'https://github.com/edison16a/Content-Machine' },
