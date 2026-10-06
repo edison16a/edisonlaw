@@ -55,7 +55,7 @@ export function ProjectDetails({ project, index, total, className }: ProjectDeta
               <BadgeList items={badges} />
             </motion.div>
           )}
-          <motion.p variants={item} className="max-w-md text-[15px] leading-relaxed text-grey-300">
+          <motion.p variants={item} className="max-w-md text-[15px] leading-relaxed text-white">
             {project.description}
           </motion.p>
         </div>
