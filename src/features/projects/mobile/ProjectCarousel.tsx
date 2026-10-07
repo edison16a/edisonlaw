@@ -1,7 +1,7 @@
 'use client';
 
 import { getImageProps } from 'next/image';
-import { useCallback, useRef, useState, type KeyboardEvent } from 'react';
+import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { preload } from 'react-dom';
 import { AnimatePresence } from 'motion/react';
 import type { Project } from '@/content/types';
@@ -11,6 +11,7 @@ import { ProjectDetails } from '../components/ProjectDetails';
 import { ProjectImage } from '../components/ProjectImage';
 import { ProjectStatus } from '../components/ProjectStatus';
 import { featuredIndex } from '../featured';
+import { registerCarousel } from '../state/projectRequest';
 import { hasGallery, projectPictures } from '../gallery/pictures';
 import { NO_SELECTION, selectPicture, shownPicture } from '../gallery/selection';
 import { CAROUSEL_QUERY } from '../hooks/useSpiralFits';
@@ -70,6 +71,8 @@ export function ProjectCarousel({ projects, className }: ProjectCarouselProps) {
     },
     [projects.length, reducedMotion],
   );
+
+  useEffect(() => registerCarousel(moveTo), [moveTo]);
 
   const onKeyDown = (event: KeyboardEvent<HTMLOListElement>) => {
     const targets: Record<string, number> = { ArrowLeft: active - 1, ArrowRight: active + 1, Home: 0, End: projects.length - 1 };
