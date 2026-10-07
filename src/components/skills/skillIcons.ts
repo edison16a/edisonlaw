@@ -11,6 +11,7 @@ import {
   siFlutter,
   siGit,
   siGooglecalendar,
+  siHuggingface,
   siJavascript,
   siKonva,
   siLeaflet,
@@ -25,6 +26,8 @@ import {
   siVitest,
   siZod,
   siOpenstreetmap,
+  siProsemirror,
+  siPwa,
   siOnnx,
   siPalantir,
   siPandas,
@@ -36,6 +39,7 @@ import {
   siRedis,
   siStripe,
   siSupabase,
+  siSharp,
   siSvg,
   siSwift,
   siTailwindcss,
@@ -43,6 +47,7 @@ import {
   siTypescript,
   siUnity,
   siVercel,
+  siWebassembly,
   type SimpleIcon,
 } from 'simple-icons';
 import type { IconProps } from '@/components/icons/IconBase';
@@ -166,6 +171,15 @@ const ICONS: Record<string, SkillIcon> = {
   'Model Context Protocol': brand(siModelcontextprotocol),
   'Web Speech API': glyph(MicGlyph, 'FB7185'),
   AVFoundation: brand(siApple),
+  IndexedDB: glyph(DatabaseGlyph, '38BDF8'),
+  'Web Workers': glyph(BracesGlyph, 'A3A3A3'),
+  Sharp: brand(siSharp),
+  PWA: brand(siPwa),
+  WebAssembly: brand(siWebassembly),
+  'Transformers.js': brand(siHuggingface),
+  Whisper: logo('openai'),
+  Kokoro: glyph(MicGlyph, 'F472B6'),
+  ProseMirror: brand(siProsemirror),
 };
 
 export function getSkillIcon(name: string): SkillIcon | undefined {

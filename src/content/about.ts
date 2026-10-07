@@ -56,13 +56,16 @@ export const skills: SkillGroup[] = [
       'Extensions API',
       'Web Speech API',
       'Zod',
+      'ProseMirror',
+      'PWA',
+      'Web Workers',
     ],
   },
   {
     category: 'Mobile & Native',
     items: ['SwiftUI', 'Vision', 'AVFoundation', 'Unity', 'Niantic Lightship'],
   },
-  { category: 'Databases', items: ['PostgreSQL', 'Supabase', 'Cloud SQL', 'Redis'] },
+  { category: 'Databases', items: ['PostgreSQL', 'Supabase', 'Cloud SQL', 'Redis', 'IndexedDB'] },
   {
     category: 'AI & Data',
     items: [
@@ -81,11 +84,14 @@ export const skills: SkillGroup[] = [
       'Palantir AIP',
       'Vapi',
       'Bright Data',
+      'Transformers.js',
+      'Whisper',
+      'Kokoro',
     ],
   },
   {
     category: 'Graphics & Real-time',
-    items: ['Three.js', 'React Three Fiber', 'Web Audio API', 'Canvas 2D rendering', 'SVG', 'Konva', 'FFmpeg'],
+    items: ['Three.js', 'React Three Fiber', 'Web Audio API', 'Canvas 2D rendering', 'SVG', 'Konva', 'FFmpeg', 'WebAssembly', 'Sharp'],
   },
   { category: 'Maps', items: ['Leaflet', 'OpenStreetMap'] },
   {

@@ -110,6 +110,32 @@ export const projects: Project[] = [
     image: '/projects/trashgo.webp',
   },
   {
+    id: 'notable',
+    name: 'Notable',
+    badges: [],
+    stack: ['Next.js', 'TypeScript', 'ProseMirror', 'Transformers.js', 'Whisper', 'Kokoro', 'IndexedDB', 'Web Workers'],
+    description:
+      'A free docs app with dictation, audio transcription and read aloud that all run on your device. Notes and checklists live in one editor with nested tabs, built on Tiptap and ProseMirror. Whisper types what you say and Kokoro reads any doc back with a sentence highlight, both running in the browser, and docs save offline.',
+    links: [
+      { label: 'freenotable.vercel.app', href: 'https://freenotable.vercel.app' },
+      { label: 'GitHub', href: 'https://github.com/edison16a/notable' },
+    ],
+    image: '/projects/notable.webp',
+  },
+  {
+    id: 'convert',
+    name: 'Convert',
+    badges: [],
+    stack: ['Next.js', 'TypeScript', 'Tailwind CSS', 'WebAssembly', 'FFmpeg', 'Web Workers', 'PWA', 'Vitest'],
+    description:
+      'A free file converter that runs entirely in your browser, so nothing is ever uploaded. Drop in images, audio, video, documents, PDFs and spreadsheets, pick a format and download the results one by one or as a zip. Conversions run in parallel in Web Workers with WebAssembly codecs and FFmpeg, and the app works offline once installed.',
+    links: [
+      { label: 'freeconvert.vercel.app', href: 'https://freeconvert.vercel.app' },
+      { label: 'GitHub', href: 'https://github.com/edison16a/convert' },
+    ],
+    image: '/projects/convert.webp',
+  },
+  {
     id: 'safeeats',
     name: 'SafeEats',
     badges: [],
@@ -134,6 +160,19 @@ export const projects: Project[] = [
       { label: 'GitHub', href: 'https://github.com/edison16a/photo-craft' },
     ],
     image: '/projects/photo-craft.webp',
+  },
+  {
+    id: 'openqr',
+    name: 'OpenQR',
+    badges: [],
+    stack: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'SVG', 'Sharp', 'IndexedDB', 'Vitest'],
+    description:
+      'A free QR code generator with your own image in the middle. Paste a link and the code appears with the site\'s favicon in the center, or upload a logo. Codes are static, so they never expire, and past codes are saved privately in your browser. The code is drawn as SVG, and a locked down server route fetches favicons safely.',
+    links: [
+      { label: 'openqrgen.vercel.app', href: 'https://openqrgen.vercel.app' },
+      { label: 'GitHub', href: 'https://github.com/edison16a/openqr' },
+    ],
+    image: '/projects/openqr.webp',
   },
   {
     id: 'text-image-replacer',
