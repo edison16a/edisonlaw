@@ -20,6 +20,19 @@ export const projects: Project[] = [
     image: '/projects/backbond.webp',
   },
   {
+    id: 'sandboxlab-ml',
+    name: 'SandboxLabML',
+    badges: [],
+    stack: ['Next.js', 'TypeScript', 'React Three Fiber', 'Rapier', 'Neuroevolution', 'Web Workers', 'CodeMirror', 'IndexedDB'],
+    description:
+      "A browser app for creating and training your own models. Pick racing or hide and seek in 3D, set the rewards, sensors and brain shape, then press Train to evolve a population of neural networks with NEAT inside real physics. Training runs on your own machine in Web Workers, and you can open any brain to watch its neurons fire as it decides. When it's done, download the trained model to run anywhere.",
+    links: [
+      { label: 'sandboxlabs.vercel.app', href: 'https://sandboxlabs.vercel.app' },
+      { label: 'GitHub', href: 'https://github.com/edison16a/SandboxLabML' },
+    ],
+    image: '/projects/sandboxlab-ml.webp',
+  },
+  {
     id: 'standoff',
     name: 'Standoff',
     badges: [],
@@ -64,19 +77,6 @@ export const projects: Project[] = [
       { label: 'GitHub', href: 'https://github.com/edison16a/Content-Machine' },
     ],
     image: '/projects/content-machine.webp',
-  },
-  {
-    id: 'sandboxlab-ml',
-    name: 'SandboxLabML',
-    badges: [],
-    stack: ['Next.js', 'TypeScript', 'React Three Fiber', 'Rapier', 'Neuroevolution', 'Web Workers', 'CodeMirror', 'IndexedDB'],
-    description:
-      "A browser app for creating and training your own models. Pick racing or hide and seek in 3D, set the rewards, sensors and brain shape, then press Train to evolve a population of neural networks with NEAT inside real physics. Training runs on your own machine in Web Workers, and you can open any brain to watch its neurons fire as it decides. When it's done, download the trained model to run anywhere.",
-    links: [
-      { label: 'sandboxlabs.vercel.app', href: 'https://sandboxlabs.vercel.app' },
-      { label: 'GitHub', href: 'https://github.com/edison16a/SandboxLabML' },
-    ],
-    image: '/projects/sandboxlab-ml.webp',
   },
   {
     id: 'senseplan',

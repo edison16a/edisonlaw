@@ -31,11 +31,11 @@ import { encodeWebp } from './lib/encode.mjs';
 /** Same order as src/content/projects.ts. */
 const PROJECTS = [
   'backbond',
+  'sandboxlab-ml',
   'standoff',
   'autolab',
   'westpa-dashboard',
   'content-machine',
-  'sandboxlab-ml',
   'senseplan',
   'flamesense',
   'callsense',
