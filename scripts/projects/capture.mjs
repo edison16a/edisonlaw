@@ -35,6 +35,7 @@ const PROJECTS = [
   'autolab',
   'westpa-dashboard',
   'content-machine',
+  'sandboxlab-ml',
   'senseplan',
   'flamesense',
   'callsense',
