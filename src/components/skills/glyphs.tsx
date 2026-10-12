@@ -65,3 +65,18 @@ export function MicGlyph(props: IconProps) {
     </IconBase>
   );
 }
+
+/** A tiny neural network, three inputs wired through one hidden neuron to two outputs, for neuroevolution. */
+export function NetworkGlyph(props: IconProps) {
+  return (
+    <IconBase {...props}>
+      <path d="M6 5.5l4.4 5.4M6 12h4M6 18.5l4.4-5.4M13.6 11l4.5-3.6M13.6 13l4.5 3.6M6 5.5l12 2M6 18.5l12-2" />
+      <circle cx="4.5" cy="5.5" r="1.5" />
+      <circle cx="4.5" cy="12" r="1.5" />
+      <circle cx="4.5" cy="18.5" r="1.5" />
+      <circle cx="12" cy="12" r="1.6" />
+      <circle cx="19.5" cy="7.5" r="1.5" />
+      <circle cx="19.5" cy="16.5" r="1.5" />
+    </IconBase>
+  );
+}

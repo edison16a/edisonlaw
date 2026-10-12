@@ -3,6 +3,7 @@ import {
   siApple,
   siC,
   siClaude,
+  siCodemirror,
   siCplusplus,
   siDocker,
   siFfmpeg,
@@ -34,6 +35,7 @@ import {
   siPostgresql,
   siPython,
   siPytorch,
+  siRadixui,
   siRaspberrypi,
   siReact,
   siRedis,
@@ -52,7 +54,16 @@ import {
 } from 'simple-icons';
 import type { IconProps } from '@/components/icons/IconBase';
 import { visibleOnBlack } from '@/lib/color';
-import { BracesGlyph, BrushGlyph, DatabaseGlyph, EyeGlyph, MapPinGlyph, MicGlyph, WaveformGlyph } from './glyphs';
+import {
+  BracesGlyph,
+  BrushGlyph,
+  DatabaseGlyph,
+  EyeGlyph,
+  MapPinGlyph,
+  MicGlyph,
+  NetworkGlyph,
+  WaveformGlyph,
+} from './glyphs';
 
 /**
  * How a skill's mark is drawn.
@@ -67,7 +78,9 @@ import { BracesGlyph, BrushGlyph, DatabaseGlyph, EyeGlyph, MapPinGlyph, MicGlyph
  *   MDAnalysis is traced from the project's own logo, with its black half drawn light for the dark UI.
  *   The gilbarbara logos set (CC0) for the WebSocket logo, drawn white like other black marks.
  *   Poimandres' own mark, from github.com/pmndrs/branding (MIT), for React Three Fiber, which it
- *   makes. Its white blocks are kept and the black square behind them is dropped.
+ *   makes. Its white blocks are kept and the black square behind them is dropped. Zustand, also
+ *   made by Poimandres, shares it. Playwright's own logo comes from playwright.dev, and Rapier's
+ *   from rapier.rs, with its dark teal ring lifted so it reads on black.
  * letter: a single display letter, for WESTPA.
  * glyph: a line icon for concepts that have no logo at all, like SQL, REST, Web Audio, Web Speech
  *   and Canvas 2D.
@@ -180,6 +193,13 @@ const ICONS: Record<string, SkillIcon> = {
   Whisper: logo('openai'),
   Kokoro: glyph(MicGlyph, 'F472B6'),
   ProseMirror: brand(siProsemirror),
+  Rapier: logo('rapier.png'),
+  Neuroevolution: glyph(NetworkGlyph, 'F59E0B'),
+  CodeMirror: brand(siCodemirror),
+  Zustand: logo('pmndrs'),
+  'Radix UI': brand(siRadixui),
+  Dexie: glyph(DatabaseGlyph, 'A78BFA'),
+  Playwright: logo('playwright'),
 };
 
 export function getSkillIcon(name: string): SkillIcon | undefined {
