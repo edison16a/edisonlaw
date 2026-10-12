@@ -66,6 +66,19 @@ export const projects: Project[] = [
     image: '/projects/content-machine.webp',
   },
   {
+    id: 'sandboxlab-ml',
+    name: 'SandboxLabML',
+    badges: [],
+    stack: ['Next.js', 'TypeScript', 'React Three Fiber', 'Rapier', 'Neuroevolution', 'Web Workers', 'CodeMirror', 'IndexedDB'],
+    description:
+      'A live machine learning lab in the browser. Press Train and a population of neural networks learns to race cars or play hide and seek in 3D, and you can open any brain to watch its neurons fire as it decides. Brains evolve with NEAT inside real physics, all on your own machine in Web Workers. You shape the rewards, sensors and training script, then download the trained model.',
+    links: [
+      { label: 'sandboxlabs.vercel.app', href: 'https://sandboxlabs.vercel.app' },
+      { label: 'GitHub', href: 'https://github.com/edison16a/SandboxLabML' },
+    ],
+    image: '/projects/sandboxlab-ml.webp',
+  },
+  {
     id: 'senseplan',
     name: 'SensePlan',
     badges: [],
