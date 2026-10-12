@@ -31,6 +31,10 @@ const FROM_WORK: Record<string, SkillOrigin> = {
   'Canvas 2D rendering': { kind: 'project', id: 'photo-craft' },
   'VS Code': { kind: 'project', id: 'content-machine' },
   Codex: { kind: 'project', id: 'content-machine' },
+  Zustand: { kind: 'project', id: 'sandboxlab-ml' },
+  'Radix UI': { kind: 'project', id: 'sandboxlab-ml' },
+  Dexie: { kind: 'project', id: 'sandboxlab-ml' },
+  Playwright: { kind: 'project', id: 'sandboxlab-ml' },
 };
 
 /** Skills too short to find by name in a job's text. */

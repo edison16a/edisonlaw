@@ -59,13 +59,16 @@ export const skills: SkillGroup[] = [
       'ProseMirror',
       'PWA',
       'Web Workers',
+      'Zustand',
+      'Radix UI',
+      'CodeMirror',
     ],
   },
   {
     category: 'Mobile & Native',
     items: ['SwiftUI', 'Vision', 'AVFoundation', 'Unity', 'Niantic Lightship'],
   },
-  { category: 'Databases', items: ['PostgreSQL', 'Supabase', 'Cloud SQL', 'Redis', 'IndexedDB'] },
+  { category: 'Databases', items: ['PostgreSQL', 'Supabase', 'Cloud SQL', 'Redis', 'IndexedDB', 'Dexie'] },
   {
     category: 'AI & Data',
     items: [
@@ -87,18 +90,30 @@ export const skills: SkillGroup[] = [
       'Transformers.js',
       'Whisper',
       'Kokoro',
+      'Neuroevolution',
     ],
   },
   {
     category: 'Graphics & Real-time',
-    items: ['Three.js', 'React Three Fiber', 'Web Audio API', 'Canvas 2D rendering', 'SVG', 'Konva', 'FFmpeg', 'WebAssembly', 'Sharp'],
+    items: [
+      'Three.js',
+      'React Three Fiber',
+      'Web Audio API',
+      'Canvas 2D rendering',
+      'SVG',
+      'Konva',
+      'FFmpeg',
+      'WebAssembly',
+      'Sharp',
+      'Rapier',
+    ],
   },
   { category: 'Maps', items: ['Leaflet', 'OpenStreetMap'] },
   {
     category: 'Cloud & Infrastructure',
     items: ['Google Cloud Platform', 'Cloud Run', 'AWS', 'Docker', 'Vercel', 'Stripe', 'OAuth', 'Linux'],
   },
-  { category: 'Dev Tools', items: ['Git', 'VS Code', 'Claude Code', 'Codex', 'Vitest'] },
+  { category: 'Dev Tools', items: ['Git', 'VS Code', 'Claude Code', 'Codex', 'Vitest', 'Playwright'] },
   { category: 'Scientific', items: ['MDAnalysis', 'WESTPA', 'Raspberry Pi'] },
 ];
 
