@@ -4,6 +4,7 @@ import type { Experience } from './types';
 export const experience: Experience[] = [
   {
     id: 'optagon',
+    logo: '/companies/optagon.webp',
     role: 'Software Engineering Lead',
     company: 'Optagon Labs',
     context: 'Berkeley SkyDeck Batch 22',
@@ -19,6 +20,7 @@ export const experience: Experience[] = [
   },
   {
     id: 'enhanced-ultrasound',
+    logo: '/companies/enhanced-ultrasound.webp',
     role: 'Machine Learning Engineer Intern',
     company: 'Enhanced Ultrasound',
     context: 'Berkeley SkyDeck Incubator',
@@ -32,6 +34,7 @@ export const experience: Experience[] = [
   },
   {
     id: 'westpa',
+    logo: '/companies/westpa.webp',
     role: 'Open Source Contributor',
     company: 'MDAnalysis & WESTPA',
     context: 'NumFOCUS',
@@ -45,6 +48,7 @@ export const experience: Experience[] = [
   },
   {
     id: 'ucla',
+    logo: '/companies/ucla.webp',
     role: 'Researcher',
     company: 'UCLA Applications of Nanoscience',
     start: { year: 2025, month: 7 },
@@ -57,6 +61,7 @@ export const experience: Experience[] = [
   },
   {
     id: 'tanius',
+    logo: '/companies/tanius.webp',
     role: 'Software Engineer Intern',
     company: 'Tanius Technology LLC',
     start: { year: 2024, month: 6 },
@@ -70,6 +75,7 @@ export const experience: Experience[] = [
   },
   {
     id: 'cisco',
+    logo: '/companies/cisco.webp',
     role: 'Apprentice',
     company: 'Cisco Career Exploration Program',
     start: { year: 2024, month: 6 },
@@ -83,6 +89,7 @@ export const experience: Experience[] = [
   },
   {
     id: 'stanford',
+    logo: '/companies/stanford.webp',
     role: 'Research Shadow',
     company: 'Stanford IFSS',
     start: { year: 2024, month: 6 },
@@ -95,6 +102,7 @@ export const experience: Experience[] = [
   },
   {
     id: 'app-developer',
+    logo: '/companies/app-developer.webp',
     role: 'App Developer',
     company: 'Independent',
     context: 'Chrome Web Store and App Store',

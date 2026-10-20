@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { motion } from 'motion/react';
 import type { Experience } from '@/content/types';
 import { DateRange } from '@/components/ui/DateRange';
@@ -41,12 +42,21 @@ export function TimelineEntry({ entry, current }: TimelineEntryProps) {
         )}
       >
         <DateRange entry={entry} />
-        <div className="flex flex-col gap-1">
-          <h3 className="text-2xl leading-tight font-bold sm:text-[1.7rem]">{entry.role}</h3>
-          <p className="text-grey-200">
-            {entry.company}
-            {entry.context && <>, {entry.context}</>}
-          </p>
+        <div className="flex items-center gap-4">
+          <Image
+            src={entry.logo}
+            alt=""
+            width={128}
+            height={128}
+            className="size-14 shrink-0 rounded-xl object-cover sm:size-16"
+          />
+          <div className="flex flex-col gap-1">
+            <h3 className="text-2xl leading-tight font-bold sm:text-[1.7rem]">{entry.role}</h3>
+            <p className="text-grey-200">
+              {entry.company}
+              {entry.context && <>, {entry.context}</>}
+            </p>
+          </div>
         </div>
         <BulletList points={entry.points} className="text-grey-200" />
       </div>

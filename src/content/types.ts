@@ -59,6 +59,8 @@ export type ExperienceScreen =
 
 export interface Experience {
   id: string;
+  /** Square picture of the company in /public/companies, shown as a rounded tile beside the role. */
+  logo: string;
   role: string;
   company: string;
   /** Short context line such as the accelerator batch. */
