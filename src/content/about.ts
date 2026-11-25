@@ -59,6 +59,7 @@ export const skills: SkillGroup[] = [
       'ProseMirror',
       'PWA',
       'Web Workers',
+      'Preact',
       'Zustand',
       'Radix UI',
       'CodeMirror',
@@ -68,7 +69,7 @@ export const skills: SkillGroup[] = [
     category: 'Mobile & Native',
     items: ['SwiftUI', 'Vision', 'AVFoundation', 'Unity', 'Niantic Lightship'],
   },
-  { category: 'Databases', items: ['PostgreSQL', 'Supabase', 'Cloud SQL', 'Redis', 'IndexedDB', 'Dexie'] },
+  { category: 'Databases', items: ['PostgreSQL', 'Supabase', 'Cloud SQL', 'Redis', 'IndexedDB', 'Dexie', 'SQLite'] },
   {
     category: 'AI & Data',
     items: [
@@ -105,7 +106,6 @@ export const skills: SkillGroup[] = [
       'FFmpeg',
       'WebAssembly',
       'Sharp',
-      'Rapier',
     ],
   },
   { category: 'Maps', items: ['Leaflet', 'OpenStreetMap'] },

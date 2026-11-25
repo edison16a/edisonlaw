@@ -32,6 +32,7 @@ import { encodeWebp } from './lib/encode.mjs';
 const PROJECTS = [
   'backbond',
   'sandboxlab-ml',
+  'coere',
   'standoff',
   'autolab',
   'westpa-dashboard',

@@ -16,21 +16,31 @@ export const projects: Project[] = [
     stack: ['Next.js', 'Vercel', 'Google Cloud Run', 'Cloud SQL', 'OAuth', 'Stripe', 'AWS', 'Amazon Bedrock'],
     description:
       'Computational design platform for R&D, developed at Optagon Labs. Built the core infrastructure, security and databases, plus billing, usage metering, organizations and project ingestion.',
-    links: [{ label: 'backbond.net', href: 'https://backbond.net' }],
+    links: [{ label: 'optagonlabs.com', href: 'https://optagonlabs.com' }],
     image: '/projects/backbond.webp',
   },
   {
     id: 'sandboxlab-ml',
     name: 'SandboxLabML',
     badges: [],
-    stack: ['Next.js', 'TypeScript', 'React Three Fiber', 'Rapier', 'Neuroevolution', 'Web Workers', 'CodeMirror', 'IndexedDB'],
+    stack: ['Next.js', 'TypeScript', 'React Three Fiber', 'Three.js', 'Neuroevolution', 'Web Workers', 'CodeMirror', 'IndexedDB'],
     description:
-      "A browser app for creating and training your own models. Pick racing or hide and seek in 3D, set the rewards, sensors and brain shape, then press Train to evolve a population of neural networks with NEAT inside real physics. Training runs on your own machine in Web Workers, and you can open any brain to watch its neurons fire as it decides. When it's done, download the trained model to run anywhere.",
+      'A live machine learning lab in your browser. Press Train and a hundred neural networks learn to drive an SUV through a city of traffic lights, people and other cars, or to run a course past crates, spikes and sliding walls. Training uses NEAT neuroevolution on your own machine in Web Workers, you can open any brain to watch its neurons fire, and a small script language lets you write the training loop yourself.',
     links: [
       { label: 'sandboxlabs.vercel.app', href: 'https://sandboxlabs.vercel.app' },
       { label: 'GitHub', href: 'https://github.com/edison16a/SandboxLabML' },
     ],
     image: '/projects/sandboxlab-ml.webp',
+  },
+  {
+    id: 'coere',
+    name: 'Coere',
+    badges: [],
+    stack: ['Next.js', 'TypeScript', 'Supabase', 'Extensions API', 'Preact', 'SQLite', 'ONNX Runtime Web', 'Model Context Protocol'],
+    description:
+      'Portable AI memory you own. A Chrome extension saves your chats from ChatGPT, Claude, Gemini and six more AIs, finds the right one while you type, and moves any chat to another AI. Search and memory run on your own machine with SQLite and ONNX Runtime in the browser, and the site, dashboard and accounts run on Next.js and Supabase.',
+    links: [{ label: 'coere.ai', href: 'https://www.coere.ai' }],
+    image: '/projects/coere.webp',
   },
   {
     id: 'standoff',

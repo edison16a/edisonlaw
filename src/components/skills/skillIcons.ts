@@ -28,6 +28,8 @@ import {
   siZod,
   siOpenstreetmap,
   siProsemirror,
+  siPreact,
+  siSqlite,
   siPwa,
   siOnnx,
   siPalantir,
@@ -79,8 +81,7 @@ import {
  *   The gilbarbara logos set (CC0) for the WebSocket logo, drawn white like other black marks.
  *   Poimandres' own mark, from github.com/pmndrs/branding (MIT), for React Three Fiber, which it
  *   makes. Its white blocks are kept and the black square behind them is dropped. Zustand, also
- *   made by Poimandres, shares it. Playwright's own logo comes from playwright.dev, and Rapier's
- *   from rapier.rs, with its dark teal ring lifted so it reads on black.
+ *   made by Poimandres, shares it. Playwright's own logo comes from playwright.dev.
  * letter: a single display letter, for WESTPA.
  * glyph: a line icon for concepts that have no logo at all, like SQL, REST, Web Audio, Web Speech
  *   and Canvas 2D.
@@ -193,7 +194,8 @@ const ICONS: Record<string, SkillIcon> = {
   Whisper: logo('openai'),
   Kokoro: glyph(MicGlyph, 'F472B6'),
   ProseMirror: brand(siProsemirror),
-  Rapier: logo('rapier.png'),
+  Preact: brand(siPreact),
+  SQLite: brand(siSqlite),
   Neuroevolution: glyph(NetworkGlyph, 'F59E0B'),
   CodeMirror: brand(siCodemirror),
   Zustand: logo('pmndrs'),
