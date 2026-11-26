@@ -20,6 +20,16 @@ export const projects: Project[] = [
     image: '/projects/backbond.webp',
   },
   {
+    id: 'bloom',
+    name: 'Bloom',
+    badges: [],
+    stack: ['Next.js', 'TypeScript', 'Python', 'WebGL', 'GLSL', 'SVG', 'Claude Code', 'Model Context Protocol'],
+    description:
+      'Three AI agents that make the art for your site, your launch film and your logo. Dot Art draws animated WebGL2 art from hexagons, LED pixels, dither or letters, Launch Video cuts a film from a link and real music, and Brand Creator builds a logo and brand kit from research on 8,332 real tech logos. Each one is a skill for Claude Code and Codex, and the site shows them off with real work.',
+    links: [{ label: 'GitHub', href: 'https://github.com/edison16a/bloom' }],
+    image: '/projects/bloom.webp',
+  },
+  {
     id: 'sandboxlab-ml',
     name: 'SandboxLabML',
     badges: [],

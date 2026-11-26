@@ -106,6 +106,8 @@ export const skills: SkillGroup[] = [
       'FFmpeg',
       'WebAssembly',
       'Sharp',
+      'WebGL',
+      'GLSL',
     ],
   },
   { category: 'Maps', items: ['Leaflet', 'OpenStreetMap'] },
