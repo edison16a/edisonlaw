@@ -31,9 +31,9 @@ import { encodeWebp } from './lib/encode.mjs';
 /** Same order as src/content/projects.ts. */
 const PROJECTS = [
   'backbond',
+  'coere',
   'bloom',
   'sandboxlab-ml',
-  'coere',
   'standoff',
   'autolab',
   'westpa-dashboard',

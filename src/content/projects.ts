@@ -15,9 +15,19 @@ export const projects: Project[] = [
     badges: [],
     stack: ['Next.js', 'Vercel', 'Google Cloud Run', 'Cloud SQL', 'OAuth', 'Stripe', 'AWS', 'Amazon Bedrock'],
     description:
-      'Computational design platform for R&D, developed at Optagon Labs. Built the core infrastructure, security and databases, plus billing, usage metering, organizations and project ingestion.',
+      'Computational platform for drug engineering, developed at Optagon Labs. Built the core infrastructure, security and databases, plus billing, usage metering, organizations and project ingestion.',
     links: [{ label: 'optagonlabs.com', href: 'https://optagonlabs.com' }],
     image: '/projects/backbond.webp',
+  },
+  {
+    id: 'coere',
+    name: 'Coere',
+    badges: [],
+    stack: ['Next.js', 'TypeScript', 'Supabase', 'Extensions API', 'Preact', 'SQLite', 'ONNX Runtime Web', 'Model Context Protocol'],
+    description:
+      'My startup, VC backed at a $2 million valuation. Coere accelerates AI use with a universal memory layer across every AI, so what you told one AI the next one already knows. A Chrome extension saves your chats from ChatGPT, Claude, Gemini and six more AIs, finds the right one while you type, and moves any chat to another AI. Search and memory run on your own machine, and the site, dashboard and accounts run on Next.js and Supabase.',
+    links: [{ label: 'coere.ai', href: 'https://www.coere.ai' }],
+    image: '/projects/coere.webp',
   },
   {
     id: 'bloom',
@@ -41,16 +51,6 @@ export const projects: Project[] = [
       { label: 'GitHub', href: 'https://github.com/edison16a/SandboxLabML' },
     ],
     image: '/projects/sandboxlab-ml.webp',
-  },
-  {
-    id: 'coere',
-    name: 'Coere',
-    badges: [],
-    stack: ['Next.js', 'TypeScript', 'Supabase', 'Extensions API', 'Preact', 'SQLite', 'ONNX Runtime Web', 'Model Context Protocol'],
-    description:
-      'Portable AI memory you own. A Chrome extension saves your chats from ChatGPT, Claude, Gemini and six more AIs, finds the right one while you type, and moves any chat to another AI. Search and memory run on your own machine with SQLite and ONNX Runtime in the browser, and the site, dashboard and accounts run on Next.js and Supabase.',
-    links: [{ label: 'coere.ai', href: 'https://www.coere.ai' }],
-    image: '/projects/coere.webp',
   },
   {
     id: 'standoff',
